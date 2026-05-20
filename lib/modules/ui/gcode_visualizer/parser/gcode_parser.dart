@@ -1,4 +1,6 @@
 import '../models/gcode_command.dart';
+import '../domain/gcode_line_record.dart';
+import '../domain/parsed_gcode_line.dart';
 import 'gcode_parse_result.dart';
 
 class GcodeParser {
@@ -16,7 +18,7 @@ class GcodeParser {
 
       if (rawLine.isEmpty) continue;
 
-      final result = _parseLine(rawLine, lineNumber);
+      final result = parseLine(rawLine, lineNumber);
 
       result.when(
         command: (cmd) => commands.add(cmd),
@@ -28,7 +30,16 @@ class GcodeParser {
     return GcodeParseResult(commands: commands, errors: errors);
   }
 
-  _LineParseResult _parseLine(String rawLine, int lineNumber) {
+  ParsedGcodeLine parseRecord(GcodeLineRecord record) {
+    final result = parseLine(record.rawLine.trim(), record.lineNumber);
+    return result.when(
+      command: (cmd) => ParsedGcodeLine.command(record, cmd),
+      error: (err) => ParsedGcodeLine.error(record, err),
+      skipped: () => ParsedGcodeLine.skipped(record),
+    );
+  }
+
+  LineParseResult parseLine(String rawLine, int lineNumber) {
     var line = rawLine;
 
     line = _removeParenthesesComments(line);
@@ -39,19 +50,19 @@ class GcodeParser {
         : line.trim();
 
     if (line.isEmpty) {
-      return _LineParseResult.skipped();
+      return LineParseResult.skipped();
     }
 
     final tokens = _tokenize(line);
     if (tokens.isEmpty) {
-      return _LineParseResult.skipped();
+      return LineParseResult.skipped();
     }
 
     final commandCode = tokens[0].toUpperCase();
 
     final normalized = _normalizeCode(commandCode);
     if (!_supportedCodes.contains(normalized)) {
-      return _LineParseResult.error(
+      return LineParseResult.error(
         GcodeParseError(
           lineNumber: lineNumber,
           rawLine: rawLine,
@@ -65,7 +76,7 @@ class GcodeParser {
       final token = tokens[i];
       final match = _paramPattern.firstMatch(token);
       if (match == null) {
-        return _LineParseResult.error(
+        return LineParseResult.error(
           GcodeParseError(
             lineNumber: lineNumber,
             rawLine: rawLine,
@@ -76,7 +87,7 @@ class GcodeParser {
       final key = match.group(1)!.toUpperCase();
       final valueStr = match.group(2);
       if (valueStr == null) {
-        return _LineParseResult.error(
+        return LineParseResult.error(
           GcodeParseError(
             lineNumber: lineNumber,
             rawLine: rawLine,
@@ -86,7 +97,7 @@ class GcodeParser {
       }
       final value = double.tryParse(valueStr);
       if (value == null) {
-        return _LineParseResult.error(
+        return LineParseResult.error(
           GcodeParseError(
             lineNumber: lineNumber,
             rawLine: rawLine,
@@ -97,7 +108,7 @@ class GcodeParser {
       params[key] = value;
     }
 
-    return _LineParseResult.command(
+    return LineParseResult.command(
       GcodeCommand(
         lineNumber: lineNumber,
         rawLine: rawLine,
@@ -159,12 +170,12 @@ class GcodeParser {
   }
 }
 
-sealed class _LineParseResult {
-  const _LineParseResult();
+sealed class LineParseResult {
+  const LineParseResult();
 
-  factory _LineParseResult.command(GcodeCommand cmd) => _CommandResult(cmd);
-  factory _LineParseResult.error(GcodeParseError err) => _ErrorResult(err);
-  factory _LineParseResult.skipped() => const _SkippedResult();
+  factory LineParseResult.command(GcodeCommand cmd) => _CommandResult(cmd);
+  factory LineParseResult.error(GcodeParseError err) => _ErrorResult(err);
+  factory LineParseResult.skipped() => const _SkippedResult();
 
   T when<T>({
     required T Function(GcodeCommand) command,
@@ -179,16 +190,16 @@ sealed class _LineParseResult {
   }
 }
 
-class _CommandResult extends _LineParseResult {
+class _CommandResult extends LineParseResult {
   const _CommandResult(this.cmd);
   final GcodeCommand cmd;
 }
 
-class _ErrorResult extends _LineParseResult {
+class _ErrorResult extends LineParseResult {
   const _ErrorResult(this.err);
   final GcodeParseError err;
 }
 
-class _SkippedResult extends _LineParseResult {
+class _SkippedResult extends LineParseResult {
   const _SkippedResult();
 }

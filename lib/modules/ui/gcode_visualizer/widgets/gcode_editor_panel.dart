@@ -9,6 +9,8 @@ class GcodeEditorPanel extends StatefulWidget {
     required this.errorCount,
     required this.commandCount,
     required this.hasParsed,
+    required this.linesRead,
+    required this.loadStageLabel,
   });
 
   final String initialText;
@@ -17,6 +19,8 @@ class GcodeEditorPanel extends StatefulWidget {
   final int errorCount;
   final int commandCount;
   final bool hasParsed;
+  final int linesRead;
+  final String loadStageLabel;
 
   @override
   State<GcodeEditorPanel> createState() => GcodeEditorPanelState();
@@ -149,6 +153,42 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
               child: Row(
                 children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      widget.loadStageLabel,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  if (widget.linesRead > 0) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.teal.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '${widget.linesRead} 行',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.teal,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(width: 6),
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),

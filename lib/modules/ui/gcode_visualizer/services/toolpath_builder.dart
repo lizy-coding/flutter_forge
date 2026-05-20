@@ -33,3 +33,37 @@ class ToolpathBuilder {
     return segments;
   }
 }
+
+class IncrementalToolpathBuilder {
+  MachinePosition _current = const MachinePosition();
+
+  MachinePosition get current => _current;
+
+  ToolpathSegment? accept(GcodeCommand command) {
+    final next = command.toPosition(_current);
+
+    final hasMovement = (command.x != null && command.x != _current.x) ||
+        (command.y != null && command.y != _current.y);
+
+    if (!hasMovement) {
+      _current = next;
+      return null;
+    }
+
+    final segment = ToolpathSegment(
+      start: _current,
+      end: next,
+      command: command,
+      type: command.code == 'G0'
+          ? GcodeSegmentType.rapid
+          : GcodeSegmentType.linear,
+    );
+
+    _current = next;
+    return segment;
+  }
+
+  void reset() {
+    _current = const MachinePosition();
+  }
+}

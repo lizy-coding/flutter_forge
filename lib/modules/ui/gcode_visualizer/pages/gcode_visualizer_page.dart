@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/learning/learning_scaffold.dart';
+import '../domain/gcode_load_stage.dart';
 import '../state/gcode_player_controller.dart';
 import '../widgets/command_timeline.dart';
 import '../widgets/gcode_canvas.dart';
@@ -129,6 +130,8 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
           errorCount: _controller.errorCount,
           commandCount: _controller.totalCommands,
           hasParsed: _controller.parseResult != null,
+          linesRead: _controller.linesRead,
+          loadStageLabel: _loadStageLabel(_controller.loadStage),
         ),
         const SizedBox(height: 8),
         PlaybackControls(
@@ -155,6 +158,16 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
         ],
       ],
     );
+  }
+
+  String _loadStageLabel(GcodeLoadStage stage) {
+    return switch (stage) {
+      GcodeLoadStage.idle => '未读取',
+      GcodeLoadStage.reading => '读取中',
+      GcodeLoadStage.parsing => '解析中',
+      GcodeLoadStage.ready => '可播放',
+      GcodeLoadStage.failed => '读取失败',
+    };
   }
 
   List<Widget> _buildSections(BuildContext context) {
