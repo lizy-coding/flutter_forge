@@ -66,3 +66,4 @@
 
 # FlutterGuard scan output
 .flutterguard/
+.flutter-plugins-dependencies

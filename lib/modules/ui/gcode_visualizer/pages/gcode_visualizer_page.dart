@@ -42,6 +42,10 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
     _controller.loadFilePath(path);
   }
 
+  Future<String?> _onPickFilePath() {
+    return _controller.pickFilePathAndLoad();
+  }
+
   void _onResetSample() {
     _controller.loadSample();
     _editorKey.currentState!.text = _controller.source;
@@ -131,6 +135,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
           initialText: _controller.source,
           onParse: _onParse,
           onLoadFilePath: _onLoadFilePath,
+          onPickFilePath: _onPickFilePath,
           onResetSample: _onResetSample,
           errorCount: _controller.errorCount,
           commandCount: _controller.totalCommands,

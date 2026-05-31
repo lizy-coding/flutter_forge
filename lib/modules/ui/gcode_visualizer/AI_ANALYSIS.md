@@ -39,7 +39,7 @@ modules/ui/gcode_visualizer/
 ├── widgets/
 │   ├── command_timeline.dart      # 指令列表，高亮当前执行行
 │   ├── gcode_canvas.dart          # CustomPaint 轨迹画布
-│   ├── gcode_editor_panel.dart    # 多行文本编辑器 + _GcodeFilePathInput + 解析/示例/提取按钮
+│   ├── gcode_editor_panel.dart    # 多行文本编辑器 + 文件路径输入/选择/提取按钮 + 解析/示例按钮
 │   └── playback_controls.dart     # 播放/暂停/重置/进度/速度控制
 └── pages/
     └── gcode_visualizer_page.dart # 教学页面 (LearningScaffold)
@@ -48,7 +48,7 @@ modules/ui/gcode_visualizer/
 ## 数据流
 
 ```
-source text / path input
+source text / path input / shared file picker
   -> GcodeLineReader.readLines()
   -> Stream<GcodeLineRecord>
   -> GcodeParser.parseRecord(record)
@@ -72,7 +72,7 @@ source text / path input
 | `GcodeReadlinePipeline` | application 层管线，聚合逐行读取、单行解析、增量轨迹构建和阶段快照 |
 | `ToolpathBuilder` | 一次性将指令序列转换为轨迹段列表，跟踪机床当前位置 |
 | `IncrementalToolpathBuilder` | 有状态增量构建器，每接收一条 `GcodeCommand` 生成 0/1 条运动段 |
-| `GcodePlayerController` | ChangeNotifier 状态管理，整合 readline 管线、轨迹快照、动画播放 |
+| `GcodePlayerController` | ChangeNotifier 状态管理，整合 shared 文件选择器、readline 管线、轨迹快照、动画播放 |
 | `_ToolpathPainter` | CustomPainter，负责坐标映射、网格、路径分层绘制 |
 | `GcodeVisualizerPage` | 教学页面，使用 LearningScaffold 组织交互演示和教学内容 |
 
@@ -88,6 +88,7 @@ source text / path input
 - 大小写不敏感
 - 文本/文件统一按行读取，每行保留 `lineNumber` 和 `byteOffset`
 - 页面提供文件路径输入框，可直接调用 `loadFilePath` 按行读取本地 G-code 文件，并兼容带引号、`file://`、`~`、shell 转义空格的复制路径
+- 页面提供文件选择器按钮，通过 `shared/platform/file_picker` 选择文件后立即解析并绘制轨迹
 
 ### 延期
 - G2/G3: 圆弧插补
@@ -123,6 +124,7 @@ source text / path input
 - `updateSource(String)` -> 更新编辑器内容
 - `parse()` -> 使用 `StringGcodeLineReader` 逐行解析编辑器文本，重置播放状态
 - `loadFilePath(String)` -> 使用 `FileGcodeLineReader` 逐行读取路径输入框指定的文件
+- `pickFilePathAndLoad()` -> 调用 shared `FilePickerService` 打开系统文件选择器，选择后复用 `loadFilePath` 解析并更新路径输入框
 - `loadMessage` -> 将准备读取、读取中、读取完成、读取失败等信息展示到路径输入区下方
 - `play()` / `pause()` / `reset()` -> 播放控制
 - `seek(double)` -> 跳转进度
@@ -140,13 +142,14 @@ source text / path input
 5. 教学页面使用 LearningScaffold 组件，保持一致性
 6. 文件读取能力只放在 `data/readers/`，controller 不直接处理 `dart:io`
 7. 大文件解析应通过 `GcodeReadlinePipeline` 批量发布快照，避免每行刷新 UI
+8. 文件选择能力属于 `shared/platform/file_picker`，本模块只传入 G-code 扩展名和弹窗文案
 
 ## 后续扩展计划
 
 - 支持 G2/G3 圆弧插补（需要 Path.arcTo 或分段逼近）
 - 支持多轴（Z 轴可视化，如颜色深浅表示 Z 高度）
 - 真实进给率时间模拟（根据段长度和 F 值计算各段时间）
-- 系统文件选择器 UI 与导出功能
+- 导出功能
 - 绘制点数抽离和抽稀缓存
 - 播放帧率控制与抽帧策略
 - Isolate 解析（大文件不阻塞 UI）

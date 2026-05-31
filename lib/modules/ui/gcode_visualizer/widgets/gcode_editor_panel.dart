@@ -6,6 +6,7 @@ class GcodeEditorPanel extends StatefulWidget {
     required this.initialText,
     required this.onParse,
     required this.onLoadFilePath,
+    required this.onPickFilePath,
     required this.onResetSample,
     required this.errorCount,
     required this.commandCount,
@@ -18,6 +19,7 @@ class GcodeEditorPanel extends StatefulWidget {
   final String initialText;
   final VoidCallback onParse;
   final ValueChanged<String> onLoadFilePath;
+  final Future<String?> Function() onPickFilePath;
   final VoidCallback onResetSample;
   final int errorCount;
   final int commandCount;
@@ -127,6 +129,7 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
           const Divider(height: 1),
           _GcodeFilePathInput(
             onLoadFilePath: widget.onLoadFilePath,
+            onPickFilePath: widget.onPickFilePath,
           ),
           Padding(
             padding: const EdgeInsets.all(8),
@@ -311,9 +314,11 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
 class _GcodeFilePathInput extends StatefulWidget {
   const _GcodeFilePathInput({
     required this.onLoadFilePath,
+    required this.onPickFilePath,
   });
 
   final ValueChanged<String> onLoadFilePath;
+  final Future<String?> Function() onPickFilePath;
 
   @override
   State<_GcodeFilePathInput> createState() => _GcodeFilePathInputState();
@@ -321,6 +326,7 @@ class _GcodeFilePathInput extends StatefulWidget {
 
 class _GcodeFilePathInputState extends State<_GcodeFilePathInput> {
   late final TextEditingController _controller;
+  bool _isPicking = false;
 
   @override
   void initState() {
@@ -380,6 +386,21 @@ class _GcodeFilePathInputState extends State<_GcodeFilePathInput> {
             ),
           ),
           const SizedBox(width: 6),
+          IconButton.filledTonal(
+            onPressed: _isPicking ? null : _pickPath,
+            icon: _isPicking
+                ? const SizedBox.square(
+                    dimension: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.folder_open, size: 18),
+            tooltip: '选择 G-code 文件',
+            style: IconButton.styleFrom(
+              minimumSize: const Size(36, 36),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ),
+          const SizedBox(width: 6),
           FilledButton.tonalIcon(
             onPressed: () => _loadPath(_controller.text),
             icon: const Icon(Icons.file_upload_outlined, size: 16),
@@ -399,5 +420,20 @@ class _GcodeFilePathInputState extends State<_GcodeFilePathInput> {
     final path = value.trim();
     if (path.isEmpty) return;
     widget.onLoadFilePath(path);
+  }
+
+  Future<void> _pickPath() async {
+    setState(() => _isPicking = true);
+    try {
+      final path = await widget.onPickFilePath();
+      if (!mounted) return;
+      if (path != null && path.isNotEmpty) {
+        _controller.text = path;
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isPicking = false);
+      }
+    }
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../../../../shared/platform/file_picker/file_picker_service.dart';
+import '../../../../shared/platform/file_picker/method_channel_file_picker.dart';
 import '../application/gcode_readline_pipeline.dart';
 import '../data/readers/file_gcode_line_reader.dart';
 import '../data/readers/gcode_line_reader.dart';
@@ -19,10 +22,21 @@ G1 X60 Y20
 G0 X0 Y0
 ''';
 
+const _kGcodeFileExtensions = [
+  'gcode',
+  'gco',
+  'nc',
+  'ngc',
+  'tap',
+  'cnc',
+  'txt',
+];
+
 class GcodePlayerController extends ChangeNotifier {
   GcodePlayerController({
     required TickerProvider vsync,
-  }) {
+    FilePickerService filePicker = const MethodChannelFilePicker(),
+  }) : _filePicker = filePicker {
     _animationController = AnimationController(
       vsync: vsync,
       duration: const Duration(seconds: 5),
@@ -32,6 +46,7 @@ class GcodePlayerController extends ChangeNotifier {
   }
 
   late final AnimationController _animationController;
+  final FilePickerService _filePicker;
   final _readlinePipeline = GcodeReadlinePipeline();
 
   String _source = _kDefaultSample.trim();
@@ -83,6 +98,42 @@ class GcodePlayerController extends ChangeNotifier {
     _loadMessage = '准备读取: $normalizedPath';
     _addLog(_loadMessage);
     return _loadFromReader(FileGcodeLineReader(normalizedPath));
+  }
+
+  Future<String?> pickFilePathAndLoad() async {
+    _loadMessage = '打开文件选择器';
+    _addLog(_loadMessage);
+    notifyListeners();
+
+    try {
+      final pickedFile = await _filePicker.pickFile(
+        allowedExtensions: _kGcodeFileExtensions,
+        title: '选择 G-code 文件',
+        message: '选择用于解析和绘制刀路的 G-code 文件',
+      );
+      final path = pickedFile?.path;
+      if (path == null || path.trim().isEmpty) {
+        _loadMessage = '已取消选择文件';
+        _addLog(_loadMessage);
+        notifyListeners();
+        return null;
+      }
+
+      await loadFilePath(path);
+      return FileGcodeLineReader.normalizePath(path);
+    } on PlatformException catch (error) {
+      _loadStage = GcodeLoadStage.failed;
+      _loadMessage = '文件选择失败: ${error.message ?? error.code}';
+      _addLog(_loadMessage);
+      notifyListeners();
+      return null;
+    } on MissingPluginException {
+      _loadStage = GcodeLoadStage.failed;
+      _loadMessage = '当前平台未实现文件选择器';
+      _addLog(_loadMessage);
+      notifyListeners();
+      return null;
+    }
   }
 
   Future<void> _loadFromReader(GcodeLineReader reader) async {

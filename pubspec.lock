@@ -207,13 +207,6 @@ packages:
       relative: true
     source: path
     version: "0.1.0"
-  flutterguard_core:
-    dependency: transitive
-    description:
-      path: "../flutterguard/packages/flutterguard_core"
-      relative: true
-    source: path
-    version: "0.1.0"
   glob:
     dependency: transitive
     description:
