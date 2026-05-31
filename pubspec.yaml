@@ -7,6 +7,14 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  gcode_core:
+    path: ../gcode_core
+  flutter_study_learning:
+    path: ../flutter_study_learning
+  flutter_study_platform_file_picker:
+    path: ../flutter_study_platform_file_picker
+  flutter_ioc_core:
+    path: ../flutter_ioc_core
   flutter:
     sdk: flutter
   go_router: ^14.2.0

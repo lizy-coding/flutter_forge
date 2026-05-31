@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../shared/platform/file_picker/file_picker_service.dart';
-import '../../../../shared/platform/file_picker/method_channel_file_picker.dart';
-import '../application/gcode_readline_pipeline.dart';
-import '../data/readers/file_gcode_line_reader.dart';
-import '../data/readers/gcode_line_reader.dart';
-import '../data/readers/string_gcode_line_reader.dart';
-import '../domain/gcode_load_stage.dart';
-import '../models/toolpath_segment.dart';
-import '../parser/gcode_parse_result.dart';
+import 'package:flutter_study_platform_file_picker/flutter_study_platform_file_picker.dart';
+import 'package:gcode_core/gcode_core.dart';
 
 const _kDefaultSample = '''
 ; Flutter G-code visualizer sample

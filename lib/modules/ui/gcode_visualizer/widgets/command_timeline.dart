@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/gcode_command.dart';
-import '../parser/gcode_parse_result.dart';
+import 'package:gcode_core/gcode_core.dart';
 
 class CommandTimeline extends StatelessWidget {
   const CommandTimeline({

@@ -1,10 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:main_app/modules/ui/gcode_visualizer/application/gcode_readline_pipeline.dart';
-import 'package:main_app/modules/ui/gcode_visualizer/data/readers/file_gcode_line_reader.dart';
-import 'package:main_app/modules/ui/gcode_visualizer/data/readers/string_gcode_line_reader.dart';
-import 'package:main_app/modules/ui/gcode_visualizer/domain/gcode_load_stage.dart';
+import 'package:gcode_core/gcode_core.dart';
 
 void main() {
   group('GcodeReadlinePipeline', () {

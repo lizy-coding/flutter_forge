@@ -166,6 +166,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "8.1.6"
+  flutter_ioc_core:
+    dependency: "direct main"
+    description:
+      path: "../flutter_ioc_core"
+      relative: true
+    source: path
+    version: "0.1.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -182,6 +189,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.6.1"
+  flutter_study_learning:
+    dependency: "direct main"
+    description:
+      path: "../flutter_study_learning"
+      relative: true
+    source: path
+    version: "0.1.0"
+  flutter_study_platform_file_picker:
+    dependency: "direct main"
+    description:
+      path: "../flutter_study_platform_file_picker"
+      relative: true
+    source: path
+    version: "0.1.0"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -204,6 +225,13 @@ packages:
     dependency: "direct dev"
     description:
       path: "../flutterguard/packages/flutterguard_cli"
+      relative: true
+    source: path
+    version: "0.1.0"
+  gcode_core:
+    dependency: "direct main"
+    description:
+      path: "../gcode_core"
       relative: true
     source: path
     version: "0.1.0"
