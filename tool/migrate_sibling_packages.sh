@@ -8,7 +8,7 @@ FORCE="${1:-}"
 PACKAGES=(
   "gcode_core"
   "flutter_study_learning"
-  "flutter_study_platform_file_picker"
+  "file_picker_bridge"
   "flutter_ioc_core"
 )
 
@@ -194,12 +194,12 @@ cat > "$PARENT/flutter_study_learning/AI_ANALYSIS.md" <<'EOF'
 只承载教学表达组件，不持有任何模块状态、解析器、网络请求或平台能力。
 EOF
 
-mkdir -p "$PARENT/flutter_study_platform_file_picker/lib/src" "$PARENT/flutter_study_platform_file_picker/test"
-cp "$ROOT/lib/shared/platform/file_picker/file_picker_service.dart" "$PARENT/flutter_study_platform_file_picker/lib/src/"
-cp "$ROOT/lib/shared/platform/file_picker/method_channel_file_picker.dart" "$PARENT/flutter_study_platform_file_picker/lib/src/"
-cp "$ROOT/test/shared/platform/file_picker/method_channel_file_picker_test.dart" "$PARENT/flutter_study_platform_file_picker/test/"
-cat > "$PARENT/flutter_study_platform_file_picker/pubspec.yaml" <<'EOF'
-name: flutter_study_platform_file_picker
+mkdir -p "$PARENT/file_picker_bridge/lib/src" "$PARENT/file_picker_bridge/test"
+cp "$ROOT/lib/shared/platform/file_picker/file_picker_service.dart" "$PARENT/file_picker_bridge/lib/src/"
+cp "$ROOT/lib/shared/platform/file_picker/method_channel_file_picker.dart" "$PARENT/file_picker_bridge/lib/src/"
+cp "$ROOT/test/shared/platform/file_picker/method_channel_file_picker_test.dart" "$PARENT/file_picker_bridge/test/"
+cat > "$PARENT/file_picker_bridge/pubspec.yaml" <<'EOF'
+name: file_picker_bridge
 description: MethodChannel file picker API used by Flutter study modules.
 publish_to: 'none'
 version: 0.1.0
@@ -219,27 +219,27 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 EOF
-cat > "$PARENT/flutter_study_platform_file_picker/lib/flutter_study_platform_file_picker.dart" <<'EOF'
-library flutter_study_platform_file_picker;
+cat > "$PARENT/file_picker_bridge/lib/file_picker_bridge.dart" <<'EOF'
+library file_picker_bridge;
 
 export 'src/file_picker_service.dart';
 export 'src/method_channel_file_picker.dart';
 EOF
-cat > "$PARENT/flutter_study_platform_file_picker/README.md" <<'EOF'
-# flutter_study_platform_file_picker
+cat > "$PARENT/file_picker_bridge/README.md" <<'EOF'
+# file_picker_bridge
 
 Business-neutral file picker API for Flutter study modules.
 
-Current host implementation is registered by `main_app` on macOS through the `flutter_study/file_picker` MethodChannel. This package owns the Dart API and mock-friendly channel implementation; it can be upgraded into a full Flutter plugin when more platforms are needed.
+Current host implementation is registered by `main_app` on macOS through the `file_picker_bridge/file_picker` MethodChannel. This package owns the Dart API and mock-friendly channel implementation; it can be upgraded into a full Flutter plugin when more platforms are needed.
 EOF
-cat > "$PARENT/flutter_study_platform_file_picker/AI_ANALYSIS.md" <<'EOF'
-# flutter_study_platform_file_picker 分析
+cat > "$PARENT/file_picker_bridge/AI_ANALYSIS.md" <<'EOF'
+# file_picker_bridge 分析
 
 > 文件选择能力包，当前承载 Dart API 和 MethodChannel 客户端。
 
 ## 平台协议
 
-- Channel: `flutter_study/file_picker`
+- Channel: `file_picker_bridge/file_picker`
 - Method: `pickFile`
 - 返回: `null` 或 `{ path: String, name: String? }`
 
@@ -247,8 +247,8 @@ cat > "$PARENT/flutter_study_platform_file_picker/AI_ANALYSIS.md" <<'EOF'
 
 macOS 原生实现仍在宿主应用 `macos/Runner/AppDelegate.swift` 中注册。后续若升级为完整 Flutter plugin，再迁移原生代码。
 EOF
-perl -0pi -e "s#import 'package:main_app/shared/platform/file_picker/method_channel_file_picker.dart';#import 'package:flutter_study_platform_file_picker/flutter_study_platform_file_picker.dart';#g" \
-  "$PARENT/flutter_study_platform_file_picker/test/method_channel_file_picker_test.dart"
+perl -0pi -e "s#import 'package:main_app/shared/platform/file_picker/method_channel_file_picker.dart';#import 'package:file_picker_bridge/file_picker_bridge.dart';#g" \
+  "$PARENT/file_picker_bridge/test/method_channel_file_picker_test.dart"
 
 mkdir -p "$PARENT/flutter_ioc_core/lib/src"
 cp "$ROOT/lib/modules/state/flutter_ioc/ioc/container.dart" "$PARENT/flutter_ioc_core/lib/src/"
@@ -285,15 +285,15 @@ cat > "$PARENT/flutter_ioc_core/AI_ANALYSIS.md" <<'EOF'
 不依赖 Flutter。
 EOF
 
-perl -0pi -e "s/\n  gcode_core:\n    path: \.\.\/gcode_core\n//g; s/\n  flutter_study_learning:\n    path: \.\.\/flutter_study_learning\n//g; s/\n  flutter_study_platform_file_picker:\n    path: \.\.\/flutter_study_platform_file_picker\n//g; s/\n  flutter_ioc_core:\n    path: \.\.\/flutter_ioc_core\n//g" "$ROOT/pubspec.yaml"
-perl -0pi -e "s/dependencies:\n/dependencies:\n  gcode_core:\n    path: ..\/gcode_core\n  flutter_study_learning:\n    path: ..\/flutter_study_learning\n  flutter_study_platform_file_picker:\n    path: ..\/flutter_study_platform_file_picker\n  flutter_ioc_core:\n    path: ..\/flutter_ioc_core\n/" "$ROOT/pubspec.yaml"
+perl -0pi -e "s/\n  gcode_core:\n    path: \.\.\/gcode_core\n//g; s/\n  flutter_study_learning:\n    path: \.\.\/flutter_study_learning\n//g; s/\n  file_picker_bridge:\n    path: \.\.\/file_picker_bridge\n//g; s/\n  flutter_ioc_core:\n    path: \.\.\/flutter_ioc_core\n//g" "$ROOT/pubspec.yaml"
+perl -0pi -e "s/dependencies:\n/dependencies:\n  gcode_core:\n    path: ..\/gcode_core\n  flutter_study_learning:\n    path: ..\/flutter_study_learning\n  file_picker_bridge:\n    path: ..\/file_picker_bridge\n  flutter_ioc_core:\n    path: ..\/flutter_ioc_core\n/" "$ROOT/pubspec.yaml"
 
 perl -0pi -e "s#import '../../../../shared/learning/learning_scaffold.dart';#import 'package:flutter_study_learning/flutter_study_learning.dart';#g" \
   "$ROOT/lib/modules/ui/gcode_visualizer/pages/gcode_visualizer_page.dart" \
   "$ROOT/lib/modules/basic/tree_state/pages/basic_widgets_page.dart"
 perl -0pi -e "s#import '../domain/gcode_load_stage.dart';#import 'package:gcode_core/gcode_core.dart';#g" \
   "$ROOT/lib/modules/ui/gcode_visualizer/pages/gcode_visualizer_page.dart"
-perl -0pi -e "s#import '../../../../shared/platform/file_picker/file_picker_service.dart';\nimport '../../../../shared/platform/file_picker/method_channel_file_picker.dart';\nimport '../application/gcode_readline_pipeline.dart';\nimport '../data/readers/file_gcode_line_reader.dart';\nimport '../data/readers/gcode_line_reader.dart';\nimport '../data/readers/string_gcode_line_reader.dart';\nimport '../domain/gcode_load_stage.dart';\nimport '../models/toolpath_segment.dart';\nimport '../parser/gcode_parse_result.dart';#import 'package:flutter_study_platform_file_picker/flutter_study_platform_file_picker.dart';\nimport 'package:gcode_core/gcode_core.dart';#s" \
+perl -0pi -e "s#import '../../../../shared/platform/file_picker/file_picker_service.dart';\nimport '../../../../shared/platform/file_picker/method_channel_file_picker.dart';\nimport '../application/gcode_readline_pipeline.dart';\nimport '../data/readers/file_gcode_line_reader.dart';\nimport '../data/readers/gcode_line_reader.dart';\nimport '../data/readers/string_gcode_line_reader.dart';\nimport '../domain/gcode_load_stage.dart';\nimport '../models/toolpath_segment.dart';\nimport '../parser/gcode_parse_result.dart';#import 'package:file_picker_bridge/file_picker_bridge.dart';\nimport 'package:gcode_core/gcode_core.dart';#s" \
   "$ROOT/lib/modules/ui/gcode_visualizer/state/gcode_player_controller.dart"
 perl -0pi -e "s#import '../models/gcode_command.dart';\nimport '../models/toolpath_segment.dart';#import 'package:gcode_core/gcode_core.dart';#s" \
   "$ROOT/lib/modules/ui/gcode_visualizer/widgets/gcode_canvas.dart"
@@ -313,7 +313,7 @@ perl -0pi -e "s/(import 'package:gcode_core\/gcode_core.dart';\n)+/import 'packa
   "$ROOT/test/gcode_visualizer/gcode_parser_test.dart" \
   "$ROOT/test/gcode_visualizer/toolpath_builder_test.dart" \
   "$ROOT/test/gcode_visualizer/application/gcode_readline_pipeline_test.dart"
-perl -0pi -e "s#import 'package:main_app/shared/platform/file_picker/method_channel_file_picker.dart';#import 'package:flutter_study_platform_file_picker/flutter_study_platform_file_picker.dart';#g" \
+perl -0pi -e "s#import 'package:main_app/shared/platform/file_picker/method_channel_file_picker.dart';#import 'package:file_picker_bridge/file_picker_bridge.dart';#g" \
   "$ROOT/test/shared/platform/file_picker/method_channel_file_picker_test.dart"
 
 rm -rf "$ROOT/lib/modules/ui/gcode_visualizer/application" \
@@ -360,7 +360,7 @@ modules/ui/gcode_visualizer/
 |---|---|
 | `gcode_core` | G-code 读取、解析、错误收集、轨迹构建 |
 | `flutter_study_learning` | 教学页面模板组件 |
-| `flutter_study_platform_file_picker` | 文件选择 Dart API，macOS 原生通道仍由宿主应用注册 |
+| `file_picker_bridge` | 文件选择 Dart API，macOS 原生通道仍由宿主应用注册 |
 
 ## 数据流
 
@@ -376,7 +376,7 @@ source text / path input / file picker
 
 1. 新增 G-code 语法、reader 或 toolpath 规则时修改 `../gcode_core`。
 2. 本模块只处理 Flutter UI、播放状态和教学表达。
-3. 文件选择能力来自 `flutter_study_platform_file_picker`，模块只传入 G-code 扩展名和弹窗文案。
+3. 文件选择能力来自 `file_picker_bridge`，模块只传入 G-code 扩展名和弹窗文案。
 4. 教学页面组件来自 `flutter_study_learning`。
 EOF
 
@@ -394,7 +394,7 @@ cat > "$ROOT/lib/shared/AI_ANALYSIS.md" <<'EOF'
 | 能力 | 同级包 | 当前使用方 |
 |---|---|---|
 | 教学模板 | `../flutter_study_learning` | tree_state, gcode_visualizer |
-| 文件选择 Dart API | `../flutter_study_platform_file_picker` | gcode_visualizer |
+| 文件选择 Dart API | `../file_picker_bridge` | gcode_visualizer |
 
 ## 维护规则
 
@@ -412,11 +412,11 @@ cat > "$ROOT/lib/shared/platform/AI_ANALYSIS.md" <<'EOF'
 
 | 能力 | 包 | 宿主原生实现 |
 |---|---|---|
-| 文件选择 | `../flutter_study_platform_file_picker` | macOS `AppDelegate.swift` 注册 `flutter_study/file_picker` |
+| 文件选择 | `../file_picker_bridge` | macOS `AppDelegate.swift` 注册 `file_picker_bridge/file_picker` |
 
 ## 后续计划
 
-当需要 Windows/iOS/Android 文件选择实现时，将 `flutter_study_platform_file_picker` 从 Dart API package 升级为完整 Flutter plugin，并迁移 macOS 原生实现。
+当需要 Windows/iOS/Android 文件选择实现时，将 `file_picker_bridge` 从 Dart API package 升级为完整 Flutter plugin，并迁移 macOS 原生实现。
 EOF
 
 cat > "$ROOT/lib/modules/state/flutter_ioc/AI_ANALYSIS.md" <<'EOF'
@@ -446,7 +446,7 @@ modules/state/flutter_ioc/
 2. 本模块只维护 Flutter/Provider 教学集成。
 EOF
 
-perl -0pi -e 's#lib/shared/learning/learning_scaffold.dart#package:flutter_study_learning#g; s#`lib/shared/platform/file_picker/`#`../flutter_study_platform_file_picker`#g; s#`shared/platform/file_picker/`#`../flutter_study_platform_file_picker`#g' \
+perl -0pi -e 's#lib/shared/learning/learning_scaffold.dart#package:flutter_study_learning#g; s#`lib/shared/platform/file_picker/`#`../file_picker_bridge`#g; s#`shared/platform/file_picker/`#`../file_picker_bridge`#g' \
   "$ROOT/README.md" "$ROOT/AI_PROJECT_CONTEXT.md" "$ROOT/REFACTOR_PLAN.md" "$ROOT/PLUGIN_DECOMPOSITION_PLAN.md" "$ROOT/lib/modules/basic/tree_state/AI_ANALYSIS.md"
 
 echo "Sibling package migration completed."

@@ -11,8 +11,8 @@ dependencies:
     path: ../gcode_core
   flutter_study_learning:
     path: ../flutter_study_learning
-  flutter_study_platform_file_picker:
-    path: ../flutter_study_platform_file_picker
+  file_picker_bridge:
+    path: ../file_picker_bridge
   flutter_ioc_core:
     path: ../flutter_ioc_core
   flutter:

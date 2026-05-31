@@ -10,7 +10,7 @@
   },
   "entrypoints": ["AI_ANALYSIS.md"],
   "owns": ["platform_boundary_docs","host_channel_registry_docs"],
-  "depends": ["../flutter_study_platform_file_picker","macos/Runner/AppDelegate.swift"],
+  "depends": ["../file_picker_bridge","macos/Runner/AppDelegate.swift"],
   "mutates": ["AI_ANALYSIS.md","macos/Runner/AppDelegate.swift"],
   "files": [],
   "contracts": {

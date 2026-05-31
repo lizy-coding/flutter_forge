@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_study_platform_file_picker/flutter_study_platform_file_picker.dart';
+import 'package:file_picker_bridge/file_picker_bridge.dart';
 import 'package:gcode_core/gcode_core.dart';
 
 const _kDefaultSample = '''

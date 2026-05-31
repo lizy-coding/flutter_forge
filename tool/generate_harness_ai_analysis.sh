@@ -110,7 +110,7 @@ write_harness \
   "main_app" \
   "$(json_string_array "lib/main.dart" "lib/app/app.dart" "lib/app/router/app_route_table.dart")" \
   "$(json_string_array "app_shell" "module_registry" "learning_modules" "path_dependency_bindings")" \
-  "$(json_string_array "../gcode_core" "../flutter_study_learning" "../flutter_study_platform_file_picker" "../flutter_ioc_core" "../flutterguard/packages/flutterguard_cli")" \
+  "$(json_string_array "../gcode_core" "../flutter_study_learning" "../file_picker_bridge" "../flutter_ioc_core" "../flutterguard/packages/flutterguard_cli")" \
   "$(json_string_array "pubspec.yaml" "lib/app/router/app_route_table.dart" "lib/modules/**" "macos/Runner/AppDelegate.swift")" \
   "$(json_string_array "dart format ." "flutter analyze" "dart run flutterguard_cli:flutterguard scan --path . --fail-on high" "flutter build macos")" \
   "active"
@@ -138,7 +138,7 @@ write_harness \
   "main_app" \
   "$(json_string_array "AI_ANALYSIS.md")" \
   "$(json_string_array "boundary_docs" "transition_layer")" \
-  "$(json_string_array "../flutter_study_learning" "../flutter_study_platform_file_picker")" \
+  "$(json_string_array "../flutter_study_learning" "../file_picker_bridge")" \
   "$(json_string_array "AI_ANALYSIS.md" "platform/AI_ANALYSIS.md")" \
   "$(json_string_array "flutter analyze")" \
   "transition"
@@ -152,7 +152,7 @@ write_harness \
   "main_app" \
   "$(json_string_array "AI_ANALYSIS.md")" \
   "$(json_string_array "platform_boundary_docs" "host_channel_registry_docs")" \
-  "$(json_string_array "../flutter_study_platform_file_picker" "macos/Runner/AppDelegate.swift")" \
+  "$(json_string_array "../file_picker_bridge" "macos/Runner/AppDelegate.swift")" \
   "$(json_string_array "AI_ANALYSIS.md" "macos/Runner/AppDelegate.swift")" \
   "$(json_string_array "flutter analyze" "flutter build macos")" \
   "transition"
@@ -191,7 +191,7 @@ write_module "state" "status_management" "learning_module" "active" "provider,fl
 write_module "state" "flutter_ioc" "learning_module_adapter" "active" "flutter_ioc_core,provider,module_registry"
 write_module "ui" "adsorption_line" "learning_module" "active" "provider,module_registry"
 write_module "ui" "download_animation" "learning_module" "active" "module_registry,go_router"
-write_module "ui" "gcode_visualizer" "learning_module_adapter" "active" "gcode_core,flutter_study_learning,flutter_study_platform_file_picker,module_registry"
+write_module "ui" "gcode_visualizer" "learning_module_adapter" "active" "gcode_core,flutter_study_learning,file_picker_bridge,module_registry"
 write_module "ui" "popup_widgets" "learning_module" "active" "module_registry"
 write_module "ui" "scroll_table" "learning_module" "active" "two_dimensional_scrollables,module_registry"
 write_module "platform" "dio_interceptor" "learning_module" "active" "dio,module_registry,go_router"
@@ -228,7 +228,7 @@ write_package() {
 
 write_package "gcode_core" "packages.gcode_core" "dart_package" "gcode_readers,gcode_parser,gcode_domain,gcode_toolpath,gcode_pipeline" "dart_sdk" "dart format .,dart analyze,dart test"
 write_package "flutter_study_learning" "packages.flutter_study_learning" "flutter_package" "learning_scaffold,learning_widgets" "flutter_sdk" "dart format .,flutter analyze"
-write_package "flutter_study_platform_file_picker" "packages.flutter_study_platform_file_picker" "flutter_package" "file_picker_api,method_channel_client" "flutter_sdk" "dart format .,flutter analyze,flutter test"
+write_package "file_picker_bridge" "packages.file_picker_bridge" "flutter_package" "file_picker_api,method_channel_client" "flutter_sdk" "dart format .,flutter analyze,flutter test"
 write_package "flutter_ioc_core" "packages.flutter_ioc_core" "dart_package" "ioc_container,ioc_types,lifetime_scope" "dart_sdk" "dart format .,dart analyze"
 
 echo "harness AI_ANALYSIS generation completed"

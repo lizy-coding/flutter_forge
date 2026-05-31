@@ -6,7 +6,7 @@ class AppDelegate: FlutterAppDelegate {
   override func applicationDidFinishLaunching(_ notification: Notification) {
     if let controller = mainFlutterWindow?.contentViewController as? FlutterViewController {
       let channel = FlutterMethodChannel(
-        name: "flutter_study/file_picker",
+        name: "file_picker_bridge/file_picker",
         binaryMessenger: controller.engine.binaryMessenger
       )
       channel.setMethodCallHandler { call, result in

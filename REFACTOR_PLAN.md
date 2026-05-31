@@ -54,7 +54,7 @@ abstract class FilePickerService {
 ```
 
 **macOS 原生侧目标**:
-- Channel 从 `flutter_study/gcode_file_picker` 调整为 `flutter_study/file_picker`
+- Channel 从 `flutter_study/gcode_file_picker` 调整为 `file_picker_bridge/file_picker`
 - `pickFile` 支持 `allowedExtensions`、`title`、`message`
 - 保留 `com.apple.security.files.user-selected.read-only`
 - G-code 模块只传 G-code 扩展名，不再持有平台通道细节

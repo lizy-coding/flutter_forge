@@ -10,7 +10,7 @@
   },
   "entrypoints": ["AI_ANALYSIS.md"],
   "owns": ["boundary_docs","transition_layer"],
-  "depends": ["../flutter_study_learning","../flutter_study_platform_file_picker"],
+  "depends": ["../flutter_study_learning","../file_picker_bridge"],
   "mutates": ["AI_ANALYSIS.md","platform/AI_ANALYSIS.md"],
   "files": ["platform/AI_ANALYSIS.md"],
   "contracts": {

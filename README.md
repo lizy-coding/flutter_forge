@@ -63,7 +63,7 @@ lib/
 ```
 ../gcode_core                         # 纯 Dart G-code 解析、读取、轨迹构建
 ../flutter_study_learning             # 教学模板组件
-../flutter_study_platform_file_picker # 文件选择 Dart API / MethodChannel client
+../file_picker_bridge                 # 文件选择 Dart API / MethodChannel client
 ../flutter_ioc_core                   # 纯 Dart IoC 容器核心
 ```
 
@@ -80,7 +80,7 @@ lib/
 
 - `lib/shared/AI_ANALYSIS.md`
 - `lib/shared/platform/AI_ANALYSIS.md`
-- `../flutter_study_platform_file_picker/AI_ANALYSIS.md`
+- `../file_picker_bridge/AI_ANALYSIS.md`
 - `../gcode_core/AI_ANALYSIS.md`
 - `../flutter_study_learning/AI_ANALYSIS.md`
 - `../flutter_ioc_core/AI_ANALYSIS.md`
@@ -94,11 +94,11 @@ lib/
 
 ### 平台文件选择
 
-`../flutter_study_platform_file_picker` 提供业务无关的文件选择接口：
+`../file_picker_bridge` 提供业务无关的文件选择接口：
 
 - Dart 接口：`FilePickerService`
 - 默认实现：`MethodChannelFilePicker`
-- macOS 通道：`flutter_study/file_picker`
+- macOS 通道：`file_picker_bridge/file_picker`
 - 当前使用方：`modules/ui/gcode_visualizer`
 
 模块只传入允许的扩展名、标题和提示文案；文件读取、解析和错误展示仍由模块自己负责。

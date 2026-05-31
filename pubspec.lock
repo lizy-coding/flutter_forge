@@ -153,6 +153,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "7.0.1"
+  file_picker_bridge:
+    dependency: "direct main"
+    description:
+      path: "../file_picker_bridge"
+      relative: true
+    source: path
+    version: "0.1.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -193,13 +200,6 @@ packages:
     dependency: "direct main"
     description:
       path: "../flutter_study_learning"
-      relative: true
-    source: path
-    version: "0.1.0"
-  flutter_study_platform_file_picker:
-    dependency: "direct main"
-    description:
-      path: "../flutter_study_platform_file_picker"
       relative: true
     source: path
     version: "0.1.0"
