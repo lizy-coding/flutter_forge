@@ -38,6 +38,10 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
     _controller.parse();
   }
 
+  void _onLoadFilePath(String path) {
+    _controller.loadFilePath(path);
+  }
+
   void _onResetSample() {
     _controller.loadSample();
     _editorKey.currentState!.text = _controller.source;
@@ -126,12 +130,14 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
           key: _editorKey,
           initialText: _controller.source,
           onParse: _onParse,
+          onLoadFilePath: _onLoadFilePath,
           onResetSample: _onResetSample,
           errorCount: _controller.errorCount,
           commandCount: _controller.totalCommands,
           hasParsed: _controller.parseResult != null,
           linesRead: _controller.linesRead,
           loadStageLabel: _loadStageLabel(_controller.loadStage),
+          loadMessage: _controller.loadMessage,
         ),
         const SizedBox(height: 8),
         PlaybackControls(

@@ -85,7 +85,9 @@ class GcodeReadlinePipeline {
         errors: errors,
         segments: segments,
         linesRead: linesRead,
-        message: '逐行读取完成',
+        message: '逐行读取完成: $linesRead 行, '
+            '${commands.length} 条指令, ${errors.length} 个错误, '
+            '${segments.length} 条轨迹段',
       );
     } catch (error) {
       yield _snapshot(

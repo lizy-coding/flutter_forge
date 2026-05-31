@@ -19,7 +19,7 @@ modules/ui/gcode_visualizer/
 │   └── readers/
 │       ├── gcode_line_reader.dart        # 按行读取接口
 │       ├── string_gcode_line_reader.dart # 编辑器文本的 readline 适配
-│       └── file_gcode_line_reader.dart   # 文件 openRead + LineSplitter 按行读取
+│       └── file_gcode_line_reader.dart   # 路径规范化/校验 + 文件 openRead 按行读取
 ├── domain/
 │   ├── gcode_line_record.dart     # 单行读取记录 (行号、原始文本、偏移)
 │   ├── gcode_load_snapshot.dart   # 读取/解析阶段快照
@@ -39,7 +39,7 @@ modules/ui/gcode_visualizer/
 ├── widgets/
 │   ├── command_timeline.dart      # 指令列表，高亮当前执行行
 │   ├── gcode_canvas.dart          # CustomPaint 轨迹画布
-│   ├── gcode_editor_panel.dart    # 多行文本编辑器 + 解析/示例按钮 (StatefulWidget, _HoverGestureWrapper 封装悬浮+按压+长按手势识别)
+│   ├── gcode_editor_panel.dart    # 多行文本编辑器 + _GcodeFilePathInput + 解析/示例/提取按钮
 │   └── playback_controls.dart     # 播放/暂停/重置/进度/速度控制
 └── pages/
     └── gcode_visualizer_page.dart # 教学页面 (LearningScaffold)
@@ -48,7 +48,7 @@ modules/ui/gcode_visualizer/
 ## 数据流
 
 ```
-source text / file path
+source text / path input
   -> GcodeLineReader.readLines()
   -> Stream<GcodeLineRecord>
   -> GcodeParser.parseRecord(record)
@@ -67,7 +67,7 @@ source text / file path
 |---|------|
 | `GcodeLineReader` | data 层读取接口，屏蔽文本来源或文件来源 |
 | `StringGcodeLineReader` | 将编辑器文本按 `readLine` 语义输出为 `GcodeLineRecord` |
-| `FileGcodeLineReader` | 使用 `File.openRead()` + `LineSplitter` 对文件单行读取 |
+| `FileGcodeLineReader` | 规范化引号、`file://`、`~`、shell 转义空格等复制路径，校验文件存在后用 `File.openRead()` + `LineSplitter` 单行读取 |
 | `GcodeParser` | 纯 Dart 文本解析器，支持整段 `parse` 与单行 `parseRecord` |
 | `GcodeReadlinePipeline` | application 层管线，聚合逐行读取、单行解析、增量轨迹构建和阶段快照 |
 | `ToolpathBuilder` | 一次性将指令序列转换为轨迹段列表，跟踪机床当前位置 |
@@ -87,6 +87,7 @@ source text / file path
 - `()` 括号注释
 - 大小写不敏感
 - 文本/文件统一按行读取，每行保留 `lineNumber` 和 `byteOffset`
+- 页面提供文件路径输入框，可直接调用 `loadFilePath` 按行读取本地 G-code 文件，并兼容带引号、`file://`、`~`、shell 转义空格的复制路径
 
 ### 延期
 - G2/G3: 圆弧插补
@@ -121,7 +122,8 @@ source text / file path
 `GcodePlayerController` 使用 ChangeNotifier + AnimationController:
 - `updateSource(String)` -> 更新编辑器内容
 - `parse()` -> 使用 `StringGcodeLineReader` 逐行解析编辑器文本，重置播放状态
-- `loadFilePath(String)` -> 使用 `FileGcodeLineReader` 逐行读取文件，作为文件选择器接入点
+- `loadFilePath(String)` -> 使用 `FileGcodeLineReader` 逐行读取路径输入框指定的文件
+- `loadMessage` -> 将准备读取、读取中、读取完成、读取失败等信息展示到路径输入区下方
 - `play()` / `pause()` / `reset()` -> 播放控制
 - `seek(double)` -> 跳转进度
 - `setSpeed(double)` -> 调整速度倍率
@@ -144,7 +146,7 @@ source text / file path
 - 支持 G2/G3 圆弧插补（需要 Path.arcTo 或分段逼近）
 - 支持多轴（Z 轴可视化，如颜色深浅表示 Z 高度）
 - 真实进给率时间模拟（根据段长度和 F 值计算各段时间）
-- 文件选择器 UI 与导入/导出功能
+- 系统文件选择器 UI 与导出功能
 - 绘制点数抽离和抽稀缓存
 - 播放帧率控制与抽帧策略
 - Isolate 解析（大文件不阻塞 UI）

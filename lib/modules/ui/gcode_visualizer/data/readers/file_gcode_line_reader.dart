@@ -9,9 +9,52 @@ class FileGcodeLineReader implements GcodeLineReader {
 
   final String path;
 
+  static String normalizePath(String value) {
+    var normalized = value.trim();
+    if (normalized.length >= 2) {
+      final first = normalized[0];
+      final last = normalized[normalized.length - 1];
+      if ((first == '"' && last == '"') || (first == "'" && last == "'")) {
+        normalized = normalized.substring(1, normalized.length - 1).trim();
+      }
+    }
+
+    if (normalized.startsWith('file://')) {
+      normalized =
+          Uri.parse(normalized).toFilePath(windows: Platform.isWindows);
+    }
+
+    final home = Platform.environment['HOME'] ??
+        Platform.environment['USERPROFILE'] ??
+        '';
+    if (home.isNotEmpty && normalized == '~') {
+      normalized = home;
+    } else if (home.isNotEmpty && normalized.startsWith('~/')) {
+      normalized = '$home/${normalized.substring(2)}';
+    }
+
+    if (!Platform.isWindows) {
+      normalized = normalized.replaceAllMapped(
+        RegExp(r'\\([ ()\[\]&;])'),
+        (match) => match.group(1)!,
+      );
+    }
+
+    return normalized;
+  }
+
   @override
   Stream<GcodeLineRecord> readLines() async* {
-    final file = File(path);
+    final normalizedPath = normalizePath(path);
+    final type = await FileSystemEntity.type(normalizedPath);
+    if (type == FileSystemEntityType.notFound) {
+      throw FileSystemException('文件不存在', normalizedPath);
+    }
+    if (type == FileSystemEntityType.directory) {
+      throw FileSystemException('路径是目录，不是 G-code 文件', normalizedPath);
+    }
+
+    final file = File(normalizedPath);
     var lineNumber = 0;
     var byteOffset = 0;
 

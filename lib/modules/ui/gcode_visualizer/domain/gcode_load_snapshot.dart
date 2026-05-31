@@ -11,6 +11,7 @@ class GcodeLoadSnapshot {
     required this.segments,
     required this.linesRead,
     this.message = '',
+    this.diagnosticMessage = '',
   });
 
   factory GcodeLoadSnapshot.empty() {
@@ -29,6 +30,7 @@ class GcodeLoadSnapshot {
   final List<ToolpathSegment> segments;
   final int linesRead;
   final String message;
+  final String diagnosticMessage;
 
   GcodeParseResult toParseResult() {
     return GcodeParseResult(commands: commands, errors: errors);

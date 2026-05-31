@@ -5,22 +5,26 @@ class GcodeEditorPanel extends StatefulWidget {
     super.key,
     required this.initialText,
     required this.onParse,
+    required this.onLoadFilePath,
     required this.onResetSample,
     required this.errorCount,
     required this.commandCount,
     required this.hasParsed,
     required this.linesRead,
     required this.loadStageLabel,
+    required this.loadMessage,
   });
 
   final String initialText;
   final VoidCallback onParse;
+  final ValueChanged<String> onLoadFilePath;
   final VoidCallback onResetSample;
   final int errorCount;
   final int commandCount;
   final bool hasParsed;
   final int linesRead;
   final String loadStageLabel;
+  final String loadMessage;
 
   @override
   State<GcodeEditorPanel> createState() => GcodeEditorPanelState();
@@ -121,6 +125,9 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
             ),
           ),
           const Divider(height: 1),
+          _GcodeFilePathInput(
+            onLoadFilePath: widget.onLoadFilePath,
+          ),
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextField(
@@ -148,7 +155,7 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
               ),
             ),
           ),
-          if (widget.hasParsed)
+          if (widget.hasParsed || widget.loadMessage.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
               child: Row(
@@ -227,6 +234,21 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
                 ],
               ),
             ),
+          if (widget.loadMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+              child: Text(
+                widget.loadMessage,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: widget.loadStageLabel == '读取失败'
+                      ? Colors.red.shade700
+                      : Colors.grey.shade700,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -283,5 +305,99 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
         ),
       ),
     );
+  }
+}
+
+class _GcodeFilePathInput extends StatefulWidget {
+  const _GcodeFilePathInput({
+    required this.onLoadFilePath,
+  });
+
+  final ValueChanged<String> onLoadFilePath;
+
+  @override
+  State<_GcodeFilePathInput> createState() => _GcodeFilePathInputState();
+}
+
+class _GcodeFilePathInputState extends State<_GcodeFilePathInput> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              minLines: 1,
+              maxLines: 1,
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 12,
+              ),
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: '输入 G-code 文件路径',
+                prefixIcon: const Icon(Icons.folder_open, size: 16),
+                prefixIconConstraints: const BoxConstraints(
+                  minWidth: 32,
+                  minHeight: 32,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              onSubmitted: _loadPath,
+            ),
+          ),
+          const SizedBox(width: 6),
+          FilledButton.tonalIcon(
+            onPressed: () => _loadPath(_controller.text),
+            icon: const Icon(Icons.file_upload_outlined, size: 16),
+            label: const Text('提取'),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(72, 36),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _loadPath(String value) {
+    final path = value.trim();
+    if (path.isEmpty) return;
+    widget.onLoadFilePath(path);
   }
 }

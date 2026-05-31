@@ -44,6 +44,7 @@ class GcodePlayerController extends ChangeNotifier {
   double _speedMultiplier = 1.0;
   int _linesRead = 0;
   int _parseGeneration = 0;
+  String _loadMessage = '';
   final List<String> _logs = [];
 
   String get source => _source;
@@ -55,6 +56,7 @@ class GcodePlayerController extends ChangeNotifier {
   double get progress => _progress;
   double get speedMultiplier => _speedMultiplier;
   int get linesRead => _linesRead;
+  String get loadMessage => _loadMessage;
   List<String> get logs => List.unmodifiable(_logs);
 
   int get totalCommands => _parseResult?.commands.length ?? 0;
@@ -70,7 +72,17 @@ class GcodePlayerController extends ChangeNotifier {
   }
 
   Future<void> loadFilePath(String path) {
-    return _loadFromReader(FileGcodeLineReader(path));
+    final normalizedPath = FileGcodeLineReader.normalizePath(path);
+    if (normalizedPath.isEmpty) {
+      _loadStage = GcodeLoadStage.failed;
+      _loadMessage = '文件路径为空';
+      _addLog(_loadMessage);
+      notifyListeners();
+      return Future.value();
+    }
+    _loadMessage = '准备读取: $normalizedPath';
+    _addLog(_loadMessage);
+    return _loadFromReader(FileGcodeLineReader(normalizedPath));
   }
 
   Future<void> _loadFromReader(GcodeLineReader reader) async {
@@ -82,6 +94,7 @@ class GcodePlayerController extends ChangeNotifier {
     _animationController.value = 0;
     _loadStage = GcodeLoadStage.reading;
     _linesRead = 0;
+    _loadMessage = '开始逐行读取';
     notifyListeners();
 
     await for (final snapshot in _readlinePipeline.load(reader)) {
@@ -91,6 +104,7 @@ class GcodePlayerController extends ChangeNotifier {
       _linesRead = snapshot.linesRead;
       _parseResult = snapshot.toParseResult();
       _segments = snapshot.segments;
+      _loadMessage = snapshot.message;
 
       if (snapshot.stage == GcodeLoadStage.ready) {
         _addLog(
