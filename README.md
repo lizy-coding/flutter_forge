@@ -47,11 +47,9 @@ lib/
 │   ├── app.dart                  # MaterialApp.router
 │   └── router/                   # go_router 路由配置
 ├── module_registry/              # 模块元数据（入口模型、枚举）
-├── shared/                       # 跨模块共享能力
-│   ├── AI_ANALYSIS.md            # shared 层维护边界
-│   ├── learning/                 # 教学模板组件
-│   └── platform/                 # 平台通道与系统能力
-│       └── file_picker/          # 通用文件选择服务
+├── shared/                       # 共享能力迁移后的边界文档与过渡层
+│   ├── AI_ANALYSIS.md
+│   └── platform/AI_ANALYSIS.md
 └── modules/                      # 学习模块分区
     ├── basic/                    # 基础机制
     ├── async/                    # 异步并发
@@ -60,30 +58,43 @@ lib/
     └── platform/                 # 网络与平台
 ```
 
+同级能力包：
+
+```
+../gcode_core                         # 纯 Dart G-code 解析、读取、轨迹构建
+../flutter_study_learning             # 教学模板组件
+../flutter_study_platform_file_picker # 文件选择 Dart API / MethodChannel client
+../flutter_ioc_core                   # 纯 Dart IoC 容器核心
+```
+
 ## 维护文档
 
 修改代码前先读根目录的：
 
 - `AI_PROJECT_CONTEXT.md`：项目整体上下文与目录约定
 - `REFACTOR_PLAN.md`：阶段性归拢重构计划
+- `PLUGIN_DECOMPOSITION_PLAN.md`：后续能力包/插件化拆解路线
 - 目标模块或共享能力的 `AI_ANALYSIS.md`
 
-新增或迁移能力时需要同步更新对应层级的 `AI_ANALYSIS.md`。例如文件选择器归拢后，相关文档为：
+新增或迁移能力时需要同步更新对应层级的 `AI_ANALYSIS.md`。例如本轮同级包迁移后，相关文档为：
 
 - `lib/shared/AI_ANALYSIS.md`
 - `lib/shared/platform/AI_ANALYSIS.md`
-- `lib/shared/platform/file_picker/AI_ANALYSIS.md`
+- `../flutter_study_platform_file_picker/AI_ANALYSIS.md`
+- `../gcode_core/AI_ANALYSIS.md`
+- `../flutter_study_learning/AI_ANALYSIS.md`
+- `../flutter_ioc_core/AI_ANALYSIS.md`
 - `lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md`
 
 ## 共享能力
 
 ### 教学模板
 
-`lib/shared/learning/learning_scaffold.dart` 提供统一教学页面骨架，模块可以用学习目标、概念标签、代码片段、常见坑和练习卡片组织内容。
+`package:flutter_study_learning` 提供统一教学页面骨架，模块可以用学习目标、概念标签、代码片段、常见坑和练习卡片组织内容。
 
 ### 平台文件选择
 
-`lib/shared/platform/file_picker/` 提供业务无关的文件选择接口：
+`../flutter_study_platform_file_picker` 提供业务无关的文件选择接口：
 
 - Dart 接口：`FilePickerService`
 - 默认实现：`MethodChannelFilePicker`
@@ -91,6 +102,17 @@ lib/
 - 当前使用方：`modules/ui/gcode_visualizer`
 
 模块只传入允许的扩展名、标题和提示文案；文件读取、解析和错误展示仍由模块自己负责。
+
+### G-code 核心
+
+`../gcode_core` 提供纯 Dart G-code 能力：
+
+- 逐行读取抽象
+- G0/G1 解析
+- 错误收集
+- 轨迹段构建
+
+Flutter UI、播放动画和 Canvas 绘制保留在 `modules/ui/gcode_visualizer`。
 
 ## 示例索引（按主题）
 

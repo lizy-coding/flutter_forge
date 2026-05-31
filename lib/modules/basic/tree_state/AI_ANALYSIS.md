@@ -32,7 +32,7 @@ modules/basic/tree_state/
 
 ## BasicWidgetsPage 教学页结构
 
-`basic_widgets_page.dart` 是第一个使用 `lib/shared/learning/learning_scaffold.dart` 的标准教学页：
+`basic_widgets_page.dart` 是第一个使用 `package:flutter_study_learning` 的标准教学页：
 
 - **学习目标**: Widget vs State 角色差异、父组件 setState 对子组件的影响、State 持久性
 - **交互演示**: 触发重建按钮 + 闪烁边框动画（_RebuildAwareBox）直观展示 rebuild
