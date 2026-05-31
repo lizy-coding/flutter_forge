@@ -1,13 +1,24 @@
-# Platform 共享层分析
-
-> 平台能力正在从主应用 shared 层迁移到同级 package。
-
-## 当前能力
-
-| 能力 | 包 | 宿主原生实现 |
-|---|---|---|
-| 文件选择 | `../flutter_study_platform_file_picker` | macOS `AppDelegate.swift` 注册 `flutter_study/file_picker` |
-
-## 后续计划
-
-当需要 Windows/iOS/Android 文件选择实现时，将 `flutter_study_platform_file_picker` 从 Dart API package 升级为完整 Flutter plugin，并迁移 macOS 原生实现。
+{
+  "schema": "vibecoding.harness.ai_analysis.v1",
+  "mode": "harness",
+  "node": {
+    "id": "main_app.shared.platform",
+    "kind": "platform_boundary_layer",
+    "package": "main_app",
+    "path": "lib/shared/platform",
+    "status": "transition"
+  },
+  "entrypoints": ["AI_ANALYSIS.md"],
+  "owns": ["platform_boundary_docs","host_channel_registry_docs"],
+  "depends": ["../flutter_study_platform_file_picker","macos/Runner/AppDelegate.swift"],
+  "mutates": ["AI_ANALYSIS.md","macos/Runner/AppDelegate.swift"],
+  "files": [],
+  "contracts": {
+    "no_natural_language": true,
+    "doc_consumer": "vibecoding",
+    "doc_mode": "harness",
+    "update_required_on_file_change": true,
+    "import_direction_enforced": true
+  },
+  "validation": ["flutter analyze","flutter build macos"]
+}
