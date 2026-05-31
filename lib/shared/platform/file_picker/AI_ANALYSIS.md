@@ -49,6 +49,24 @@ Method: `pickFile`
 - `null`: 用户取消选择
 - `{ "path": String, "name": String? }`: 已选择文件
 
+## 当前接入
+
+| 调用方 | 传入扩展名 | 后续处理 |
+|---|---|---|
+| `modules/ui/gcode_visualizer` | `gcode`, `gco`, `nc`, `ngc`, `tap`, `cnc`, `txt` | 将路径交给 `FileGcodeLineReader` 逐行读取并解析轨迹 |
+
+## macOS 权限
+
+macOS Runner 启用 sandbox 后，读取用户选择文件需要:
+
+```
+com.apple.security.files.user-selected.read-only = true
+```
+
+当前配置位于:
+- `macos/Runner/DebugProfile.entitlements`
+- `macos/Runner/Release.entitlements`
+
 ## 修改注意事项
 
 1. shared 层只做“选择文件”，不做业务解析、路径规范化或内容读取。
