@@ -13,6 +13,8 @@
 **/web/build/
 
 # Flutter generated files
+.flutter-plugins
+.flutter-plugins-dependencies
 **/flutter/generated_plugin_registrant.cc
 **/flutter/generated_plugin_registrant.h
 **/flutter/generated_plugins.cmake
@@ -20,6 +22,7 @@
 
 # Dart/Flutter cache
 **/.dart_tool/
+**/.packages
 
 # IDE files
 **/.vscode/
@@ -49,10 +52,12 @@
 **/macos/Flutter/ephemeral/
 **/macos/Flutter/Generated.xcconfig
 **/macos/Flutter/flutter_export_environment.sh
+**/macos/Pods/
 **/macos/Runner.xcworkspace/xcshareddata/swiftpm/
 **/macos/*.pbxuser
 **/macos/*.perspectivev3
 **/macos/*.xcuserstate
+**/macos/Podfile.lock
 
 # Windows generated files
 **/windows/flutter/generated_plugin_registrant.cc
@@ -63,3 +68,15 @@
 **/linux/flutter/generated_plugin_registrant.cc
 **/linux/flutter/generated_plugin_registrant.h
 **/linux/flutter/generated_plugins.cmake
+
+# FlutterGuard scan output
+.flutterguard/
+
+# Test and coverage output
+coverage/
+test-results/
+
+# Local environment
+.env
+.env.*
+*.log

@@ -110,7 +110,7 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
   @override
   void dispose() {
     for (var item in _flyingItems) {
-      item.controller.dispose();
+      item.dispose();
     }
     super.dispose();
   }
@@ -445,6 +445,10 @@ class FlyingPaintItem {
     required this.endPosition,
     required this.controller,
   });
+
+  void dispose() {
+    controller.dispose();
+  }
 }
 
 /// 自定义 Painter 绘制飞行动画

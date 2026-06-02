@@ -33,9 +33,11 @@
 ```bash
 dart format .
 flutter analyze
+dart run flutterguard_cli:flutterguard scan --path . --fail-on high
 ```
 
 - `flutter analyze` 必须通过，不允许有 error 级别问题
+- `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题
 - 涉及逻辑代码时补充测试（如有测试框架）
 - 涉及 UI 教学页时进行人工验收或截图说明
 
@@ -59,6 +61,14 @@ flutter analyze
 4. 检查 `ModuleEntry` 元数据是否完整（所有必填字段）
 5. 标记低质量模块的 `status` 为 `ModuleStatus.pending`
 6. 检查 `flutter analyze` 和 `dart format` 是否通过
+
+## 启用预提交钩子
+
+```bash
+git config core.hooksPath .githooks
+```
+
+这会在每次 `git commit` 前自动执行 FlutterGuard 扫描，阻止引入高优问题的提交。
 
 ## 模块分类枚举
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../shared/learning/learning_scaffold.dart';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
 
 /// Stateless 与 Stateful 重建行为对比教学页
 class BasicWidgetsPage extends StatefulWidget {

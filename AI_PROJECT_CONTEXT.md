@@ -39,6 +39,7 @@ lib/
 ├── shared/                # 共享能力
 │   ├── learning/
 │   │   └── learning_scaffold.dart  # 教学模板组件
+│   ├── platform/          # 平台通道与系统能力封装
 │   ├── widgets/
 │   ├── utils/
 │   └── theme/

@@ -1,0 +1,42 @@
+include:
+  - lib/**
+  - test/**
+
+exclude:
+  - lib/**.g.dart
+  - lib/**.freezed.dart
+  - lib/**.mocks.dart
+
+rules:
+  large_file:
+    enabled: true
+    maxLines: 500
+  large_class:
+    enabled: true
+    maxLines: 300
+  large_build_method:
+    enabled: true
+    maxLines: 80
+  lifecycle_resource:
+    enabled: true
+
+boundaries:
+  # 模块禁止反向依赖 app 层
+  - name: no_module_to_app
+    from: lib/modules/**
+    forbidden:
+      - lib/app/**
+
+  # shared 层禁止反向依赖模块或 app
+  - name: shared_purity
+    from: lib/shared/**
+    forbidden:
+      - lib/modules/**
+      - lib/app/**
+
+  # shared 层必须纯净，不能反向依赖模块或 app
+  - name: shared_purity
+    from: lib/shared/**
+    forbidden:
+      - lib/modules/**
+      - lib/app/**

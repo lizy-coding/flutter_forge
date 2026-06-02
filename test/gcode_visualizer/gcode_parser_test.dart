@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:main_app/modules/ui/gcode_visualizer/parser/gcode_parser.dart';
+import 'package:gcode_core/gcode_core.dart';
 
 void main() {
   group('GcodeParser', () {
@@ -103,6 +103,22 @@ G1 X20 Y20
       expect(result.commands, hasLength(2));
       expect(result.errors, hasLength(1));
       expect(result.errors.first.lineNumber, 2);
+    });
+
+    test('parseRecord preserves readline metadata', () {
+      final parsed = parser.parseRecord(
+        const GcodeLineRecord(
+          lineNumber: 12,
+          rawLine: 'G1 X20 Y30',
+          byteOffset: 128,
+        ),
+      );
+
+      expect(parsed.kind, ParsedGcodeLineKind.command);
+      expect(parsed.record.lineNumber, 12);
+      expect(parsed.record.byteOffset, 128);
+      expect(parsed.command?.lineNumber, 12);
+      expect(parsed.command?.x, 20);
     });
   });
 }

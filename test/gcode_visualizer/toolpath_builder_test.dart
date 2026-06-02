@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:main_app/modules/ui/gcode_visualizer/models/gcode_command.dart';
-import 'package:main_app/modules/ui/gcode_visualizer/services/toolpath_builder.dart';
+import 'package:gcode_core/gcode_core.dart';
 
 void main() {
   group('ToolpathBuilder', () {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'ioc/ioc.dart' as ioc;
+import 'package:flutter_ioc_core/flutter_ioc_core.dart' as ioc;
 import 'module_root.dart' as flutter_ioc;
 import 'model/counter_model.dart';
 

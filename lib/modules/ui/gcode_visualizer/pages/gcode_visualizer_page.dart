@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:gcode_core/gcode_core.dart';
 
-import '../../../../shared/learning/learning_scaffold.dart';
 import '../state/gcode_player_controller.dart';
 import '../widgets/command_timeline.dart';
 import '../widgets/gcode_canvas.dart';
@@ -17,31 +18,37 @@ class GcodeVisualizerPage extends StatefulWidget {
 class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
     with TickerProviderStateMixin {
   late final GcodePlayerController _controller;
-  late final TextEditingController _editorController;
+  final _editorKey = GlobalKey<GcodeEditorPanelState>();
 
   @override
   void initState() {
     super.initState();
     _controller = GcodePlayerController(vsync: this);
-    _editorController = TextEditingController(text: _controller.source);
     _controller.parse();
   }
 
   @override
   void dispose() {
-    _editorController.dispose();
     _controller.dispose();
     super.dispose();
   }
 
   void _onParse() {
-    _controller.updateSource(_editorController.text);
+    _controller.updateSource(_editorKey.currentState!.text);
     _controller.parse();
+  }
+
+  void _onLoadFilePath(String path) {
+    _controller.loadFilePath(path);
+  }
+
+  Future<String?> _onPickFilePath() {
+    return _controller.pickFilePathAndLoad();
   }
 
   void _onResetSample() {
     _controller.loadSample();
-    _editorController.text = _controller.source;
+    _editorKey.currentState!.text = _controller.source;
     _controller.parse();
   }
 
@@ -124,12 +131,18 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
     return Column(
       children: [
         GcodeEditorPanel(
-          controller: _editorController,
+          key: _editorKey,
+          initialText: _controller.source,
           onParse: _onParse,
+          onLoadFilePath: _onLoadFilePath,
+          onPickFilePath: _onPickFilePath,
           onResetSample: _onResetSample,
           errorCount: _controller.errorCount,
           commandCount: _controller.totalCommands,
           hasParsed: _controller.parseResult != null,
+          linesRead: _controller.linesRead,
+          loadStageLabel: _loadStageLabel(_controller.loadStage),
+          loadMessage: _controller.loadMessage,
         ),
         const SizedBox(height: 8),
         PlaybackControls(
@@ -156,6 +169,16 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
         ],
       ],
     );
+  }
+
+  String _loadStageLabel(GcodeLoadStage stage) {
+    return switch (stage) {
+      GcodeLoadStage.idle => '未读取',
+      GcodeLoadStage.reading => '读取中',
+      GcodeLoadStage.parsing => '解析中',
+      GcodeLoadStage.ready => '可播放',
+      GcodeLoadStage.failed => '读取失败',
+    };
   }
 
   List<Widget> _buildSections(BuildContext context) {
