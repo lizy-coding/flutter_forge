@@ -9,10 +9,10 @@
     "status": "active"
   },
   "entrypoints": ["module_entry.dart","pages","widgets","state"],
-  "owns": ["module_entry","module_ui","module_state","module_docs"],
+  "owns": ["module_entry","module_page","module_state","module_docs"],
   "depends": ["gcode_core","flutter_study_learning","file_picker_bridge","module_registry"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["module_entry.dart","pages/gcode_visualizer_page.dart","state/gcode_player_controller.dart","widgets/command_timeline.dart","widgets/gcode_canvas.dart","widgets/gcode_editor_panel.dart","widgets/playback_controls.dart"],
+  "files": ["module_entry.dart","pages/gcode_visualizer_page.dart","state/gcode_player_controller.dart","widgets/gcode_editor_panel.dart"],
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",
