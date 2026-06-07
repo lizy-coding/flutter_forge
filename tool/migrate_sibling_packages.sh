@@ -40,9 +40,6 @@ cp -R "$ROOT/lib/modules/ui/gcode_visualizer/domain" "$PARENT/gcode_core/lib/src
 cp -R "$ROOT/lib/modules/ui/gcode_visualizer/models" "$PARENT/gcode_core/lib/src/"
 cp -R "$ROOT/lib/modules/ui/gcode_visualizer/parser" "$PARENT/gcode_core/lib/src/"
 cp -R "$ROOT/lib/modules/ui/gcode_visualizer/services" "$PARENT/gcode_core/lib/src/"
-cp "$ROOT/test/gcode_visualizer/gcode_parser_test.dart" "$PARENT/gcode_core/test/"
-cp "$ROOT/test/gcode_visualizer/toolpath_builder_test.dart" "$PARENT/gcode_core/test/"
-cp "$ROOT/test/gcode_visualizer/application/gcode_readline_pipeline_test.dart" "$PARENT/gcode_core/test/application/"
 
 cat > "$PARENT/gcode_core/pubspec.yaml" <<'EOF'
 name: gcode_core
@@ -130,19 +127,6 @@ gcode_core/
 - 不绘制 Canvas。
 - 不管理播放动画。
 EOF
-
-perl -0pi -e "s/import 'package:flutter_test\/flutter_test.dart';/import 'package:test\/test.dart';/g" \
-  "$PARENT/gcode_core/test/gcode_parser_test.dart" \
-  "$PARENT/gcode_core/test/toolpath_builder_test.dart" \
-  "$PARENT/gcode_core/test/application/gcode_readline_pipeline_test.dart"
-perl -0pi -e "s/import 'package:main_app\/modules\/ui\/gcode_visualizer\/(?:application|data\/readers|domain|models|parser|services)\/[^']+';/import 'package:gcode_core\/gcode_core.dart';/g" \
-  "$PARENT/gcode_core/test/gcode_parser_test.dart" \
-  "$PARENT/gcode_core/test/toolpath_builder_test.dart" \
-  "$PARENT/gcode_core/test/application/gcode_readline_pipeline_test.dart"
-perl -0pi -e "s/(import 'package:gcode_core\/gcode_core.dart';\n)+/import 'package:gcode_core\/gcode_core.dart';\n/g" \
-  "$PARENT/gcode_core/test/gcode_parser_test.dart" \
-  "$PARENT/gcode_core/test/toolpath_builder_test.dart" \
-  "$PARENT/gcode_core/test/application/gcode_readline_pipeline_test.dart"
 
 mkdir -p "$PARENT/flutter_study_learning/lib/src"
 cp "$ROOT/lib/shared/learning/learning_scaffold.dart" "$PARENT/flutter_study_learning/lib/src/learning_scaffold.dart"
@@ -299,20 +283,9 @@ perl -0pi -e "s#import '../models/gcode_command.dart';\nimport '../models/toolpa
   "$ROOT/lib/modules/ui/gcode_visualizer/widgets/gcode_canvas.dart"
 perl -0pi -e "s#import '../models/gcode_command.dart';\nimport '../parser/gcode_parse_result.dart';#import 'package:gcode_core/gcode_core.dart';#s" \
   "$ROOT/lib/modules/ui/gcode_visualizer/widgets/command_timeline.dart"
-cat > "$ROOT/lib/modules/ui/gcode_visualizer/gcode_readline.dart" <<'EOF'
-export 'package:gcode_core/gcode_core.dart';
-EOF
 perl -0pi -e "s#import 'ioc/ioc.dart' as ioc;#import 'package:flutter_ioc_core/flutter_ioc_core.dart' as ioc;#g" \
   "$ROOT/lib/modules/state/flutter_ioc/module_entry.dart"
 
-perl -0pi -e "s/import 'package:main_app\/modules\/ui\/gcode_visualizer\/(?:application|data\/readers|domain|models|parser|services)\/[^']+';/import 'package:gcode_core\/gcode_core.dart';/g" \
-  "$ROOT/test/gcode_visualizer/gcode_parser_test.dart" \
-  "$ROOT/test/gcode_visualizer/toolpath_builder_test.dart" \
-  "$ROOT/test/gcode_visualizer/application/gcode_readline_pipeline_test.dart"
-perl -0pi -e "s/(import 'package:gcode_core\/gcode_core.dart';\n)+/import 'package:gcode_core\/gcode_core.dart';\n/g" \
-  "$ROOT/test/gcode_visualizer/gcode_parser_test.dart" \
-  "$ROOT/test/gcode_visualizer/toolpath_builder_test.dart" \
-  "$ROOT/test/gcode_visualizer/application/gcode_readline_pipeline_test.dart"
 perl -0pi -e "s#import 'package:main_app/shared/platform/file_picker/method_channel_file_picker.dart';#import 'package:file_picker_bridge/file_picker_bridge.dart';#g" \
   "$ROOT/test/shared/platform/file_picker/method_channel_file_picker_test.dart"
 
@@ -342,7 +315,6 @@ cat > "$ROOT/lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md" <<'EOF'
 modules/ui/gcode_visualizer/
 ├── module_entry.dart              # 入口: 返回 GcodeVisualizerPage
 ├── AI_ANALYSIS.md                 # 模块分析文档
-├── gcode_readline.dart            # 兼容导出: export package:gcode_core/gcode_core.dart
 ├── pages/
 │   └── gcode_visualizer_page.dart # 教学页面，依赖 flutter_study_learning
 ├── state/
