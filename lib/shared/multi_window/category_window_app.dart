@@ -133,14 +133,10 @@ class CategoryHomePage extends StatelessWidget {
               ],
             ),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push(_stripSlash(module.path)),
+            onTap: () => context.push(module.path),
           );
         },
       ),
     );
-  }
-
-  String _stripSlash(String path) {
-    return path.startsWith('/') ? path.substring(1) : path;
   }
 }
