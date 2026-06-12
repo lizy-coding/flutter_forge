@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_study_learning/flutter_study_learning.dart';
 import 'package:gcode_core/gcode_core.dart';
 
-import '../state/gcode_player_controller.dart';
-import '../widgets/command_timeline.dart';
-import '../widgets/gcode_canvas.dart';
 import '../widgets/gcode_editor_panel.dart';
-import '../widgets/playback_controls.dart';
+import '../state/gcode_player_controller.dart';
 
 class GcodeVisualizerPage extends StatefulWidget {
   const GcodeVisualizerPage({super.key});

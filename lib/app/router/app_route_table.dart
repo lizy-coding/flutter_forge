@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../module_registry/module_category.dart';
 import '../../module_registry/module_entry.dart';
+import '../../shared/multi_window/category_window_app.dart';
+import '../../shared/multi_window/multi_window_manager.dart';
+import '../../shared/multi_window/multi_window_route_filter.dart';
 import '../../modules/basic/debounce_throttle/module_entry.dart';
 import '../../modules/basic/microtask/module_entry.dart';
 import '../../modules/basic/microtask/module_routes.dart';
@@ -229,6 +232,22 @@ final List<ModuleEntry> _modules = [
 
 // ==================== 路由聚合 ====================
 
+Future<void> _openCategoryWindow(
+  BuildContext context,
+  ModuleCategory category,
+) async {
+  final filtered = filterModulesByCategory(_modules, category);
+  if (MultiWindowManager.isSupported) {
+    await MultiWindowManager.instance.createCategoryWindow(category);
+  } else {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CategoryHomePage(category: category, modules: filtered),
+      ),
+    );
+  }
+}
+
 final List<GoRoute> _routes = [
   GoRoute(
     path: '/',
@@ -276,13 +295,27 @@ class ModuleHomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Text(
-                  category.label,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
+                padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        category.label,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                       ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.open_in_new, size: 20),
+                      tooltip: '在新窗口打开',
+                      onPressed: () {
+                        _openCategoryWindow(context, category);
+                      },
+                    ),
+                  ],
                 ),
               ),
               ...categoryModules.map((module) => ModuleCard(module: module)),
