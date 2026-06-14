@@ -15,8 +15,10 @@
 | isolate_task_manager | `modules/async/isolate_task_manager` | /isolate-stream | StatefulWidget | 中 | `modules/async/isolate_task_manager/AI_ANALYSIS.md` |
 | isolate_basic | `modules/async/isolate_basic` | /isolate-basic | StatefulWidget | 低 | `modules/async/isolate_basic/AI_ANALYSIS.md` |
 | microtask | `modules/basic/microtask` | /microtask | StatefulWidget | 低 | `modules/basic/microtask/AI_ANALYSIS.md` |
-| popup_widgets | `modules/ui/popup_widgets` | /popup-widgets | StatefulWidget | 中 | `modules/ui/popup_widgets/AI_ANALYSIS.md` |
-| scroll_table | `modules/ui/scroll_table` | /scroll-table | 无 | 低 | `modules/ui/scroll_table/AI_ANALYSIS.md` |
+| popup_widgets | `modules/popup_table/popup_widgets` | /popup-widgets | StatefulWidget | 中 | `modules/popup_table/popup_widgets/AI_ANALYSIS.md` |
+| popup_list_interaction | `modules/popup_table/popup_list_interaction` | /popup-list-interaction | StatefulWidget | 低 | `modules/popup_table/popup_list_interaction/AI_ANALYSIS.md` |
+| scroll_table | `modules/popup_table/scroll_table` | /scroll-table | 无 | 低 | `modules/popup_table/scroll_table/AI_ANALYSIS.md` |
+| overlay_follow_compare | `modules/popup_table/overlay_follow_compare` | /overlay-compare | StatefulWidget | 中 | `modules/popup_table/overlay_follow_compare/AI_ANALYSIS.md` |
 | status_management | `modules/state/status_management` | /status-management | Provider/Riverpod/Bloc | 高 | `modules/state/status_management/AI_ANALYSIS.md` |
 | stream_subscription | `modules/async/stream_subscription` | /stream-subscription | StreamController | 中 | `modules/async/stream_subscription/AI_ANALYSIS.md` |
 | tree_state | `modules/basic/tree_state` | /tree-state | StatefulWidget | 低 | `modules/basic/tree_state/AI_ANALYSIS.md` |
@@ -30,6 +32,8 @@
 - flutter_ioc
 - isolate_task_manager
 - isolate_basic
+- overlay_follow_compare
+- popup_list_interaction
 - popup_widgets
 - scroll_table
 - usb_detector
