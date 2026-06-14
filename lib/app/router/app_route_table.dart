@@ -26,8 +26,11 @@ import '../../modules/ui/adsorption_line/module_entry.dart';
 import '../../modules/ui/download_animation/module_entry.dart';
 import '../../modules/ui/download_animation/module_routes.dart';
 import '../../modules/ui/gcode_visualizer/module_entry.dart';
-import '../../modules/ui/popup_widgets/module_entry.dart';
-import '../../modules/ui/scroll_table/module_entry.dart';
+import '../../modules/popup_table/popup_widgets/module_entry.dart';
+import '../../modules/popup_table/popup_list_interaction/module_entry.dart';
+import '../../modules/popup_table/popup_list_interaction/module_routes.dart';
+import '../../modules/popup_table/scroll_table/module_entry.dart';
+import '../../modules/popup_table/overlay_follow_compare/module_entry.dart';
 
 import '../../modules/platform/dio_interceptor/module_entry.dart';
 import '../../modules/platform/dio_interceptor/module_routes.dart';
@@ -181,11 +184,13 @@ final List<ModuleEntry> _modules = [
     builder: (context) => const DownloadAnimationEntry(),
     routes: DownloadAnimationRoutes.routes,
   ),
+
+  // 弹窗与列表
   ModuleEntry(
     title: '弹窗合集',
     path: '/popup-widgets',
     subtitle: '全面展示 Flutter 中的对话框、底部抽屉、菜单等弹窗类型',
-    category: ModuleCategory.ui,
+    category: ModuleCategory.popupTable,
     difficulty: Difficulty.beginner,
     concepts: ['AlertDialog', 'BottomSheet', 'Overlay', 'ContextMenu'],
     estimatedMinutes: 20,
@@ -193,15 +198,44 @@ final List<ModuleEntry> _modules = [
     builder: (context) => const PopWidgetEntry(),
   ),
   ModuleEntry(
+    title: '弹窗与列表交互',
+    path: '/popup-list-interaction',
+    subtitle: 'Flutter 弹窗组件与二维滚动表格的综合演示',
+    category: ModuleCategory.popupTable,
+    difficulty: Difficulty.beginner,
+    concepts: ['Dialog', 'BottomSheet', 'Overlay', 'TableView', '二维滚动'],
+    estimatedMinutes: 25,
+    status: ModuleStatus.ready,
+    builder: (context) => const PopupListInteractionEntry(),
+    routes: PopupListInteractionRoutes.routes,
+  ),
+  ModuleEntry(
     title: '二维滚动表格',
     path: '/scroll-table',
     subtitle: '使用 two_dimensional_scrollables 实现固定表头的表格',
-    category: ModuleCategory.ui,
+    category: ModuleCategory.popupTable,
     difficulty: Difficulty.beginner,
     concepts: ['TableView', '固定表头', '二维滚动'],
     estimatedMinutes: 15,
     status: ModuleStatus.pending,
     builder: (context) => const ScrollTableEntry(),
+  ),
+  ModuleEntry(
+    title: 'Overlay 跟随方案对照组',
+    path: '/overlay-compare',
+    subtitle: '对比 CompositedTransformFollower 与 markNeedsBuild 两种浮层跟随方案',
+    category: ModuleCategory.popupTable,
+    difficulty: Difficulty.intermediate,
+    concepts: [
+      'Overlay',
+      'LayerLink',
+      'CompositedTransformFollower',
+      'markNeedsBuild',
+      'ScrollController'
+    ],
+    estimatedMinutes: 30,
+    status: ModuleStatus.ready,
+    builder: (context) => const OverlayFollowCompareEntry(),
   ),
 
   // 网络与平台

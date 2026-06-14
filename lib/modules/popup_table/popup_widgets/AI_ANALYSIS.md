@@ -2,17 +2,17 @@
   "schema": "vibecoding.harness.ai_analysis.v1",
   "mode": "harness",
   "node": {
-    "id": "main_app.modules.ui.scroll_table",
+    "id": "main_app.modules.popup_table.popup_widgets",
     "kind": "learning_module",
     "package": "main_app",
-    "path": "lib/modules/ui/scroll_table",
+    "path": "lib/modules/popup_table/popup_widgets",
     "status": "active"
   },
   "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
   "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["two_dimensional_scrollables","module_registry"],
+  "depends": ["module_registry"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["module_entry.dart","module_root.dart","widgets/scroll_table.dart"],
+  "files": ["module_entry.dart","module_root.dart"],
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",

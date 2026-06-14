@@ -1,7 +1,9 @@
 # Flutter 学习实验室
 
 本项目是面向 Flutter 初学者的学习项目集合，所有学习模块位于 `lib/modules/` 目录下，按主题分类，通过路由切换进入不同模块。项目同时维护 `app/` 应用壳、`module_registry/` 模块元数据和 `shared/` 共享能力，让示例既能独立学习，也能按真实工程方式演进。
-![flutter](https://github.com/lizy-coding/flutter_study/blob/master/2026-06-14%2020.32.58.mov)
+![demo](https://raw.githubusercontent.com/lizy-coding/flutter_study/master/assets/demo.gif)
+
+Full video: https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-624071b0e2ea
 
 ## 推荐学习顺序
 
@@ -56,6 +58,7 @@ lib/
     ├── async/                    # 异步并发
     ├── state/                    # 状态管理
     ├── ui/                       # UI 与动效
+    ├── popup_table/              # 弹窗与列表
     └── platform/                 # 网络与平台
 ```
 
@@ -121,15 +124,21 @@ Flutter UI、播放动画和 Canvas 绘制保留在 `modules/ui/gcode_visualizer
 - `modules/ui/adsorption_line`：智能吸附线画板，矩形/圆形/线条创建与拖拽，对齐辅助线、工具栏和快捷键。
 - `modules/ui/download_animation`：下载飞入动效三种实现（自定义 View / CustomPaint / Overlay），带参数调节面板。
 - `modules/ui/gcode_visualizer`：G-code 解析与轨迹动画，支持 G0/G1 指令解析、路径输入和系统文件选择、刀路轨迹绘制、播放进度控制与指令高亮，使用 `LearningScaffold` 教学模板。
-- `modules/ui/popup_widgets`：常见弹窗合集，包含顺序链式 Overlay 演示与多种触发方式。
-- `modules/ui/scroll_table`：二维滚动表格，固定表头/行头，基于 `two_dimensional_scrollables`。
+
+### 弹窗与列表
+- `modules/popup_table/popup_widgets`：常见弹窗合集，包含顺序链式 Overlay 演示与多种触发方式。
+- `modules/popup_table/popup_list_interaction`：弹窗与列表交互组合入口，集成弹窗演示与二维表格。
+- `modules/popup_table/scroll_table`：二维滚动表格，固定表头/行头，基于 `two_dimensional_scrollables`。
+- `modules/popup_table/overlay_follow_compare`：Overlay 跟随方案对照组，对比 `CompositedTransformFollower` 与 `markNeedsBuild` 两种浮层跟随机制。
+
+### 基础机制
 - `modules/basic/tree_state`：Widget/Element/RenderObject 三棵树与生命周期、CustomPainter、RepaintBoundary 重绘范围示例。
+- `modules/basic/microtask`：事件循环演示，微任务队列与事件队列的执行顺序可视化。
+- `modules/basic/debounce_throttle`：防抖与节流执行时序对比。
 
 ### 异步与并发
-- `modules/basic/debounce_throttle`：防抖与节流执行时序对比。
 - `modules/async/isolate_basic`：主线程 vs Isolate 执行耗时计算的 UI 流畅度对比。
 - `modules/async/isolate_task_manager`：多任务 Isolate 管理器，支持进度上报、暂停/恢复/停止。
-- `modules/basic/microtask`：事件循环演示，微任务队列与事件队列的执行顺序可视化。
 - `modules/async/stream_subscription`：单订阅/广播流示例，包含暂停/恢复/取消与变换工具。
 
 ### 架构与状态
