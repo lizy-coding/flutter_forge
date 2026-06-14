@@ -235,7 +235,7 @@ packages:
       path: "../flutterguard/packages/flutterguard_cli"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   gcode_core:
     dependency: "direct main"
     description:

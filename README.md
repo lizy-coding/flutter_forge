@@ -1,7 +1,9 @@
 # Flutter 学习实验室
 
 本项目是面向 Flutter 初学者的学习项目集合，所有学习模块位于 `lib/modules/` 目录下，按主题分类，通过路由切换进入不同模块。项目同时维护 `app/` 应用壳、`module_registry/` 模块元数据和 `shared/` 共享能力，让示例既能独立学习，也能按真实工程方式演进。
-<video src="https://raw.githubusercontent.com/lizy-coding/flutter_study/master/demo.mp4" controls width="100%"></video>
+![demo](https://raw.githubusercontent.com/lizy-coding/flutter_study/master/assets/demo.gif)
+
+Full video: https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-624071b0e2ea
 
 ## 推荐学习顺序
 
