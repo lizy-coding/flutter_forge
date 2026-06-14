@@ -181,22 +181,25 @@ final List<ModuleEntry> _modules = [
     builder: (context) => const DownloadAnimationEntry(),
     routes: DownloadAnimationRoutes.routes,
   ),
+
+  // 弹窗与列表
   ModuleEntry(
     title: '弹窗合集',
     path: '/popup-widgets',
     subtitle: '全面展示 Flutter 中的对话框、底部抽屉、菜单等弹窗类型',
-    category: ModuleCategory.ui,
+    category: ModuleCategory.popupTable,
     difficulty: Difficulty.beginner,
     concepts: ['AlertDialog', 'BottomSheet', 'Overlay', 'ContextMenu'],
     estimatedMinutes: 20,
     status: ModuleStatus.ready,
     builder: (context) => const PopWidgetEntry(),
   ),
+
   ModuleEntry(
     title: '二维滚动表格',
     path: '/scroll-table',
     subtitle: '使用 two_dimensional_scrollables 实现固定表头的表格',
-    category: ModuleCategory.ui,
+    category: ModuleCategory.popupTable,
     difficulty: Difficulty.beginner,
     concepts: ['TableView', '固定表头', '二维滚动'],
     estimatedMinutes: 15,

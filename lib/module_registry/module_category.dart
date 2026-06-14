@@ -4,6 +4,7 @@ enum ModuleCategory {
   async('异步并发'),
   state('状态管理'),
   ui('UI 与动效'),
+  popupTable('弹窗与列表'),
   platform('网络与平台');
 
   const ModuleCategory(this.label);
