@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_study_learning/flutter_study_learning.dart';
 import 'package:gcode_core/gcode_core.dart';
 
+import '../widgets/current_segment_inspector.dart';
 import '../widgets/gcode_editor_panel.dart';
 import '../state/gcode_player_controller.dart';
 
@@ -96,6 +97,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
                     segments: _controller.segments,
                     progress: _controller.progress,
                     errorCount: _controller.errorCount,
+                    commandCount: _controller.totalCommands,
                   ),
                 ),
               ),
@@ -114,6 +116,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
                   segments: _controller.segments,
                   progress: _controller.progress,
                   errorCount: _controller.errorCount,
+                  commandCount: _controller.totalCommands,
                 ),
               ),
               const SizedBox(height: 12),
@@ -136,6 +139,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
           onResetSample: _onResetSample,
           errorCount: _controller.errorCount,
           commandCount: _controller.totalCommands,
+          segmentCount: _controller.segments.length,
           hasParsed: _controller.parseResult != null,
           linesRead: _controller.linesRead,
           loadStageLabel: _loadStageLabel(_controller.loadStage),
@@ -162,6 +166,11 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
               currentIndex: _controller.currentCommandIndex,
               maxHeight: 140,
             ),
+          ),
+          const SizedBox(height: 8),
+          CurrentSegmentInspector(
+            segment: _controller.currentSegment,
+            progress: _controller.currentSegmentProgress,
           ),
         ],
       ],
@@ -192,6 +201,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
         concepts: [
           'G0 快速移动',
           'G1 线性插补',
+          'G90/G91 绝对/相对',
           'Parser',
           'Toolpath',
           'CustomPaint',
@@ -207,6 +217,16 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
             'G0 X0 Y0    ; 快速返回原点',
         explanation: 'G0 为快速定位（不切削），G1 为线性插补（切削进给）',
       ),
+      const CodeSnippetCard(
+        title: 'G90 绝对模式 vs G91 相对模式',
+        code: 'G90        ; 切换到绝对坐标模式\n'
+            'G1 X10 Y10 ; 移动到 (10, 10)\n'
+            'G1 X20 Y10 ; 移动到 (20, 10)\n'
+            'G91        ; 切换到相对坐标模式\n'
+            'G1 X10 Y0  ; 从当前位置向右移动 10\n'
+            'G1 X10 Y0  ; 再向右移动 10（当前位置在 30,10）',
+        explanation: 'G90 模式下坐标值表示绝对位置，G91 模式下坐标值表示相对于当前位置的偏移量',
+      ),
       StateLogView(
         logs: _controller.logs,
         maxLines: 6,
@@ -218,6 +238,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
           '解析逻辑必须独立于 Flutter Widget，保持纯 Dart 可测试',
           '动画进度不应修改已解析的几何数据',
           '大文件不应在每帧都重新解析',
+          'G91 相对模式下坐标会累加，同一段 G-code 在不同位置执行结果不同',
         ],
       ),
       const ExerciseCard(

@@ -12,7 +12,7 @@
   "owns": ["module_entry","module_page","module_state","module_docs"],
   "depends": ["gcode_core","flutter_study_learning","file_picker_bridge","module_registry"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["module_entry.dart","pages/gcode_visualizer_page.dart","state/gcode_player_controller.dart","widgets/gcode_editor_panel.dart"],
+  "files": ["module_entry.dart","pages/gcode_visualizer_page.dart","state/gcode_player_controller.dart","widgets/gcode_editor_panel.dart","widgets/current_segment_inspector.dart"],
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",
