@@ -81,8 +81,9 @@ abstract class FilePickerService {
 
 ### 2.2 shared 能力治理
 
-- [ ] 为 `lib/shared/learning/` 补充/更新 `AI_ANALYSIS.md`
-- [ ] 为 `lib/shared/platform/` 建立边界: 只放跨平台/平台通道能力，不放具体业务解析逻辑
+- [x] 教学模板组件已从 `lib/shared/learning/` 抽出为外部 `flutter_study_learning` 包
+- [x] `file_picker` 已从 `lib/shared/platform/` 抽出为外部 `file_picker_bridge` 包
+- [ ] 为 `lib/shared/platform/` 补充平台能力说明 `AI_ANALYSIS.md`
 - [ ] 共享能力必须提供业务无关接口，模块只能传入业务参数
 - [ ] 共享能力新增后必须至少被 1 个模块接入验证
 - [ ] 若 shared 能力 3 个月内仍只有 1 个模块使用，保留在 shared，但不升级为独立插件
