@@ -8,11 +8,31 @@
     "path": "lib/modules/ui/adsorption_line",
     "status": "active"
   },
-  "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
+  "entrypoints": ["module_entry.dart","pages/adsorption_line_page.dart","widgets","state"],
   "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["provider","module_registry"],
+  "depends": ["provider","module_registry","flutter_study_learning"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["models/drawing_element.dart","module_entry.dart","services/adsorption_manager.dart","state/drawing_state.dart","widgets/drawing_board.dart","widgets/drawing_canvas.dart"],
+  "files": [
+    "models/drawing_element.dart",
+    "module_entry.dart",
+    "services/adsorption_manager.dart",
+    "state/drawing_state.dart",
+    "widgets/drawing_board.dart",
+    "widgets/drawing_canvas.dart",
+    "pages/adsorption_line_page.dart"
+  ],
+  "teaching_components": {
+    "page": "pages/adsorption_line_page.dart",
+    "components": [
+      "LearningScaffold",
+      "LearningObjectives",
+      "ConceptChips",
+      "CodeSnippetCard",
+      "StateLogView",
+      "CommonPitfalls",
+      "ExerciseCard"
+    ]
+  },
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",

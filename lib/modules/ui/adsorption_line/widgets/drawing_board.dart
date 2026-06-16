@@ -7,7 +7,9 @@ import 'drawing_canvas.dart';
 
 /// 画板主界面
 class DrawingBoard extends StatefulWidget {
-  const DrawingBoard({super.key});
+  final bool embedInScaffold;
+
+  const DrawingBoard({super.key, this.embedInScaffold = true});
 
   @override
   State<DrawingBoard> createState() => _DrawingBoardState();
@@ -27,6 +29,8 @@ class _DrawingBoardState extends State<DrawingBoard> {
 
   @override
   Widget build(BuildContext context) {
+    final body = _buildBody(context);
+    if (!widget.embedInScaffold) return body;
     return KeyboardListener(
       focusNode: FocusNode()..requestFocus(),
       onKeyEvent: (event) {
@@ -58,34 +62,35 @@ class _DrawingBoardState extends State<DrawingBoard> {
             ),
           ],
         ),
-        body: Column(
-          children: [
-            // 工具栏
-            _buildToolbar(),
-            // 画板区域
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                color: Colors.white,
-                child: Consumer<DrawingState>(
-                  builder: (context, drawingState, child) {
-                    return DrawingCanvas(
-                      elements: drawingState.elements,
-                      selectedElement: drawingState.selectedElement,
-                      onTap: _handleCanvasTap,
-                      onPanStart: _handlePanStart,
-                      onPanUpdate: _handlePanUpdate,
-                      onPanEnd: _handlePanEnd,
-                    );
-                  },
-                ),
-              ),
-            ),
-            // 状态栏
-            _buildStatusBar(),
-          ],
-        ),
+        body: body,
       ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return Column(
+      children: [
+        _buildToolbar(),
+        Expanded(
+          child: Container(
+            width: double.infinity,
+            color: Colors.white,
+            child: Consumer<DrawingState>(
+              builder: (context, drawingState, child) {
+                return DrawingCanvas(
+                  elements: drawingState.elements,
+                  selectedElement: drawingState.selectedElement,
+                  onTap: _handleCanvasTap,
+                  onPanStart: _handlePanStart,
+                  onPanUpdate: _handlePanUpdate,
+                  onPanEnd: _handlePanEnd,
+                );
+              },
+            ),
+          ),
+        ),
+        _buildStatusBar(),
+      ],
     );
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'state/drawing_state.dart';
-import 'widgets/drawing_board.dart';
+import 'pages/adsorption_line_page.dart';
 
 class AdsorptionLineEntry extends StatelessWidget {
   const AdsorptionLineEntry({super.key});
@@ -11,7 +11,7 @@ class AdsorptionLineEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => DrawingState(),
-      child: const DrawingBoard(),
+      child: const AdsorptionLinePage(),
     );
   }
 }
