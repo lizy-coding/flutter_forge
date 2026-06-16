@@ -8,11 +8,32 @@
     "path": "lib/modules/basic/microtask",
     "status": "active"
   },
-  "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
-  "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["module_registry","go_router"],
+  "entrypoints": ["module_entry.dart"],
+  "owns": ["module_entry","module_ui"],
+  "depends": ["flutter_study_learning","module_registry","go_router"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["core/models/event_log.dart","core/widgets/code_snippet_view.dart","core/widgets/event_log_view.dart","features/advanced_examples/advanced_examples_page.dart","features/event_queue/event_queue_page.dart","features/home_page.dart","features/microtask_queue/microtask_queue_page.dart","module_entry.dart","module_routes.dart"],
+  "files": [
+    "module_entry.dart",
+    "module_routes.dart",
+    "models/event_log.dart",
+    "widgets/code_snippet_view.dart",
+    "widgets/event_log_view.dart",
+    "pages/home_page.dart",
+    "pages/event_queue_page.dart",
+    "pages/microtask_queue_page.dart",
+    "pages/advanced_examples_page.dart"
+  ],
+  "teaching_components": {
+    "page": "module_root.dart",
+    "components": [
+      "LearningScaffold",
+      "LearningObjectives",
+      "ConceptChips",
+      "CodeSnippetCard",
+      "CommonPitfalls",
+      "ExerciseCard"
+    ]
+  },
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",
