@@ -19,9 +19,9 @@ import '../../modules/async/stream_subscription/module_entry.dart';
 import '../../modules/async/stream_subscription/module_routes.dart';
 
 import '../../modules/state/flutter_ioc/module_entry.dart';
-import '../../modules/state/status_management/app/app_routes.dart';
-import '../../modules/state/status_management/module_entry.dart';
+import '../../modules/state/status_management/module_routes.dart';
 
+import '../../modules/state/status_management/module_entry.dart';
 import '../../modules/ui/adsorption_line/module_entry.dart';
 import '../../modules/ui/download_animation/module_entry.dart';
 import '../../modules/ui/download_animation/module_routes.dart';
@@ -38,14 +38,16 @@ import '../../modules/platform/usb_detector/module_entry.dart';
 
 // ==================== 状态管理子路由（模块内部已定义映射） ====================
 
-List<GoRoute> _buildStatusManageRoutes() => AppRoutes.routes.entries
-    .map(
-      (entry) => GoRoute(
-        path: entry.key.startsWith('/') ? entry.key.substring(1) : entry.key,
-        builder: (context, state) => entry.value(context),
-      ),
-    )
-    .toList();
+List<GoRoute> _buildStatusManageRoutes() =>
+    StatusManagementRoutes.routes.entries
+        .map(
+          (entry) => GoRoute(
+            path:
+                entry.key.startsWith('/') ? entry.key.substring(1) : entry.key,
+            builder: (context, state) => entry.value(context),
+          ),
+        )
+        .toList();
 
 // ==================== 模块注册 ====================
 
@@ -217,7 +219,7 @@ final List<ModuleEntry> _modules = [
     difficulty: Difficulty.beginner,
     concepts: ['TableView', '固定表头', '二维滚动'],
     estimatedMinutes: 15,
-    status: ModuleStatus.pending,
+    status: ModuleStatus.ready,
     builder: (context) => const ScrollTableEntry(),
   ),
   ModuleEntry(
@@ -259,7 +261,7 @@ final List<ModuleEntry> _modules = [
     difficulty: Difficulty.intermediate,
     concepts: ['usb_serial', 'device_info_plus', 'Stream 广播', '设备扫描'],
     estimatedMinutes: 25,
-    status: ModuleStatus.pending,
+    status: ModuleStatus.ready,
     builder: (context) => const UsbDetectorEntry(),
   ),
 ];
