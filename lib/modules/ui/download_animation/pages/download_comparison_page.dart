@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'dart:math' as math;
+
 import '../models/download_item.dart';
 import '../models/animation_config.dart';
 import '../services/overlay_download_service.dart';
-import 'dart:math' as math;
 
 /// 下载动画对比页面
 class DownloadComparisonPage extends StatefulWidget {
@@ -159,39 +161,79 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text('下载动画对比'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 1,
-        actions: [
-          IconButton(
-            icon: Icon(showControlPanel ? Icons.close : Icons.settings),
-            onPressed: () {
-              setState(() {
-                showControlPanel = !showControlPanel;
-              });
-            },
-            tooltip: '动画设置',
+    return Stack(
+      children: [
+        LearningScaffold(
+          title: '下载动画对比',
+          interactiveDemo: SizedBox(
+            height: 500,
+            child: Column(
+              children: [
+                if (showControlPanel) _buildControlPanel(),
+                _buildComparisonInfo(),
+                Flexible(child: _buildFileList()),
+                _buildDownloadArea(),
+              ],
+            ),
           ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              if (showControlPanel) _buildControlPanel(),
-              _buildComparisonInfo(),
-              _buildFileList(),
-              const SizedBox(height: 40),
-              _buildDownloadArea(),
-            ],
-          ),
-          ...downloadItems.map((item) => _buildFlyingItem(item)),
-        ],
-      ),
+          sections: const [
+            LearningObjectives(
+              objectives: [
+                '对比 Custom View（Stack + AnimatedBuilder）与 Overlay 两种动画实现方式的差异',
+                '理解 OverlayEntry 的全局渲染机制——不受视图层级限制',
+                '掌握 Tween 动画与 Interval 组合实现多阶段动画效果',
+              ],
+            ),
+            ConceptChips(
+              concepts: [
+                'Stack',
+                'Positioned',
+                'Overlay',
+                'OverlayEntry',
+                'AnimatedBuilder',
+                'Tween',
+                'Interval'
+              ],
+            ),
+            CodeSnippetCard(
+              title: 'Custom View vs Overlay',
+              code: '''// Custom View：使用 Stack + AnimatedBuilder
+Stack(
+  children: [
+    // 主内容
+    Column(children: [...]),
+    // 飞入元素
+    ...items.map((item) => Positioned(
+      left: item.position.value.dx,
+      top: item.position.value.dy,
+      child: flyingWidget,
+    )),
+  ],
+)
+
+// Overlay：使用 Overlay.of(context).insert
+final overlayEntry = OverlayEntry(builder: (_) => flyingWidget);
+Overlay.of(context).insert(overlayEntry);''',
+              explanation:
+                  'Custom View 受父组件边界限制；Overlay 渲染在独立的 Overlay 层，不受任何父组件裁剪。',
+            ),
+            CommonPitfalls(
+              pitfalls: [
+                'OverlayEntry 必须在 dispose 中移除，否则会内存泄漏',
+                'Positioned 必须在 Stack 中才能正确定位',
+                'AnimationController 使用后必须 dispose',
+                'globalPosition 在列表滚动时会偏移，注意使用 RenderBox.localToGlobal 转换',
+              ],
+            ),
+            ExerciseCard(
+              task:
+                  '对比两种方式的下载动画：点击文件右侧的「View」和「Overlay」按钮，观察飞入动画的视觉差异。尝试调整动画参数面板中的持续时间与速度。',
+              hint: 'Overlay 方式不受页面边界限制，可以覆盖在其他组件（如 AppBar）之上。',
+            ),
+          ],
+        ),
+        ...downloadItems.map((item) => _buildFlyingItem(item)),
+      ],
     );
   }
 
@@ -372,141 +414,130 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
       {'name': '演示视频.mp4', 'size': '156.3 MB', 'icon': Icons.video_file},
     ];
 
-    return Expanded(
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: files.length,
-        itemBuilder: (context, index) {
-          final file = files[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 8),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: files.length,
+      itemBuilder: (context, index) {
+        final file = files[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                file['icon'] as IconData,
+                color: Colors.blue.shade600,
+                size: 28,
+              ),
             ),
-            child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  file['icon'] as IconData,
-                  color: Colors.blue.shade600,
-                  size: 28,
-                ),
+            title: Text(
+              file['name'] as String,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
               ),
-              title: Text(
-                file['name'] as String,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
+            ),
+            subtitle: Text(
+              file['size'] as String,
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 14,
               ),
-              subtitle: Text(
-                file['size'] as String,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 14,
-                ),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Custom View 下载按钮
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.blue.shade400, Colors.blue.shade600],
-                      ),
-                      borderRadius: BorderRadius.circular(20),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade400, Colors.blue.shade600],
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTapDown: (TapDownDetails details) {
-                          _startCustomViewDownload(
-                            file['name'] as String,
-                            file['size'] as String,
-                            details.globalPosition,
-                          );
-                        },
-                        child: const Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.download,
-                                  color: Colors.white, size: 14),
-                              SizedBox(width: 4),
-                              Text(
-                                'View',
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTapDown: (TapDownDetails details) {
+                        _startCustomViewDownload(
+                          file['name'] as String,
+                          file['size'] as String,
+                          details.globalPosition,
+                        );
+                      },
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.download, color: Colors.white, size: 14),
+                            SizedBox(width: 4),
+                            Text('View',
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12)),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  // Overlay 下载按钮
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.green.shade400, Colors.green.shade600],
-                      ),
-                      borderRadius: BorderRadius.circular(20),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green.shade400, Colors.green.shade600],
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTapDown: (TapDownDetails details) {
-                          _startOverlayDownload(
-                            file['name'] as String,
-                            file['size'] as String,
-                            details.globalPosition,
-                          );
-                        },
-                        child: const Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.cloud_download,
-                                  color: Colors.white, size: 14),
-                              SizedBox(width: 4),
-                              Text(
-                                'Overlay',
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTapDown: (TapDownDetails details) {
+                        _startOverlayDownload(
+                          file['name'] as String,
+                          file['size'] as String,
+                          details.globalPosition,
+                        );
+                      },
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.cloud_download,
+                                color: Colors.white, size: 14),
+                            SizedBox(width: 4),
+                            Text('Overlay',
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12)),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

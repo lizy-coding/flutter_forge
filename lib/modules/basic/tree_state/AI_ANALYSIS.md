@@ -12,7 +12,18 @@
   "owns": ["module_entry","module_ui","module_state","module_docs"],
   "depends": ["flutter_study_learning","module_registry","go_router"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["module_entry.dart","module_routes.dart","pages/basic_widgets_page.dart","pages/demo_home_page.dart","pages/painter_demo_page.dart","pages/repaint_boundary_demo_page.dart","pages/state_lifecycle_page.dart","routes.dart"],
+  "files": ["module_entry.dart","module_routes.dart","pages/basic_widgets_page.dart","pages/demo_home_page.dart","pages/painter_demo_page.dart","pages/repaint_boundary_demo_page.dart","pages/state_lifecycle_page.dart"],
+  "teaching_components": {
+    "page": "pages (全部 5 页)",
+    "components": [
+      "LearningScaffold",
+      "LearningObjectives",
+      "ConceptChips",
+      "CodeSnippetCard",
+      "CommonPitfalls",
+      "ExerciseCard"
+    ]
+  },
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",

@@ -1,5 +1,7 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
 
 // 固定链式弹窗代号，便于确认与复用（顺序可变，代号固定）
 const List<String> kChainDialogIds = <String>['A', 'B', 'C'];
@@ -35,195 +37,292 @@ class PopDemoHomePage extends StatefulWidget {
 }
 
 class _PopDemoHomePageState extends State<PopDemoHomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  PersistentBottomSheetController? _bottomSheetController;
+  bool _showBottomSheet = false;
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) {
-          return;
-        }
-        final shouldPop = await _showExitConfirmDialog(context);
-        if ((shouldPop ?? false) && context.mounted) {
-          Navigator.of(context).pop();
-        }
-      },
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text(widget.title),
-          actions: [
-            IconButton(
-              tooltip: '显示 AboutDialog',
-              onPressed: _showAbout,
-              icon: const Icon(Icons.info_outline),
-            ),
-            PopupMenuButton<String>(
-              tooltip: '选择更多弹窗',
-              onSelected: (value) async {
-                switch (value) {
-                  case 'date':
-                    await _showDatePicker();
-                    break;
-                  case 'time':
-                    await _showTimePicker();
-                    break;
-                }
-              },
-              itemBuilder: (context) => const [
-                PopupMenuItem(value: 'date', child: Text('日期选择弹窗')),
-                PopupMenuItem(value: 'time', child: Text('时间选择弹窗')),
-              ],
-            ),
+    return LearningScaffold(
+      title: widget.title,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _togglePersistentBottomSheet,
+        icon: const Icon(Icons.vertical_align_top),
+        label: Text(_showBottomSheet ? '关闭底部条' : '显示底部条'),
+      ),
+      interactiveDemo: SizedBox(
+        height: 500,
+        child: Column(
+          children: [
+            _buildToolbar(),
+            Expanded(child: _buildDemoList()),
+            if (_showBottomSheet) _buildBottomSheetBar(),
           ],
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(color: Colors.deepPurple),
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Text('弹窗演示菜单',
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
-                ),
+      ),
+      sections: [
+        LearningObjectives(objectives: [
+          '掌握 Flutter 中多种弹窗的创建方式',
+          '理解 AlertDialog、SimpleDialog、BottomSheet 的区别与适用场景',
+          '掌握通过 Navigator 管理链式对话框',
+          '学习使用 OverlayEntry 自定义弹窗',
+          '理解 ContextMenu（showMenu）的触发方式',
+        ]),
+        ConceptChips(concepts: [
+          'showDialog',
+          'AlertDialog',
+          'SimpleDialog',
+          'BottomSheet',
+          'showMenu',
+          'OverlayEntry',
+          'Navigator',
+          'showDatePicker',
+          'showTimePicker',
+        ]),
+        CodeSnippetCard(
+          title: 'AlertDialog 基础用法',
+          code: 'Future<void> showAlertDialog() async {\n'
+              '  await showDialog<void>(\n'
+              '    context: context,\n'
+              '    builder: (context) => AlertDialog(\n'
+              '      title: Text(\'提示\'),\n'
+              '      content: Text(\'这是 AlertDialog\'),\n'
+              '      actions: [\n'
+              '        TextButton(\n'
+              '          onPressed: () => Navigator.pop(context),\n'
+              '          child: Text(\'确定\'),\n'
+              '        ),\n'
+              '      ],\n'
+              '    ),\n'
+              '  );\n'
+              '}',
+          explanation: 'showDialog + AlertDialog 是最常用的弹窗组合。',
+        ),
+        CodeSnippetCard(
+          title: 'Modal Bottom Sheet',
+          code: 'Future<void> showBottomSheetDemo() async {\n'
+              '  await showModalBottomSheet<void>(\n'
+              '    context: context,\n'
+              '    showDragHandle: true,\n'
+              '    builder: (context) => SafeArea(\n'
+              '      child: Padding(\n'
+              '        padding: EdgeInsets.all(16),\n'
+              '        child: Column(\n'
+              '          mainAxisSize: MainAxisSize.min,\n'
+              '          children: [\n'
+              '            Text(\'底部弹窗\'),\n'
+              '            ElevatedButton(\n'
+              '              onPressed: () => Navigator.pop(context),\n'
+              '              child: Text(\'关闭\'),\n'
+              '            ),\n'
+              '          ],\n'
+              '        ),\n'
+              '      ),\n'
+              '    ),\n'
+              '  );\n'
+              '}',
+          explanation: 'showModalBottomSheet 从屏幕底部滑入，支持拖动关闭。',
+        ),
+        CommonPitfalls(pitfalls: [
+          '忘记 Navigator.pop(context) — 对话框不会自动关闭，需要在按钮回调中显式调用 Navigator.pop(context)',
+          'context 生命周期 — 异步操作后需检查 mounted，否则调用 Navigator.pop(context) 可能抛异常',
+          'showDialog 与 showCupertinoDialog 使用不同的主题上下文，不可混用',
+          'OverlayEntry 需手动管理 — 不会自动释放，必须在 dispose 时清理所有 entry',
+        ]),
+        ExerciseCard(
+          task: '创建一个包含输入框的自定义对话框，用户输入文字后点击"提交"，在 SnackBar 中显示输入内容。',
+          hint:
+              '使用 showDialog + AlertDialog，在 builder 中使用 TextField，通过 Navigator.pop(context, inputValue) 返回结果。',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildToolbar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        border:
+            Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: '显示 AboutDialog',
+            onPressed: _showAbout,
+            icon: const Icon(Icons.info_outline),
+          ),
+          const Spacer(),
+          PopupMenuButton<String>(
+            tooltip: '选择更多弹窗',
+            onSelected: (value) async {
+              switch (value) {
+                case 'date':
+                  await _showDatePicker();
+                  break;
+                case 'time':
+                  await _showTimePicker();
+                  break;
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'date', child: Text('日期选择弹窗')),
+              PopupMenuItem(value: 'time', child: Text('时间选择弹窗')),
+            ],
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.date_range, size: 20),
+                  SizedBox(width: 4),
+                  Text('日期/时间', style: TextStyle(fontSize: 13)),
+                ],
               ),
-              ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: const Text('显示 AboutDialog'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showAbout();
-                },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDemoList() {
+    return ListView(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      children: [
+        ListTile(
+          leading: const Icon(Icons.warning_amber_rounded),
+          title: const Text('AlertDialog (普通对话框)'),
+          subtitle: const Text('点击触发'),
+          onTap: () => _showAlertDialog(),
+        ),
+        ListTile(
+          leading: const Icon(Icons.list_alt),
+          title: const Text('SimpleDialog (选项对话框)'),
+          subtitle: const Text('点击右侧图标触发'),
+          trailing: IconButton(
+            icon: const Icon(Icons.open_in_new),
+            onPressed: _showSimpleDialog,
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.keyboard_double_arrow_up),
+          title: const Text('Modal Bottom Sheet (模态底部弹窗)'),
+          subtitle: const Text('长按触发'),
+          onLongPress: _showModalBottomSheet,
+        ),
+        const Divider(height: 16),
+        _CupertinoDoubleTapTile(onDoubleTap: _showCupertinoAlert),
+        ListTile(
+          leading: const Icon(Icons.design_services),
+          title: const Text('自定义 Dialog'),
+          subtitle: const Text('点击按钮触发'),
+          trailing: ElevatedButton(
+            onPressed: _showCustomDialog,
+            child: const Text('打开'),
+          ),
+        ),
+        _ContextMenuTile(onShowMenu: _showContextMenu),
+        const Divider(height: 16),
+        ListTile(
+          leading: const Icon(Icons.info_outline),
+          title: const Text('显示 AboutDialog'),
+          subtitle: const Text('系统自带"关于"对话框'),
+          onTap: _showAbout,
+        ),
+        const Divider(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('顺序链式弹窗（自定义开关顺序）',
+                  style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 6),
+              Text('示例：打开 A→B→C；关闭 B→A→C',
+                  style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ElevatedButton(
+                    onPressed: _demoOpenChain,
+                    child: const Text('打开 A→B→C'),
+                  ),
+                  OutlinedButton(
+                    onPressed: _demoCloseChain,
+                    child: const Text('关闭 B→A→C'),
+                  ),
+                ],
               ),
             ],
           ),
         ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          children: [
-            ListTile(
-              leading: const Icon(Icons.warning_amber_rounded),
-              title: const Text('AlertDialog (普通对话框)'),
-              subtitle: const Text('点击触发'),
-              onTap: () => _showAlertDialog(),
-            ),
-            ListTile(
-              leading: const Icon(Icons.list_alt),
-              title: const Text('SimpleDialog (选项对话框)'),
-              subtitle: const Text('点击右侧图标触发'),
-              trailing: IconButton(
-                icon: const Icon(Icons.open_in_new),
-                onPressed: _showSimpleDialog,
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.keyboard_double_arrow_up),
-              title: const Text('Modal Bottom Sheet (模态底部弹窗)'),
-              subtitle: const Text('长按触发'),
-              onLongPress: _showModalBottomSheet,
-            ),
-            const Divider(height: 16),
-            _CupertinoDoubleTapTile(onDoubleTap: _showCupertinoAlert),
-            ListTile(
-              leading: const Icon(Icons.design_services),
-              title: const Text('自定义 Dialog'),
-              subtitle: const Text('点击按钮触发'),
-              trailing: ElevatedButton(
-                onPressed: _showCustomDialog,
-                child: const Text('打开'),
-              ),
-            ),
-            _ContextMenuTile(onShowMenu: _showContextMenu),
-            const Divider(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('顺序链式弹窗（自定义开关顺序）',
-                      style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 6),
-                  Text('示例：打开 A→B→C；关闭 B→A→C',
-                      style: Theme.of(context).textTheme.bodySmall),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _demoOpenChain,
-                        child: const Text('打开 A→B→C'),
-                      ),
-                      OutlinedButton(
-                        onPressed: _demoCloseChain,
-                        child: const Text('关闭 B→A→C'),
-                      ),
-                    ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Overlay 链式弹窗（对比 Navigator）',
+                  style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 6),
+              ValueListenableBuilder<List<String>>(
+                valueListenable: _orderStore.openOrder,
+                builder: (_, open, __) => ValueListenableBuilder<List<String>>(
+                  valueListenable: _orderStore.closeOrder,
+                  builder: (_, close, __) => Text(
+                    '示例：打开 ${open.join('→')}；关闭 ${close.join('→')}（使用 OverlayEntry）',
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  Text('Overlay 链式弹窗（对比 Navigator）',
-                      style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 6),
                   ValueListenableBuilder<List<String>>(
                     valueListenable: _orderStore.openOrder,
-                    builder: (_, open, __) =>
-                        ValueListenableBuilder<List<String>>(
-                      valueListenable: _orderStore.closeOrder,
-                      builder: (_, close, __) => Text(
-                        '示例：打开 ${open.join('→')}；关闭 ${close.join('→')}（使用 OverlayEntry）',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                    builder: (_, open, __) => ElevatedButton(
+                      onPressed: _demoOpenOverlayChain,
+                      child: Text('Overlay 打开 ${open.join('→')}'),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      ValueListenableBuilder<List<String>>(
-                        valueListenable: _orderStore.openOrder,
-                        builder: (_, open, __) => ElevatedButton(
-                          onPressed: _demoOpenOverlayChain,
-                          child: Text('Overlay 打开 ${open.join('→')}'),
-                        ),
-                      ),
-                      ValueListenableBuilder<List<String>>(
-                        valueListenable: _orderStore.closeOrder,
-                        builder: (_, close, __) => OutlinedButton(
-                          onPressed: _demoCloseOverlayChain,
-                          child: Text('Overlay 关闭 ${close.join('→')}'),
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: _editOverlayOrders,
-                        icon: const Icon(Icons.tune),
-                        label: const Text('编辑 Overlay 顺序'),
-                      ),
-                    ],
+                  ValueListenableBuilder<List<String>>(
+                    valueListenable: _orderStore.closeOrder,
+                    builder: (_, close, __) => OutlinedButton(
+                      onPressed: _demoCloseOverlayChain,
+                      child: Text('Overlay 关闭 ${close.join('→')}'),
+                    ),
+                  ),
+                  TextButton.icon(
+                    onPressed: _editOverlayOrders,
+                    icon: const Icon(Icons.tune),
+                    label: const Text('编辑 Overlay 顺序'),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 80),
-          ],
+            ],
+          ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: _togglePersistentBottomSheet,
-          icon: const Icon(Icons.vertical_align_top),
-          label: Text(_bottomSheetController == null ? '显示底部工具条' : '关闭底部工具条'),
-        ),
+        const SizedBox(height: 80),
+      ],
+    );
+  }
+
+  Widget _buildBottomSheetBar() {
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          const Icon(Icons.tips_and_updates_outlined),
+          const SizedBox(width: 8),
+          const Expanded(child: Text('这是一个持久化底部工具条，你可以手动关闭。')),
+          TextButton(
+            onPressed: _togglePersistentBottomSheet,
+            child: const Text('关闭'),
+          ),
+        ],
       ),
     );
   }
@@ -755,35 +854,9 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
 
   // 6) 持久化 BottomSheet（FAB 切换）
   void _togglePersistentBottomSheet() {
-    if (_bottomSheetController != null) {
-      _bottomSheetController!.close();
-      _bottomSheetController = null;
-      setState(() {});
-      return;
-    }
-    _bottomSheetController =
-        _scaffoldKey.currentState?.showBottomSheet((context) {
-      return SafeArea(
-        child: Container(
-          color: Theme.of(context).colorScheme.surface,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              const Icon(Icons.tips_and_updates_outlined),
-              const SizedBox(width: 8),
-              const Expanded(child: Text('这是一个持久化底部工具条，你可以手动关闭。')),
-              TextButton(
-                  onPressed: () => _bottomSheetController?.close(),
-                  child: const Text('关闭')),
-            ],
-          ),
-        ),
-      );
+    setState(() {
+      _showBottomSheet = !_showBottomSheet;
     });
-    _bottomSheetController?.closed.whenComplete(() {
-      if (mounted) setState(() => _bottomSheetController = null);
-    });
-    setState(() {});
   }
 
   // 7) 日期/时间选择
@@ -815,26 +888,7 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
     );
   }
 
-  // 9) 退出确认弹窗（返回键触发）
-  Future<bool?> _showExitConfirmDialog(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('确认退出'),
-        content: const Text('确定要退出应用吗？'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消')),
-          ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('退出')),
-        ],
-      ),
-    );
-  }
-
-  // 10) 上下文菜单（在点击位置弹出）
+  // 9) 上下文菜单（在点击位置弹出）
   Future<void> _showContextMenu(TapDownDetails details) async {
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final selected = await showMenu<String>(

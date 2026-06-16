@@ -1,5 +1,8 @@
-import 'utils/debounce_throttle.dart' show Debouncer, Throttle;
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
+
+import 'utils/debounce_throttle.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -15,92 +18,144 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   final PageController _pageController = PageController();
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Column(
-        children: [
-          // 场景选择器
-          Container(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _currentPageIndex == 0
-                          ? Theme.of(context).colorScheme.primaryContainer
-                          : null,
+    return LearningScaffold(
+      title: widget.title,
+      interactiveDemo: SizedBox(
+        height: 500,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _currentPageIndex == 0
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : null,
+                      ),
+                      onPressed: () {
+                        setState(() => _currentPageIndex = 0);
+                        _pageController.animateToPage(0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut);
+                      },
+                      child: const Text('按钮点击场景'),
                     ),
-                    onPressed: () {
-                      setState(() => _currentPageIndex = 0);
-                      _pageController.animateToPage(0,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut);
-                    },
-                    child: const Text('按钮点击场景'),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _currentPageIndex == 1
-                          ? Theme.of(context).colorScheme.primaryContainer
-                          : null,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _currentPageIndex == 1
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : null,
+                      ),
+                      onPressed: () {
+                        setState(() => _currentPageIndex = 1);
+                        _pageController.animateToPage(1,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut);
+                      },
+                      child: const Text('滚动场景'),
                     ),
-                    onPressed: () {
-                      setState(() => _currentPageIndex = 1);
-                      _pageController.animateToPage(1,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut);
-                    },
-                    child: const Text('滚动场景'),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-
-          // 防抖节流描述
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.grey[100],
-            child: const Column(
-              children: [
-                Text(
-                  '防抖(Debounce)：在一段时间内多次触发事件，只执行最后一次。',
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '节流(Throttle)：在一段时间内多次触发事件，只执行第一次。',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.blue),
-                ),
-              ],
+            Container(
+              padding: const EdgeInsets.all(16),
+              color: Colors.grey[100],
+              child: const Column(
+                children: [
+                  Text(
+                    '防抖(Debounce)：在一段时间内多次触发事件，只执行最后一次。',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.red),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '节流(Throttle)：在一段时间内多次触发事件，只执行第一次。',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.blue),
+                  ),
+                ],
+              ),
             ),
-          ),
-
-          // 场景内容
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => _currentPageIndex = index);
-              },
-              children: const [
-                ButtonScene(),
-                ScrollScene(),
-              ],
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() => _currentPageIndex = index);
+                },
+                children: const [
+                  ButtonScene(),
+                  ScrollScene(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      sections: [
+        LearningObjectives(objectives: [
+          '理解防抖(Debounce)与节流(Throttle)的核心区别',
+          '掌握 Debouncer 和 Throttle 的代码实现',
+          '学会在实际场景中选择合适的频率控制策略',
+        ]),
+        ConceptChips(concepts: [
+          'Debounce',
+          'Throttle',
+          'Timer',
+          '频率控制',
+          '性能优化',
+        ]),
+        CodeSnippetCard(
+          title: 'Debouncer 实现',
+          code: 'class Debouncer {\n'
+              '  final Duration delay;\n'
+              '  Timer? _timer;\n\n'
+              '  void run(VoidCallback action) {\n'
+              '    _timer?.cancel();\n'
+              '    _timer = Timer(delay, action);\n'
+              '  }\n\n'
+              '  void dispose() => _timer?.cancel();\n'
+              '}',
+          explanation: '防抖在延迟时间内重置计时器，只有最后一次触发生效。',
+        ),
+        CodeSnippetCard(
+          title: 'Throttle 实现',
+          code: 'class Throttle {\n'
+              '  final Duration limit;\n'
+              '  DateTime? _lastCall;\n\n'
+              '  void run(VoidCallback action) {\n'
+              '    final now = DateTime.now();\n'
+              '    if (_lastCall != null &&\n'
+              '        now.difference(_lastCall!) < limit) return;\n'
+              '    _lastCall = now;\n'
+              '    action();\n'
+              '  }\n'
+              '}',
+          explanation: '节流在限制时间内忽略后续触发，只有第一次生效。',
+        ),
+        CommonPitfalls(pitfalls: [
+          '防抖延迟过长会降低响应感 — 按钮点击场景建议 300-500ms，滚动场景可适当延长',
+          '节流可能会导致关键更新丢失 — 不适合需要实时反馈的场景',
+          '忘记 dispose — Timer 和 StreamSubscription 必须在 dispose 中清理',
+        ]),
+        ExerciseCard(
+          task: '实现一个"先执行一次"的防抖（leading edge debounce），首次点击立即执行，后续连续点击只执行最后一次。',
+          hint: '在 Debouncer 中增加 _leadingExecuted 标记，首次调用时立即执行再启动延迟。',
+        ),
+      ],
     );
   }
 }
@@ -118,17 +173,14 @@ class _ButtonSceneState extends State<ButtonScene>
   int _throttleCount = 0;
   int _normalCount = 0;
 
-  // 普通事件、防抖事件和节流事件的处理次数
   final List<int> _normalEvents = [];
   final List<int> _debounceEvents = [];
   final List<int> _throttleEvents = [];
 
-  // 用于展示事件触发的动画控制器
   late AnimationController _normalAnim;
   late AnimationController _debounceAnim;
   late AnimationController _throttleAnim;
 
-  // 防抖和节流实例
   final Debouncer _debouncer =
       Debouncer(delay: const Duration(milliseconds: 500));
   final Throttle _throttler =
@@ -156,41 +208,38 @@ class _ButtonSceneState extends State<ButtonScene>
     _normalAnim.dispose();
     _debounceAnim.dispose();
     _throttleAnim.dispose();
+    _debouncer.dispose();
     super.dispose();
   }
 
-  // 添加事件记录
-  void _addEventRecord(List<int> list, int count) {
+  void _addEventRecord(List<int> list) {
     setState(() {
-      list.add(count);
+      list.add(DateTime.now().millisecondsSinceEpoch);
       if (list.length > 10) {
         list.removeAt(0);
       }
     });
   }
 
-  // 处理普通点击
   void _handleNormalClick() {
     setState(() => _normalCount++);
     _normalAnim.forward(from: 0);
-    _addEventRecord(_normalEvents, _normalCount);
+    _addEventRecord(_normalEvents);
   }
 
-  // 处理防抖点击
   void _handleDebounceClick() {
     _debounceAnim.forward(from: 0);
     _debouncer.run(() {
       setState(() => _debounceCount++);
-      _addEventRecord(_debounceEvents, _debounceCount);
+      _addEventRecord(_debounceEvents);
     });
   }
 
-  // 处理节流点击
   void _handleThrottleClick() {
     _throttleAnim.forward(from: 0);
     _throttler.run(() {
       setState(() => _throttleCount++);
-      _addEventRecord(_throttleEvents, _throttleCount);
+      _addEventRecord(_throttleEvents);
     });
   }
 
@@ -206,35 +255,18 @@ class _ButtonSceneState extends State<ButtonScene>
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
-
-          // 按钮区域
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildAnimatedButton(
-                '普通点击',
-                Colors.grey,
-                _handleNormalClick,
-                _normalAnim,
-              ),
+                  '普通点击', Colors.grey, _handleNormalClick, _normalAnim),
               _buildAnimatedButton(
-                '防抖点击',
-                Colors.red,
-                _handleDebounceClick,
-                _debounceAnim,
-              ),
+                  '防抖点击', Colors.red, _handleDebounceClick, _debounceAnim),
               _buildAnimatedButton(
-                '节流点击',
-                Colors.blue,
-                _handleThrottleClick,
-                _throttleAnim,
-              ),
+                  '节流点击', Colors.blue, _handleThrottleClick, _throttleAnim),
             ],
           ),
-
           const SizedBox(height: 20),
-
-          // 计数器显示
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -243,13 +275,10 @@ class _ButtonSceneState extends State<ButtonScene>
               _buildCounter('节流:', _throttleCount, Colors.blue),
             ],
           ),
-
           const SizedBox(height: 30),
           const Text('事件触发可视化:',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
-
-          // 事件触发可视化区域
           Expanded(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,51 +294,32 @@ class _ButtonSceneState extends State<ButtonScene>
     );
   }
 
-  // 创建带动画的按钮
   Widget _buildAnimatedButton(
       String text, Color color, VoidCallback onTap, AnimationController anim) {
-    return Column(
-      children: [
-        ScaleTransition(
-          scale: CurvedAnimation(
-            parent: anim,
-            curve: Curves.elasticOut,
-          ),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: color.withValues(alpha: 0.2),
-              foregroundColor: color,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-            onPressed: () {
-              anim.forward(from: 0.0); // 添加按钮点击动画触发
-              onTap(); // 触发点击回调
-            },
-            child:
-                Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ),
+    return ScaleTransition(
+      scale: CurvedAnimation(parent: anim, curve: Curves.elasticOut),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color.withValues(alpha: 0.2),
+          foregroundColor: color,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
-      ],
+        onPressed: onTap,
+        child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
+      ),
     );
   }
 
-  // 创建计数器显示
   Widget _buildCounter(String prefix, int count, Color color) {
     return Column(
       children: [
-        Text(
-          '$prefix $count',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
+        Text('$prefix $count',
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: color)),
       ],
     );
   }
 
-  // 创建事件触发可视化组件
   Widget _buildEventVisualization(String title, List<int> events, Color color) {
     return Expanded(
       child: Container(
@@ -328,9 +338,8 @@ class _ButtonSceneState extends State<ButtonScene>
                 itemCount: events.length,
                 reverse: true,
                 itemBuilder: (context, index) {
-                  final timestamp = events[index];
                   return Text(
-                    DateTime.fromMillisecondsSinceEpoch(timestamp)
+                    DateTime.fromMillisecondsSinceEpoch(events[index])
                         .toString()
                         .substring(11, 19),
                     style: TextStyle(color: color.withValues(alpha: 0.8)),
@@ -374,17 +383,12 @@ class _ScrollSceneState extends State<ScrollScene>
       duration: const Duration(milliseconds: 300),
     );
 
-    // 滚动监听
     _scrollController.addListener(() {
       setState(() => _scrollPosition = _scrollController.offset);
-
-      // 防抖处理滚动位置
       _debouncer.run(() {
         setState(() => _debouncePosition = _scrollController.offset);
         _positionAnimController.forward(from: 0);
       });
-
-      // 节流处理滚动位置
       _throttler.run(() {
         setState(() => _throttlePosition = _scrollController.offset);
         _positionAnimController.forward(from: 0);
@@ -396,6 +400,7 @@ class _ScrollSceneState extends State<ScrollScene>
   void dispose() {
     _scrollController.dispose();
     _positionAnimController.dispose();
+    _debouncer.dispose();
     super.dispose();
   }
 
@@ -403,7 +408,6 @@ class _ScrollSceneState extends State<ScrollScene>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // 滚动位置指示器
         Container(
           padding: const EdgeInsets.all(16),
           color: Colors.grey[200],
@@ -428,13 +432,19 @@ class _ScrollSceneState extends State<ScrollScene>
             ],
           ),
         ),
-
-        // 可滚动列表
         Expanded(
           child: ListView.builder(
             controller: _scrollController,
             itemCount: 100,
             itemBuilder: (context, index) {
+              final double itemPosition = index * 100.0;
+              final bool isNearReal =
+                  (_scrollPosition - itemPosition).abs() < 200;
+              final bool isNearDebounce =
+                  (_debouncePosition - itemPosition).abs() < 200;
+              final bool isNearThrottle =
+                  (_throttlePosition - itemPosition).abs() < 200;
+
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Padding(
@@ -442,13 +452,18 @@ class _ScrollSceneState extends State<ScrollScene>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '列表项 #$index',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
+                      Text('列表项 #$index',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
                       const SizedBox(height: 8),
-                      _buildPositionVisualization(index),
+                      Row(
+                        children: [
+                          _buildPositionDot(
+                              '实时', isNearReal, Colors.grey[800]!),
+                          _buildPositionDot('防抖', isNearDebounce, Colors.red),
+                          _buildPositionDot('节流', isNearThrottle, Colors.blue),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -460,19 +475,13 @@ class _ScrollSceneState extends State<ScrollScene>
     );
   }
 
-  // 创建位置指示器
   Widget _buildPositionIndicator(String title, double position, Color color) {
     return Row(
       children: [
         SizedBox(
           width: 100,
-          child: Text(
-            title,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          child: Text(title,
+              style: TextStyle(color: color, fontWeight: FontWeight.bold)),
         ),
         Expanded(
           child: Container(
@@ -500,30 +509,21 @@ class _ScrollSceneState extends State<ScrollScene>
         const SizedBox(width: 8),
         SizedBox(
           width: 60,
-          child: Text(
-            '${position.toStringAsFixed(0)}px',
-            textAlign: TextAlign.right,
-            style: TextStyle(color: color),
-          ),
+          child: Text('${position.toStringAsFixed(0)}px',
+              textAlign: TextAlign.right, style: TextStyle(color: color)),
         ),
       ],
     );
   }
 
-  // 创建带动画的位置指示器
   Widget _buildAnimatedPositionIndicator(
       String title, double position, Color color) {
     return Row(
       children: [
         SizedBox(
           width: 80,
-          child: Text(
-            title,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          child: Text(title,
+              style: TextStyle(color: color, fontWeight: FontWeight.bold)),
         ),
         Expanded(
           child: Stack(
@@ -560,33 +560,13 @@ class _ScrollSceneState extends State<ScrollScene>
         const SizedBox(width: 8),
         SizedBox(
           width: 60,
-          child: Text(
-            '${position.toStringAsFixed(0)}px',
-            textAlign: TextAlign.right,
-            style: TextStyle(color: color),
-          ),
+          child: Text('${position.toStringAsFixed(0)}px',
+              textAlign: TextAlign.right, style: TextStyle(color: color)),
         ),
       ],
     );
   }
 
-  // 为列表项创建位置可视化
-  Widget _buildPositionVisualization(int index) {
-    final double itemPosition = index * 100.0; // 模拟列表项位置
-    final bool isNearReal = (_scrollPosition - itemPosition).abs() < 200;
-    final bool isNearDebounce = (_debouncePosition - itemPosition).abs() < 200;
-    final bool isNearThrottle = (_throttlePosition - itemPosition).abs() < 200;
-
-    return Row(
-      children: [
-        _buildPositionDot('实时', isNearReal, Colors.grey[800]!),
-        _buildPositionDot('防抖', isNearDebounce, Colors.red),
-        _buildPositionDot('节流', isNearThrottle, Colors.blue),
-      ],
-    );
-  }
-
-  // 创建位置指示点
   Widget _buildPositionDot(String label, bool isActive, Color color) {
     return Padding(
       padding: const EdgeInsets.only(right: 16.0),
@@ -602,13 +582,11 @@ class _ScrollSceneState extends State<ScrollScene>
             ),
           ),
           const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
+          Text(label,
+              style: TextStyle(
+                color: color,
+                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+              )),
         ],
       ),
     );

@@ -21,6 +21,17 @@
     "widgets/dropdown_surface.dart",
     "widgets/status_info.dart"
   ],
+  "teaching_components": {
+    "page": "module_root.dart",
+    "components": [
+      "LearningScaffold",
+      "LearningObjectives",
+      "ConceptChips",
+      "CodeSnippetCard",
+      "CommonPitfalls",
+      "ExerciseCard"
+    ]
+  },
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",

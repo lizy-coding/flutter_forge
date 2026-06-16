@@ -21,9 +21,9 @@ class StatusInfo extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _chip('跟随: $followMethod'),
-          _chip('监听: $scrollListener'),
-          _chip('重绘: $rebuildLevel'),
+          Flexible(child: _chip('跟随: $followMethod')),
+          Flexible(child: _chip('监听: $scrollListener')),
+          Flexible(child: _chip('重绘: $rebuildLevel')),
         ],
       ),
     );
@@ -32,6 +32,7 @@ class StatusInfo extends StatelessWidget {
   Widget _chip(String text) {
     return Text(
       text,
+      overflow: TextOverflow.ellipsis,
       style: const TextStyle(fontSize: 11, color: Colors.black54),
     );
   }

@@ -20,5 +20,16 @@
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },
+  "teaching_components": {
+    "page": "module_root.dart",
+    "components": [
+      "LearningScaffold",
+      "LearningObjectives",
+      "ConceptChips",
+      "CodeSnippetCard",
+      "CommonPitfalls",
+      "ExerciseCard"
+    ]
+  },
   "validation": ["flutter analyze","flutter test"]
 }

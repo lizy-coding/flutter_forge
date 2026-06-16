@@ -8,11 +8,22 @@
     "path": "lib/modules/popup_table/scroll_table",
     "status": "active"
   },
-  "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
-  "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["two_dimensional_scrollables","module_registry"],
+  "entrypoints": ["module_entry.dart","module_root.dart"],
+  "owns": ["module_entry","module_ui"],
+  "depends": ["flutter_study_learning","module_registry"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
   "files": ["module_entry.dart","module_root.dart","widgets/scroll_table.dart"],
+  "teaching_components": {
+    "page": "module_root.dart",
+    "components": [
+      "LearningScaffold",
+      "LearningObjectives",
+      "ConceptChips",
+      "CodeSnippetCard",
+      "CommonPitfalls",
+      "ExerciseCard"
+    ]
+  },
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",

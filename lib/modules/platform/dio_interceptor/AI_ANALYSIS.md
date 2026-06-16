@@ -8,11 +8,35 @@
     "path": "lib/modules/platform/dio_interceptor",
     "status": "active"
   },
-  "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
-  "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["dio","module_registry","go_router"],
+  "entrypoints": ["module_entry.dart"],
+  "owns": ["module_entry","module_ui"],
+  "depends": ["flutter_study_learning","module_registry","go_router","dio"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["mock_server/mock_server.dart","models/article.dart","module_entry.dart","module_routes.dart","network/api/api_service.dart","network/http_client.dart","network/interceptor/auth_interceptor.dart","network/interceptor/error_interceptor.dart","network/interceptor/log_interceptor.dart","network/interceptor/retry_interceptor.dart","pages/home_page.dart","pages/login_page.dart"],
+  "files": [
+    "module_entry.dart",
+    "module_routes.dart",
+    "mock_server/mock_server.dart",
+    "models/article.dart",
+    "network/http_client.dart",
+    "network/api/api_service.dart",
+    "network/interceptor/auth_interceptor.dart",
+    "network/interceptor/error_interceptor.dart",
+    "network/interceptor/log_interceptor.dart",
+    "network/interceptor/retry_interceptor.dart",
+    "pages/home_page.dart",
+    "pages/login_page.dart"
+  ],
+  "teaching_components": {
+    "page": "module_root.dart",
+    "components": [
+      "LearningScaffold",
+      "LearningObjectives",
+      "ConceptChips",
+      "CodeSnippetCard",
+      "CommonPitfalls",
+      "ExerciseCard"
+    ]
+  },
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
 
 import '../models/animation_config.dart';
 
@@ -17,7 +18,6 @@ class PaintAnimationPage extends StatefulWidget {
 
 class _PaintAnimationPageState extends State<PaintAnimationPage>
     with TickerProviderStateMixin {
-  // 存储所有正在飞行的动画项
   final List<FlyingPaintItem> _flyingItems = [];
 
   final GlobalKey _downloadAreaKey = GlobalKey();
@@ -77,7 +77,6 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
       _flyingItems.add(item);
     });
 
-    // 添加监听器以触发重绘
     controller.addListener(() {
       setState(() {});
     });
@@ -117,48 +116,91 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text('Paint 绘制动画'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 1,
-        actions: [
-          IconButton(
-            icon: Icon(showControlPanel ? Icons.close : Icons.settings),
-            onPressed: () {
-              setState(() {
-                showControlPanel = !showControlPanel;
-              });
-            },
-            tooltip: '动画设置',
+    return Stack(
+      children: [
+        LearningScaffold(
+          title: 'Paint 绘制动画',
+          interactiveDemo: SizedBox(
+            height: 460,
+            child: Column(
+              children: [
+                if (showControlPanel) _buildControlPanel(),
+                Flexible(child: _buildFileList()),
+                _buildDownloadArea(),
+              ],
+            ),
           ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              if (showControlPanel) _buildControlPanel(),
-              _buildFileList(),
-              const SizedBox(height: 40),
-              _buildDownloadArea(),
-            ],
-          ),
-          // 使用 CustomPaint 绘制所有飞行的动画
-          Positioned.fill(
-            child: IgnorePointer(
-              child: CustomPaint(
-                painter: FlyingAnimationPainter(
-                  items: _flyingItems,
-                  animationConfig: animationConfig,
-                ),
+          sections: const [
+            LearningObjectives(
+              objectives: [
+                '掌握 CustomPainter 实现动画的方法——在 paint 中根据动画进度计算绘制位置',
+                '理解 Canvas 绘制坐标系变换（translate / scale / rotate）',
+                '掌握贝塞尔曲线轨迹与尾迹效果的绘制技巧',
+              ],
+            ),
+            ConceptChips(
+              concepts: [
+                'CustomPaint',
+                'CustomPainter',
+                'Canvas',
+                'Path',
+                'MaskFilter',
+                '贝塞尔曲线'
+              ],
+            ),
+            CodeSnippetCard(
+              title: 'CustomPainter 动画核心',
+              code: '''// 在 CustomPainter.paint() 中驱动动画
+class FlyingPainter extends CustomPainter {
+  final List<FlyingItem> items;
+  final AnimationConfig config;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (var item in items) {
+      final progress = item.controller.value;
+      final pos = _calculatePosition(item, progress);
+
+      canvas.save();
+      canvas.translate(pos.dx, pos.dy);
+      canvas.scale(_calculateScale(progress));
+      // 绘制图形...
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(FlyingPainter old) => true;
+}''',
+              explanation:
+                  '动画每帧触发 setState → parent rebuild → CustomPaint repaint，在 paint 中根据 AnimationController.value 实时计算绘制位置。',
+            ),
+            CommonPitfalls(
+              pitfalls: [
+                'CustomPainter.shouldRepaint 应返回 true 以确保持续驱动画帧重绘',
+                'Canvas 绘制的坐标变换需要 save/restore 配对使用，否则会影响后续绘制',
+                'MaskFilter 性能开销较大，不宜在循环中创建过多实例',
+                '尾迹绘制涉及历史帧计算，注意性能优化',
+              ],
+            ),
+            ExerciseCard(
+              task:
+                  '尝试调整动画参数（持续时间、飞入点大小、速度），观察 CustomPainter 绘制的飞入轨迹与尾迹效果的变化。对比与 Stack+Positioned 方式的视觉差异。',
+              hint: 'CustomPainter 可以绘制更复杂的图形效果（渐变、光晕、尾迹），不受 Widget 层级限制。',
+            ),
+          ],
+        ),
+        Positioned.fill(
+          child: IgnorePointer(
+            child: CustomPaint(
+              painter: FlyingAnimationPainter(
+                items: _flyingItems,
+                animationConfig: animationConfig,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -176,10 +218,7 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
           children: [
             const Text(
               '动画参数设置',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 16),
             Column(
@@ -286,93 +325,77 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
       },
     ];
 
-    return Expanded(
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: files.length,
-        itemBuilder: (context, index) {
-          final file = files[index];
-          final color = file['color'] as Color;
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: files.length,
+      itemBuilder: (context, index) {
+        final file = files[index];
+        final color = file['color'] as Color;
 
-          return Card(
-            margin: const EdgeInsets.only(bottom: 8),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(file['icon'] as IconData, color: color, size: 28),
             ),
-            child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+            title: Text(
+              file['name'] as String,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            ),
+            subtitle: Text(
+              file['size'] as String,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+            ),
+            trailing: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [color.withValues(alpha: 0.8), color],
                 ),
-                child: Icon(
-                  file['icon'] as IconData,
-                  color: color,
-                  size: 28,
-                ),
+                borderRadius: BorderRadius.circular(20),
               ),
-              title: Text(
-                file['name'] as String,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-              ),
-              subtitle: Text(
-                file['size'] as String,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 14,
-                ),
-              ),
-              trailing: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [color.withValues(alpha: 0.8), color],
-                  ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
                   borderRadius: BorderRadius.circular(20),
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(20),
-                    onTapDown: (TapDownDetails details) {
-                      final itemPosition = details.globalPosition;
-                      _startDownload(
-                        file['name'] as String,
-                        file['size'] as String,
-                        itemPosition,
-                      );
-                    },
-                    child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.download, color: Colors.white, size: 16),
-                          SizedBox(width: 4),
-                          Text(
-                            '下载',
+                  onTapDown: (TapDownDetails details) {
+                    final itemPosition = details.globalPosition;
+                    _startDownload(
+                      file['name'] as String,
+                      file['size'] as String,
+                      itemPosition,
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.download, color: Colors.white, size: 16),
+                        SizedBox(width: 4),
+                        Text('下载',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500)),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -401,28 +424,21 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
               color: Colors.blue.shade50,
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.download_done,
-              size: 40,
-              color: Colors.blue.shade600,
-            ),
+            child: Icon(Icons.download_done,
+                size: 40, color: Colors.blue.shade600),
           ),
           const SizedBox(height: 16),
           Text(
             '下载中心',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue.shade800,
-            ),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade800),
           ),
           const SizedBox(height: 8),
           Text(
             '点击文件右侧下载按钮查看 Paint 动画效果',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
         ],
       ),
@@ -472,23 +488,18 @@ class FlyingAnimationPainter extends CustomPainter {
   void _drawFlyingItem(Canvas canvas, FlyingPaintItem item) {
     final progress = item.controller.value;
 
-    // 使用贝塞尔曲线计算路径
     final curveProgress = Curves.easeInOut.transform(progress);
 
-    // 计算当前位置（带有弧线效果）
     final dx = item.startPosition.dx +
         (item.endPosition.dx - item.startPosition.dx) * curveProgress;
     final dy = item.startPosition.dy +
         (item.endPosition.dy - item.startPosition.dy) * curveProgress;
 
-    // 添加抛物线效果
     final controlPointOffset = -100.0 * math.sin(math.pi * curveProgress);
     final currentPosition = Offset(dx, dy + controlPointOffset);
 
-    // 计算缩放（从 1.2 到 0.2）
     final scale = progress < 0.7 ? 1.2 : 1.2 - (progress - 0.7) / 0.3 * 1.0;
 
-    // 计算透明度（在最后 20% 淡出）
     final opacity = progress < 0.8 ? 1.0 : 1.0 - (progress - 0.8) / 0.2;
 
     if (opacity <= 0) return;
@@ -497,16 +508,9 @@ class FlyingAnimationPainter extends CustomPainter {
     canvas.translate(currentPosition.dx, currentPosition.dy);
     canvas.scale(math.max(0.1, scale));
 
-    // 绘制外圈光晕（多层）
     _drawGlow(canvas, opacity);
-
-    // 绘制主圆圈
     _drawMainCircle(canvas, opacity);
-
-    // 绘制图标
     _drawIcon(canvas, opacity);
-
-    // 绘制尾迹效果
     _drawTrail(canvas, item, progress, opacity);
 
     canvas.restore();
@@ -517,17 +521,14 @@ class FlyingAnimationPainter extends CustomPainter {
       ..color = Colors.blue.withValues(alpha: 0.1 * opacity)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
 
-    // 外层光晕
     canvas.drawCircle(Offset.zero, 40, glowPaint);
 
-    // 中层光晕
     glowPaint.color = Colors.blue.withValues(alpha: 0.2 * opacity);
     glowPaint.maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
     canvas.drawCircle(Offset.zero, 30, glowPaint);
   }
 
   void _drawMainCircle(Canvas canvas, double opacity) {
-    // 渐变圆圈
     const rect = Rect.fromLTRB(-25, -25, 25, 25);
     final gradient = RadialGradient(
       colors: [
@@ -542,7 +543,6 @@ class FlyingAnimationPainter extends CustomPainter {
 
     canvas.drawCircle(Offset.zero, 25, circlePaint);
 
-    // 边框高光
     final borderPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.3 * opacity)
       ..style = PaintingStyle.stroke
@@ -552,14 +552,12 @@ class FlyingAnimationPainter extends CustomPainter {
   }
 
   void _drawIcon(Canvas canvas, double opacity) {
-    // 绘制下载图标（简化版）
     final iconPaint = Paint()
       ..color = Colors.white.withValues(alpha: opacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
 
-    // 箭头向下
     final path = Path();
     path.moveTo(0, -10);
     path.lineTo(0, 10);
@@ -567,7 +565,6 @@ class FlyingAnimationPainter extends CustomPainter {
     path.lineTo(0, 10);
     path.lineTo(8, 3);
 
-    // 底部横线
     path.moveTo(-10, 15);
     path.lineTo(10, 15);
 
@@ -578,12 +575,10 @@ class FlyingAnimationPainter extends CustomPainter {
       Canvas canvas, FlyingPaintItem item, double progress, double opacity) {
     if (progress < 0.1) return;
 
-    // 绘制运动轨迹尾迹
     final trailPaint = Paint()
       ..style = PaintingStyle.fill
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
-    // 计算前几帧的位置并绘制尾迹
     for (int i = 1; i <= 5; i++) {
       final trailProgress = math.max(0.0, progress - i * 0.02);
       if (trailProgress <= 0) break;
@@ -617,6 +612,6 @@ class FlyingAnimationPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(FlyingAnimationPainter oldDelegate) {
-    return true; // 始终重绘以确保动画流畅
+    return true;
   }
 }
