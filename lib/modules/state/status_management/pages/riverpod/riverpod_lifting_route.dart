@@ -1,29 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
 
 class RiverpodLiftingRoute extends ConsumerWidget {
   const RiverpodLiftingRoute({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Riverpod 状态提升')),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 520),
-          child: const Padding(
-            padding: EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _LDisplay(),
-                SizedBox(height: 16),
-                _LControls(),
-              ],
-            ),
-          ),
+    return LearningScaffold(
+      title: 'Riverpod 状态提升',
+      interactiveDemo: SizedBox(
+        height: 200,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _LDisplay(),
+            const SizedBox(height: 16),
+            _LControls(),
+          ],
         ),
       ),
+      sections: [
+        LearningObjectives(objectives: [
+          '理解 Riverpod 的状态提升模式',
+          '掌握 Provider 图谱中状态的共享机制',
+        ]),
+        ConceptChips(concepts: [
+          'Riverpod',
+          '状态提升',
+          'Provider 图谱',
+          'StateNotifierProvider',
+        ]),
+        CodeSnippetCard(
+          title: 'Riverpod 状态提升',
+          code: 'final liftProvider = StateNotifierProvider<LiftRP, int>(\n'
+              '  (ref) => LiftRP(),\n'
+              ');\n'
+              '// 任意组件可 watch/read 同一 Provider',
+          explanation: 'Provider 是全局的，无需 Widget 树传递，任意层级组件均可消费。',
+        ),
+        ExerciseCard(
+          task: '添加第三个组件同时消费 _liftProvider，验证共享状态。',
+          hint: '创建一个新的 ConsumerWidget 调用 ref.watch(_liftProvider)。',
+        ),
+      ],
     );
   }
 }
