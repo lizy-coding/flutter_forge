@@ -8,11 +8,31 @@
     "path": "lib/modules/async/stream_subscription",
     "status": "active"
   },
-  "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
-  "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["module_registry","go_router"],
+  "entrypoints": ["module_entry.dart","module_root.dart"],
+  "owns": ["module_entry","module_ui"],
+  "depends": ["flutter_study_learning","module_registry","go_router"],
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["models/message_model.dart","module_entry.dart","module_routes.dart","pages/broadcast_demo/broadcast_demo_page.dart","pages/home_page.dart","pages/stream_demo_controller.dart","pages/stream_demo_page.dart","services/stream_service.dart","utils/stream_utils.dart"],
+  "files": [
+    "module_entry.dart",
+    "module_root.dart",
+    "module_routes.dart",
+    "pages/home_page.dart",
+    "pages/stream_demo_page.dart",
+    "pages/broadcast_demo_page.dart",
+    "services/stream_service.dart",
+    "utils/stream_utils.dart"
+  ],
+  "teaching_components": {
+    "page": "module_root.dart",
+    "components": [
+      "LearningScaffold",
+      "LearningObjectives",
+      "ConceptChips",
+      "CodeSnippetCard",
+      "CommonPitfalls",
+      "ExerciseCard"
+    ]
+  },
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",
