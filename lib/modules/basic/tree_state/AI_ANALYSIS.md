@@ -14,7 +14,7 @@
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
   "files": ["module_entry.dart","module_routes.dart","pages/basic_widgets_page.dart","pages/demo_home_page.dart","pages/painter_demo_page.dart","pages/repaint_boundary_demo_page.dart","pages/state_lifecycle_page.dart"],
   "teaching_components": {
-    "page": "pages (全部 5 页)",
+    "page": "pages_all_5",
     "components": [
       "LearningScaffold",
       "LearningObjectives",

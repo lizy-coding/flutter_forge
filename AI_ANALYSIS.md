@@ -8,11 +8,122 @@
     "path": ".",
     "status": "active"
   },
-  "entrypoints": ["lib/main.dart","lib/app/app.dart","lib/app/router/app_route_table.dart"],
-  "owns": ["app_shell","module_registry","learning_modules","path_dependency_bindings"],
-  "depends": ["../gcode_core","../flutter_study_learning","../file_picker_bridge","../flutter_ioc_core","../flutterguard/packages/flutterguard_cli"],
-  "mutates": ["pubspec.yaml","lib/app/router/app_route_table.dart","lib/modules/**","macos/Runner/AppDelegate.swift"],
-  "files": [".flutter-plugins-dependencies",".githooks/pre-commit",".gitignore",".metadata","AGENTS.md","AI_PROJECT_CONTEXT.md","GCODE_VISUALIZER_EVOLUTION_PLAN.md","README.md","REFACTOR_PLAN.md","analysis_options.yaml","flutterguard.yaml","lib/AI_MODULE_INDEX.md","lib/app/app.dart","lib/app/router/AI_ANALYSIS.md","lib/app/router/app_route_table.dart","lib/app/router/app_router.dart","lib/main.dart","lib/module_registry/module_category.dart","lib/module_registry/module_entry.dart","lib/modules/async/isolate_basic/AI_ANALYSIS.md","lib/modules/async/isolate_basic/module_entry.dart","lib/modules/async/isolate_basic/module_root.dart","lib/modules/async/isolate_basic/module_routes.dart","lib/modules/async/isolate_basic/with_isolate_page.dart","lib/modules/async/isolate_basic/without_isolate_page.dart","lib/modules/async/isolate_task_manager/AI_ANALYSIS.md","lib/modules/async/isolate_task_manager/module_entry.dart","lib/modules/async/isolate_task_manager/module_root.dart","lib/modules/async/isolate_task_manager/task_manager.dart","lib/modules/async/stream_subscription/AI_ANALYSIS.md","lib/modules/async/stream_subscription/models/message_model.dart","lib/modules/async/stream_subscription/module_entry.dart","lib/modules/async/stream_subscription/module_routes.dart","lib/modules/async/stream_subscription/pages/broadcast_demo/broadcast_demo_page.dart","lib/modules/async/stream_subscription/pages/home_page.dart","lib/modules/async/stream_subscription/pages/stream_demo_controller.dart","lib/modules/async/stream_subscription/pages/stream_demo_page.dart","lib/modules/async/stream_subscription/services/stream_service.dart","lib/modules/async/stream_subscription/utils/stream_utils.dart","lib/modules/basic/debounce_throttle/AI_ANALYSIS.md","lib/modules/basic/debounce_throttle/module_entry.dart","lib/modules/basic/debounce_throttle/module_root.dart","lib/modules/basic/debounce_throttle/utils/debounce_throttle.dart","lib/modules/basic/microtask/AI_ANALYSIS.md","lib/modules/basic/microtask/core/models/event_log.dart","lib/modules/basic/microtask/core/widgets/code_snippet_view.dart","lib/modules/basic/microtask/core/widgets/event_log_view.dart","lib/modules/basic/microtask/features/advanced_examples/advanced_examples_page.dart","lib/modules/basic/microtask/features/event_queue/event_queue_page.dart","lib/modules/basic/microtask/features/home_page.dart","lib/modules/basic/microtask/features/microtask_queue/microtask_queue_page.dart","lib/modules/basic/microtask/module_entry.dart","lib/modules/basic/microtask/module_routes.dart","lib/modules/basic/tree_state/AI_ANALYSIS.md","lib/modules/basic/tree_state/module_entry.dart","lib/modules/basic/tree_state/module_routes.dart","lib/modules/basic/tree_state/pages/basic_widgets_page.dart","lib/modules/basic/tree_state/pages/demo_home_page.dart","lib/modules/basic/tree_state/pages/painter_demo_page.dart","lib/modules/basic/tree_state/pages/repaint_boundary_demo_page.dart","lib/modules/basic/tree_state/pages/state_lifecycle_page.dart","lib/modules/basic/tree_state/routes.dart","lib/modules/platform/dio_interceptor/AI_ANALYSIS.md","lib/modules/platform/dio_interceptor/mock_server/mock_server.dart","lib/modules/platform/dio_interceptor/models/article.dart","lib/modules/platform/dio_interceptor/module_entry.dart","lib/modules/platform/dio_interceptor/module_routes.dart","lib/modules/platform/dio_interceptor/network/api/api_service.dart","lib/modules/platform/dio_interceptor/network/http_client.dart","lib/modules/platform/dio_interceptor/network/interceptor/auth_interceptor.dart","lib/modules/platform/dio_interceptor/network/interceptor/error_interceptor.dart","lib/modules/platform/dio_interceptor/network/interceptor/log_interceptor.dart","lib/modules/platform/dio_interceptor/network/interceptor/retry_interceptor.dart","lib/modules/platform/dio_interceptor/pages/home_page.dart","lib/modules/platform/dio_interceptor/pages/login_page.dart","lib/modules/platform/usb_detector/AI_ANALYSIS.md","lib/modules/platform/usb_detector/models/usb_device_info.dart","lib/modules/platform/usb_detector/module_entry.dart","lib/modules/platform/usb_detector/module_root.dart","lib/modules/platform/usb_detector/services/usb_detection_service.dart","lib/modules/state/flutter_ioc/AI_ANALYSIS.md","lib/modules/state/flutter_ioc/model/counter_model.dart","lib/modules/state/flutter_ioc/module_entry.dart","lib/modules/state/flutter_ioc/module_root.dart","lib/modules/state/status_management/AI_ANALYSIS.md","lib/modules/state/status_management/app/app_routes.dart","lib/modules/state/status_management/app/route_paths.dart","lib/modules/state/status_management/app/state_flow_app.dart","lib/modules/state/status_management/features/bloc/bloc_route.dart","lib/modules/state/status_management/features/bloc/counter_bloc.dart","lib/modules/state/status_management/features/bloc/counter_event.dart","lib/modules/state/status_management/features/bloc/counter_state.dart","lib/modules/state/status_management/features/provider/models/counter_cn.dart","lib/modules/state/status_management/features/provider/models/counter_model.dart","lib/modules/state/status_management/features/provider/provider_future_route.dart","lib/modules/state/status_management/features/provider/provider_lifting_route.dart","lib/modules/state/status_management/features/provider/provider_route.dart","lib/modules/state/status_management/features/provider/provider_todo_route.dart","lib/modules/state/status_management/features/provider/widgets/granular_grid.dart","lib/modules/state/status_management/features/provider/widgets/provider_perks.dart","lib/modules/state/status_management/features/riverpod/riverpod_future_route.dart","lib/modules/state/status_management/features/riverpod/riverpod_lifting_route.dart","lib/modules/state/status_management/features/riverpod/riverpod_route.dart","lib/modules/state/status_management/features/riverpod/riverpod_todo_route.dart","lib/modules/state/status_management/module_entry.dart","lib/modules/state/status_management/shared/widgets/state_flow_scaffold.dart","lib/modules/ui/adsorption_line/AI_ANALYSIS.md","lib/modules/ui/adsorption_line/models/drawing_element.dart","lib/modules/ui/adsorption_line/module_entry.dart","lib/modules/ui/adsorption_line/services/adsorption_manager.dart","lib/modules/ui/adsorption_line/state/drawing_state.dart","lib/modules/ui/adsorption_line/widgets/drawing_board.dart","lib/modules/ui/adsorption_line/widgets/drawing_canvas.dart","lib/modules/ui/download_animation/AI_ANALYSIS.md","lib/modules/ui/download_animation/models/animation_config.dart","lib/modules/ui/download_animation/models/download_item.dart","lib/modules/ui/download_animation/models/overlay_download_item.dart","lib/modules/ui/download_animation/module_entry.dart","lib/modules/ui/download_animation/module_root.dart","lib/modules/ui/download_animation/module_routes.dart","lib/modules/ui/download_animation/pages/download_animation_page.dart","lib/modules/ui/download_animation/pages/download_comparison_page.dart","lib/modules/ui/download_animation/pages/paint_animation_page.dart","lib/modules/ui/download_animation/services/overlay_download_service.dart","lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md","lib/modules/ui/gcode_visualizer/module_entry.dart","lib/modules/ui/gcode_visualizer/pages/gcode_visualizer_page.dart","lib/modules/ui/gcode_visualizer/state/gcode_player_controller.dart","lib/modules/ui/gcode_visualizer/widgets/gcode_editor_panel.dart","lib/modules/ui/popup_widgets/AI_ANALYSIS.md","lib/modules/ui/popup_widgets/module_entry.dart","lib/modules/ui/popup_widgets/module_root.dart","lib/modules/ui/scroll_table/AI_ANALYSIS.md","lib/modules/ui/scroll_table/module_entry.dart","lib/modules/ui/scroll_table/module_root.dart","lib/modules/ui/scroll_table/widgets/scroll_table.dart","lib/shared/AI_ANALYSIS.md","lib/shared/platform/AI_ANALYSIS.md","macos/.gitignore","macos/Flutter/Flutter-Debug.xcconfig","macos/Flutter/Flutter-Release.xcconfig","macos/Flutter/GeneratedPluginRegistrant.swift","macos/Podfile","macos/Podfile.lock","macos/Runner.xcodeproj/project.pbxproj","macos/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist","macos/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme","macos/Runner.xcworkspace/contents.xcworkspacedata","macos/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist","macos/Runner/AppDelegate.swift","macos/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json","macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png","macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png","macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png","macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png","macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png","macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png","macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png","macos/Runner/Base.lproj/MainMenu.xib","macos/Runner/Configs/AppInfo.xcconfig","macos/Runner/Configs/Debug.xcconfig","macos/Runner/Configs/Release.xcconfig","macos/Runner/Configs/Warnings.xcconfig","macos/Runner/DebugProfile.entitlements","macos/Runner/Info.plist","macos/Runner/MainFlutterWindow.swift","macos/Runner/Release.entitlements","macos/RunnerTests/RunnerTests.swift","pubspec.lock","pubspec.yaml","tool/generate_harness_ai_analysis.sh","tool/migrate_sibling_packages.sh","windows/.gitignore","windows/CMakeLists.txt","windows/flutter/CMakeLists.txt","windows/flutter/generated_plugin_registrant.cc","windows/flutter/generated_plugin_registrant.h","windows/flutter/generated_plugins.cmake","windows/runner/CMakeLists.txt","windows/runner/Runner.rc","windows/runner/flutter_window.cpp","windows/runner/flutter_window.h","windows/runner/main.cpp","windows/runner/resource.h","windows/runner/resources/app_icon.ico","windows/runner/runner.exe.manifest","windows/runner/utils.cpp","windows/runner/utils.h","windows/runner/win32_window.cpp","windows/runner/win32_window.h"],
+  "entrypoints": [
+    "lib/main.dart",
+    "lib/app/app.dart",
+    "lib/app/router/app_route_table.dart"
+  ],
+  "architecture_layers": [
+    {
+      "path": "lib/app",
+      "role": "app_shell",
+      "owns": ["material_app_router", "go_router_root", "module_home_index"],
+      "analysis": ["lib/app/router/AI_ANALYSIS.md"]
+    },
+    {
+      "path": "lib/module_registry",
+      "role": "module_metadata_contract",
+      "owns": ["module_entry", "module_category", "difficulty", "module_status"],
+      "analysis": []
+    },
+    {
+      "path": "lib/shared",
+      "role": "business_free_shared_capabilities",
+      "owns": ["multi_window", "platform_boundary"],
+      "analysis": [
+        "lib/shared/AI_ANALYSIS.md",
+        "lib/shared/multi_window/AI_ANALYSIS.md",
+        "lib/shared/platform/AI_ANALYSIS.md"
+      ]
+    },
+    {
+      "path": "lib/modules",
+      "role": "learning_modules",
+      "owns": ["basic", "async", "state", "ui", "popup_table", "platform"],
+      "analysis": ["lib/AI_MODULE_INDEX.md", "lib/modules/**/AI_ANALYSIS.md"]
+    },
+    {
+      "path": "macos",
+      "role": "host_platform_integration",
+      "owns": ["desktop_runner", "multi_window_host", "file_picker_bridge_wiring"],
+      "analysis": ["lib/shared/platform/AI_ANALYSIS.md"]
+    }
+  ],
+  "module_summary": {
+    "total_registered": 17,
+    "by_category": {
+      "basic": 3,
+      "async": 3,
+      "state": 2,
+      "ui": 3,
+      "popup_table": 4,
+      "platform": 2
+    },
+    "by_status": {
+      "recommended": 4,
+      "ready": 13,
+      "pending": 0
+    },
+    "required_route_table": "lib/app/router/app_route_table.dart",
+    "required_index": "lib/AI_MODULE_INDEX.md"
+  },
+  "external_packages": [
+    "../gcode_core",
+    "../flutter_study_learning",
+    "../file_picker_bridge",
+    "../flutter_ioc_core",
+    "../flutterguard/packages/flutterguard_cli"
+  ],
+  "next_direction": [
+    {
+      "priority": 1,
+      "id": "stabilize_analysis_hierarchy",
+      "scope": [
+        "AI_ANALYSIS.md",
+        "lib/AI_MODULE_INDEX.md",
+        "tool/generate_harness_ai_analysis.sh"
+      ],
+      "actions": ["sync_schema", "remove_file_inventory", "enforce_layer_scope"],
+      "blocks": ["analysis_drift"]
+    },
+    {
+      "priority": 2,
+      "id": "split_large_popup_widgets",
+      "scope": ["lib/modules/popup_table/popup_widgets"],
+      "actions": ["split_module_root", "extract_widgets", "add_smoke_test"],
+      "blocks": ["large_file", "flutterguard_noise"]
+    },
+    {
+      "priority": 3,
+      "id": "raise_recommended_modules",
+      "scope": ["module_status_ready", "learning_scaffold_modules"],
+      "actions": ["verify_metadata", "verify_ai_analysis", "add_widget_smoke_tests"],
+      "blocks": ["status_inflation"]
+    },
+    {
+      "priority": 4,
+      "id": "shared_boundary_tests",
+      "scope": ["lib/shared/multi_window", "../file_picker_bridge"],
+      "actions": ["add_platform_mocks", "add_cancel_tests", "add_error_tests"],
+      "blocks": ["shared_regression"]
+    },
+    {
+      "priority": 5,
+      "id": "quality_noise_reduction",
+      "scope": ["flutterguard_medium_low", "module_widget_tests"],
+      "actions": ["triage_medium_low", "add_module_tests", "record_visual_acceptance"],
+      "blocks": ["quality_debt"]
+    }
+  ],
+  "update_policy": {
+    "syntax": "json_config",
+    "prose": "forbidden",
+    "markdown": "forbidden",
+    "root_file": ["layers", "module_totals", "package_boundaries", "next_direction"],
+    "layer_files": ["ownership", "entrypoints", "dependencies", "contracts", "validation"],
+    "module_files": ["structure", "data_flow", "key_classes", "teaching_components", "change_notes"],
+    "avoid": ["root_file_inventory", "module_internal_duplication"]
+  },
   "contracts": {
     "no_natural_language": true,
     "doc_consumer": "vibecoding",
@@ -20,5 +131,9 @@
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },
-  "validation": ["dart format .","flutter analyze","dart run flutterguard_cli:flutterguard scan --path . --fail-on high","flutter build macos"]
+  "validation": [
+    "dart format .",
+    "flutter analyze",
+    "dart run flutterguard_cli:flutterguard scan --path . --fail-on high"
+  ]
 }

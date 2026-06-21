@@ -14,11 +14,16 @@
   "mutates": ["AI_ANALYSIS.md","**/*.dart"],
   "files": ["module_entry.dart","module_root.dart"],
   "classes": {
-    "PopDemoHomePage": "StatefulWidget page entry",
-    "_PopDemoHomePageState": "Main state: LearningScaffold build, 9 demo trigger methods, chain/overlay dialog management",
-    "ChainOrderStore": "ValueNotifier-based data model for chain dialog ordering (open/close order)",
-    "_CupertinoDoubleTapTile": "GestureDetector tile for double-tap Cupertino dialog trigger",
-    "_ContextMenuTile": "GestureDetector tile for onTapDown context menu trigger"
+    "PopDemoHomePage": ["stateful_page_entry"],
+    "_PopDemoHomePageState": [
+      "learning_scaffold_builder",
+      "demo_trigger_methods_9",
+      "chain_dialog_state",
+      "overlay_dialog_state"
+    ],
+    "ChainOrderStore": ["value_notifier_model", "chain_dialog_order"],
+    "_CupertinoDoubleTapTile": ["gesture_detector", "cupertino_dialog_trigger"],
+    "_ContextMenuTile": ["gesture_detector", "context_menu_trigger"]
   },
   "contracts": {
     "no_natural_language": true,
@@ -30,14 +35,16 @@
   "validation": ["flutter analyze","flutter test"],
   "refactoring": {
     "date": "2026-06-15",
-    "summary": "Retrofit P0: Replaced PopScope+Scaffold with LearningScaffold from flutter_study_learning package",
+    "id": "retrofit_p0_learning_scaffold",
     "changes": [
-      "Removed PopScope exit confirmation (no back-swipe guard needed in teaching module)",
-      "Removed Drawer (AboutDialog moved into interactive demo list)",
-      "Removed AppBar actions (moved to interactive demo toolbar row)",
-      "Removed GlobalKey<ScaffoldState>/PersistentBottomSheetController (replaced with inline _showBottomSheet bool toggle)",
-      "Added 5 teaching sections: LearningObjectives, ConceptChips (×2 CodeSnippetCard), CommonPitfalls, ExerciseCard",
-      "Added smoke test test/popup_widgets/popup_widgets_page_test.dart"
+      "replace_scaffold_with_learning_scaffold",
+      "remove_popscope_exit_confirmation",
+      "remove_drawer",
+      "move_about_dialog_to_demo_list",
+      "move_appbar_actions_to_toolbar_row",
+      "replace_persistent_bottom_sheet_controller",
+      "add_teaching_sections_5",
+      "add_widget_smoke_test"
     ]
   }
 }
