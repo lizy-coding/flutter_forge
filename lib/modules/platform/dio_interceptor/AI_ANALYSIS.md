@@ -1,48 +1,43 @@
 {
-  "schema": "vibecoding.harness.ai_analysis.v1",
-  "mode": "harness",
+  "schema": "vibecoding.harness.ai_analysis.v2",
+  "mode": "module_contract",
   "node": {
     "id": "main_app.modules.platform.dio_interceptor",
     "kind": "learning_module",
     "package": "main_app",
     "path": "lib/modules/platform/dio_interceptor",
-    "status": "active"
+    "status": "ready"
   },
-  "entrypoints": ["module_entry.dart"],
-  "owns": ["module_entry","module_ui"],
-  "depends": ["flutter_study_learning","module_registry","go_router","dio"],
-  "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": [
+  "route": "/dio-interceptor",
+  "category": "platform",
+  "entrypoints": [
     "module_entry.dart",
     "module_routes.dart",
-    "mock_server/mock_server.dart",
-    "models/article.dart",
-    "network/http_client.dart",
-    "network/api/api_service.dart",
-    "network/interceptor/auth_interceptor.dart",
-    "network/interceptor/error_interceptor.dart",
-    "network/interceptor/log_interceptor.dart",
-    "network/interceptor/retry_interceptor.dart",
-    "pages/home_page.dart",
-    "pages/login_page.dart"
+    "pages"
   ],
-  "teaching_components": {
-    "page": "module_root.dart",
-    "components": [
-      "LearningScaffold",
-      "LearningObjectives",
-      "ConceptChips",
-      "CodeSnippetCard",
-      "CommonPitfalls",
-      "ExerciseCard"
-    ]
-  },
+  "owns": [
+    "module_entry",
+    "module_ui",
+    "module_docs"
+  ],
+  "depends": [
+    "flutter_study_learning",
+    "dio",
+    "module_registry",
+    "go_router"
+  ],
+  "children": [],
+  "analysis_parent": "lib/modules/platform/AI_ANALYSIS.md",
   "contracts": {
     "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
     "doc_consumer": "vibecoding",
     "doc_mode": "harness",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },
-  "validation": ["flutter analyze","flutter test"]
+  "validation": [
+    "flutter analyze"
+  ]
 }

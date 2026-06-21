@@ -2,26 +2,29 @@
   "schema": "vibecoding.harness.ai_analysis.v2",
   "mode": "index",
   "node": {
-    "id": "main_app.app.router",
-    "kind": "router_index",
+    "id": "main_app.modules.async",
+    "kind": "module_category_index",
     "package": "main_app",
-    "path": "lib/app/router",
+    "path": "lib/modules/async",
     "status": "active"
   },
   "entrypoints": [
-    "app_router.dart",
-    "app_route_table.dart"
+    "stream_subscription",
+    "isolate_basic",
+    "isolate_task_manager"
   ],
   "owns": [
-    "go_router_root",
-    "module_route_aggregation",
-    "module_home_index"
+    "async_concurrency"
   ],
   "depends": [
     "module_registry",
-    "modules"
+    "flutter_study_learning"
   ],
-  "children": [],
+  "children": [
+    "stream_subscription/AI_ANALYSIS.md",
+    "isolate_basic/AI_ANALYSIS.md",
+    "isolate_task_manager/AI_ANALYSIS.md"
+  ],
   "contracts": {
     "no_natural_language": true,
     "index_only": true,

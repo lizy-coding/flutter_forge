@@ -2,26 +2,29 @@
   "schema": "vibecoding.harness.ai_analysis.v2",
   "mode": "index",
   "node": {
-    "id": "main_app.app.router",
-    "kind": "router_index",
+    "id": "main_app.modules.platform",
+    "kind": "module_category_index",
     "package": "main_app",
-    "path": "lib/app/router",
+    "path": "lib/modules/platform",
     "status": "active"
   },
   "entrypoints": [
-    "app_router.dart",
-    "app_route_table.dart"
+    "dio_interceptor",
+    "usb_detector"
   ],
   "owns": [
-    "go_router_root",
-    "module_route_aggregation",
-    "module_home_index"
+    "network_platform"
   ],
   "depends": [
-    "module_registry",
-    "modules"
+    "dio",
+    "usb_serial",
+    "device_info_plus",
+    "flutter_study_learning"
   ],
-  "children": [],
+  "children": [
+    "dio_interceptor/AI_ANALYSIS.md",
+    "usb_detector/AI_ANALYSIS.md"
+  ],
   "contracts": {
     "no_natural_language": true,
     "index_only": true,

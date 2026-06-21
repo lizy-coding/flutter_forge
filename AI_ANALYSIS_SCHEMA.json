@@ -1,0 +1,72 @@
+{
+  "schema": "vibecoding.harness.ai_analysis_schema.v1",
+  "syntax": "json_config",
+  "prose": "forbidden",
+  "markdown": "forbidden",
+  "levels": {
+    "workspace": [
+      "AI_ANALYSIS.md"
+    ],
+    "section": [
+      "lib/AI_ANALYSIS.md",
+      "lib/app/AI_ANALYSIS.md",
+      "lib/module_registry/AI_ANALYSIS.md",
+      "lib/shared/AI_ANALYSIS.md",
+      "lib/modules/AI_ANALYSIS.md"
+    ],
+    "subsection": [
+      "lib/app/router/AI_ANALYSIS.md",
+      "lib/shared/platform/AI_ANALYSIS.md",
+      "lib/shared/multi_window/AI_ANALYSIS.md",
+      "lib/modules/basic/AI_ANALYSIS.md",
+      "lib/modules/async/AI_ANALYSIS.md",
+      "lib/modules/state/AI_ANALYSIS.md",
+      "lib/modules/ui/AI_ANALYSIS.md",
+      "lib/modules/popup_table/AI_ANALYSIS.md",
+      "lib/modules/platform/AI_ANALYSIS.md"
+    ],
+    "module_contract": [
+      "lib/modules/*/*/AI_ANALYSIS.md"
+    ]
+  },
+  "required_keys": [
+    "schema",
+    "mode",
+    "node",
+    "entrypoints",
+    "owns",
+    "depends",
+    "children",
+    "contracts",
+    "validation"
+  ],
+  "node_required_keys": [
+    "id",
+    "kind",
+    "package",
+    "path",
+    "status"
+  ],
+  "contracts_required": {
+    "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
+    "doc_consumer": "vibecoding",
+    "doc_mode": "harness"
+  },
+  "module_contract_policy": {
+    "keep_for_module_rule": true,
+    "content": [
+      "route",
+      "category",
+      "status",
+      "entrypoints",
+      "analysis_parent"
+    ],
+    "avoid": [
+      "class_descriptions",
+      "long_file_inventory",
+      "natural_language_notes"
+    ]
+  }
+}

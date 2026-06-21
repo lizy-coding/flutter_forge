@@ -1,30 +1,27 @@
 {
   "schema": "vibecoding.harness.ai_analysis.v2",
-  "mode": "module_contract",
+  "mode": "index",
   "node": {
-    "id": "main_app.modules.popup_table.popup_widgets",
-    "kind": "learning_module",
+    "id": "main_app.module_registry",
+    "kind": "registry_index",
     "package": "main_app",
-    "path": "lib/modules/popup_table/popup_widgets",
-    "status": "ready"
+    "path": "lib/module_registry",
+    "status": "active"
   },
-  "route": "/popup-widgets",
-  "category": "popup_table",
   "entrypoints": [
     "module_entry.dart",
-    "module_root.dart"
+    "module_category.dart"
   ],
   "owns": [
-    "module_entry",
-    "module_ui",
-    "module_docs"
+    "module_entry_model",
+    "module_category_enum",
+    "difficulty_enum",
+    "module_status_enum"
   ],
   "depends": [
-    "flutter_study_learning",
-    "module_registry"
+    "flutter_material"
   ],
   "children": [],
-  "analysis_parent": "lib/modules/popup_table/AI_ANALYSIS.md",
   "contracts": {
     "no_natural_language": true,
     "index_only": true,

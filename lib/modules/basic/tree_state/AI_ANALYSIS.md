@@ -1,35 +1,42 @@
 {
-  "schema": "vibecoding.harness.ai_analysis.v1",
-  "mode": "harness",
+  "schema": "vibecoding.harness.ai_analysis.v2",
+  "mode": "module_contract",
   "node": {
     "id": "main_app.modules.basic.tree_state",
     "kind": "learning_module",
     "package": "main_app",
     "path": "lib/modules/basic/tree_state",
-    "status": "active"
+    "status": "recommended"
   },
-  "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
-  "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["flutter_study_learning","module_registry","go_router"],
-  "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["module_entry.dart","module_routes.dart","pages/basic_widgets_page.dart","pages/demo_home_page.dart","pages/painter_demo_page.dart","pages/repaint_boundary_demo_page.dart","pages/state_lifecycle_page.dart"],
-  "teaching_components": {
-    "page": "pages_all_5",
-    "components": [
-      "LearningScaffold",
-      "LearningObjectives",
-      "ConceptChips",
-      "CodeSnippetCard",
-      "CommonPitfalls",
-      "ExerciseCard"
-    ]
-  },
+  "route": "/tree-state",
+  "category": "basic",
+  "entrypoints": [
+    "module_entry.dart",
+    "module_routes.dart",
+    "pages"
+  ],
+  "owns": [
+    "module_entry",
+    "module_ui",
+    "module_docs"
+  ],
+  "depends": [
+    "flutter_study_learning",
+    "module_registry",
+    "go_router"
+  ],
+  "children": [],
+  "analysis_parent": "lib/modules/basic/AI_ANALYSIS.md",
   "contracts": {
     "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
     "doc_consumer": "vibecoding",
     "doc_mode": "harness",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },
-  "validation": ["flutter analyze","flutter test"]
+  "validation": [
+    "flutter analyze"
+  ]
 }

@@ -2,26 +2,32 @@
   "schema": "vibecoding.harness.ai_analysis.v2",
   "mode": "index",
   "node": {
-    "id": "main_app.app.router",
-    "kind": "router_index",
+    "id": "main_app.modules.popup_table",
+    "kind": "module_category_index",
     "package": "main_app",
-    "path": "lib/app/router",
+    "path": "lib/modules/popup_table",
     "status": "active"
   },
   "entrypoints": [
-    "app_router.dart",
-    "app_route_table.dart"
+    "popup_widgets",
+    "popup_list_interaction",
+    "scroll_table",
+    "overlay_follow_compare"
   ],
   "owns": [
-    "go_router_root",
-    "module_route_aggregation",
-    "module_home_index"
+    "popup_overlay_table"
   ],
   "depends": [
     "module_registry",
-    "modules"
+    "flutter_study_learning",
+    "two_dimensional_scrollables"
   ],
-  "children": [],
+  "children": [
+    "popup_widgets/AI_ANALYSIS.md",
+    "popup_list_interaction/AI_ANALYSIS.md",
+    "scroll_table/AI_ANALYSIS.md",
+    "overlay_follow_compare/AI_ANALYSIS.md"
+  ],
   "contracts": {
     "no_natural_language": true,
     "index_only": true,

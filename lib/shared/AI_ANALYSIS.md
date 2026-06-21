@@ -1,24 +1,40 @@
 {
-  "schema": "vibecoding.harness.ai_analysis.v1",
-  "mode": "harness",
+  "schema": "vibecoding.harness.ai_analysis.v2",
+  "mode": "index",
   "node": {
     "id": "main_app.shared",
-    "kind": "shared_layer",
+    "kind": "shared_index",
     "package": "main_app",
     "path": "lib/shared",
-    "status": "transition"
+    "status": "active"
   },
-  "entrypoints": ["AI_ANALYSIS.md"],
-  "owns": ["boundary_docs","transition_layer"],
-  "depends": ["../flutter_study_learning","../file_picker_bridge"],
-  "mutates": ["AI_ANALYSIS.md","platform/AI_ANALYSIS.md"],
-  "files": ["platform/AI_ANALYSIS.md"],
+  "entrypoints": [
+    "multi_window",
+    "platform"
+  ],
+  "owns": [
+    "business_free_capabilities",
+    "desktop_windowing",
+    "platform_boundaries"
+  ],
+  "depends": [
+    "desktop_multi_window",
+    "../file_picker_bridge"
+  ],
+  "children": [
+    "multi_window/AI_ANALYSIS.md",
+    "platform/AI_ANALYSIS.md"
+  ],
   "contracts": {
     "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
     "doc_consumer": "vibecoding",
     "doc_mode": "harness",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },
-  "validation": ["flutter analyze"]
+  "validation": [
+    "flutter analyze"
+  ]
 }
