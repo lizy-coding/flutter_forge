@@ -12,7 +12,8 @@
   "category": "popup_table",
   "entrypoints": [
     "module_entry.dart",
-    "module_root.dart"
+    "module_root.dart",
+    "widgets"
   ],
   "owns": [
     "module_entry",

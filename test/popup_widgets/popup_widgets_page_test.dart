@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:main_app/modules/popup_table/popup_widgets/module_entry.dart';
 import 'package:main_app/modules/popup_table/popup_widgets/module_root.dart';
 
 void main() {
+  testWidgets('PopWidgetEntry renders module page', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: PopWidgetEntry(),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.text('Flutter 弹窗学习'), findsOneWidget);
+    expect(find.text('AlertDialog (普通对话框)'), findsOneWidget);
+  });
+
   testWidgets('PopDemoHomePage renders teaching components', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
