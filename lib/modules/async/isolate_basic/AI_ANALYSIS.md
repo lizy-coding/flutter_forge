@@ -1,24 +1,42 @@
 {
-  "schema": "vibecoding.harness.ai_analysis.v1",
-  "mode": "harness",
+  "schema": "vibecoding.harness.ai_analysis.v2",
+  "mode": "module_contract",
   "node": {
     "id": "main_app.modules.async.isolate_basic",
     "kind": "learning_module",
     "package": "main_app",
     "path": "lib/modules/async/isolate_basic",
-    "status": "active"
+    "status": "ready"
   },
-  "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
-  "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["module_registry","go_router"],
-  "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["module_entry.dart","module_root.dart","module_routes.dart","with_isolate_page.dart","without_isolate_page.dart"],
+  "route": "/isolate-basic",
+  "category": "async",
+  "entrypoints": [
+    "module_entry.dart",
+    "module_root.dart",
+    "module_routes.dart"
+  ],
+  "owns": [
+    "module_entry",
+    "module_ui",
+    "module_docs"
+  ],
+  "depends": [
+    "flutter_study_learning",
+    "module_registry",
+    "go_router"
+  ],
+  "children": [],
+  "analysis_parent": "lib/modules/async/AI_ANALYSIS.md",
   "contracts": {
     "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
     "doc_consumer": "vibecoding",
     "doc_mode": "harness",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },
-  "validation": ["flutter analyze","flutter test"]
+  "validation": [
+    "flutter analyze"
+  ]
 }

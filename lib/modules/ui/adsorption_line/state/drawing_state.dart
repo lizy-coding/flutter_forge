@@ -7,22 +7,38 @@ class DrawingState extends ChangeNotifier {
   DrawingElement? _selectedElement;
   bool _isDragging = false;
   Offset? _dragOffset;
+  final List<String> _logs = [];
 
   List<DrawingElement> get elements => List.unmodifiable(_elements);
   DrawingElement? get selectedElement => _selectedElement;
   bool get isDragging => _isDragging;
+  List<String> get logs => List.unmodifiable(_logs);
 
-  void addElement(DrawingElement element) {
-    _elements.add(element);
+  void _addLog(String message) {
+    _logs.add(message);
     notifyListeners();
   }
 
+  void addElement(DrawingElement element) {
+    _elements.add(element);
+    _addLog('添加了 ${element.type.name} 元素 (${_elements.length})');
+  }
+
   void removeElement(String elementId) {
+    final removed = _elements.firstWhere(
+      (e) => e.id == elementId,
+      orElse: () => const DrawingElement(
+        id: '',
+        position: Offset.zero,
+        size: Size.zero,
+        type: ElementType.rectangle,
+      ),
+    );
     _elements.removeWhere((element) => element.id == elementId);
     if (_selectedElement?.id == elementId) {
       _selectedElement = null;
     }
-    notifyListeners();
+    _addLog('删除了 ${removed.type.name} 元素');
   }
 
   void updateElement(DrawingElement updatedElement) {
@@ -41,11 +57,15 @@ class DrawingState extends ChangeNotifier {
     _selectedElement = elementId != null
         ? _elements.firstWhere((element) => element.id == elementId)
         : null;
+    if (_selectedElement != null) {
+      _addLog('选中了 ${_selectedElement!.type.name} 元素');
+    }
     notifyListeners();
   }
 
   void clearSelection() {
     _selectedElement = null;
+    _addLog('取消选中');
     notifyListeners();
   }
 
@@ -87,26 +107,30 @@ class DrawingState extends ChangeNotifier {
     _selectedElement = null;
     _isDragging = false;
     _dragOffset = null;
-    notifyListeners();
+    _addLog('清空画板');
   }
 
   /// 删除选中的元素
   void deleteSelectedElement() {
     if (_selectedElement != null) {
+      _addLog('删除了选中的 ${_selectedElement!.type.name} 元素');
       removeElement(_selectedElement!.id);
     }
+  }
+
+  void clearLogs() {
+    _logs.clear();
+    notifyListeners();
   }
 
   /// 处理键盘事件
   bool handleKeyEvent(KeyEvent event) {
     if (event is KeyDownEvent) {
-      // Delete键或Backspace键删除选中元素
       if (event.logicalKey == LogicalKeyboardKey.delete ||
           event.logicalKey == LogicalKeyboardKey.backspace) {
         deleteSelectedElement();
         return true;
       }
-      // Escape键取消选择
       if (event.logicalKey == LogicalKeyboardKey.escape) {
         clearSelection();
         return true;

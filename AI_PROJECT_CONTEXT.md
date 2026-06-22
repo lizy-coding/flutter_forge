@@ -37,19 +37,18 @@ lib/
 │   ├── module_entry.dart
 │   └── module_category.dart
 ├── shared/                # 共享能力
-│   ├── learning/
-│   │   └── learning_scaffold.dart  # 教学模板组件
-│   ├── platform/          # 平台通道与系统能力封装
-│   ├── widgets/
-│   ├── utils/
-│   └── theme/
-└── modules/               # 学习模块分区
-    ├── basic/             # 基础机制
-    ├── async/             # 异步并发
-    ├── state/             # 状态管理
-    ├── ui/                # UI 与动效
-    └── platform/          # 网络与平台
+│   ├── multi_window/      # 多窗口能力封装
+│   └── platform/          # 平台通道与系统能力封装
+├── modules/               # 学习模块分区
+│   ├── basic/             # 基础机制
+│   ├── async/             # 异步并发
+│   ├── state/             # 状态管理
+│   ├── ui/                # UI 与动效
+│   ├── popup_table/       # 弹窗与列表
+│   └── platform/          # 网络与平台
 ```
+
+教学模板组件由外部包 `flutter_study_learning` 提供（`LearningScaffold`、`LearningObjectives`、`ConceptChips`、`CodeSnippetCard`、`CommonPitfalls`、`ExerciseCard`、`StateLogView`）。
 
 ## 模块内部结构（推荐）
 

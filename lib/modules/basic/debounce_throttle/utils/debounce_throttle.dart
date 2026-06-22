@@ -10,6 +10,10 @@ class Debouncer {
     _timer?.cancel();
     _timer = Timer(delay, action);
   }
+
+  void dispose() {
+    _timer?.cancel();
+  }
 }
 
 class Throttle {

@@ -1,56 +1,39 @@
-```json
 {
-  "schema": "vibecoding.harness.ai_analysis.v1",
-  "mode": "harness",
+  "schema": "vibecoding.harness.ai_analysis.v2",
+  "mode": "index",
   "node": {
-    "identity": "shared/multi_window",
-    "path": "lib/shared/multi_window/",
-    "category": "shared",
-    "status": "ready"
+    "id": "main_app.shared.multi_window",
+    "kind": "shared_capability_index",
+    "package": "main_app",
+    "path": "lib/shared/multi_window",
+    "status": "active"
   },
-  "depends": [
-    "module_registry/module_category.dart",
-    "app/router/app_route_table.dart"
-  ],
-  "mutates": [],
-  "owns": [
+  "entrypoints": [
     "multi_window_manager.dart",
     "category_window_app.dart",
     "multi_window_route_filter.dart"
   ],
+  "owns": [
+    "desktop_window_lifecycle",
+    "category_window_router",
+    "module_route_filter"
+  ],
+  "depends": [
+    "desktop_multi_window",
+    "go_router",
+    "module_registry"
+  ],
+  "children": [],
   "contracts": {
-    "multi_window_manager": {
-      "description": "桌面平台多窗口管理器，创建/关闭/管理分类子窗口",
-      "entry": "MultiWindowManager",
-      "public_api": [
-        "MultiWindowManager.instance",
-        "MultiWindowManager.isSupported",
-        "createCategoryWindow(ModuleCategory)",
-        "closeCategoryWindow(ModuleCategory)",
-        "isCategoryOpen(ModuleCategory)",
-        "WindowArguments.fromJson(Map<String, dynamic>)"
-      ]
-    },
-    "category_window_app": {
-      "description": "子窗口 MaterialApp.router，按分类过滤路由",
-      "entry": "CategoryWindowApp",
-      "public_api": [
-        "CategoryWindowApp(category: ModuleCategory)",
-        "CategoryWindowApp.createRouter(ModuleCategory)"
-      ]
-    },
-    "multi_window_route_filter": {
-      "description": "按分类过滤 ModuleEntry 列表和路由",
-      "entry": "filterModulesByCategory",
-      "public_api": [
-        "filterModulesByCategory(List<ModuleEntry>, ModuleCategory)",
-        "buildCategoryRoutes(List<ModuleEntry>)"
-      ]
-    }
+    "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
+    "doc_consumer": "vibecoding",
+    "doc_mode": "harness",
+    "update_required_on_file_change": true,
+    "import_direction_enforced": true
   },
-  "validation": {
-    "lint": "dart format . && flutter analyze",
-    "scan": "dart run flutterguard_cli:flutterguard scan --path . --fail-on high"
-  }
+  "validation": [
+    "flutter analyze"
+  ]
 }
-```

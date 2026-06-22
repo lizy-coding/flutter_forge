@@ -1,24 +1,42 @@
 {
-  "schema": "vibecoding.harness.ai_analysis.v1",
-  "mode": "harness",
+  "schema": "vibecoding.harness.ai_analysis.v2",
+  "mode": "module_contract",
   "node": {
     "id": "main_app.modules.popup_table.scroll_table",
     "kind": "learning_module",
     "package": "main_app",
     "path": "lib/modules/popup_table/scroll_table",
-    "status": "active"
+    "status": "ready"
   },
-  "entrypoints": ["module_entry.dart","module_routes.dart","module_root.dart","pages","widgets","state"],
-  "owns": ["module_entry","module_ui","module_state","module_docs"],
-  "depends": ["two_dimensional_scrollables","module_registry"],
-  "mutates": ["AI_ANALYSIS.md","**/*.dart"],
-  "files": ["module_entry.dart","module_root.dart","widgets/scroll_table.dart"],
+  "route": "/scroll-table",
+  "category": "popup_table",
+  "entrypoints": [
+    "module_entry.dart",
+    "module_root.dart",
+    "widgets"
+  ],
+  "owns": [
+    "module_entry",
+    "module_ui",
+    "module_docs"
+  ],
+  "depends": [
+    "flutter_study_learning",
+    "two_dimensional_scrollables",
+    "module_registry"
+  ],
+  "children": [],
+  "analysis_parent": "lib/modules/popup_table/AI_ANALYSIS.md",
   "contracts": {
     "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
     "doc_consumer": "vibecoding",
     "doc_mode": "harness",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },
-  "validation": ["flutter analyze","flutter test"]
+  "validation": [
+    "flutter analyze"
+  ]
 }

@@ -1,0 +1,42 @@
+{
+  "schema": "vibecoding.harness.ai_analysis.v2",
+  "mode": "index",
+  "node": {
+    "id": "main_app.modules.ui",
+    "kind": "module_category_index",
+    "package": "main_app",
+    "path": "lib/modules/ui",
+    "status": "active"
+  },
+  "entrypoints": [
+    "gcode_visualizer",
+    "adsorption_line",
+    "download_animation"
+  ],
+  "owns": [
+    "ui_animation_custom_paint"
+  ],
+  "depends": [
+    "provider",
+    "gcode_core",
+    "file_picker_bridge",
+    "flutter_study_learning"
+  ],
+  "children": [
+    "gcode_visualizer/AI_ANALYSIS.md",
+    "adsorption_line/AI_ANALYSIS.md",
+    "download_animation/AI_ANALYSIS.md"
+  ],
+  "contracts": {
+    "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
+    "doc_consumer": "vibecoding",
+    "doc_mode": "harness",
+    "update_required_on_file_change": true,
+    "import_direction_enforced": true
+  },
+  "validation": [
+    "flutter analyze"
+  ]
+}

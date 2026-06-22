@@ -10,6 +10,7 @@ class GcodeEditorPanel extends StatefulWidget {
     required this.onResetSample,
     required this.errorCount,
     required this.commandCount,
+    required this.segmentCount,
     required this.hasParsed,
     required this.linesRead,
     required this.loadStageLabel,
@@ -23,6 +24,7 @@ class GcodeEditorPanel extends StatefulWidget {
   final VoidCallback onResetSample;
   final int errorCount;
   final int commandCount;
+  final int segmentCount;
   final bool hasParsed;
   final int linesRead;
   final String loadStageLabel;
@@ -68,8 +70,10 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 2, 8),
-            child: Row(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+            child: OverflowBar(
+              spacing: 4,
+              overflowAlignment: OverflowBarAlignment.end,
               children: [
                 Text(
                   'G-code 编辑器',
@@ -77,7 +81,6 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Spacer(),
                 _buildGestureButton(
                   hovered: _resetHovered,
                   pressed: _resetPressed,
@@ -99,7 +102,6 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 4),
                 _buildGestureButton(
                   hovered: _parseHovered,
                   pressed: _parsePressed,
@@ -161,79 +163,23 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
           if (widget.hasParsed || widget.loadMessage.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-              child: Row(
+              child: Wrap(
+                spacing: 6,
+                runSpacing: 4,
                 children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      widget.loadStageLabel,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  if (widget.linesRead > 0) ...[
-                    const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.teal.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        '${widget.linesRead} 行',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.teal,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                  const SizedBox(width: 6),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      '${widget.commandCount} 指令',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  if (widget.errorCount > 0) ...[
-                    const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        '${widget.errorCount} 错误',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.red,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
+                  _badge(widget.loadStageLabel, Colors.grey.shade700,
+                      Colors.grey.withValues(alpha: 0.12)),
+                  if (widget.linesRead > 0)
+                    _badge('${widget.linesRead} 行', Colors.teal,
+                        Colors.teal.withValues(alpha: 0.1)),
+                  _badge('${widget.commandCount} 指令', Colors.blue,
+                      Colors.blue.withValues(alpha: 0.1)),
+                  if (widget.segmentCount > 0)
+                    _badge('${widget.segmentCount} 轨迹段', Colors.teal,
+                        Colors.teal.withValues(alpha: 0.1)),
+                  if (widget.errorCount > 0)
+                    _badge('${widget.errorCount} 错误', Colors.red,
+                        Colors.red.withValues(alpha: 0.1)),
                 ],
               ),
             ),
@@ -253,6 +199,24 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _badge(String text, Color textColor, Color bgColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          color: textColor,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

@@ -25,6 +25,11 @@ class _FlutterIocEntryState extends State<FlutterIocEntry> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Provider<ioc.IoCContainer>.value(
       value: _container,

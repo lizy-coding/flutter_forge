@@ -70,6 +70,21 @@ class GcodePlayerController extends ChangeNotifier {
   int get totalCommands => _parseResult?.commands.length ?? 0;
   int get errorCount => _parseResult?.errors.length ?? 0;
 
+  ToolpathSegment? get currentSegment {
+    if (_segments.isEmpty) return null;
+    final totalSegments = _segments.length;
+    final idx = (_progress * totalSegments).floor().clamp(0, totalSegments - 1);
+    return _segments[idx];
+  }
+
+  double get currentSegmentProgress {
+    if (_segments.isEmpty) return 0;
+    final totalSegments = _segments.length;
+    final currentSegFloat = _progress * totalSegments;
+    final currentSegIndex = currentSegFloat.floor().clamp(0, totalSegments - 1);
+    return (currentSegFloat - currentSegIndex).clamp(0.0, 1.0);
+  }
+
   void updateSource(String value) {
     _source = value;
     notifyListeners();

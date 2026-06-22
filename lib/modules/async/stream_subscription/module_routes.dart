@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 
 import 'pages/stream_demo_page.dart';
-import 'pages/broadcast_demo/broadcast_demo_page.dart';
+import 'pages/broadcast_demo_page.dart';
 
 /// Stream 订阅机制模块子路由
 class StreamSubscriptionRoutes {

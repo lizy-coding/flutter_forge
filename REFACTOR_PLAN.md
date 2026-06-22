@@ -81,8 +81,9 @@ abstract class FilePickerService {
 
 ### 2.2 shared 能力治理
 
-- [ ] 为 `lib/shared/learning/` 补充/更新 `AI_ANALYSIS.md`
-- [ ] 为 `lib/shared/platform/` 建立边界: 只放跨平台/平台通道能力，不放具体业务解析逻辑
+- [x] 教学模板组件已从 `lib/shared/learning/` 抽出为外部 `flutter_study_learning` 包
+- [x] `file_picker` 已从 `lib/shared/platform/` 抽出为外部 `file_picker_bridge` 包
+- [x] 为 `lib/shared/platform/` 补充平台能力说明 `AI_ANALYSIS.md`
 - [ ] 共享能力必须提供业务无关接口，模块只能传入业务参数
 - [ ] 共享能力新增后必须至少被 1 个模块接入验证
 - [ ] 若 shared 能力 3 个月内仍只有 1 个模块使用，保留在 shared，但不升级为独立插件
@@ -94,7 +95,7 @@ abstract class FilePickerService {
 - [ ] `popup_widgets` — 拆分 895 行 `module_root.dart` 为独立页面
 - [ ] `debounce_throttle` — 迁移为 `module_entry + module_root + utils` 精简模式
 - [ ] `status_management` — 保持 app/features/shared 分层，添加测试
-- [ ] 所有模块补齐 `AI_ANALYSIS.md`（如有缺失）
+- [x] 所有模块补齐 `AI_ANALYSIS.md`（如有缺失）
 - [x] `gcode_visualizer` — 文件选择器抽到 `shared/platform/file_picker` 后更新模块分析文档
 
 ## Phase 4 — 测试与质量 🔲
@@ -111,9 +112,9 @@ abstract class FilePickerService {
 
 **目标**: 更多模块使用教学模板（`LearningScaffold`）。
 
-- [ ] `adsorption_line` — 改造为教学页面
-- [ ] `stream_subscription` — 改造为教学页面
-- [ ] `download_animation` — 改造为教学页面
+- [x] `adsorption_line` — 改造为教学页面
+- [x] `stream_subscription` — 改造为教学页面
+- [x] `download_animation` — 改造为教学页面
 
 ## Phase 6 — 项目整体归拢 🔲
 
@@ -150,8 +151,8 @@ dart run flutterguard_cli:flutterguard scan --path . --fail-on high
 
 ### 6.4 近期优先级
 
-1. 补齐 shared file picker 错误分支测试和非 macOS 平台降级说明
-2. `popup_widgets` 拆分大文件，降低 FlutterGuard MED/LOW 噪音
-3. `stream_subscription` 和 `download_animation` 改造为教学模板
-4. 建立 shared 能力测试模板，后续平台能力按同一模式接入
+1. 修正并稳定 `AI_ANALYSIS.md` 层级生成/维护规则，避免根文档再次退化为全量文件清单
+2. `popup_widgets` 拆分 900+ 行 `module_root.dart`，降低 FlutterGuard MED/LOW 噪音
+3. 为已使用 `LearningScaffold` 的 ready 模块补齐 Widget smoke test，满足后续推荐条件
+4. 建立 shared 能力测试模板，覆盖多窗口、平台桥接、取消/错误分支
 5. 对推荐模块逐步补齐截图或人工验收记录

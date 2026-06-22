@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
 
 class WithoutIsolatePage extends StatefulWidget {
   const WithoutIsolatePage({super.key});
@@ -14,8 +15,6 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
   String _result = '';
   double _progress = 0.0;
   final Stopwatch _stopwatch = Stopwatch();
-
-  // 添加动画控制器和动画值
   late AnimationController _animationController;
   late Animation<double> _animation;
   int _counter = 0;
@@ -23,13 +22,10 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
   @override
   void initState() {
     super.initState();
-    // 创建动画控制器
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-
-    // 创建动画
     _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
   }
 
@@ -39,112 +35,114 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
     super.dispose();
   }
 
-  // 增加计数器
   void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+    setState(() => _counter++);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('不使用 Isolate'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              '这个示例在主线程上执行大量的计算，期间界面会卡顿',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20),
-            LinearProgressIndicator(
-              value: _progress,
-              minHeight: 10,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isCalculating ? null : _startHeavyCalculation,
-              child: Text(_isCalculating ? '计算中...' : '开始计算'),
-            ),
-            const SizedBox(height: 10),
-
-            // 添加计数器和按钮来测试UI响应
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: _incrementCounter,
-                  child: const Text('点击测试响应'),
-                ),
-                const SizedBox(width: 20),
-                Text('计数: $_counter', style: const TextStyle(fontSize: 18)),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // 添加动画元素
-            AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                return Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: const [Colors.blue, Colors.purple],
-                      stops: [0, _animation.value],
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      '这个动画应该平滑运行',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                );
-              },
-            ),
-
-            const SizedBox(height: 20),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 500),
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
+    return LearningScaffold(
+      title: '不使用 Isolate',
+      interactiveDemo: SizedBox(
+        height: 500,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              LinearProgressIndicator(value: _progress, minHeight: 10),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: _isCalculating ? null : _startHeavyCalculation,
+                child: Text(_isCalculating ? '计算中...' : '开始计算'),
               ),
-              child: const Center(
-                child: Text(
-                  '尝试滑动和点击，感受界面响应',
-                  style: TextStyle(fontSize: 16),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: _incrementCounter,
+                      child: const Text('点击测试响应')),
+                  const SizedBox(width: 20),
+                  Text('计数: $_counter', style: const TextStyle(fontSize: 18)),
+                ],
+              ),
+              const SizedBox(height: 12),
+              AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: const [Colors.blue, Colors.purple],
+                        stops: [0, _animation.value],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text('这个动画应该平滑运行',
+                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.blue.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(
+                  child: Text('尝试滑动和点击，感受界面响应', style: TextStyle(fontSize: 16)),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text('结果:'),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(12),
+              const SizedBox(height: 12),
+              const Text('结果:', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 4),
+              Container(
+                height: 100,
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: SingleChildScrollView(
-                  child: Text(_result),
-                ),
+                child: SingleChildScrollView(child: Text(_result)),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+      sections: [
+        LearningObjectives(objectives: [
+          '理解主 Isolate 被阻塞时界面卡顿的原理',
+          '对比使用和不使用 Isolate 时的界面响应差异',
+          '掌握计算密集型任务对 UI 性能的影响',
+        ]),
+        ConceptChips(concepts: [
+          'Isolate',
+          '主线程',
+          'UI 卡顿',
+          '计算密集型',
+          '事件循环',
+        ]),
+        CodeSnippetCard(
+          title: '主线程计算的问题',
+          code: '// 主线程执行大量计算\n'
+              'void _findPrimes() {\n'
+              '  for (int i = 0; i < 20; i++) {\n'
+              '    _calculatePrimes(500000); // 阻塞 UI\n'
+              '    await Future.delayed(Duration.ms(1));\n'
+              '  }\n'
+              '}',
+          explanation: '计算在事件循环中执行，阻塞了 UI 渲染和手势处理。',
+        ),
+        ExerciseCard(
+          task: '点击"开始计算"后尝试点击测试按钮和观察动画，感受界面卡顿程度。',
+          hint: '对比"使用 Isolate"页面，体验两种方式的响应差异。',
+        ),
+      ],
     );
   }
 
@@ -156,36 +154,24 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
       _stopwatch.reset();
       _stopwatch.start();
     });
-
-    // 执行大量计算（计算大量的素数）
     _findPrimes();
   }
 
   void _findPrimes() async {
-    // 增加迭代次数和计算范围
     const int iterations = 20;
     const int maxNumber = 500000;
     List<int> primes = [];
-
     for (int i = 0; i < iterations; i++) {
-      // 更新进度
       setState(() {
         _progress = i / iterations;
         _result += '迭代 ${i + 1}/$iterations 开始...\n';
       });
-
-      // 计算素数
       primes = _calculatePrimes(maxNumber);
-
-      // 由于是在主线程上执行，UI会更新但会感到卡顿
-      // 添加一个很短的延迟来让UI有机会更新
       await Future.delayed(const Duration(milliseconds: 1));
-
       setState(() {
         _result += '找到 ${primes.length} 个素数 (≤ $maxNumber)\n';
       });
     }
-
     _stopwatch.stop();
     setState(() {
       _isCalculating = false;
@@ -196,11 +182,8 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
 
   List<int> _calculatePrimes(int max) {
     List<int> primes = [];
-
-    // 埃拉托斯特尼筛法 (Sieve of Eratosthenes)
     List<bool> sieve = List.filled(max + 1, true);
     sieve[0] = sieve[1] = false;
-
     for (int i = 2; i <= sqrt(max).floor(); i++) {
       if (sieve[i]) {
         for (int j = i * i; j <= max; j += i) {
@@ -208,13 +191,9 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
         }
       }
     }
-
-    // 额外增加更多计算量，使计算更耗时
     for (int number = 2; number <= max; number++) {
       if (sieve[number]) {
-        // 增加一些额外的计算
-        // 增加一些额外的计算以延长执行时间
-        // ignore: unused_local_variable, no_leading_underscores_for_local_identifiers
+        // ignore: unused_local_variable
         double sum = 0;
         for (int j = 0; j < 2000; j++) {
           sum += sin(j * 0.01) * cos(j * 0.01) * tan(j * 0.005);
@@ -222,7 +201,6 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
         primes.add(number);
       }
     }
-
     return primes;
   }
 }

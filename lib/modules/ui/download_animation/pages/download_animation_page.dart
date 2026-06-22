@@ -1,9 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:math' as math;
-import '../models/download_item.dart';
+import 'package:flutter_study_learning/flutter_study_learning.dart';
+
 import '../models/animation_config.dart';
+import '../models/download_item.dart';
 
 /// 下载动画页面组件
 class DownloadAnimationPage extends StatefulWidget {
@@ -23,10 +26,8 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
   final GlobalKey _downloadAreaKey = GlobalKey();
   Offset? _downloadAreaPosition;
 
-  // 使用AnimationConfig类管理动画参数
   late AnimationConfig animationConfig;
 
-  // 控制是否显示参数控制面板
   bool showControlPanel = false;
 
   @override
@@ -37,7 +38,6 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
       vsync: this,
     );
 
-    // 初始化动画配置 - 优先使用父组件传入的配置
     animationConfig = widget.animationConfig ?? const AnimationConfig();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -149,51 +149,142 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text('下载飞入动画'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 1,
-        actions: [
-          IconButton(
-            icon: Icon(showControlPanel ? Icons.close : Icons.settings),
-            onPressed: () {
-              setState(() {
-                showControlPanel = !showControlPanel;
-              });
-            },
-            tooltip: '动画设置',
+    return Stack(
+      children: [
+        LearningScaffold(
+          title: '下载飞入动画',
+          interactiveDemo: SizedBox(
+            height: 480,
+            child: Column(
+              children: [
+                _buildSettingsToggle(),
+                if (showControlPanel) _buildControlPanel(),
+                Flexible(child: _buildFileList()),
+                _buildDownloadArea(),
+              ],
+            ),
           ),
-        ],
-      ),
-      body: Stack(
+          sections: const [
+            LearningObjectives(
+              objectives: [
+                '理解 AnimationController 的生命周期管理——创建、forward、dispose。',
+                '掌握 Tween 与 CurvedAnimation 的组合使用来控制动画轨迹。',
+                '理解 AnimatedBuilder 的刷新机制——监听动画值变化重建 widget。',
+                '掌握 Stack + Positioned 实现元素飞入效果。',
+                '理解 Offset 动画与缩放、透明度动画的协同调度。',
+              ],
+            ),
+            ConceptChips(
+              concepts: [
+                'AnimationController',
+                'Tween',
+                'CurvedAnimation',
+                'AnimatedBuilder',
+                'Stack',
+                'Positioned',
+                'Interval',
+              ],
+            ),
+            CodeSnippetCard(
+              title: '飞入动画核心模式',
+              code: '''// 创建动画控制器
+final controller = AnimationController(
+  duration: Duration(seconds: 2),
+  vsync: this,
+);
+
+// 位置动画
+final positionAnim = Tween<Offset>(
+  begin: startPos,
+  end: endPos,
+).animate(CurvedAnimation(
+  parent: controller,
+  curve: Curves.easeInOut,
+));
+
+// 使用 AnimatedBuilder 驱动 widget
+AnimatedBuilder(
+  animation: controller,
+  builder: (context, child) {
+    return Positioned(
+      left: positionAnim.value.dx,
+      top: positionAnim.value.dy,
+      child: child!,
+    );
+  },
+  child: flyingWidget,
+);''',
+              explanation:
+                  'AnimationController 驱动 Tween 输出插值，AnimatedBuilder 监听动画变化并重建 widget 树，实现流畅的飞入效果。',
+            ),
+            CommonPitfalls(
+              pitfalls: [
+                'AnimationController 必须在使用后 dispose()，否则会造成内存泄漏。',
+                '在 State 中混入 TickerProviderStateMixin 才能创建 AnimationController。',
+                'AnimationController 的 duration 过短会导致动画卡顿，建议 800ms 以上。',
+                '多个动画组合时（位置+缩放+透明度），注意 Interval 的时间重叠，避免视觉冲突。',
+                'Positioned 必须在 Stack 中才能正确定位，否则会抛出布局异常。',
+              ],
+            ),
+            ExerciseCard(
+              task:
+                  '为每个文件添加不同的飞入颜色（如 PDF 蓝色、ZIP 橙色、视频红色），在 _buildFlyingItem 中根据 file type 设置不同的 Container 颜色。',
+              hint: '在 DownloadItem 中添加 color 字段，或在 _startDownload 时传入文件类型标记。',
+            ),
+          ],
+        ),
+        ...downloadItems.map((item) => _buildFlyingItem(item)),
+      ],
+    );
+  }
+
+  Widget _buildSettingsToggle() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, right: 4),
+      child: Row(
         children: [
-          Column(
-            children: [
-              if (showControlPanel) _buildControlPanel(),
-              _buildFileList(),
-              const SizedBox(height: 40),
-              _buildDownloadArea(),
-            ],
+          const SizedBox(width: 8),
+          Icon(Icons.tune,
+              size: 16, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(width: 4),
+          Text(
+            '下载演示',
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
           ),
-          ...downloadItems.map((item) => _buildFlyingItem(item)),
+          const Spacer(),
+          SizedBox(
+            width: 36,
+            height: 36,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              icon: Icon(
+                showControlPanel ? Icons.close : Icons.settings,
+                size: 20,
+              ),
+              onPressed: () {
+                setState(() {
+                  showControlPanel = !showControlPanel;
+                });
+              },
+              tooltip: '动画设置',
+            ),
+          ),
         ],
       ),
     );
   }
 
-  /// 构建动画参数控制面板
   Widget _buildControlPanel() {
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -201,118 +292,124 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
               '动画参数设置',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 14,
               ),
             ),
-            const SizedBox(height: 16),
-
-            // 动画持续时间滑块
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('动画持续时间: ${animationConfig.animationDuration} 毫秒'),
-                Slider(
-                  value: animationConfig.animationDuration.toDouble(),
-                  min: 500,
-                  max: 3000,
-                  divisions: 25,
-                  onChanged: (value) {
-                    setState(() {
-                      animationConfig = animationConfig.copyWith(
-                        animationDuration: value.toInt(),
-                      );
-                    });
-                  },
-                ),
-              ],
+            const SizedBox(height: 12),
+            _buildSliderRow(
+              label: '持续时间',
+              value: animationConfig.animationDuration.toDouble(),
+              min: 500,
+              max: 3000,
+              divisions: 25,
+              display: '${animationConfig.animationDuration} 毫秒',
+              onChanged: (v) {
+                setState(() {
+                  animationConfig = animationConfig.copyWith(
+                    animationDuration: v.toInt(),
+                  );
+                });
+              },
             ),
-
-            // 飞入点偏移量滑块
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('飞入点大小偏移: ${animationConfig.flyingItemOffset.toInt()}'),
-                Slider(
-                  value: animationConfig.flyingItemOffset,
-                  min: 10,
-                  max: 50,
-                  divisions: 40,
-                  onChanged: (value) {
-                    setState(() {
-                      animationConfig = animationConfig.copyWith(
-                        flyingItemOffset: value,
-                      );
-                    });
-                  },
-                ),
-              ],
+            _buildSliderRow(
+              label: '偏移量',
+              value: animationConfig.flyingItemOffset,
+              min: 10,
+              max: 50,
+              divisions: 40,
+              display: animationConfig.flyingItemOffset.toInt().toString(),
+              onChanged: (v) {
+                setState(() {
+                  animationConfig = animationConfig.copyWith(
+                    flyingItemOffset: v,
+                  );
+                });
+              },
             ),
-
-            // 飞入点内边距滑块
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('飞入点内边距: ${animationConfig.flyingItemPadding.toInt()}'),
-                Slider(
-                  value: animationConfig.flyingItemPadding,
-                  min: 4,
-                  max: 16,
-                  divisions: 12,
-                  onChanged: (value) {
-                    setState(() {
-                      animationConfig = animationConfig.copyWith(
-                        flyingItemPadding: value,
-                      );
-                    });
-                  },
-                ),
-              ],
+            _buildSliderRow(
+              label: '内边距',
+              value: animationConfig.flyingItemPadding,
+              min: 4,
+              max: 16,
+              divisions: 12,
+              display: animationConfig.flyingItemPadding.toInt().toString(),
+              onChanged: (v) {
+                setState(() {
+                  animationConfig = animationConfig.copyWith(
+                    flyingItemPadding: v,
+                  );
+                });
+              },
             ),
-
-            // 飞入点圆角滑块
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('飞入点圆角: ${animationConfig.flyingItemRadius.toInt()}'),
-                Slider(
-                  value: animationConfig.flyingItemRadius,
-                  min: 4,
-                  max: 16,
-                  divisions: 12,
-                  onChanged: (value) {
-                    setState(() {
-                      animationConfig = animationConfig.copyWith(
-                        flyingItemRadius: value,
-                      );
-                    });
-                  },
-                ),
-              ],
+            _buildSliderRow(
+              label: '圆角',
+              value: animationConfig.flyingItemRadius,
+              min: 4,
+              max: 16,
+              divisions: 12,
+              display: animationConfig.flyingItemRadius.toInt().toString(),
+              onChanged: (v) {
+                setState(() {
+                  animationConfig = animationConfig.copyWith(
+                    flyingItemRadius: v,
+                  );
+                });
+              },
             ),
-
-            // 飞入速度滑块
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                    '飞入速度: ${animationConfig.flyingSpeed.toStringAsFixed(1)}x'),
-                Slider(
-                  value: animationConfig.flyingSpeed,
-                  min: 0.5,
-                  max: 3.0,
-                  divisions: 25,
-                  onChanged: (value) {
-                    setState(() {
-                      animationConfig = animationConfig.copyWith(
-                        flyingSpeed: value,
-                      );
-                    });
-                  },
-                ),
-              ],
+            _buildSliderRow(
+              label: '速度',
+              value: animationConfig.flyingSpeed,
+              min: 0.5,
+              max: 3.0,
+              divisions: 25,
+              display: '${animationConfig.flyingSpeed.toStringAsFixed(1)}x',
+              onChanged: (v) {
+                setState(() {
+                  animationConfig = animationConfig.copyWith(
+                    flyingSpeed: v,
+                  );
+                });
+              },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSliderRow({
+    required String label,
+    required double value,
+    required double min,
+    required double max,
+    required int divisions,
+    required String display,
+    required ValueChanged<double> onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(label, style: const TextStyle(fontSize: 12)),
+              const Spacer(),
+              Text(display,
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+            ],
+          ),
+          SizedBox(
+            height: 28,
+            child: Slider(
+              value: value,
+              min: min,
+              max: max,
+              divisions: divisions,
+              onChanged: onChanged,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -331,45 +428,46 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
       {'name': '音频文件.mp3', 'size': '12.4 MB', 'icon': Icons.audiotrack},
     ];
 
-    return Expanded(
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: files.length,
-        itemBuilder: (context, index) {
-          final file = files[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 8),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      itemCount: files.length,
+      itemBuilder: (context, index) {
+        final file = files[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 4),
+          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: SizedBox(
+            height: 52,
             child: ListTile(
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
               leading: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
                   file['icon'] as IconData,
                   color: Colors.blue.shade600,
-                  size: 28,
+                  size: 20,
                 ),
               ),
               title: Text(
                 file['name'] as String,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 16,
+                  fontSize: 13,
                 ),
               ),
               subtitle: Text(
                 file['size'] as String,
                 style: TextStyle(
                   color: Colors.grey.shade600,
-                  fontSize: 14,
+                  fontSize: 11,
                 ),
               ),
               trailing: Container(
@@ -377,14 +475,13 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
                   gradient: LinearGradient(
                     colors: [Colors.blue.shade400, Colors.blue.shade600],
                   ),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                     onTapDown: (TapDownDetails details) {
-                      // 直接使用点击位置作为动画起始点
                       final itemPosition = details.globalPosition;
 
                       _startDownload(
@@ -395,17 +492,18 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
                     },
                     child: const Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.download, color: Colors.white, size: 16),
+                          Icon(Icons.download, color: Colors.white, size: 14),
                           SizedBox(width: 4),
                           Text(
                             '下载',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
+                              fontSize: 12,
                             ),
                           ),
                         ],
@@ -415,59 +513,58 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildDownloadArea() {
     return Container(
       key: _downloadAreaKey,
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.blue.shade200, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.shade100,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.shade200, width: 1.5),
       ),
-      child: Column(
+      child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.blue.shade50,
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.download_done,
-              size: 40,
+              size: 24,
               color: Colors.blue.shade600,
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            '下载中心',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue.shade800,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '点击文件右侧下载按钮查看飞入效果',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '下载中心',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade800,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '点击文件右侧下载按钮查看飞入效果',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -511,8 +608,8 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
                 ),
                 child: SvgPicture.asset(
                   'assets/icons/paper_plane.svg',
-                  width: 32,
-                  height: 32,
+                  width: 24,
+                  height: 24,
                   colorFilter: const ColorFilter.mode(
                     Colors.white,
                     BlendMode.srcIn,

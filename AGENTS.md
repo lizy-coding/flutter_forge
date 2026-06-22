@@ -19,7 +19,7 @@
 | `AI_ANALYSIS.md` | 模块分析文档：功能、文件结构、数据流、关键类、修改建议 |
 | 路由注册 | 在 `lib/router/app_route_table.dart` 的 `_modules` 中注册 |
 | 模块元数据 | `ModuleEntry` 必须填写 `category`、`difficulty`、`concepts`、`estimatedMinutes`、`status`、`subtitle` |
-| 教学页面 | 至少 1 个页面使用 `lib/shared/learning/` 中的教学模板组件 |
+| 教学页面 | 至少 1 个页面使用外部 `flutter_study_learning` 包中的教学模板组件（`LearningScaffold` 等） |
 
 ## 修改模块规则
 
@@ -57,7 +57,7 @@ dart run flutterguard_cli:flutterguard scan --path . --fail-on high
 
 1. 扫描 `lib/` 下所有模块目录，检查是否都在 `_modules` 中注册
 2. 检查每个模块是否有 `AI_ANALYSIS.md`
-3. 检查重点模块是否使用教学模板（`lib/shared/learning/`）
+3. 检查重点模块是否使用教学模板（`flutter_study_learning` 包）
 4. 检查 `ModuleEntry` 元数据是否完整（所有必填字段）
 5. 标记低质量模块的 `status` 为 `ModuleStatus.pending`
 6. 检查 `flutter analyze` 和 `dart format` 是否通过
@@ -73,11 +73,12 @@ git config core.hooksPath .githooks
 ## 模块分类枚举
 
 ```dart
-ModuleCategory.basic      // 基础机制
-ModuleCategory.async      // 异步并发
-ModuleCategory.state      // 状态管理
-ModuleCategory.ui         // UI 与动效
-ModuleCategory.platform   // 网络与平台
+ModuleCategory.basic       // 基础机制
+ModuleCategory.async       // 异步并发
+ModuleCategory.state       // 状态管理
+ModuleCategory.ui          // UI 与动效
+ModuleCategory.popupTable  // 弹窗与列表
+ModuleCategory.platform    // 网络与平台
 ```
 
 ## 难度等级枚举

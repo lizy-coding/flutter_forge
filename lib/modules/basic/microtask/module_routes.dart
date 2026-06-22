@@ -1,10 +1,9 @@
 import 'package:go_router/go_router.dart';
 
-import 'features/event_queue/event_queue_page.dart';
-import 'features/microtask_queue/microtask_queue_page.dart';
-import 'features/advanced_examples/advanced_examples_page.dart';
+import 'pages/event_queue_page.dart';
+import 'pages/microtask_queue_page.dart';
+import 'pages/advanced_examples_page.dart';
 
-/// 事件循环与微任务模块子路由
 class MicrotaskRoutes {
   MicrotaskRoutes._();
 
