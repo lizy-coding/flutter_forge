@@ -15,9 +15,10 @@
   "owns": [
     "go_router_root",
     "module_route_aggregation",
-    "module_home_index"
+    "module_catalog_composition"
   ],
   "depends": [
+    "app/module_home_page",
     "module_registry",
     "modules"
   ],
@@ -26,8 +27,8 @@
     "no_natural_language": true,
     "index_only": true,
     "max_index_depth": 2,
-    "doc_consumer": "vibecoding",
-    "doc_mode": "harness",
+    "doc_consumer": "coding_agent",
+    "doc_mode": "machine_contract",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },

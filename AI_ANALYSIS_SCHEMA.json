@@ -1,8 +1,15 @@
 {
-  "schema": "vibecoding.harness.ai_analysis_schema.v1",
+  "schema": "flutter_study.agent_docs.schema.v2",
   "syntax": "json_config",
   "prose": "forbidden",
   "markdown": "forbidden",
+  "generated_by": "tool/generate_agent_indexes.js",
+  "documents": {
+    "project_context": "AI_PROJECT_CONTEXT.md",
+    "refactor_plan": "REFACTOR_PLAN.md",
+    "module_index": "lib/AI_MODULE_INDEX.md",
+    "analysis_glob": "**/AI_ANALYSIS.md"
+  },
   "levels": {
     "workspace": [
       "AI_ANALYSIS.md"
@@ -51,8 +58,8 @@
     "no_natural_language": true,
     "index_only": true,
     "max_index_depth": 2,
-    "doc_consumer": "vibecoding",
-    "doc_mode": "harness"
+    "doc_consumer": "coding_agent",
+    "doc_mode": "machine_contract"
   },
   "module_contract_policy": {
     "keep_for_module_rule": true,

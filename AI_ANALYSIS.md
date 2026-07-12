@@ -10,6 +10,7 @@
   },
   "entrypoints": [
     "lib/main.dart",
+    "lib/app/app_bootstrap.dart",
     "lib/app/app.dart",
     "lib/app/router/app_route_table.dart"
   ],
@@ -38,12 +39,13 @@
     "no_natural_language": true,
     "index_only": true,
     "max_index_depth": 2,
-    "doc_consumer": "vibecoding",
-    "doc_mode": "harness",
+    "doc_consumer": "coding_agent",
+    "doc_mode": "machine_contract",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },
   "validation": [
+    "bash tool/generate_harness_ai_analysis.sh",
     "dart format .",
     "flutter analyze",
     "dart run flutterguard_cli:flutterguard scan --path . --fail-on high"

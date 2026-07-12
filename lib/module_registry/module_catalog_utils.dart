@@ -1,13 +1,13 @@
 import 'package:go_router/go_router.dart';
 
-import '../../module_registry/module_category.dart';
-import '../../module_registry/module_entry.dart';
+import 'module_category.dart';
+import 'module_entry.dart';
 
 List<ModuleEntry> filterModulesByCategory(
   List<ModuleEntry> allModules,
   ModuleCategory category,
 ) {
-  return allModules.where((m) => m.category == category).toList();
+  return allModules.where((module) => module.category == category).toList();
 }
 
 List<GoRoute> buildCategoryRoutes(List<ModuleEntry> modules) {
@@ -26,12 +26,12 @@ String _stripLeadingSlash(String path) {
 }
 
 List<GoRoute> _rebasedRoutes(List<GoRoute> routes) {
-  return routes.map((r) {
-    final strippedPath = r.path.startsWith('/') ? r.path.substring(1) : r.path;
+  return routes.map((route) {
+    final strippedPath = _stripLeadingSlash(route.path);
     return GoRoute(
       path: strippedPath,
-      builder: r.builder,
-      routes: r.routes,
+      builder: route.builder,
+      routes: route.routes,
     );
   }).toList();
 }
