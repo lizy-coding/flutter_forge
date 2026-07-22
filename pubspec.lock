@@ -232,10 +232,10 @@ packages:
   flutterguard_cli:
     dependency: "direct dev"
     description:
-      path: "../flutterguard/packages/flutterguard_cli"
+      path: "../flutterguard"
       relative: true
     source: path
-    version: "0.1.1"
+    version: "0.7.1"
   gcode_core:
     dependency: "direct main"
     description:
