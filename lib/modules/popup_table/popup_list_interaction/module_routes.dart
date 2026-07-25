@@ -10,13 +10,7 @@ class PopupListInteractionRoutes {
   static const String list = '/list';
 
   static List<GoRoute> get routes => [
-        GoRoute(
-          path: 'popup',
-          builder: (_, __) => const PopupPage(),
-        ),
-        GoRoute(
-          path: 'list',
-          builder: (_, __) => const ListPage(),
-        ),
-      ];
+    GoRoute(path: 'popup', builder: (_, __) => const PopupPage()),
+    GoRoute(path: 'list', builder: (_, __) => const ListPage()),
+  ];
 }

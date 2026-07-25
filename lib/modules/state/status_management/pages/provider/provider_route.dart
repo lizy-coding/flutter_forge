@@ -40,19 +40,24 @@ class ProviderRoute extends StatelessWidget {
               extra: const ProviderPerks(),
             ),
             sections: [
-              LearningObjectives(objectives: [
-                '理解 Provider + ChangeNotifier 的状态刷新链路',
-                '掌握 context.select 的粒度刷新机制',
-              ]),
-              ConceptChips(concepts: [
-                'Provider',
-                'ChangeNotifier',
-                'notifyListeners',
-                'context.select',
-              ]),
+              LearningObjectives(
+                objectives: [
+                  '理解 Provider + ChangeNotifier 的状态刷新链路',
+                  '掌握 context.select 的粒度刷新机制',
+                ],
+              ),
+              ConceptChips(
+                concepts: [
+                  'Provider',
+                  'ChangeNotifier',
+                  'notifyListeners',
+                  'context.select',
+                ],
+              ),
               CodeSnippetCard(
                 title: 'Provider 粒度刷新',
-                code: 'final value = context.select<CN, int>((s) => s.value);\n'
+                code:
+                    'final value = context.select<CN, int>((s) => s.value);\n'
                     'context.read<CN>().increment();',
                 explanation: 'select 只监听指定字段，字段未变时 Widget 不会重建。',
               ),

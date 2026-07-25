@@ -14,14 +14,14 @@ class StatusManagementRoutes {
   StatusManagementRoutes._();
 
   static Map<String, WidgetBuilder> get routes => {
-        '/provider': (_) => const ProviderRoute(),
-        '/provider/lifting': (_) => const ProviderLiftingRoute(),
-        '/provider/future': (_) => const ProviderFutureRoute(),
-        '/provider/todo': (_) => const ProviderTodoRoute(),
-        '/riverpod': (_) => const RiverpodRoute(),
-        '/riverpod/lifting': (_) => const RiverpodLiftingRoute(),
-        '/riverpod/future': (_) => const RiverpodFutureRoute(),
-        '/riverpod/todo': (_) => const RiverpodTodoRoute(),
-        '/bloc': (_) => const BlocRoute(),
-      };
+    '/provider': (_) => const ProviderRoute(),
+    '/provider/lifting': (_) => const ProviderLiftingRoute(),
+    '/provider/future': (_) => const ProviderFutureRoute(),
+    '/provider/todo': (_) => const ProviderTodoRoute(),
+    '/riverpod': (_) => const RiverpodRoute(),
+    '/riverpod/lifting': (_) => const RiverpodLiftingRoute(),
+    '/riverpod/future': (_) => const RiverpodFutureRoute(),
+    '/riverpod/todo': (_) => const RiverpodTodoRoute(),
+    '/bloc': (_) => const BlocRoute(),
+  };
 }

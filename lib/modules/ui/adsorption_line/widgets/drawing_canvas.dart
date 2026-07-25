@@ -45,10 +45,7 @@ class DrawingCanvasPainter extends CustomPainter {
   final List<DrawingElement> elements;
   final DrawingElement? selectedElement;
 
-  DrawingCanvasPainter({
-    required this.elements,
-    this.selectedElement,
-  });
+  DrawingCanvasPainter({required this.elements, this.selectedElement});
 
   @override
   void paint(Canvas canvas, Size size) {

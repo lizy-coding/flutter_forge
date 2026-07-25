@@ -43,7 +43,8 @@ class _PainterDemoPageState extends State<PainterDemoPage> {
                           _radius = value;
                         });
                         _logs.add(
-                            'Slider → radius=${_radius.toStringAsFixed(0)}');
+                          'Slider → radius=${_radius.toStringAsFixed(0)}',
+                        );
                       },
                     ),
                   ),
@@ -72,14 +73,22 @@ class _PainterDemoPageState extends State<PainterDemoPage> {
               child: ListView(
                 children: _logs.isEmpty
                     ? [
-                        const Text('拖动 Slider 观察 paint 和 shouldRepaint 日志',
-                            style: TextStyle(color: Colors.grey, fontSize: 12))
+                        const Text(
+                          '拖动 Slider 观察 paint 和 shouldRepaint 日志',
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        ),
                       ]
                     : _logs
-                        .map((l) => Text(l,
-                            style: const TextStyle(
-                                fontSize: 11, fontFamily: 'monospace')))
-                        .toList(),
+                          .map(
+                            (l) => Text(
+                              l,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                          )
+                          .toList(),
               ),
             ),
           ],
@@ -99,7 +108,7 @@ class _PainterDemoPageState extends State<PainterDemoPage> {
             'CustomPainter',
             'shouldRepaint',
             'Canvas',
-            'paint'
+            'paint',
           ],
         ),
         CodeSnippetCard(
@@ -158,9 +167,15 @@ class PainterDemoPainter extends CustomPainter {
       ..color = Colors.grey
       ..strokeWidth = 1;
     canvas.drawLine(
-        Offset(center.dx, 0), Offset(center.dx, size.height), axisPaint);
+      Offset(center.dx, 0),
+      Offset(center.dx, size.height),
+      axisPaint,
+    );
     canvas.drawLine(
-        Offset(0, center.dy), Offset(size.width, center.dy), axisPaint);
+      Offset(0, center.dy),
+      Offset(size.width, center.dy),
+      axisPaint,
+    );
 
     final fillPaint = Paint()
       ..color = Colors.blueAccent.withValues(alpha: 0.3)

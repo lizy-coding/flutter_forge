@@ -132,9 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           const SizedBox(height: 16),
                           Text(
                             _isInitialized ? '未检测到USB设备' : 'USB服务未初始化',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
+                            style: Theme.of(context).textTheme.bodyLarge
                                 ?.copyWith(color: Colors.grey[600]),
                           ),
                         ],
@@ -169,8 +167,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: _getStatusColor(device.status)
-                                    .withValues(alpha: 0.1),
+                                color: _getStatusColor(
+                                  device.status,
+                                ).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: _getStatusColor(device.status),
@@ -195,21 +194,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Flutter 中 USB 设备检测的实现方式',
-          '掌握 MethodChannel 与原生平台通信的模式',
-          '学会使用 Stream 监听设备插拔事件',
-        ]),
-        ConceptChips(concepts: [
-          'USB',
-          '设备检测',
-          'MethodChannel',
-          'Stream',
-          '平台通道',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Flutter 中 USB 设备检测的实现方式',
+            '掌握 MethodChannel 与原生平台通信的模式',
+            '学会使用 Stream 监听设备插拔事件',
+          ],
+        ),
+        ConceptChips(
+          concepts: ['USB', '设备检测', 'MethodChannel', 'Stream', '平台通道'],
+        ),
         CodeSnippetCard(
           title: 'USB 检测服务使用',
-          code: 'final service = UsbDetectionService();\n'
+          code:
+              'final service = UsbDetectionService();\n'
               'await service.initialize();\n'
               'service.deviceStream.listen((devices) {\n'
               '  // 设备列表更新\n'
@@ -221,11 +219,13 @@ class _MyHomePageState extends State<MyHomePage> {
               'service.dispose();',
           explanation: 'UsbDetectionService 封装了平台通道调用和设备状态管理。',
         ),
-        CommonPitfalls(pitfalls: [
-          'USB 检测需要平台特定权限 — macOS 需在 entitlements 中声明，Android 需声明 USB 权限',
-          '平台通道需在后台线程操作 — USB 通信可能阻塞，避免在主 Isolate 中执行耗时操作',
-          '设备热插拔监听需及时注册 — initState 中启动监听，dispose 中释放',
-        ]),
+        CommonPitfalls(
+          pitfalls: [
+            'USB 检测需要平台特定权限 — macOS 需在 entitlements 中声明，Android 需声明 USB 权限',
+            '平台通道需在后台线程操作 — USB 通信可能阻塞，避免在主 Isolate 中执行耗时操作',
+            '设备热插拔监听需及时注册 — initState 中启动监听，dispose 中释放',
+          ],
+        ),
         ExerciseCard(
           task: '实现设备连接时的 Toast 或 SnackBar 提示，当 USB 设备插入时自动弹出通知。',
           hint:

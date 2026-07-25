@@ -30,15 +30,9 @@ class MultiWindowManager {
       _categoryWindows.remove(category);
     }
 
-    final args = jsonEncode({
-      'type': 'category',
-      'category': category.name,
-    });
+    final args = jsonEncode({'type': 'category', 'category': category.name});
 
-    final config = WindowConfiguration(
-      hiddenAtLaunch: true,
-      arguments: args,
-    );
+    final config = WindowConfiguration(hiddenAtLaunch: true, arguments: args);
 
     final controller = await WindowController.create(config);
     await controller.show();

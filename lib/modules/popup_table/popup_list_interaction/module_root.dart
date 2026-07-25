@@ -34,29 +34,36 @@ class PopupListInteractionHome extends StatelessWidget {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '掌握 Flutter 弹窗组件（Dialog、BottomSheet、Overlay）的使用',
-          '理解二维滚动表格的原理与实现',
-          '学习弹窗与列表的协同交互方式',
-        ]),
-        ConceptChips(concepts: [
-          'Dialog',
-          'BottomSheet',
-          'Overlay',
-          'ContextMenu',
-          'TableView',
-          '二维滚动',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '掌握 Flutter 弹窗组件（Dialog、BottomSheet、Overlay）的使用',
+            '理解二维滚动表格的原理与实现',
+            '学习弹窗与列表的协同交互方式',
+          ],
+        ),
+        ConceptChips(
+          concepts: [
+            'Dialog',
+            'BottomSheet',
+            'Overlay',
+            'ContextMenu',
+            'TableView',
+            '二维滚动',
+          ],
+        ),
         CodeSnippetCard(
           title: '弹窗与列表路由配置',
-          code: "context.push(PopupListInteractionRoutes.popup);\n"
+          code:
+              "context.push(PopupListInteractionRoutes.popup);\n"
               "context.push(PopupListInteractionRoutes.list);",
           explanation: '模块内部使用 go_router 子路由管理多个演示页面。',
         ),
-        CommonPitfalls(pitfalls: [
-          'OverlayEntry 需在 dispose 时清理 — 否则会造成内存泄漏',
-          'BottomSheet 在 ListView 中可能出现手势冲突 — 注意 GestureDetector 的嵌套',
-        ]),
+        CommonPitfalls(
+          pitfalls: [
+            'OverlayEntry 需在 dispose 时清理 — 否则会造成内存泄漏',
+            'BottomSheet 在 ListView 中可能出现手势冲突 — 注意 GestureDetector 的嵌套',
+          ],
+        ),
         ExerciseCard(
           task: '在列表页中长按列表项弹出 ContextMenu，选择后执行对应操作。',
           hint:

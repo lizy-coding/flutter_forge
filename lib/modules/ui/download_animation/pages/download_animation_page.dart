@@ -51,7 +51,8 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
     if (renderBox != null) {
       final position = renderBox.localToGlobal(Offset.zero);
       setState(() {
-        _downloadAreaPosition = position +
+        _downloadAreaPosition =
+            position +
             Offset(renderBox.size.width / 2, renderBox.size.height / 2);
       });
     }
@@ -76,9 +77,10 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
   void _animateDownload(DownloadItem item) {
     final animationController = AnimationController(
       duration: Duration(
-          milliseconds:
-              (animationConfig.animationDuration / animationConfig.flyingSpeed)
-                  .round()),
+        milliseconds:
+            (animationConfig.animationDuration / animationConfig.flyingSpeed)
+                .round(),
+      ),
       vsync: this,
     );
 
@@ -92,21 +94,19 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
       end: item.endPosition,
     ).animate(curveAnimation);
 
-    final scaleAnimation = Tween<double>(
-      begin: 1.2,
-      end: 0.2,
-    ).animate(CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.7, 1.0, curve: Curves.easeIn),
-    ));
+    final scaleAnimation = Tween<double>(begin: 1.2, end: 0.2).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.7, 1.0, curve: Curves.easeIn),
+      ),
+    );
 
-    final opacityAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.8, 1.0, curve: Curves.easeIn),
-    ));
+    final opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.8, 1.0, curve: Curves.easeIn),
+      ),
+    );
 
     item.positionAnimation = positionAnimation;
     item.scaleAnimation = scaleAnimation;
@@ -244,14 +244,17 @@ AnimatedBuilder(
       child: Row(
         children: [
           const SizedBox(width: 8),
-          Icon(Icons.tune,
-              size: 16, color: Theme.of(context).colorScheme.primary),
+          Icon(
+            Icons.tune,
+            size: 16,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           const SizedBox(width: 4),
           Text(
             '下载演示',
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           const Spacer(),
           SizedBox(
@@ -280,9 +283,7 @@ AnimatedBuilder(
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -290,10 +291,7 @@ AnimatedBuilder(
           children: [
             const Text(
               '动画参数设置',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             const SizedBox(height: 12),
             _buildSliderRow(
@@ -365,9 +363,7 @@ AnimatedBuilder(
               display: '${animationConfig.flyingSpeed.toStringAsFixed(1)}x',
               onChanged: (v) {
                 setState(() {
-                  animationConfig = animationConfig.copyWith(
-                    flyingSpeed: v,
-                  );
+                  animationConfig = animationConfig.copyWith(flyingSpeed: v);
                 });
               },
             ),
@@ -395,8 +391,10 @@ AnimatedBuilder(
             children: [
               Text(label, style: const TextStyle(fontSize: 12)),
               const Spacer(),
-              Text(display,
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+              Text(
+                display,
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              ),
             ],
           ),
           SizedBox(
@@ -419,7 +417,7 @@ AnimatedBuilder(
       {
         'name': 'Flutter开发指南.pdf',
         'size': '15.2 MB',
-        'icon': Icons.picture_as_pdf
+        'icon': Icons.picture_as_pdf,
       },
       {'name': '项目源码.zip', 'size': '89.5 MB', 'icon': Icons.folder_zip},
       {'name': '设计稿.psd', 'size': '234.7 MB', 'icon': Icons.image},
@@ -436,14 +434,14 @@ AnimatedBuilder(
         return Card(
           margin: const EdgeInsets.only(bottom: 4),
           elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           child: SizedBox(
             height: 52,
             child: ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 0,
+              ),
               leading: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
@@ -465,10 +463,7 @@ AnimatedBuilder(
               ),
               subtitle: Text(
                 file['size'] as String,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
               ),
               trailing: Container(
                 decoration: BoxDecoration(
@@ -491,8 +486,10 @@ AnimatedBuilder(
                       );
                     },
                     child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -559,10 +556,7 @@ AnimatedBuilder(
               const SizedBox(height: 2),
               Text(
                 '点击文件右侧下载按钮查看飞入效果',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
               ),
             ],
           ),
@@ -591,7 +585,8 @@ AnimatedBuilder(
                 decoration: BoxDecoration(
                   color: Colors.blue.shade600,
                   borderRadius: BorderRadius.circular(
-                      animationConfig.flyingItemRadius + 2),
+                    animationConfig.flyingItemRadius + 2,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.blue.shade300,

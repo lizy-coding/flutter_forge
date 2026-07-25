@@ -8,11 +8,12 @@ const List<String> kChainDialogIds = <String>['A', 'B', 'C'];
 
 class ChainOrderStore {
   ChainOrderStore({List<String>? initial})
-      : openOrder =
-            ValueNotifier<List<String>>(List.of(initial ?? kChainDialogIds)),
-        closeOrder = ValueNotifier<List<String>>(
-          List.of((initial ?? kChainDialogIds).reversed),
-        );
+    : openOrder = ValueNotifier<List<String>>(
+        List.of(initial ?? kChainDialogIds),
+      ),
+      closeOrder = ValueNotifier<List<String>>(
+        List.of((initial ?? kChainDialogIds).reversed),
+      );
 
   final ValueNotifier<List<String>> openOrder;
   final ValueNotifier<List<String>> closeOrder;
@@ -124,8 +125,9 @@ class _PopupDemoToolbar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        border:
-            Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
+        ),
       ),
       child: Row(
         children: [
@@ -278,11 +280,15 @@ class _NavigatorChainSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('顺序链式弹窗（自定义开关顺序）',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            '顺序链式弹窗（自定义开关顺序）',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 6),
-          Text('示例：打开 A→B→C；关闭 B→A→C',
-              style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            '示例：打开 A→B→C；关闭 B→A→C',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -324,8 +330,10 @@ class _OverlayChainSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Overlay 链式弹窗（对比 Navigator）',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Overlay 链式弹窗（对比 Navigator）',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 6),
           ValueListenableBuilder<List<String>>(
             valueListenable: orderStore.openOrder,

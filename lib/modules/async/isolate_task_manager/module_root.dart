@@ -86,12 +86,15 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
                             children: [
                               Text(
                                 task.name,
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineSmall,
                               ),
                               if (task.isCompleted)
-                                const Icon(Icons.check_circle,
-                                    color: Colors.green)
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                )
                               else
                                 IconButton(
                                   icon: const Icon(Icons.close),
@@ -116,14 +119,14 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
                                 task.isCompleted
                                     ? '已完成'
                                     : task.isPaused
-                                        ? '已暂停'
-                                        : '进行中',
+                                    ? '已暂停'
+                                    : '进行中',
                                 style: TextStyle(
                                   color: task.isCompleted
                                       ? Colors.green
                                       : task.isPaused
-                                          ? Colors.orange
-                                          : Colors.blue,
+                                      ? Colors.orange
+                                      : Colors.blue,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -134,9 +137,11 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: Icon(task.isPaused
-                                      ? Icons.play_arrow
-                                      : Icons.pause),
+                                  icon: Icon(
+                                    task.isPaused
+                                        ? Icons.play_arrow
+                                        : Icons.pause,
+                                  ),
                                   onPressed: task.isPaused
                                       ? () => _resumeTask(task)
                                       : () => _pauseTask(task),
@@ -152,22 +157,20 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
               ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Isolate 多任务并行执行的原理',
-          '掌握通过 Stream 实时监控任务进度',
-          '学会管理多个 Isolate 的生命周期',
-        ]),
-        ConceptChips(concepts: [
-          'Isolate',
-          '多任务',
-          'Stream',
-          '进度上报',
-          '暂停/恢复',
-          '并发控制',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Isolate 多任务并行执行的原理',
+            '掌握通过 Stream 实时监控任务进度',
+            '学会管理多个 Isolate 的生命周期',
+          ],
+        ),
+        ConceptChips(
+          concepts: ['Isolate', '多任务', 'Stream', '进度上报', '暂停/恢复', '并发控制'],
+        ),
         CodeSnippetCard(
           title: 'TaskManager 核心用法',
-          code: 'final manager = TaskManager(\n'
+          code:
+              'final manager = TaskManager(\n'
               '  onTaskUpdate: (task) => setState(() {}),\n'
               '  onTaskComplete: (task) => setState(() {}),\n'
               ');\n'
@@ -178,11 +181,13 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
               'manager.dispose();',
           explanation: 'TaskManager 封装了 Isolate 的创建、通信和销毁流程。',
         ),
-        CommonPitfalls(pitfalls: [
-          '忘记 dispose TaskManager — Isolate 不会自动终止，需显式释放资源',
-          '在 Isolate 中访问主线程对象 — Isolate 是独立内存空间，只能通过消息传递数据',
-          '任务过密导致 UI 卡顿 — 大量任务同时运行时注意控制并发数量',
-        ]),
+        CommonPitfalls(
+          pitfalls: [
+            '忘记 dispose TaskManager — Isolate 不会自动终止，需显式释放资源',
+            '在 Isolate 中访问主线程对象 — Isolate 是独立内存空间，只能通过消息传递数据',
+            '任务过密导致 UI 卡顿 — 大量任务同时运行时注意控制并发数量',
+          ],
+        ),
         ExerciseCard(
           task: '为 TaskManager 增加"任务优先级"功能，高优先级任务先执行。',
           hint: '在 Task 模型中增加 priority 字段，在 startNewTask 中对队列排序。',

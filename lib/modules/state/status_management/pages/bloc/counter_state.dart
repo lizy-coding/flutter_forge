@@ -3,8 +3,11 @@ import 'package:equatable/equatable.dart';
 enum CounterStatus { initial, loading, success, failure }
 
 class CounterState extends Equatable {
-  const CounterState(
-      {this.value = 0, this.status = CounterStatus.initial, this.error});
+  const CounterState({
+    this.value = 0,
+    this.status = CounterStatus.initial,
+    this.error,
+  });
 
   final int value;
   final CounterStatus status;

@@ -106,14 +106,22 @@ class _StateLifecyclePageState extends State<StateLifecyclePage> {
                   child: ListView(
                     children: _logs.isEmpty
                         ? [
-                            const Text('操作按钮观察生命周期日志',
-                                style: TextStyle(color: Colors.grey))
+                            const Text(
+                              '操作按钮观察生命周期日志',
+                              style: TextStyle(color: Colors.grey),
+                            ),
                           ]
                         : _logs
-                            .map((l) => Text(l,
-                                style: const TextStyle(
-                                    fontSize: 12, fontFamily: 'monospace')))
-                            .toList(),
+                              .map(
+                                (l) => Text(
+                                  l,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: 'monospace',
+                                  ),
+                                ),
+                              )
+                              .toList(),
                   ),
                 ),
               ),
@@ -137,7 +145,7 @@ class _StateLifecyclePageState extends State<StateLifecyclePage> {
             'setState',
             'didUpdateWidget',
             'deactivate',
-            'dispose'
+            'dispose',
           ],
         ),
         CodeSnippetCard(
@@ -182,9 +190,7 @@ class LifecycleChildPage extends StatelessWidget {
     debugPrint('[LifecycleChildPage] build');
     return Scaffold(
       appBar: AppBar(title: const Text('Child Page')),
-      body: const Center(
-        child: Text('观察父页面 push/pop 时的生命周期日志'),
-      ),
+      body: const Center(child: Text('观察父页面 push/pop 时的生命周期日志')),
     );
   }
 }

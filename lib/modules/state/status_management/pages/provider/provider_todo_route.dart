@@ -55,29 +55,30 @@ class _TodoContent extends StatelessWidget {
               return ListTile(
                 title: Text(item.title),
                 leading: Checkbox(
-                    value: item.done, onChanged: (_) => store.toggle(i)),
+                  value: item.done,
+                  onChanged: (_) => store.toggle(i),
+                ),
                 trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () => store.remove(i)),
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: () => store.remove(i),
+                ),
               );
             },
           ),
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '掌握 Provider 管理全局列表状态',
-          '理解 notifyListeners 在 CRUD 操作中的触发时机',
-        ]),
-        ConceptChips(concepts: [
-          'Provider',
-          '全局状态',
-          'CRUD',
-          'ChangeNotifier',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '掌握 Provider 管理全局列表状态',
+            '理解 notifyListeners 在 CRUD 操作中的触发时机',
+          ],
+        ),
+        ConceptChips(concepts: ['Provider', '全局状态', 'CRUD', 'ChangeNotifier']),
         CodeSnippetCard(
           title: 'Provider Todo 模式',
-          code: 'class TodoStore extends ChangeNotifier {\n'
+          code:
+              'class TodoStore extends ChangeNotifier {\n'
               '  final list = <Todo>[];\n'
               '  void add(String t) { list.add(Todo(t)); notifyListeners(); }\n'
               '  void remove(int i) { list.removeAt(i); notifyListeners(); }\n'

@@ -12,17 +12,11 @@ class MicrotaskRoutes {
   static const String advanced = '/advanced';
 
   static List<GoRoute> get routes => [
-        GoRoute(
-          path: 'event-queue',
-          builder: (_, __) => const EventQueuePage(),
-        ),
-        GoRoute(
-          path: 'microtask-queue',
-          builder: (_, __) => const MicrotaskQueuePage(),
-        ),
-        GoRoute(
-          path: 'advanced',
-          builder: (_, __) => const AdvancedExamplesPage(),
-        ),
-      ];
+    GoRoute(path: 'event-queue', builder: (_, __) => const EventQueuePage()),
+    GoRoute(
+      path: 'microtask-queue',
+      builder: (_, __) => const MicrotaskQueuePage(),
+    ),
+    GoRoute(path: 'advanced', builder: (_, __) => const AdvancedExamplesPage()),
+  ];
 }

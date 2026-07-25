@@ -44,8 +44,9 @@ class _HomePageState extends State<HomePage> {
       final result = await _apiService.getArticles(page: _currentPage);
       if (result['success'] == true && result['data'] != null) {
         final articlesData = result['data']['articles'] as List;
-        final articles =
-            articlesData.map((json) => Article.fromJson(json)).toList();
+        final articles = articlesData
+            .map((json) => Article.fromJson(json))
+            .toList();
         setState(() {
           _articles = articles;
           _totalPages = result['data']['totalPages'] as int;
@@ -91,9 +92,9 @@ class _HomePageState extends State<HomePage> {
 
   void _logout() {
     AuthInterceptor.clearToken();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('已退出登录')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('已退出登录')));
     _refreshArticles();
   }
 
@@ -117,10 +118,13 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(isLoggedIn ? '已登录' : '未登录',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: isLoggedIn ? Colors.green : Colors.grey)),
+                Text(
+                  isLoggedIn ? '已登录' : '未登录',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isLoggedIn ? Colors.green : Colors.grey,
+                  ),
+                ),
                 const SizedBox(width: 8),
                 IconButton(
                   icon: Icon(isLoggedIn ? Icons.logout : Icons.login, size: 20),
@@ -134,23 +138,21 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Dio 拦截器的工作原理和链路机制',
-          '掌握 Auth 拦截器实现 Token 自动注入',
-          '理解 Error 拦截器统一错误处理',
-          '掌握 Retry 拦截器实现请求重试',
-        ]),
-        ConceptChips(concepts: [
-          'Dio',
-          '拦截器',
-          'Token',
-          '重试机制',
-          '错误处理',
-          'Mock Server',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Dio 拦截器的工作原理和链路机制',
+            '掌握 Auth 拦截器实现 Token 自动注入',
+            '理解 Error 拦截器统一错误处理',
+            '掌握 Retry 拦截器实现请求重试',
+          ],
+        ),
+        ConceptChips(
+          concepts: ['Dio', '拦截器', 'Token', '重试机制', '错误处理', 'Mock Server'],
+        ),
         CodeSnippetCard(
           title: 'Dio 拦截器链路',
-          code: 'final dio = Dio(BaseOptions(baseUrl: url));\n'
+          code:
+              'final dio = Dio(BaseOptions(baseUrl: url));\n'
               'dio.interceptors.addAll([\n'
               '  AuthInterceptor(),\n'
               '  LoggingInterceptor(),\n'
@@ -159,11 +161,13 @@ class _HomePageState extends State<HomePage> {
               ']);',
           explanation: '拦截器按添加顺序组成链路，请求从 Auth → Logging → Retry → Error 依次经过。',
         ),
-        CommonPitfalls(pitfalls: [
-          '拦截器顺序很重要 — Auth 应放在首位确保后续拦截器也能使用 Token',
-          'Retry 拦截器需避免死循环 — 设置最大重试次数和指数退避策略',
-          'Error 拦截器不要吞掉异常 — 统一处理后应继续抛出或返回友好提示',
-        ]),
+        CommonPitfalls(
+          pitfalls: [
+            '拦截器顺序很重要 — Auth 应放在首位确保后续拦截器也能使用 Token',
+            'Retry 拦截器需避免死循环 — 设置最大重试次数和指数退避策略',
+            'Error 拦截器不要吞掉异常 — 统一处理后应继续抛出或返回友好提示',
+          ],
+        ),
         ExerciseCard(
           task: '在 RetryInterceptor 中添加"登录过期"检测，当响应为 401 时自动跳转登录页。',
           hint:
@@ -182,11 +186,15 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('错误: $_errorMessage',
-                style: const TextStyle(color: Colors.red)),
+            Text(
+              '错误: $_errorMessage',
+              style: const TextStyle(color: Colors.red),
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
-                onPressed: _refreshArticles, child: const Text('重试')),
+              onPressed: _refreshArticles,
+              child: const Text('重试'),
+            ),
           ],
         ),
       );
@@ -265,22 +273,27 @@ class _HomePageState extends State<HomePage> {
           children: [
             TextField(
               controller: titleController,
-              decoration:
-                  const InputDecoration(labelText: '标题', hintText: '请输入文章标题'),
+              decoration: const InputDecoration(
+                labelText: '标题',
+                hintText: '请输入文章标题',
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: contentController,
-              decoration:
-                  const InputDecoration(labelText: '内容', hintText: '请输入文章内容'),
+              decoration: const InputDecoration(
+                labelText: '内容',
+                hintText: '请输入文章内容',
+              ),
               maxLines: 3,
             ),
           ],
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('取消')),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('取消'),
+          ),
           TextButton(
             onPressed: () async {
               final title = titleController.text.trim();

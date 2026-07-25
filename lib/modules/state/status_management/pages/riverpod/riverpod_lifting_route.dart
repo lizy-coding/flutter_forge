@@ -13,27 +13,25 @@ class RiverpodLiftingRoute extends ConsumerWidget {
         height: 200,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            _LDisplay(),
-            const SizedBox(height: 16),
-            _LControls(),
-          ],
+          children: [_LDisplay(), const SizedBox(height: 16), _LControls()],
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Riverpod 的状态提升模式',
-          '掌握 Provider 图谱中状态的共享机制',
-        ]),
-        ConceptChips(concepts: [
-          'Riverpod',
-          '状态提升',
-          'Provider 图谱',
-          'StateNotifierProvider',
-        ]),
+        LearningObjectives(
+          objectives: ['理解 Riverpod 的状态提升模式', '掌握 Provider 图谱中状态的共享机制'],
+        ),
+        ConceptChips(
+          concepts: [
+            'Riverpod',
+            '状态提升',
+            'Provider 图谱',
+            'StateNotifierProvider',
+          ],
+        ),
         CodeSnippetCard(
           title: 'Riverpod 状态提升',
-          code: 'final liftProvider = StateNotifierProvider<LiftRP, int>(\n'
+          code:
+              'final liftProvider = StateNotifierProvider<LiftRP, int>(\n'
               '  (ref) => LiftRP(),\n'
               ');\n'
               '// 任意组件可 watch/read 同一 Provider',
@@ -74,14 +72,16 @@ class _LControls extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         FilledButton.icon(
-            onPressed: n.inc,
-            icon: const Icon(Icons.exposure_plus_1),
-            label: const Text('加 1')),
+          onPressed: n.inc,
+          icon: const Icon(Icons.exposure_plus_1),
+          label: const Text('加 1'),
+        ),
         const SizedBox(width: 12),
         OutlinedButton.icon(
-            onPressed: n.reset,
-            icon: const Icon(Icons.restart_alt),
-            label: const Text('重置')),
+          onPressed: n.reset,
+          icon: const Icon(Icons.restart_alt),
+          label: const Text('重置'),
+        ),
       ],
     );
   }

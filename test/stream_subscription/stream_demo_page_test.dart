@@ -5,11 +5,7 @@ import 'package:main_app/modules/async/stream_subscription/pages/stream_demo_pag
 
 void main() {
   testWidgets('StreamDemoPage renders teaching components', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: StreamDemoPage(),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: StreamDemoPage()));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));

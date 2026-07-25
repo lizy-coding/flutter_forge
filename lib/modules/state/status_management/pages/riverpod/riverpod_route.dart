@@ -28,17 +28,21 @@ class RiverpodRoute extends ConsumerWidget {
         onReset: () => ref.read(counterProvider.notifier).reset(),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Riverpod StateNotifier 的状态管理机制',
-          '掌握 Provider 容器广播与消费者重建的关系',
-        ]),
-        ConceptChips(concepts: [
-          'Riverpod',
-          'StateNotifier',
-          'ProviderContainer',
-          'ref.watch',
-          'ref.read',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Riverpod StateNotifier 的状态管理机制',
+            '掌握 Provider 容器广播与消费者重建的关系',
+          ],
+        ),
+        ConceptChips(
+          concepts: [
+            'Riverpod',
+            'StateNotifier',
+            'ProviderContainer',
+            'ref.watch',
+            'ref.read',
+          ],
+        ),
         CodeSnippetCard(
           title: 'Riverpod 核心模式',
           code:

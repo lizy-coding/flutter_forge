@@ -75,7 +75,7 @@ class DemoHomePage extends StatelessWidget {
             '生命周期',
             'setState',
             'RepaintBoundary',
-            'CustomPainter'
+            'CustomPainter',
           ],
         ),
         CodeSnippetCard(

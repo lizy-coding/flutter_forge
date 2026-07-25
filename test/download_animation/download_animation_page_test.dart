@@ -4,13 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:main_app/modules/ui/download_animation/pages/download_animation_page.dart';
 
 void main() {
-  testWidgets('DownloadAnimationPage renders teaching components',
-      (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: DownloadAnimationPage(),
-      ),
-    );
+  testWidgets('DownloadAnimationPage renders teaching components', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: DownloadAnimationPage()));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));

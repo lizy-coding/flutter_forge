@@ -5,11 +5,7 @@ import 'package:main_app/modules/popup_table/overlay_follow_compare/module_root.
 
 void main() {
   testWidgets('OverlayComparePage renders teaching components', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: OverlayComparePage(),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: OverlayComparePage()));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));

@@ -44,38 +44,42 @@ class StateFlowDemo extends StatelessWidget {
           ),
           child: Card(
             elevation: 0,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(pageTitle,
-                      style: Theme.of(context).textTheme.headlineSmall,
-                      textAlign: TextAlign.center),
+                  Text(
+                    pageTitle,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 8),
-                  Text(subtitle,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Colors.black54),
-                      textAlign: TextAlign.center),
+                  Text(
+                    subtitle,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.black54),
+                    textAlign: TextAlign.center,
+                  ),
                   const Divider(height: 32),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 260),
                     transitionBuilder: (child, animation) =>
                         ScaleTransition(scale: animation, child: child),
-                    child: Text('$value',
-                        key: ValueKey(value),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayLarge
-                            ?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1.5)),
+                    child: Text(
+                      '$value',
+                      key: ValueKey(value),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   _FlowTimeline(steps: flowSteps),
@@ -101,10 +105,7 @@ class StateFlowDemo extends StatelessWidget {
                     '提示：配合调试控制台日志，可完整追踪 "事件 → 状态变化 → 通知 → build() 重建"。',
                     textAlign: TextAlign.center,
                   ),
-                  if (extra != null) ...[
-                    const SizedBox(height: 16),
-                    extra!,
-                  ],
+                  if (extra != null) ...[const SizedBox(height: 16), extra!],
                 ],
               ),
             ),
@@ -130,9 +131,12 @@ class _FlowTimeline extends StatelessWidget {
       children: [
         for (var i = 0; i < steps.length; i++) ...[
           Chip(
-            label: Text(steps[i],
-                style: theme.textTheme.bodySmall
-                    ?.copyWith(fontWeight: FontWeight.w600)),
+            label: Text(
+              steps[i],
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             avatar: CircleAvatar(
               radius: 10,
               backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),

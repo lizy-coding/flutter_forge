@@ -7,18 +7,10 @@ class SnapLine {
   final Offset end;
   final SnapType type;
 
-  const SnapLine({
-    required this.start,
-    required this.end,
-    required this.type,
-  });
+  const SnapLine({required this.start, required this.end, required this.type});
 }
 
-enum SnapType {
-  horizontal,
-  vertical,
-  center,
-}
+enum SnapType { horizontal, vertical, center }
 
 class AdsorptionManager {
   static const double snapThreshold = 25.0;
@@ -108,19 +100,23 @@ class AdsorptionManager {
       for (final currentPoint in currentSnapPoints) {
         for (final elementPoint in elementSnapPoints) {
           if ((currentPoint.dx - elementPoint.dx).abs() < snapThreshold) {
-            snapLines.add(SnapLine(
-              start: Offset(elementPoint.dx, 0),
-              end: Offset(elementPoint.dx, double.infinity),
-              type: SnapType.vertical,
-            ));
+            snapLines.add(
+              SnapLine(
+                start: Offset(elementPoint.dx, 0),
+                end: Offset(elementPoint.dx, double.infinity),
+                type: SnapType.vertical,
+              ),
+            );
           }
 
           if ((currentPoint.dy - elementPoint.dy).abs() < snapThreshold) {
-            snapLines.add(SnapLine(
-              start: Offset(0, elementPoint.dy),
-              end: Offset(double.infinity, elementPoint.dy),
-              type: SnapType.horizontal,
-            ));
+            snapLines.add(
+              SnapLine(
+                start: Offset(0, elementPoint.dy),
+                end: Offset(double.infinity, elementPoint.dy),
+                type: SnapType.horizontal,
+              ),
+            );
           }
         }
       }

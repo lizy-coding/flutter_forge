@@ -15,21 +15,18 @@ class TreeStateRoutes {
   static const String repaintBoundary = '/repaint_boundary_demo';
 
   static List<GoRoute> get routes => [
-        GoRoute(
-          path: 'basic_widgets',
-          builder: (_, __) => const BasicWidgetsPage(),
-        ),
-        GoRoute(
-          path: 'state_lifecycle',
-          builder: (_, __) => const StateLifecyclePage(),
-        ),
-        GoRoute(
-          path: 'painter_demo',
-          builder: (_, __) => const PainterDemoPage(),
-        ),
-        GoRoute(
-          path: 'repaint_boundary_demo',
-          builder: (_, __) => const RepaintBoundaryDemoPage(),
-        ),
-      ];
+    GoRoute(
+      path: 'basic_widgets',
+      builder: (_, __) => const BasicWidgetsPage(),
+    ),
+    GoRoute(
+      path: 'state_lifecycle',
+      builder: (_, __) => const StateLifecyclePage(),
+    ),
+    GoRoute(path: 'painter_demo', builder: (_, __) => const PainterDemoPage()),
+    GoRoute(
+      path: 'repaint_boundary_demo',
+      builder: (_, __) => const RepaintBoundaryDemoPage(),
+    ),
+  ];
 }

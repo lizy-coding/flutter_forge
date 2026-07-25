@@ -72,15 +72,18 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
       children: [
         Row(
           children: [
-            Icon(Icons.speed,
-                size: 18, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.speed,
+              size: 18,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(width: 8),
             Text(
               '交互演示',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ],
         ),
@@ -102,9 +105,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
                 ),
               ),
               const SizedBox(width: 12),
-              Expanded(
-                child: _buildRightPanel(context),
-              ),
+              Expanded(child: _buildRightPanel(context)),
             ],
           )
         else
@@ -210,7 +211,8 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
       ),
       const CodeSnippetCard(
         title: 'G-code 示例',
-        code: '; 注释说明\n'
+        code:
+            '; 注释说明\n'
             'G0 X0 Y0    ; 快速移动到原点\n'
             'G1 X80 Y0 F1200  ; 以 F1200 进给率线性移动到 (80, 0)\n'
             'G1 X80 Y50       ; 继续移动到 (80, 50)\n'
@@ -219,7 +221,8 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
       ),
       const CodeSnippetCard(
         title: 'G90 绝对模式 vs G91 相对模式',
-        code: 'G90        ; 切换到绝对坐标模式\n'
+        code:
+            'G90        ; 切换到绝对坐标模式\n'
             'G1 X10 Y10 ; 移动到 (10, 10)\n'
             'G1 X20 Y10 ; 移动到 (20, 10)\n'
             'G91        ; 切换到相对坐标模式\n'
@@ -227,10 +230,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
             'G1 X10 Y0  ; 再向右移动 10（当前位置在 30,10）',
         explanation: 'G90 模式下坐标值表示绝对位置，G91 模式下坐标值表示相对于当前位置的偏移量',
       ),
-      StateLogView(
-        logs: _controller.logs,
-        maxLines: 6,
-      ),
+      StateLogView(logs: _controller.logs, maxLines: 6),
       const CommonPitfalls(
         pitfalls: [
           '不支持的 G-code 应明显报错，而不是静默绘制错误轨迹',

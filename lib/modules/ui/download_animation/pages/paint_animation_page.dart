@@ -42,7 +42,8 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
     if (renderBox != null) {
       final position = renderBox.localToGlobal(Offset.zero);
       setState(() {
-        _downloadAreaPosition = position +
+        _downloadAreaPosition =
+            position +
             Offset(renderBox.size.width / 2, renderBox.size.height / 2);
       });
     }
@@ -55,13 +56,15 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
     }
 
     debugPrint(
-        '开始下载动画: $fileName, 起点: $startPosition, 终点: $_downloadAreaPosition');
+      '开始下载动画: $fileName, 起点: $startPosition, 终点: $_downloadAreaPosition',
+    );
 
     final controller = AnimationController(
       duration: Duration(
-          milliseconds:
-              (animationConfig.animationDuration / animationConfig.flyingSpeed)
-                  .round()),
+        milliseconds:
+            (animationConfig.animationDuration / animationConfig.flyingSpeed)
+                .round(),
+      ),
       vsync: this,
     );
 
@@ -145,7 +148,7 @@ class _PaintAnimationPageState extends State<PaintAnimationPage>
                 'Canvas',
                 'Path',
                 'MaskFilter',
-                '贝塞尔曲线'
+                '贝塞尔曲线',
               ],
             ),
             CodeSnippetCard(
@@ -208,9 +211,7 @@ class FlyingPainter extends CustomPainter {
     return Card(
       margin: const EdgeInsets.all(16),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -263,7 +264,8 @@ class FlyingPainter extends CustomPainter {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    '飞入速度: ${animationConfig.flyingSpeed.toStringAsFixed(1)}x'),
+                  '飞入速度: ${animationConfig.flyingSpeed.toStringAsFixed(1)}x',
+                ),
                 Slider(
                   value: animationConfig.flyingSpeed,
                   min: 0.5,
@@ -291,37 +293,37 @@ class FlyingPainter extends CustomPainter {
         'name': 'Flutter开发指南.pdf',
         'size': '15.2 MB',
         'icon': Icons.picture_as_pdf,
-        'color': Colors.red
+        'color': Colors.red,
       },
       {
         'name': '项目源码.zip',
         'size': '89.5 MB',
         'icon': Icons.folder_zip,
-        'color': Colors.orange
+        'color': Colors.orange,
       },
       {
         'name': '设计稿.psd',
         'size': '234.7 MB',
         'icon': Icons.image,
-        'color': Colors.purple
+        'color': Colors.purple,
       },
       {
         'name': '演示视频.mp4',
         'size': '156.3 MB',
         'icon': Icons.video_file,
-        'color': Colors.blue
+        'color': Colors.blue,
       },
       {
         'name': '技术文档.docx',
         'size': '3.8 MB',
         'icon': Icons.description,
-        'color': Colors.green
+        'color': Colors.green,
       },
       {
         'name': '音频文件.mp3',
         'size': '12.4 MB',
         'icon': Icons.audiotrack,
-        'color': Colors.pink
+        'color': Colors.pink,
       },
     ];
 
@@ -339,8 +341,10 @@ class FlyingPainter extends CustomPainter {
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -383,10 +387,13 @@ class FlyingPainter extends CustomPainter {
                       children: [
                         Icon(Icons.download, color: Colors.white, size: 16),
                         SizedBox(width: 4),
-                        Text('下载',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500)),
+                        Text(
+                          '下载',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -424,16 +431,20 @@ class FlyingPainter extends CustomPainter {
               color: Colors.blue.shade50,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.download_done,
-                size: 40, color: Colors.blue.shade600),
+            child: Icon(
+              Icons.download_done,
+              size: 40,
+              color: Colors.blue.shade600,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
             '下载中心',
             style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade800),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade800,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -472,10 +483,7 @@ class FlyingAnimationPainter extends CustomPainter {
   final List<FlyingPaintItem> items;
   final AnimationConfig animationConfig;
 
-  FlyingAnimationPainter({
-    required this.items,
-    required this.animationConfig,
-  });
+  FlyingAnimationPainter({required this.items, required this.animationConfig});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -490,9 +498,11 @@ class FlyingAnimationPainter extends CustomPainter {
 
     final curveProgress = Curves.easeInOut.transform(progress);
 
-    final dx = item.startPosition.dx +
+    final dx =
+        item.startPosition.dx +
         (item.endPosition.dx - item.startPosition.dx) * curveProgress;
-    final dy = item.startPosition.dy +
+    final dy =
+        item.startPosition.dy +
         (item.endPosition.dy - item.startPosition.dy) * curveProgress;
 
     final controlPointOffset = -100.0 * math.sin(math.pi * curveProgress);
@@ -572,7 +582,11 @@ class FlyingAnimationPainter extends CustomPainter {
   }
 
   void _drawTrail(
-      Canvas canvas, FlyingPaintItem item, double progress, double opacity) {
+    Canvas canvas,
+    FlyingPaintItem item,
+    double progress,
+    double opacity,
+  ) {
     if (progress < 0.1) return;
 
     final trailPaint = Paint()
@@ -584,9 +598,11 @@ class FlyingAnimationPainter extends CustomPainter {
       if (trailProgress <= 0) break;
 
       final curveTProgress = Curves.easeInOut.transform(trailProgress);
-      final trailDx = item.startPosition.dx +
+      final trailDx =
+          item.startPosition.dx +
           (item.endPosition.dx - item.startPosition.dx) * curveTProgress;
-      final trailDy = item.startPosition.dy +
+      final trailDy =
+          item.startPosition.dy +
           (item.endPosition.dy - item.startPosition.dy) * curveTProgress;
       final trailControlOffset = -100.0 * math.sin(math.pi * curveTProgress);
       final trailPosition = Offset(

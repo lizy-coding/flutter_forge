@@ -34,8 +34,10 @@ class HomePage extends StatelessWidget {
                 ),
                 child: const Column(
                   children: [
-                    Text('测试说明:',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      '测试说明:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     SizedBox(height: 8),
                     Text(
                       '1. 两个页面执行相同的计算任务(查找素数)\n'
@@ -51,8 +53,10 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 40),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                   backgroundColor: Colors.red[100],
                 ),
                 onPressed: () {
@@ -63,8 +67,10 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                   backgroundColor: Colors.green[100],
                 ),
                 onPressed: () {
@@ -77,22 +83,27 @@ class HomePage extends StatelessWidget {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Isolate 与主线程的内存隔离机制',
-          '掌握 Isolate.spawn + SendPort/ReceivePort 通信模式',
-          '对比有/无 Isolate 时 UI 流畅度差异',
-        ]),
-        ConceptChips(concepts: [
-          'Isolate',
-          'SendPort',
-          'ReceivePort',
-          '并发',
-          'UI 流畅度',
-          '耗时计算',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Isolate 与主线程的内存隔离机制',
+            '掌握 Isolate.spawn + SendPort/ReceivePort 通信模式',
+            '对比有/无 Isolate 时 UI 流畅度差异',
+          ],
+        ),
+        ConceptChips(
+          concepts: [
+            'Isolate',
+            'SendPort',
+            'ReceivePort',
+            '并发',
+            'UI 流畅度',
+            '耗时计算',
+          ],
+        ),
         CodeSnippetCard(
           title: 'Isolate 基础用法',
-          code: 'final receivePort = ReceivePort();\n'
+          code:
+              'final receivePort = ReceivePort();\n'
               'await Isolate.spawn(\n'
               '  computeTask,\n'
               '  receivePort.sendPort,\n'
@@ -102,11 +113,13 @@ class HomePage extends StatelessWidget {
               '});',
           explanation: 'Isolate.spawn 在新 Isolate 中执行函数，通过 Port 通信。',
         ),
-        CommonPitfalls(pitfalls: [
-          'Isolate 间不能共享变量 — 必须通过消息传递，无法直接访问主线程数据',
-          'ReceivePort 需要及时关闭 — 不关闭会导致内存泄漏',
-          '大量小消息的性能开销 — 频繁跨 Isolate 通信可能得不偿失',
-        ]),
+        CommonPitfalls(
+          pitfalls: [
+            'Isolate 间不能共享变量 — 必须通过消息传递，无法直接访问主线程数据',
+            'ReceivePort 需要及时关闭 — 不关闭会导致内存泄漏',
+            '大量小消息的性能开销 — 频繁跨 Isolate 通信可能得不偿失',
+          ],
+        ),
         ExerciseCard(
           task:
               '修改 without_isolate_page.dart，尝试使用 compute 工具函数替换 Isolate.spawn，对比两种 API 的差异。',

@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 /// 画板元素类型枚举
-enum ElementType {
-  rectangle,
-  circle,
-  line,
-}
+enum ElementType { rectangle, circle, line }
 
 /// 画板元素模型类
 class DrawingElement {
@@ -51,20 +47,12 @@ class DrawingElement {
 
   /// 获取元素的边界矩形
   Rect get bounds {
-    return Rect.fromLTWH(
-      position.dx,
-      position.dy,
-      size.width,
-      size.height,
-    );
+    return Rect.fromLTWH(position.dx, position.dy, size.width, size.height);
   }
 
   /// 获取元素中心点
   Offset get center {
-    return Offset(
-      position.dx + size.width / 2,
-      position.dy + size.height / 2,
-    );
+    return Offset(position.dx + size.width / 2, position.dy + size.height / 2);
   }
 
   /// 检查指定点是否在元素内
@@ -83,10 +71,15 @@ class DrawingElement {
       case ElementType.line:
         // 简化的线条碰撞检测，检查点是否在线条附近
         final lineStart = position;
-        final lineEnd =
-            Offset(position.dx + size.width, position.dy + size.height);
-        final distanceToLine =
-            _distanceToLineSegment(point, lineStart, lineEnd);
+        final lineEnd = Offset(
+          position.dx + size.width,
+          position.dy + size.height,
+        );
+        final distanceToLine = _distanceToLineSegment(
+          point,
+          lineStart,
+          lineEnd,
+        );
         return distanceToLine <= strokeWidth + 5; // 5像素的容错范围
     }
   }
@@ -105,10 +98,14 @@ class DrawingElement {
           Offset(position.dx + size.width, position.dy + size.height), // 右下角
           Offset(position.dx + size.width / 2, position.dy), // 上边中点
           Offset(
-              position.dx + size.width / 2, position.dy + size.height), // 下边中点
+            position.dx + size.width / 2,
+            position.dy + size.height,
+          ), // 下边中点
           Offset(position.dx, position.dy + size.height / 2), // 左边中点
           Offset(
-              position.dx + size.width, position.dy + size.height / 2), // 右边中点
+            position.dx + size.width,
+            position.dy + size.height / 2,
+          ), // 右边中点
         ]);
         break;
       case ElementType.circle:
@@ -126,8 +123,10 @@ class DrawingElement {
       case ElementType.line:
         // 线条的3个吸附点：起点、终点、中点
         final lineStart = position;
-        final lineEnd =
-            Offset(position.dx + size.width, position.dy + size.height);
+        final lineEnd = Offset(
+          position.dx + size.width,
+          position.dy + size.height,
+        );
         final midPoint = Offset(
           (lineStart.dx + lineEnd.dx) / 2,
           (lineStart.dy + lineEnd.dy) / 2,
@@ -141,7 +140,10 @@ class DrawingElement {
 
   /// 计算点到线段的距离
   double _distanceToLineSegment(
-      Offset point, Offset lineStart, Offset lineEnd) {
+    Offset point,
+    Offset lineStart,
+    Offset lineEnd,
+  ) {
     final A = point.dx - lineStart.dx;
     final B = point.dy - lineStart.dy;
     final C = lineEnd.dx - lineStart.dx;

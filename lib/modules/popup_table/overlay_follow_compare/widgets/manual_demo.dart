@@ -84,8 +84,10 @@ class _ManualRebuildDemoState extends State<ManualRebuildDemo> {
           itemBuilder: (context, index) {
             if (index == 8) {
               return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: ElevatedButton(
                   key: _buttonKey,
                   onPressed: _toggleOverlay,

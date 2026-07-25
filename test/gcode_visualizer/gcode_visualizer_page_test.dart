@@ -4,9 +4,7 @@ import 'package:main_app/modules/ui/gcode_visualizer/pages/gcode_visualizer_page
 
 void main() {
   testWidgets('GcodeVisualizerPage renders key elements', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(home: GcodeVisualizerPage()),
-    );
+    await tester.pumpWidget(const MaterialApp(home: GcodeVisualizerPage()));
 
     await tester.pump();
 

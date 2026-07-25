@@ -15,10 +15,7 @@ class ApiService {
     try {
       final response = await _httpClient.post(
         '/api/login',
-        data: {
-          'username': username,
-          'password': password,
-        },
+        data: {'username': username, 'password': password},
       );
 
       return response.data;
@@ -32,9 +29,7 @@ class ApiService {
     try {
       final response = await _httpClient.post(
         '/api/refresh-token',
-        data: {
-          'refreshToken': refreshToken,
-        },
+        data: {'refreshToken': refreshToken},
       );
 
       return response.data;
@@ -44,15 +39,14 @@ class ApiService {
   }
 
   /// 获取文章列表
-  Future<Map<String, dynamic>> getArticles(
-      {int page = 1, int pageSize = 10}) async {
+  Future<Map<String, dynamic>> getArticles({
+    int page = 1,
+    int pageSize = 10,
+  }) async {
     try {
       final response = await _httpClient.get(
         '/api/articles',
-        queryParameters: {
-          'page': page,
-          'pageSize': pageSize,
-        },
+        queryParameters: {'page': page, 'pageSize': pageSize},
       );
 
       return response.data;
@@ -63,14 +57,13 @@ class ApiService {
 
   /// 创建文章
   Future<Map<String, dynamic>> createArticle(
-      String title, String content) async {
+    String title,
+    String content,
+  ) async {
     try {
       final response = await _httpClient.post(
         '/api/articles/create',
-        data: {
-          'title': title,
-          'content': content,
-        },
+        data: {'title': title, 'content': content},
       );
 
       return response.data;

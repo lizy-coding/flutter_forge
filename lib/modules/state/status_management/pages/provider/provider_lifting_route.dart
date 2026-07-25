@@ -36,27 +36,21 @@ class _LiftingContent extends StatelessWidget {
         height: 200,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            _LDisplay(),
-            const SizedBox(height: 16),
-            _LControls(),
-          ],
+          children: [_LDisplay(), const SizedBox(height: 16), _LControls()],
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Provider 状态提升 (Lifting State Up) 模式',
-          '掌握父级集中管理状态、子组件共享的模式',
-        ]),
-        ConceptChips(concepts: [
-          '状态提升',
-          'Provider',
-          'ChangeNotifier',
-          '共享状态',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Provider 状态提升 (Lifting State Up) 模式',
+            '掌握父级集中管理状态、子组件共享的模式',
+          ],
+        ),
+        ConceptChips(concepts: ['状态提升', 'Provider', 'ChangeNotifier', '共享状态']),
         CodeSnippetCard(
           title: '状态提升模式',
-          code: 'ChangeNotifierProvider(\n'
+          code:
+              'ChangeNotifierProvider(\n'
               '  create: (_) => _LiftingCN(),\n'
               '  child: _LDisplay(),\n'
               ');\n'
@@ -91,14 +85,16 @@ class _LControls extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         FilledButton.icon(
-            onPressed: s.inc,
-            icon: const Icon(Icons.exposure_plus_1),
-            label: const Text('加 1')),
+          onPressed: s.inc,
+          icon: const Icon(Icons.exposure_plus_1),
+          label: const Text('加 1'),
+        ),
         const SizedBox(width: 12),
         OutlinedButton.icon(
-            onPressed: s.reset,
-            icon: const Icon(Icons.restart_alt),
-            label: const Text('重置')),
+          onPressed: s.reset,
+          icon: const Icon(Icons.restart_alt),
+          label: const Text('重置'),
+        ),
       ],
     );
   }

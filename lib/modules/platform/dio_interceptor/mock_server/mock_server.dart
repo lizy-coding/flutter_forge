@@ -44,8 +44,9 @@ class MockServer {
         'title': '文章标题 $i',
         'content': '这是文章 $i 的内容，用于测试拦截器功能。',
         'author': i % 2 == 0 ? 'admin' : 'user',
-        'createdAt':
-            DateTime.now().subtract(Duration(days: 20 - i)).toIso8601String(),
+        'createdAt': DateTime.now()
+            .subtract(Duration(days: 20 - i))
+            .toIso8601String(),
       });
     }
   }
@@ -83,9 +84,13 @@ class MockServer {
       // 添加CORS头
       request.response.headers.add('Access-Control-Allow-Origin', '*');
       request.response.headers.add(
-          'Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      request.response.headers.add('Access-Control-Allow-Headers',
-          'Origin, Content-Type, X-Auth-Token, Authorization');
+        'Access-Control-Allow-Methods',
+        'GET, POST, PUT, DELETE, OPTIONS',
+      );
+      request.response.headers.add(
+        'Access-Control-Allow-Headers',
+        'Origin, Content-Type, X-Auth-Token, Authorization',
+      );
 
       // 处理预检请求
       if (request.method == 'OPTIONS') {
@@ -101,10 +106,9 @@ class MockServer {
       if (Random().nextDouble() < failureRate) {
         request.response.statusCode = HttpStatus.internalServerError;
         request.response.headers.contentType = ContentType.json;
-        request.response.write(json.encode({
-          'success': false,
-          'message': '模拟服务器随机错误，请重试',
-        }));
+        request.response.write(
+          json.encode({'success': false, 'message': '模拟服务器随机错误，请重试'}),
+        );
         await request.response.close();
 
         if (kDebugMode) {
@@ -132,20 +136,21 @@ class MockServer {
             // 404 Not Found
             request.response.statusCode = HttpStatus.notFound;
             request.response.headers.contentType = ContentType.json;
-            request.response.write(json.encode({
-              'success': false,
-              'message': '404 Not Found: ${request.uri.path}',
-            }));
+            request.response.write(
+              json.encode({
+                'success': false,
+                'message': '404 Not Found: ${request.uri.path}',
+              }),
+            );
             break;
         }
       } catch (e) {
         // 处理过程中的错误
         request.response.statusCode = HttpStatus.internalServerError;
         request.response.headers.contentType = ContentType.json;
-        request.response.write(json.encode({
-          'success': false,
-          'message': '服务器内部错误: $e',
-        }));
+        request.response.write(
+          json.encode({'success': false, 'message': '服务器内部错误: $e'}),
+        );
 
         if (kDebugMode) {
           print('处理请求时出错: $e');
@@ -161,10 +166,9 @@ class MockServer {
     if (request.method != 'POST') {
       request.response.statusCode = HttpStatus.methodNotAllowed;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '方法不允许',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '方法不允许'}),
+      );
       return;
     }
 
@@ -177,10 +181,9 @@ class MockServer {
           !data.containsKey('password')) {
         request.response.statusCode = HttpStatus.badRequest;
         request.response.headers.contentType = ContentType.json;
-        request.response.write(json.encode({
-          'success': false,
-          'message': '缺少用户名或密码',
-        }));
+        request.response.write(
+          json.encode({'success': false, 'message': '缺少用户名或密码'}),
+        );
         return;
       }
 
@@ -191,10 +194,9 @@ class MockServer {
       if (!_users.containsKey(username) || _users[username] != password) {
         request.response.statusCode = HttpStatus.unauthorized;
         request.response.headers.contentType = ContentType.json;
-        request.response.write(json.encode({
-          'success': false,
-          'message': '用户名或密码错误',
-        }));
+        request.response.write(
+          json.encode({'success': false, 'message': '用户名或密码错误'}),
+        );
         return;
       }
 
@@ -214,15 +216,17 @@ class MockServer {
 
       request.response.statusCode = HttpStatus.ok;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': true,
-        'data': {
-          'token': token,
-          'refreshToken': refreshToken,
-          'expiresIn': expiresIn,
-          'username': username,
-        },
-      }));
+      request.response.write(
+        json.encode({
+          'success': true,
+          'data': {
+            'token': token,
+            'refreshToken': refreshToken,
+            'expiresIn': expiresIn,
+            'username': username,
+          },
+        }),
+      );
 
       if (kDebugMode) {
         print('用户 $username 登录成功');
@@ -230,10 +234,9 @@ class MockServer {
     } catch (e) {
       request.response.statusCode = HttpStatus.badRequest;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '无效的请求数据: $e',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '无效的请求数据: $e'}),
+      );
     }
   }
 
@@ -242,10 +245,9 @@ class MockServer {
     if (request.method != 'POST') {
       request.response.statusCode = HttpStatus.methodNotAllowed;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '方法不允许',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '方法不允许'}),
+      );
       return;
     }
 
@@ -256,10 +258,9 @@ class MockServer {
       if (data is! Map || !data.containsKey('refreshToken')) {
         request.response.statusCode = HttpStatus.badRequest;
         request.response.headers.contentType = ContentType.json;
-        request.response.write(json.encode({
-          'success': false,
-          'message': '缺少刷新令牌',
-        }));
+        request.response.write(
+          json.encode({'success': false, 'message': '缺少刷新令牌'}),
+        );
         return;
       }
 
@@ -277,10 +278,9 @@ class MockServer {
       if (matchedToken == null) {
         request.response.statusCode = HttpStatus.unauthorized;
         request.response.headers.contentType = ContentType.json;
-        request.response.write(json.encode({
-          'success': false,
-          'message': '无效的刷新令牌',
-        }));
+        request.response.write(
+          json.encode({'success': false, 'message': '无效的刷新令牌'}),
+        );
         return;
       }
 
@@ -307,15 +307,17 @@ class MockServer {
 
       request.response.statusCode = HttpStatus.ok;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': true,
-        'data': {
-          'token': newToken,
-          'refreshToken': newRefreshToken,
-          'expiresIn': expiresIn,
-          'username': username,
-        },
-      }));
+      request.response.write(
+        json.encode({
+          'success': true,
+          'data': {
+            'token': newToken,
+            'refreshToken': newRefreshToken,
+            'expiresIn': expiresIn,
+            'username': username,
+          },
+        }),
+      );
 
       if (kDebugMode) {
         print('用户 $username 刷新令牌成功');
@@ -323,10 +325,9 @@ class MockServer {
     } catch (e) {
       request.response.statusCode = HttpStatus.badRequest;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '无效的请求数据: $e',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '无效的请求数据: $e'}),
+      );
     }
   }
 
@@ -337,10 +338,9 @@ class MockServer {
     if (authHeader == null || !authHeader.startsWith('Bearer ')) {
       request.response.statusCode = HttpStatus.unauthorized;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '未授权，缺少有效的认证信息',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '未授权，缺少有效的认证信息'}),
+      );
       return;
     }
 
@@ -349,10 +349,9 @@ class MockServer {
     if (!_tokens.containsKey(token)) {
       request.response.statusCode = HttpStatus.unauthorized;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '无效的认证令牌',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '无效的认证令牌'}),
+      );
       return;
     }
 
@@ -362,10 +361,9 @@ class MockServer {
     if (DateTime.now().isAfter(expiresAt)) {
       request.response.statusCode = HttpStatus.unauthorized;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '认证令牌已过期',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '认证令牌已过期'}),
+      );
       return;
     }
 
@@ -378,22 +376,26 @@ class MockServer {
     final startIndex = (page - 1) * pageSize;
     final endIndex = startIndex + pageSize;
     final pagedArticles = _articles.length > startIndex
-        ? _articles.sublist(startIndex,
-            endIndex > _articles.length ? _articles.length : endIndex)
+        ? _articles.sublist(
+            startIndex,
+            endIndex > _articles.length ? _articles.length : endIndex,
+          )
         : [];
 
     request.response.statusCode = HttpStatus.ok;
     request.response.headers.contentType = ContentType.json;
-    request.response.write(json.encode({
-      'success': true,
-      'data': {
-        'articles': pagedArticles,
-        'total': _articles.length,
-        'page': page,
-        'pageSize': pageSize,
-        'totalPages': (_articles.length / pageSize).ceil(),
-      },
-    }));
+    request.response.write(
+      json.encode({
+        'success': true,
+        'data': {
+          'articles': pagedArticles,
+          'total': _articles.length,
+          'page': page,
+          'pageSize': pageSize,
+          'totalPages': (_articles.length / pageSize).ceil(),
+        },
+      }),
+    );
   }
 
   /// 处理创建文章请求
@@ -401,10 +403,9 @@ class MockServer {
     if (request.method != 'POST') {
       request.response.statusCode = HttpStatus.methodNotAllowed;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '方法不允许',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '方法不允许'}),
+      );
       return;
     }
 
@@ -413,10 +414,9 @@ class MockServer {
     if (authHeader == null || !authHeader.startsWith('Bearer ')) {
       request.response.statusCode = HttpStatus.unauthorized;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '未授权，缺少有效的认证信息',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '未授权，缺少有效的认证信息'}),
+      );
       return;
     }
 
@@ -425,10 +425,9 @@ class MockServer {
     if (!_tokens.containsKey(token)) {
       request.response.statusCode = HttpStatus.unauthorized;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '无效的认证令牌',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '无效的认证令牌'}),
+      );
       return;
     }
 
@@ -438,10 +437,9 @@ class MockServer {
     if (DateTime.now().isAfter(expiresAt)) {
       request.response.statusCode = HttpStatus.unauthorized;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '认证令牌已过期',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '认证令牌已过期'}),
+      );
       return;
     }
 
@@ -454,10 +452,9 @@ class MockServer {
           !data.containsKey('content')) {
         request.response.statusCode = HttpStatus.badRequest;
         request.response.headers.contentType = ContentType.json;
-        request.response.write(json.encode({
-          'success': false,
-          'message': '缺少标题或内容',
-        }));
+        request.response.write(
+          json.encode({'success': false, 'message': '缺少标题或内容'}),
+        );
         return;
       }
 
@@ -478,10 +475,9 @@ class MockServer {
 
       request.response.statusCode = HttpStatus.created;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': true,
-        'data': newArticle,
-      }));
+      request.response.write(
+        json.encode({'success': true, 'data': newArticle}),
+      );
 
       if (kDebugMode) {
         print('用户 $username 创建了新文章: $title');
@@ -489,10 +485,9 @@ class MockServer {
     } catch (e) {
       request.response.statusCode = HttpStatus.badRequest;
       request.response.headers.contentType = ContentType.json;
-      request.response.write(json.encode({
-        'success': false,
-        'message': '无效的请求数据: $e',
-      }));
+      request.response.write(
+        json.encode({'success': false, 'message': '无效的请求数据: $e'}),
+      );
     }
   }
 

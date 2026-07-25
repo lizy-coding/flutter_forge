@@ -91,17 +91,25 @@ class _RepaintBoundaryDemoPageState extends State<RepaintBoundaryDemoPage> {
                 scrollDirection: Axis.horizontal,
                 children: _logs.isEmpty
                     ? [
-                        const Text('点击按钮观察 paint 日志',
-                            style: TextStyle(color: Colors.grey, fontSize: 12))
+                        const Text(
+                          '点击按钮观察 paint 日志',
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        ),
                       ]
                     : _logs
-                        .map((l) => Padding(
+                          .map(
+                            (l) => Padding(
                               padding: const EdgeInsets.only(right: 8),
-                              child: Text(l,
-                                  style: const TextStyle(
-                                      fontSize: 11, fontFamily: 'monospace')),
-                            ))
-                        .toList(),
+                              child: Text(
+                                l,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontFamily: 'monospace',
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
               ),
             ),
           ],
@@ -121,7 +129,7 @@ class _RepaintBoundaryDemoPageState extends State<RepaintBoundaryDemoPage> {
             'CustomPainter',
             'shouldRepaint',
             '局部重绘',
-            'RenderObject'
+            'RenderObject',
           ],
         ),
         CodeSnippetCard(
@@ -157,8 +165,10 @@ class _RepaintBoundaryDemoPageState extends State<RepaintBoundaryDemoPage> {
   Widget _buildSection({required String label, required Widget child}) {
     return Column(
       children: [
-        Text(label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 4),
         Expanded(child: child),
       ],

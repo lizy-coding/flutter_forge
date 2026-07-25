@@ -61,8 +61,9 @@ class _WithIsolatePageState extends State<WithIsolatePage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                      onPressed: _incrementCounter,
-                      child: const Text('点击测试响应')),
+                    onPressed: _incrementCounter,
+                    child: const Text('点击测试响应'),
+                  ),
                   const SizedBox(width: 20),
                   Text('计数: $_counter', style: const TextStyle(fontSize: 18)),
                 ],
@@ -81,8 +82,10 @@ class _WithIsolatePageState extends State<WithIsolatePage>
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
-                      child: Text('这个动画应该平滑运行',
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text(
+                        '这个动画应该平滑运行',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                   );
                 },
@@ -116,22 +119,27 @@ class _WithIsolatePageState extends State<WithIsolatePage>
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Isolate 在 Flutter 中的工作原理',
-          '掌握 Isolate.spawn 创建后台线程的方法',
-          '学会使用 SendPort/ReceivePort 进行 Isolate 通信',
-        ]),
-        ConceptChips(concepts: [
-          'Isolate',
-          '多线程',
-          'SendPort',
-          'ReceivePort',
-          '并发计算',
-          'UI 流畅度',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Isolate 在 Flutter 中的工作原理',
+            '掌握 Isolate.spawn 创建后台线程的方法',
+            '学会使用 SendPort/ReceivePort 进行 Isolate 通信',
+          ],
+        ),
+        ConceptChips(
+          concepts: [
+            'Isolate',
+            '多线程',
+            'SendPort',
+            'ReceivePort',
+            '并发计算',
+            'UI 流畅度',
+          ],
+        ),
         CodeSnippetCard(
           title: 'Isolate 基本使用',
-          code: 'final receivePort = ReceivePort();\n'
+          code:
+              'final receivePort = ReceivePort();\n'
               'await Isolate.spawn(entryPoint, message,\n'
               '  onError: errorPort.sendPort);\n'
               'await for (final msg in receivePort) {\n'
@@ -203,11 +211,13 @@ class _WithIsolatePageState extends State<WithIsolatePage>
 void _isolateEntryPoint(_IsolateMessage message) {
   for (int i = 0; i < message.iterations; i++) {
     List<int> primes = _calculatePrimes(message.maxNumber);
-    message.sendPort.send(_ProgressMessage(
-      iteration: i + 1,
-      progress: i / message.iterations,
-      primeCount: primes.length,
-    ));
+    message.sendPort.send(
+      _ProgressMessage(
+        iteration: i + 1,
+        progress: i / message.iterations,
+        primeCount: primes.length,
+      ),
+    );
   }
   message.sendPort.send(_ResultMessage());
 }
