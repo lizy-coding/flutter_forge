@@ -48,7 +48,7 @@ const flutterGuardDependency = {
   url: 'https://github.com/lizy-coding/flutterguard.git',
   ref: '9f9be84a73dc4b99a956a8529b8c334849566b03',
   immutable: true,
-  lock_status: 'pending_dependency_resolution',
+  lock_status: 'active',
 };
 
 const workspacePackages = [
@@ -217,8 +217,8 @@ function writeProjectContext() {
       layout: 'pub_workspace',
       workspace_root: '.',
       members: workspacePackages.map(({ path: packagePath }) => packagePath),
-      resolution_status: 'blocked',
-      resolution_blocker: 'test_analyzer_flutter_sdk_pin_conflict',
+      resolution_status: 'active',
+      resolution_blocker: 'none',
     },
     internal_packages: workspacePackages.map(({ name, kind, path: packagePath, entrypoints }) => ({
       name,
@@ -297,8 +297,8 @@ function writeRefactorPlan() {
     dependency_migration: {
       layout: 'pub_workspace',
       internal_packages: workspacePackages.map(({ path: packagePath }) => packagePath),
-      workspace_resolution_status: 'blocked',
-      workspace_resolution_blocker: 'test_analyzer_flutter_sdk_pin_conflict',
+      workspace_resolution_status: 'active',
+      workspace_resolution_blocker: 'none',
       external_tool: flutterGuardDependency,
     },
     work_queue: [
@@ -535,8 +535,8 @@ function writePackageContracts() {
       workspace: {
         member: true,
         resolution: 'workspace',
-        resolution_status: 'blocked',
-        resolution_blocker: 'test_analyzer_flutter_sdk_pin_conflict',
+        resolution_status: 'active',
+        resolution_blocker: 'none',
       },
       entrypoints: packageMeta.entrypoints,
       owns: packageMeta.owns,

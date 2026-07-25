@@ -12,8 +12,8 @@
   "workspace": {
     "member": true,
     "resolution": "workspace",
-    "resolution_status": "blocked",
-    "resolution_blocker": "test_analyzer_flutter_sdk_pin_conflict"
+    "resolution_status": "active",
+    "resolution_blocker": "none"
   },
   "entrypoints": [
     "lib/gcode_core.dart"

@@ -1,0 +1,25 @@
+{
+  "schema": "flutter_study.agent_docs.change_report_schema.v1",
+  "consumer": "coding_agent",
+  "description": "Agent 变更报告格式 — 每次任务完成后的结构化输出",
+  "fields": {
+    "task_id": {"type": "string", "required": true, "description": "关联任务 ID"},
+    "changed_files": {"type": "array", "items": "string", "required": true, "description": "修改的文件路径列表"},
+    "tests_added": {"type": "array", "items": "string", "required": false, "description": "新增/修改的测试文件"},
+    "commands": {"type": "array", "items": "string", "required": true, "description": "执行的验证命令"},
+    "results": {
+      "type": "object",
+      "fields": {
+        "analyze": {"type": "string", "enum": ["pass", "fail", "partial", "skipped"]},
+        "format": {"type": "string", "enum": ["pass", "fail", "skipped"]},
+        "test": {"type": "string", "enum": ["pass", "fail", "partial", "skipped"]},
+        "flutterguard": {"type": "string", "enum": ["pass", "fail", "skipped"]},
+        "agent_docs": {"type": "string", "enum": ["pass", "fail", "skipped"]}
+      }
+    },
+    "generated_artifacts": {"type": "array", "items": "string", "description": "生成的产物路径"},
+    "known_risks": {"type": "array", "items": "string", "description": "已知剩余风险"},
+    "manual_verification": {"type": "array", "items": "string", "description": "需要人工验证的项目"},
+    "followups": {"type": "array", "items": "string", "description": "后续跟进事项"}
+  }
+}

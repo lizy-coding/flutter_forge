@@ -18,15 +18,15 @@
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core"
     ],
-    "workspace_resolution_status": "blocked",
-    "workspace_resolution_blocker": "test_analyzer_flutter_sdk_pin_conflict",
+    "workspace_resolution_status": "active",
+    "workspace_resolution_blocker": "none",
     "external_tool": {
       "package": "flutterguard_cli",
       "source": "git",
       "url": "https://github.com/lizy-coding/flutterguard.git",
       "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
       "immutable": true,
-      "lock_status": "pending_dependency_resolution"
+      "lock_status": "active"
     }
   },
   "work_queue": [

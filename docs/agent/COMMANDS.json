@@ -1,0 +1,71 @@
+{
+  "schema": "flutter_study.agent_docs.commands.v1",
+  "consumer": "coding_agent",
+  "description": "项目命令清单 — 所有可执行命令的标准化描述",
+  "commands": {
+    "bootstrap": {
+      "cmd": "bash tool/bootstrap.sh",
+      "description": "环境自举：校验环境 + 获取依赖 + 启用 hooks + smoke check",
+      "modifies_files": false,
+      "timeout_seconds": 180,
+      "artifacts": [],
+      "success_condition": "exit_code=0"
+    },
+    "quality_gate": {
+      "cmd": "bash tool/quality_gate.sh",
+      "description": "全量质量门禁：文档校验 → 格式 → 分析 → 测试 → FlutterGuard",
+      "modifies_files": false,
+      "timeout_seconds": 300,
+      "artifacts": [],
+      "success_condition": "exit_code=0"
+    },
+    "check_environment": {
+      "cmd": "bash tool/check_environment.sh",
+      "description": "环境组件版本检查",
+      "modifies_files": false,
+      "timeout_seconds": 30,
+      "artifacts": [],
+      "success_condition": "exit_code=0"
+    },
+    "test_all": {
+      "cmd": "bash tool/test_all.sh",
+      "description": "遍历主应用和 workspace packages 执行测试",
+      "modifies_files": false,
+      "timeout_seconds": 300,
+      "artifacts": [],
+      "success_condition": "exit_code=0"
+    },
+    "generate_agent_docs": {
+      "cmd": "bash tool/generate_harness_ai_analysis.sh",
+      "description": "生成 Agent 索引 + 校验文档一致性",
+      "modifies_files": true,
+      "timeout_seconds": 30,
+      "artifacts": ["lib/AI_MODULE_INDEX.md", "AI_PROJECT_CONTEXT.md", "REFACTOR_PLAN.md"],
+      "success_condition": "exit_code=0 && agent_docs_valid >= 40"
+    },
+    "format": {
+      "cmd": "dart format .",
+      "description": "格式化所有 Dart 文件",
+      "modifies_files": true,
+      "timeout_seconds": 30,
+      "artifacts": [],
+      "success_condition": "exit_code=0 && 0 files changed"
+    },
+    "analyze": {
+      "cmd": "flutter analyze",
+      "description": "Flutter 静态分析",
+      "modifies_files": false,
+      "timeout_seconds": 120,
+      "artifacts": [],
+      "success_condition": "exit_code=0 && 0 errors"
+    },
+    "flutterguard": {
+      "cmd": "dart run flutterguard_cli:flutterguard scan . --fail-on high",
+      "description": "FlutterGuard 安全扫描",
+      "modifies_files": false,
+      "timeout_seconds": 60,
+      "artifacts": [],
+      "success_condition": "exit_code=0 && 0 high issues"
+    }
+  }
+}

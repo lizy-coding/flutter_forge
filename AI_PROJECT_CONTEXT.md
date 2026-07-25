@@ -38,8 +38,8 @@
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core"
     ],
-    "resolution_status": "blocked",
-    "resolution_blocker": "test_analyzer_flutter_sdk_pin_conflict"
+    "resolution_status": "active",
+    "resolution_blocker": "none"
   },
   "internal_packages": [
     {
@@ -74,7 +74,7 @@
       "url": "https://github.com/lizy-coding/flutterguard.git",
       "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
       "immutable": true,
-      "lock_status": "pending_dependency_resolution"
+      "lock_status": "active"
     }
   ],
   "layers": [
