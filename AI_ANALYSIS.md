@@ -22,18 +22,22 @@
     "host_integrations"
   ],
   "depends": [
-    "../gcode_core",
-    "../flutter_study_learning",
-    "../file_picker_bridge",
-    "../flutter_ioc_core",
-    "../flutterguard/packages/flutterguard_cli"
+    "packages/gcode_core",
+    "packages/flutter_study_learning",
+    "packages/file_picker_bridge",
+    "packages/flutter_ioc_core",
+    "git:https://github.com/lizy-coding/flutterguard.git#9f9be84a73dc4b99a956a8529b8c334849566b03"
   ],
   "children": [
     "lib/AI_ANALYSIS.md",
     "lib/app/AI_ANALYSIS.md",
     "lib/module_registry/AI_ANALYSIS.md",
     "lib/shared/AI_ANALYSIS.md",
-    "lib/modules/AI_ANALYSIS.md"
+    "lib/modules/AI_ANALYSIS.md",
+    "packages/gcode_core/AI_ANALYSIS.md",
+    "packages/flutter_study_learning/AI_ANALYSIS.md",
+    "packages/file_picker_bridge/AI_ANALYSIS.md",
+    "packages/flutter_ioc_core/AI_ANALYSIS.md"
   ],
   "contracts": {
     "no_natural_language": true,
@@ -48,6 +52,6 @@
     "bash tool/generate_harness_ai_analysis.sh",
     "dart format .",
     "flutter analyze",
-    "dart run flutterguard_cli:flutterguard scan --path . --fail-on high"
+    "dart run flutterguard_cli:flutterguard scan . --fail-on high"
   ]
 }

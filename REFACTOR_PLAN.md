@@ -7,8 +7,28 @@
     "shared_package_extraction",
     "module_analysis_coverage",
     "app_navigation_boundary",
-    "host_bootstrap_boundary"
+    "host_bootstrap_boundary",
+    "workspace_package_import"
   ],
+  "dependency_migration": {
+    "layout": "pub_workspace",
+    "internal_packages": [
+      "packages/gcode_core",
+      "packages/flutter_study_learning",
+      "packages/file_picker_bridge",
+      "packages/flutter_ioc_core"
+    ],
+    "workspace_resolution_status": "blocked",
+    "workspace_resolution_blocker": "test_analyzer_flutter_sdk_pin_conflict",
+    "external_tool": {
+      "package": "flutterguard_cli",
+      "source": "git",
+      "url": "https://github.com/lizy-coding/flutterguard.git",
+      "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
+      "immutable": true,
+      "lock_status": "pending_dependency_resolution"
+    }
+  },
   "work_queue": [
     {
       "id": "module_platform_contract",

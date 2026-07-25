@@ -42,6 +42,58 @@ const categoryMeta = {
   platform: [['dio_interceptor', 'usb_detector'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'flutter_study_learning']],
 };
 
+const flutterGuardDependency = {
+  package: 'flutterguard_cli',
+  source: 'git',
+  url: 'https://github.com/lizy-coding/flutterguard.git',
+  ref: '9f9be84a73dc4b99a956a8529b8c334849566b03',
+  immutable: true,
+  lock_status: 'pending_dependency_resolution',
+};
+
+const workspacePackages = [
+  {
+    name: 'gcode_core',
+    kind: 'flutter_package',
+    path: 'packages/gcode_core',
+    entrypoints: ['lib/gcode_core.dart'],
+    owns: ['gcode_parsing', 'line_reading', 'toolpath_building', 'flutter_visualization_widgets'],
+    depends: ['flutter_sdk'],
+    validation: ['flutter pub get', 'flutter analyze', 'flutter test'],
+    test_status: 'configured',
+  },
+  {
+    name: 'flutter_study_learning',
+    kind: 'flutter_package',
+    path: 'packages/flutter_study_learning',
+    entrypoints: ['lib/flutter_study_learning.dart'],
+    owns: ['learning_scaffold_widgets', 'teaching_ui_components'],
+    depends: ['flutter_sdk'],
+    validation: ['flutter pub get', 'flutter analyze'],
+    test_status: 'missing_test_directory',
+  },
+  {
+    name: 'file_picker_bridge',
+    kind: 'flutter_bridge_package',
+    path: 'packages/file_picker_bridge',
+    entrypoints: ['lib/file_picker_bridge.dart'],
+    owns: ['file_picker_api', 'method_channel_client'],
+    depends: ['flutter_sdk'],
+    validation: ['flutter pub get', 'flutter analyze', 'flutter test'],
+    test_status: 'configured',
+  },
+  {
+    name: 'flutter_ioc_core',
+    kind: 'dart_package',
+    path: 'packages/flutter_ioc_core',
+    entrypoints: ['lib/flutter_ioc_core.dart'],
+    owns: ['ioc_container', 'registration_lifetimes', 'scoped_resolution'],
+    depends: [],
+    validation: ['dart pub get', 'dart analyze'],
+    test_status: 'missing_test_directory',
+  },
+];
+
 function writeJson(rel, value) {
   const file = path.join(root, rel);
   fs.mkdirSync(path.dirname(file), { recursive: true });
@@ -97,6 +149,7 @@ function writeSchema() {
     },
     levels: {
       workspace: ['AI_ANALYSIS.md'],
+      package_contract: workspacePackages.map(({ path: packagePath }) => `${packagePath}/AI_ANALYSIS.md`),
       section: [
         'lib/AI_ANALYSIS.md',
         'lib/app/AI_ANALYSIS.md',
@@ -131,6 +184,11 @@ function writeSchema() {
       content: ['route', 'category', 'status', 'entrypoints', 'analysis_parent'],
       avoid: ['class_descriptions', 'long_file_inventory', 'natural_language_notes'],
     },
+    package_contract_policy: {
+      required_for_workspace_member: true,
+      content: ['package_type', 'workspace', 'entrypoints', 'owns', 'depends', 'validation', 'test_status'],
+      avoid: ['platform_claims_not_proven_by_manifest', 'natural_language_notes'],
+    },
   });
 }
 
@@ -155,6 +213,20 @@ function writeProjectContext() {
       router: 'lib/app/router/app_router.dart',
       route_table: 'lib/app/router/app_route_table.dart',
     },
+    repository: {
+      layout: 'pub_workspace',
+      workspace_root: '.',
+      members: workspacePackages.map(({ path: packagePath }) => packagePath),
+      resolution_status: 'blocked',
+      resolution_blocker: 'test_analyzer_flutter_sdk_pin_conflict',
+    },
+    internal_packages: workspacePackages.map(({ name, kind, path: packagePath, entrypoints }) => ({
+      name,
+      type: kind,
+      path: packagePath,
+      entrypoint: entrypoints[0],
+    })),
+    external_tools: [flutterGuardDependency],
     layers: [
       {
         id: 'app',
@@ -203,7 +275,7 @@ function writeProjectContext() {
         'bash tool/generate_harness_ai_analysis.sh',
         'dart format .',
         'flutter analyze',
-        'dart run flutterguard_cli:flutterguard scan --path . --fail-on high',
+        'dart run flutterguard_cli:flutterguard scan . --fail-on high',
       ],
     },
   });
@@ -220,7 +292,15 @@ function writeRefactorPlan() {
       'module_analysis_coverage',
       'app_navigation_boundary',
       'host_bootstrap_boundary',
+      'workspace_package_import',
     ],
+    dependency_migration: {
+      layout: 'pub_workspace',
+      internal_packages: workspacePackages.map(({ path: packagePath }) => packagePath),
+      workspace_resolution_status: 'blocked',
+      workspace_resolution_blocker: 'test_analyzer_flutter_sdk_pin_conflict',
+      external_tool: flutterGuardDependency,
+    },
     work_queue: [
       {
         id: 'module_platform_contract',
@@ -300,9 +380,22 @@ function writeRootIndexes() {
     kind: 'workspace_index',
     entrypoints: ['lib/main.dart', 'lib/app/app_bootstrap.dart', 'lib/app/app.dart', 'lib/app/router/app_route_table.dart'],
     owns: ['app_shell', 'module_registry', 'shared_capabilities', 'learning_modules', 'host_integrations'],
-    depends: ['../gcode_core', '../flutter_study_learning', '../file_picker_bridge', '../flutter_ioc_core', '../flutterguard/packages/flutterguard_cli'],
-    children: ['lib/AI_ANALYSIS.md', 'lib/app/AI_ANALYSIS.md', 'lib/module_registry/AI_ANALYSIS.md', 'lib/shared/AI_ANALYSIS.md', 'lib/modules/AI_ANALYSIS.md'],
-    validation: ['bash tool/generate_harness_ai_analysis.sh', 'dart format .', 'flutter analyze', 'dart run flutterguard_cli:flutterguard scan --path . --fail-on high'],
+    depends: [
+      'packages/gcode_core',
+      'packages/flutter_study_learning',
+      'packages/file_picker_bridge',
+      'packages/flutter_ioc_core',
+      `git:${flutterGuardDependency.url}#${flutterGuardDependency.ref}`,
+    ],
+    children: [
+      'lib/AI_ANALYSIS.md',
+      'lib/app/AI_ANALYSIS.md',
+      'lib/module_registry/AI_ANALYSIS.md',
+      'lib/shared/AI_ANALYSIS.md',
+      'lib/modules/AI_ANALYSIS.md',
+      ...workspacePackages.map(({ path: packagePath }) => `${packagePath}/AI_ANALYSIS.md`),
+    ],
+    validation: ['bash tool/generate_harness_ai_analysis.sh', 'dart format .', 'flutter analyze', 'dart run flutterguard_cli:flutterguard scan . --fail-on high'],
   });
   writeIndex({
     rel: 'lib/AI_ANALYSIS.md',
@@ -347,7 +440,7 @@ function writeLayerIndexes() {
     kind: 'shared_index',
     entrypoints: ['multi_window', 'platform'],
     owns: ['business_free_capabilities', 'desktop_window_lifecycle', 'platform_boundaries'],
-    depends: ['desktop_multi_window', '../file_picker_bridge'],
+    depends: ['desktop_multi_window', 'packages/file_picker_bridge'],
     children: ['multi_window/AI_ANALYSIS.md', 'platform/AI_ANALYSIS.md'],
   });
   writeIndex({
@@ -365,7 +458,7 @@ function writeLayerIndexes() {
     status: 'transition',
     entrypoints: ['AI_ANALYSIS.md'],
     owns: ['platform_boundary', 'host_channel_registry'],
-    depends: ['../file_picker_bridge', 'macos/Runner/AppDelegate.swift'],
+    depends: ['packages/file_picker_bridge', 'macos/Runner/AppDelegate.swift'],
     validation: ['flutter analyze', 'flutter build macos'],
   });
 }
@@ -426,6 +519,36 @@ function writeModuleContracts() {
   }
 }
 
+function writePackageContracts() {
+  for (const packageMeta of workspacePackages) {
+    writeJson(`${packageMeta.path}/AI_ANALYSIS.md`, {
+      schema: 'vibecoding.harness.ai_analysis.v2',
+      mode: 'package_contract',
+      node: {
+        id: `flutter_study.workspace.${packageMeta.name}`,
+        kind: packageMeta.kind,
+        package: packageMeta.name,
+        path: packageMeta.path,
+        status: 'active',
+      },
+      package_type: packageMeta.kind,
+      workspace: {
+        member: true,
+        resolution: 'workspace',
+        resolution_status: 'blocked',
+        resolution_blocker: 'test_analyzer_flutter_sdk_pin_conflict',
+      },
+      entrypoints: packageMeta.entrypoints,
+      owns: packageMeta.owns,
+      depends: packageMeta.depends,
+      children: [],
+      contracts,
+      validation: packageMeta.validation,
+      test_status: packageMeta.test_status,
+    });
+  }
+}
+
 writeSchema();
 writeProjectContext();
 writeRefactorPlan();
@@ -434,5 +557,6 @@ writeRootIndexes();
 writeLayerIndexes();
 writeModuleIndexes();
 writeModuleContracts();
+writePackageContracts();
 
 console.log('agent index AI_ANALYSIS generation completed');

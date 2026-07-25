@@ -19,7 +19,7 @@
   ],
   "depends": [
     "desktop_multi_window",
-    "../file_picker_bridge"
+    "packages/file_picker_bridge"
   ],
   "children": [
     "multi_window/AI_ANALYSIS.md",

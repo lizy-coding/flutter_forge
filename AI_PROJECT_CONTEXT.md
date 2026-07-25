@@ -29,6 +29,54 @@
     "router": "lib/app/router/app_router.dart",
     "route_table": "lib/app/router/app_route_table.dart"
   },
+  "repository": {
+    "layout": "pub_workspace",
+    "workspace_root": ".",
+    "members": [
+      "packages/gcode_core",
+      "packages/flutter_study_learning",
+      "packages/file_picker_bridge",
+      "packages/flutter_ioc_core"
+    ],
+    "resolution_status": "blocked",
+    "resolution_blocker": "test_analyzer_flutter_sdk_pin_conflict"
+  },
+  "internal_packages": [
+    {
+      "name": "gcode_core",
+      "type": "flutter_package",
+      "path": "packages/gcode_core",
+      "entrypoint": "lib/gcode_core.dart"
+    },
+    {
+      "name": "flutter_study_learning",
+      "type": "flutter_package",
+      "path": "packages/flutter_study_learning",
+      "entrypoint": "lib/flutter_study_learning.dart"
+    },
+    {
+      "name": "file_picker_bridge",
+      "type": "flutter_bridge_package",
+      "path": "packages/file_picker_bridge",
+      "entrypoint": "lib/file_picker_bridge.dart"
+    },
+    {
+      "name": "flutter_ioc_core",
+      "type": "dart_package",
+      "path": "packages/flutter_ioc_core",
+      "entrypoint": "lib/flutter_ioc_core.dart"
+    }
+  ],
+  "external_tools": [
+    {
+      "package": "flutterguard_cli",
+      "source": "git",
+      "url": "https://github.com/lizy-coding/flutterguard.git",
+      "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
+      "immutable": true,
+      "lock_status": "pending_dependency_resolution"
+    }
+  ],
   "layers": [
     {
       "id": "app",
@@ -121,7 +169,7 @@
       "bash tool/generate_harness_ai_analysis.sh",
       "dart format .",
       "flutter analyze",
-      "dart run flutterguard_cli:flutterguard scan --path . --fail-on high"
+      "dart run flutterguard_cli:flutterguard scan . --fail-on high"
     ]
   }
 }

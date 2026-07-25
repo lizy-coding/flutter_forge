@@ -4,6 +4,12 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const failures = [];
 const documents = new Map();
+const workspacePackages = [
+  ['gcode_core', 'packages/gcode_core'],
+  ['flutter_study_learning', 'packages/flutter_study_learning'],
+  ['file_picker_bridge', 'packages/file_picker_bridge'],
+  ['flutter_ioc_core', 'packages/flutter_ioc_core'],
+];
 
 function readJson(rel) {
   try {
@@ -104,6 +110,33 @@ if (moduleIndex) {
     if (contract.node?.status !== module.status) {
       failures.push(`${module.analysis}:index_mismatch:status`);
     }
+  }
+}
+
+for (const [packageName, packagePath] of workspacePackages) {
+  const analysisPath = `${packagePath}/AI_ANALYSIS.md`;
+  const manifestPath = `${packagePath}/pubspec.yaml`;
+  const contract = documents.get(analysisPath);
+  if (!contract) {
+    failures.push(`${analysisPath}:missing_package_contract`);
+    continue;
+  }
+  if (contract.mode !== 'package_contract') {
+    failures.push(`${analysisPath}:mode:package_contract`);
+  }
+  if (contract.node?.package !== packageName) {
+    failures.push(`${analysisPath}:package_name_mismatch`);
+  }
+  if (contract.node?.path !== packagePath) {
+    failures.push(`${analysisPath}:package_path_mismatch`);
+  }
+
+  const manifest = fs.readFileSync(path.join(root, manifestPath), 'utf8');
+  if (!new RegExp(`^name:\\s*${packageName}$`, 'm').test(manifest)) {
+    failures.push(`${manifestPath}:name_mismatch`);
+  }
+  if (!/^resolution:\s*workspace$/m.test(manifest)) {
+    failures.push(`${manifestPath}:missing_workspace_resolution`);
   }
 }
 

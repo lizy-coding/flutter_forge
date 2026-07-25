@@ -14,6 +14,12 @@
     "workspace": [
       "AI_ANALYSIS.md"
     ],
+    "package_contract": [
+      "packages/gcode_core/AI_ANALYSIS.md",
+      "packages/flutter_study_learning/AI_ANALYSIS.md",
+      "packages/file_picker_bridge/AI_ANALYSIS.md",
+      "packages/flutter_ioc_core/AI_ANALYSIS.md"
+    ],
     "section": [
       "lib/AI_ANALYSIS.md",
       "lib/app/AI_ANALYSIS.md",
@@ -73,6 +79,22 @@
     "avoid": [
       "class_descriptions",
       "long_file_inventory",
+      "natural_language_notes"
+    ]
+  },
+  "package_contract_policy": {
+    "required_for_workspace_member": true,
+    "content": [
+      "package_type",
+      "workspace",
+      "entrypoints",
+      "owns",
+      "depends",
+      "validation",
+      "test_status"
+    ],
+    "avoid": [
+      "platform_claims_not_proven_by_manifest",
       "natural_language_notes"
     ]
   }

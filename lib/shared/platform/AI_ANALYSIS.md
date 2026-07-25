@@ -16,7 +16,7 @@
     "host_channel_registry"
   ],
   "depends": [
-    "../file_picker_bridge",
+    "packages/file_picker_bridge",
     "macos/Runner/AppDelegate.swift"
   ],
   "children": [],
