@@ -213,49 +213,46 @@ runZoned(() {
           children: [
             SizedBox(
               height: 380,
-              child: DefaultTabController(
-                length: 4,
-                child: Column(
-                  children: [
-                    TabBar(
+              child: Column(
+                children: [
+                  TabBar(
+                    controller: _tabController,
+                    tabs: const [
+                      Tab(text: 'async/await'),
+                      Tab(text: 'Future.value'),
+                      Tab(text: 'Future链'),
+                      Tab(text: 'Zone'),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
                       controller: _tabController,
-                      tabs: const [
-                        Tab(text: 'async/await'),
-                        Tab(text: 'Future.value'),
-                        Tab(text: 'Future链'),
-                        Tab(text: 'Zone'),
+                      children: [
+                        _buildTabContent(
+                          'async/await',
+                          'async/await语法是Future的语法糖。'
+                              'await会暂停函数并将后续代码包装成微任务。',
+                          _runAsyncAwaitTest,
+                        ),
+                        _buildTabContent(
+                          'Future.value',
+                          'Future.value立即完成，then回调直接进微任务队列。',
+                          _runFutureValueTest,
+                        ),
+                        _buildTabContent(
+                          'Future链式调用',
+                          '每个then回调都是微任务，不是事件任务。',
+                          _runFutureChainTest,
+                        ),
+                        _buildTabContent(
+                          'Zone',
+                          'Zone可拦截和修改异步操作调度。',
+                          _runZoneTest,
+                        ),
                       ],
                     ),
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabController,
-                        children: [
-                          _buildTabContent(
-                            'async/await',
-                            'async/await语法是Future的语法糖。'
-                                'await会暂停函数并将后续代码包装成微任务。',
-                            _runAsyncAwaitTest,
-                          ),
-                          _buildTabContent(
-                            'Future.value',
-                            'Future.value立即完成，then回调直接进微任务队列。',
-                            _runFutureValueTest,
-                          ),
-                          _buildTabContent(
-                            'Future链式调用',
-                            '每个then回调都是微任务，不是事件任务。',
-                            _runFutureChainTest,
-                          ),
-                          _buildTabContent(
-                            'Zone',
-                            'Zone可拦截和修改异步操作调度。',
-                            _runZoneTest,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 4),

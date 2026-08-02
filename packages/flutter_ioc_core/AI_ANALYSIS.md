@@ -36,7 +36,8 @@
   },
   "validation": [
     "dart pub get",
-    "dart analyze"
+    "dart analyze",
+    "dart test"
   ],
-  "test_status": "missing_test_directory"
+  "test_status": "configured"
 }

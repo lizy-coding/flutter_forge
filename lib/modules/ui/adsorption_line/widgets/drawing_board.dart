@@ -19,10 +19,17 @@ class _DrawingBoardState extends State<DrawingBoard> {
   ElementType _selectedTool = ElementType.rectangle;
   Color _selectedColor = Colors.blue;
   double _strokeWidth = 2.0;
+  final FocusNode _keyboardFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _keyboardFocusNode.requestFocus();
+  }
 
   @override
   void dispose() {
-    // 清理吸附管理器的计时器
+    _keyboardFocusNode.dispose();
     AdsorptionManager.dispose();
     super.dispose();
   }
@@ -32,7 +39,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
     final body = _buildBody(context);
     if (!widget.embedInScaffold) return body;
     return KeyboardListener(
-      focusNode: FocusNode()..requestFocus(),
+      focusNode: _keyboardFocusNode,
       onKeyEvent: (event) {
         context.read<DrawingState>().handleKeyEvent(event);
       },

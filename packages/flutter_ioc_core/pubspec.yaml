@@ -10,3 +10,5 @@ resolution: workspace
 
 dev_dependencies:
   lints: ^4.0.0
+  flutter_test:
+    sdk: flutter

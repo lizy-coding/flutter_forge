@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout pinned FlutterGuard
+        uses: actions/checkout@v4
+        with:
+          repository: lizy-coding/flutterguard
+          ref: 9f9be84a73dc4b99a956a8529b8c334849566b03
+          path: flutterguard
+
+      - name: Prepare sibling FlutterGuard dependency
+        run: mv flutterguard ../flutterguard
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.6"
+          channel: stable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.20.2"
+
+      - name: Bootstrap
+        run: |
+          flutter pub get
+          git config core.hooksPath .githooks
+
+      - name: Agent doc generation + drift check
+        run: |
+          bash tool/generate_harness_ai_analysis.sh
+          git diff --exit-code -- \
+            AI_ANALYSIS_SCHEMA.json \
+            AI_PROJECT_CONTEXT.md \
+            REFACTOR_PLAN.md \
+            'lib/**/AI_ANALYSIS.md' \
+            'lib/AI_MODULE_INDEX.md' \
+            'packages/**/AI_ANALYSIS.md'
+
+      - name: Dart format
+        run: |
+          dart format .
+          git diff --exit-code -- '*.dart'
+
+      - name: Flutter analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Tests
+        run: bash tool/test_all.sh
+
+      - name: FlutterGuard scan
+        run: dart run flutterguard_cli:flutterguard scan . --fail-on high

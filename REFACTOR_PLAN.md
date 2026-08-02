@@ -1,14 +1,15 @@
 {
   "schema": "flutter_study.agent_docs.refactor_plan.v1",
   "objective": "android_readiness_after_architecture_convergence",
-  "active_phase": "mobile_preintegration",
+  "active_phase": "agent_managed",
   "completed_milestones": [
     "directory_layers",
     "shared_package_extraction",
     "module_analysis_coverage",
     "app_navigation_boundary",
     "host_bootstrap_boundary",
-    "workspace_package_import"
+    "workspace_package_import",
+    "agent_takeover_ready"
   ],
   "dependency_migration": {
     "layout": "pub_workspace",

@@ -35,15 +35,19 @@
 
 每次代码修改后 **必须** 执行：
 ```bash
-bash tool/generate_harness_ai_analysis.sh
-dart format .
-flutter analyze
-dart run flutterguard_cli:flutterguard scan --path . --fail-on high
+bash tool/quality_gate.sh
 ```
+
+等效手动步骤（quality_gate.sh 内部执行顺序）:
+1. `bash tool/generate_harness_ai_analysis.sh` + `git diff --exit-code` (文档不漂移)
+2. `dart format .` + `git diff --exit-code -- '*.dart'` (格式不漂移)
+3. `flutter analyze` (无 error)
+4. `bash tool/test_all.sh` (全部测试通过)
+5. `dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题)
 
 - `flutter analyze` 必须通过，不允许有 error 级别问题
 - `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题
-- 涉及逻辑代码时补充测试（如有测试框架）
+- 涉及逻辑代码时补充测试
 - 涉及 UI 教学页时进行人工验收或截图说明
 
 ## 禁止事项

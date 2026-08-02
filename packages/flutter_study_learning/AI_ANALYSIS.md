@@ -37,7 +37,8 @@
   },
   "validation": [
     "flutter pub get",
-    "flutter analyze"
+    "flutter analyze",
+    "flutter test"
   ],
-  "test_status": "missing_test_directory"
+  "test_status": "configured"
 }

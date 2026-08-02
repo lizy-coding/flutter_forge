@@ -69,8 +69,8 @@ const workspacePackages = [
     entrypoints: ['lib/flutter_study_learning.dart'],
     owns: ['learning_scaffold_widgets', 'teaching_ui_components'],
     depends: ['flutter_sdk'],
-    validation: ['flutter pub get', 'flutter analyze'],
-    test_status: 'missing_test_directory',
+    validation: ['flutter pub get', 'flutter analyze', 'flutter test'],
+    test_status: 'configured',
   },
   {
     name: 'file_picker_bridge',
@@ -89,8 +89,8 @@ const workspacePackages = [
     entrypoints: ['lib/flutter_ioc_core.dart'],
     owns: ['ioc_container', 'registration_lifetimes', 'scoped_resolution'],
     depends: [],
-    validation: ['dart pub get', 'dart analyze'],
-    test_status: 'missing_test_directory',
+    validation: ['dart pub get', 'dart analyze', 'dart test'],
+    test_status: 'configured',
   },
 ];
 
@@ -285,7 +285,7 @@ function writeRefactorPlan() {
   writeJson('REFACTOR_PLAN.md', {
     schema: 'flutter_study.agent_docs.refactor_plan.v1',
     objective: 'android_readiness_after_architecture_convergence',
-    active_phase: 'mobile_preintegration',
+    active_phase: 'agent_managed',
     completed_milestones: [
       'directory_layers',
       'shared_package_extraction',
@@ -293,6 +293,7 @@ function writeRefactorPlan() {
       'app_navigation_boundary',
       'host_bootstrap_boundary',
       'workspace_package_import',
+      'agent_takeover_ready',
     ],
     dependency_migration: {
       layout: 'pub_workspace',

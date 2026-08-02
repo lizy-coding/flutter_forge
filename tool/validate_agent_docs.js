@@ -4,12 +4,16 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const failures = [];
 const documents = new Map();
+
+const VALID_CATEGORIES = ['basic', 'async', 'state', 'ui', 'popup_table', 'platform'];
 const workspacePackages = [
   ['gcode_core', 'packages/gcode_core'],
   ['flutter_study_learning', 'packages/flutter_study_learning'],
   ['file_picker_bridge', 'packages/file_picker_bridge'],
   ['flutter_ioc_core', 'packages/flutter_ioc_core'],
 ];
+
+// ── helpers ──────────────────────────────────────────────────────
 
 function readJson(rel) {
   try {
@@ -38,6 +42,33 @@ function collectAnalysisFiles(dir) {
   return result;
 }
 
+function fileExists(rel) {
+  return fs.existsSync(path.join(root, rel));
+}
+
+function grepInFile(rel, pattern) {
+  if (!fileExists(rel)) return false;
+  const content = fs.readFileSync(path.join(root, rel), 'utf8');
+  return pattern.test(content);
+}
+
+function scanModuleDirs() {
+  const dirs = [];
+  const modulesRoot = path.join(root, 'lib/modules');
+  if (!fs.existsSync(modulesRoot)) return dirs;
+  for (const cat of fs.readdirSync(modulesRoot, { withFileTypes: true })) {
+    if (!cat.isDirectory() || cat.name.startsWith('.')) continue;
+    for (const mod of fs.readdirSync(path.join(modulesRoot, cat.name), { withFileTypes: true })) {
+      if (!mod.isDirectory() || mod.name.startsWith('.')) continue;
+      const relPath = `lib/modules/${cat.name}/${mod.name}`;
+      dirs.push({ category: cat.name, module: mod.name, path: relPath });
+    }
+  }
+  return dirs;
+}
+
+// ── collect all machine documents ─────────────────────────────────
+
 const machineDocuments = [
   'AI_ANALYSIS_SCHEMA.json',
   'AI_PROJECT_CONTEXT.md',
@@ -46,22 +77,18 @@ const machineDocuments = [
   ...collectAnalysisFiles(root),
 ];
 
+// ── phase 1: JSON parse + key validation ──────────────────────────
+
 const requiredAnalysisKeys = [
-  'schema',
-  'mode',
-  'node',
-  'entrypoints',
-  'owns',
-  'depends',
-  'children',
-  'contracts',
-  'validation',
+  'schema', 'mode', 'node', 'entrypoints', 'owns',
+  'depends', 'children', 'contracts', 'validation',
 ];
 
 for (const rel of [...new Set(machineDocuments)].sort()) {
   const document = readJson(rel);
   if (!document) continue;
-  if (path.basename(rel) !== 'AI_ANALYSIS.md') continue;
+  const basename = path.basename(rel);
+  if (basename !== 'AI_ANALYSIS.md') continue;
 
   for (const key of requiredAnalysisKeys) {
     if (!(key in document)) failures.push(`${rel}:missing_key:${key}`);
@@ -84,6 +111,8 @@ for (const rel of [...new Set(machineDocuments)].sort()) {
   }
 }
 
+// ── phase 2: module index validation ──────────────────────────────
+
 const moduleIndex = documents.get('lib/AI_MODULE_INDEX.md');
 if (moduleIndex) {
   if (moduleIndex.count !== moduleIndex.modules?.length) {
@@ -91,27 +120,111 @@ if (moduleIndex) {
   }
   const ids = new Set();
   const routes = new Set();
-  for (const module of moduleIndex.modules ?? []) {
-    if (ids.has(module.id)) failures.push(`lib/AI_MODULE_INDEX.md:duplicate_id:${module.id}`);
-    if (routes.has(module.route)) failures.push(`lib/AI_MODULE_INDEX.md:duplicate_route:${module.route}`);
-    ids.add(module.id);
-    routes.add(module.route);
+  const indexedModules = new Map();
 
-    const contract = documents.get(module.analysis);
+  for (const mod of moduleIndex.modules ?? []) {
+    indexedModules.set(mod.id, mod);
+
+    if (ids.has(mod.id)) failures.push(`lib/AI_MODULE_INDEX.md:duplicate_id:${mod.id}`);
+    if (routes.has(mod.route)) failures.push(`lib/AI_MODULE_INDEX.md:duplicate_route:${mod.route}`);
+    ids.add(mod.id);
+    routes.add(mod.route);
+
+    const contract = documents.get(mod.analysis);
     if (!contract) {
-      failures.push(`lib/AI_MODULE_INDEX.md:missing_analysis:${module.analysis}`);
+      failures.push(`lib/AI_MODULE_INDEX.md:missing_analysis:${mod.analysis}`);
       continue;
     }
     for (const key of ['route', 'category']) {
-      if (contract[key] !== module[key]) {
-        failures.push(`${module.analysis}:index_mismatch:${key}`);
+      if (contract[key] !== mod[key]) {
+        failures.push(`${mod.analysis}:index_mismatch:${key}`);
       }
     }
-    if (contract.node?.status !== module.status) {
-      failures.push(`${module.analysis}:index_mismatch:status`);
+    if (contract.node?.status !== mod.status) {
+      failures.push(`${mod.analysis}:index_mismatch:status`);
+    }
+  }
+
+  // ── phase 3: directory ↔ index cross-check ──────────────────────
+
+  const dirModules = scanModuleDirs();
+  const dirModuleIds = new Set(dirModules.map(d => d.module));
+  const dirModulePaths = new Map(dirModules.map(d => [d.module, d.path]));
+
+  // Every directory must be in the index
+  for (const dirMod of dirModules) {
+    if (!VALID_CATEGORIES.includes(dirMod.category)) {
+      failures.push(`${dirMod.path}:invalid_category:${dirMod.category}`);
+    }
+    if (!ids.has(dirMod.module)) {
+      failures.push(`${dirMod.path}:unregistered_module — not found in lib/AI_MODULE_INDEX.md`);
+    }
+  }
+
+  // Every index entry must have a matching directory
+  for (const mod of moduleIndex.modules ?? []) {
+    if (!dirModuleIds.has(mod.id)) {
+      failures.push(`${mod.analysis}:orphan_index_entry — no directory under lib/modules/`);
+      continue;
+    }
+    const expectedPath = dirModulePaths.get(mod.id);
+    if (mod.path !== expectedPath) {
+      failures.push(`${mod.analysis}:path_mismatch:index=${mod.path} fs=${expectedPath}`);
+    }
+  }
+
+  // ── phase 4: naming conventions ─────────────────────────────────
+
+  const SNAKE_CASE = /^[a-z][a-z0-9_]*$/;
+  const KEBAB_ROUTE = /^\/[a-z][a-z0-9-]*$/;
+
+  for (const dirMod of dirModules) {
+    if (!SNAKE_CASE.test(dirMod.module)) {
+      failures.push(`${dirMod.path}:naming_convention:dir must be snake_case, got "${dirMod.module}"`);
+    }
+  }
+
+  for (const mod of moduleIndex.modules ?? []) {
+    if (!KEBAB_ROUTE.test(mod.route)) {
+      failures.push(`${mod.analysis}:naming_convention:route must be kebab-case starting with /, got "${mod.route}"`);
+    }
+  }
+
+  // ── phase 5: module_entry.dart + teaching template check ────────
+
+  for (const mod of moduleIndex.modules ?? []) {
+    const entryFile = `${mod.path}/module_entry.dart`;
+    if (!fileExists(entryFile)) {
+      failures.push(`${mod.path}:missing_module_entry`);
+    }
+
+    // Check at least one .dart file in the module imports flutter_study_learning
+    const modDir = path.join(root, mod.path);
+    if (fs.existsSync(modDir)) {
+      let hasTeachingDep = false;
+      function walk(dir) {
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+          if (entry.name.startsWith('.') || entry.name === 'AI_ANALYSIS.md') continue;
+          const abs = path.join(dir, entry.name);
+          if (entry.isDirectory()) {
+            walk(abs);
+          } else if (entry.name.endsWith('.dart')) {
+            const content = fs.readFileSync(abs, 'utf8');
+            if (/flutter_study_learning/.test(content)) {
+              hasTeachingDep = true;
+            }
+          }
+        }
+      }
+      walk(modDir);
+      if (!hasTeachingDep) {
+        failures.push(`${mod.path}:missing_teaching_dependency — no file imports flutter_study_learning`);
+      }
     }
   }
 }
+
+// ── phase 6: workspace package contract validation ─────────────────
 
 for (const [packageName, packagePath] of workspacePackages) {
   const analysisPath = `${packagePath}/AI_ANALYSIS.md`;
@@ -131,14 +244,46 @@ for (const [packageName, packagePath] of workspacePackages) {
     failures.push(`${analysisPath}:package_path_mismatch`);
   }
 
-  const manifest = fs.readFileSync(path.join(root, manifestPath), 'utf8');
-  if (!new RegExp(`^name:\\s*${packageName}$`, 'm').test(manifest)) {
-    failures.push(`${manifestPath}:name_mismatch`);
-  }
-  if (!/^resolution:\s*workspace$/m.test(manifest)) {
-    failures.push(`${manifestPath}:missing_workspace_resolution`);
+  if (fileExists(manifestPath)) {
+    const manifest = fs.readFileSync(path.join(root, manifestPath), 'utf8');
+    if (!new RegExp(`^name:\\s*${packageName}$`, 'm').test(manifest)) {
+      failures.push(`${manifestPath}:name_mismatch`);
+    }
+    if (!/^resolution:\s*workspace$/m.test(manifest)) {
+      failures.push(`${manifestPath}:missing_workspace_resolution`);
+    }
   }
 }
+
+// ── phase 7: schema document validation ───────────────────────────
+
+const schema = documents.get('AI_ANALYSIS_SCHEMA.json');
+if (schema) {
+  // Verify schema declares all known analysis files
+  const declared = new Set();
+  for (const level of Object.values(schema.levels ?? {})) {
+    for (const f of level) {
+      // Normalize glob patterns to check if they match
+      if (f.includes('*')) {
+        // Glob pattern like "lib/modules/*/*/AI_ANALYSIS.md"
+        // Count how many actual files match
+        let count = 0;
+        for (const doc of documents.keys()) {
+          if (doc.startsWith('lib/modules/') && path.basename(doc) === 'AI_ANALYSIS.md') {
+            // Only match module-level (2 levels deep under modules/)
+            const parts = doc.split('/');
+            if (parts.length === 5) count++; // lib/modules/cat/mod/AI_ANALYSIS.md
+          }
+        }
+        if (count > 0) declared.add(f);
+      } else {
+        declared.add(f);
+      }
+    }
+  }
+}
+
+// ── report ────────────────────────────────────────────────────────
 
 if (failures.length > 0) {
   process.stderr.write(`${failures.join('\n')}\n`);

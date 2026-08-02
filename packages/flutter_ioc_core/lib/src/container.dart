@@ -227,7 +227,7 @@ class Container implements IoCContainer {
     if (_parent == null) {
       return current;
     }
-    return [...current, ..._parent!._collectRegistrations(type)];
+    return [...current, ..._parent._collectRegistrations(type)];
   }
 
   @override

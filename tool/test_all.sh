@@ -46,7 +46,7 @@ run_tests "." "main_app" "flutter test"
 run_tests "packages/gcode_core" "gcode_core" "flutter test"
 run_tests "packages/flutter_study_learning" "flutter_study_learning" "flutter test"
 run_tests "packages/file_picker_bridge" "file_picker_bridge" "flutter test"
-run_tests "packages/flutter_ioc_core" "flutter_ioc_core" "dart test"
+run_tests "packages/flutter_ioc_core" "flutter_ioc_core" "flutter test"
 
 echo "--- 汇总 ---"
 echo "  总计: $TOTAL | 通过: $PASSED | 失败: $FAILED | 跳过: $SKIPPED"
