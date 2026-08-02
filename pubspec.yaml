@@ -35,6 +35,9 @@ dependencies:
   usb_serial: ^0.5.0
   device_info_plus: ^10.1.2
   desktop_multi_window: ^0.3.0
+  media_kit: ^1.2.6
+  media_kit_video: ^2.0.1
+  media_kit_libs_video: ^1.0.7
 
 dev_dependencies:
   flutter_test:

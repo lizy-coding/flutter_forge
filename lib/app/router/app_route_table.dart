@@ -31,6 +31,7 @@ import '../../modules/popup_table/overlay_follow_compare/module_entry.dart';
 
 import '../../modules/platform/dio_interceptor/module_entry.dart';
 import '../../modules/platform/dio_interceptor/module_routes.dart';
+import '../../modules/platform/online_video_player/module_entry.dart';
 import '../../modules/platform/usb_detector/module_entry.dart';
 
 // ==================== 状态管理子路由（模块内部已定义映射） ====================
@@ -260,6 +261,17 @@ final List<ModuleEntry> _modules = [
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
     builder: (context) => const UsbDetectorEntry(),
+  ),
+  ModuleEntry(
+    title: '在线视频播放',
+    path: '/online-video-player',
+    subtitle: '使用 media_kit 播放在线 HTTP 视频流并操控播放参数',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['media_kit', 'libmpv', 'HTTP 流', '播放控制', '倍速', 'Player 生命周期'],
+    estimatedMinutes: 35,
+    status: ModuleStatus.ready,
+    builder: (context) => const OnlineVideoPlayerEntry(),
   ),
 ];
 

@@ -1,7 +1,7 @@
 {
   "schema": "flutter_study.agent_docs.module_index.v1",
   "registry": "lib/app/router/app_route_table.dart",
-  "count": 17,
+  "count": 18,
   "modules": [
     {
       "id": "tree_state",
@@ -226,6 +226,20 @@
         "module_registry"
       ],
       "analysis": "lib/modules/platform/usb_detector/AI_ANALYSIS.md"
+    },
+    {
+      "id": "online_video_player",
+      "category": "platform",
+      "path": "lib/modules/platform/online_video_player",
+      "route": "/online-video-player",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "media_kit",
+        "media_kit_video",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/platform/online_video_player/AI_ANALYSIS.md"
     }
   ]
 }

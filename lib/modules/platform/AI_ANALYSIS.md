@@ -10,7 +10,8 @@
   },
   "entrypoints": [
     "dio_interceptor",
-    "usb_detector"
+    "usb_detector",
+    "online_video_player"
   ],
   "owns": [
     "network_platform"
@@ -19,11 +20,14 @@
     "dio",
     "usb_serial",
     "device_info_plus",
+    "media_kit",
+    "media_kit_video",
     "flutter_study_learning"
   ],
   "children": [
     "dio_interceptor/AI_ANALYSIS.md",
-    "usb_detector/AI_ANALYSIS.md"
+    "usb_detector/AI_ANALYSIS.md",
+    "online_video_player/AI_ANALYSIS.md"
   ],
   "contracts": {
     "no_natural_language": true,
