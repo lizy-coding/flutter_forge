@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # quality_gate.sh — 全量质量门禁
-# 按固定顺序执行: 文档生成/校验 → 格式 → 分析 → 测试 → FlutterGuard
+# 按固定顺序执行: 文档生成/校验 → 格式 → 分析 → 测试 → 测试布局 → FlutterGuard
 # 任一步失败返回非零状态码并指明失败阶段。
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -50,7 +50,10 @@ run_stage "Flutter 静态分析" flutter analyze --no-fatal-infos --no-fatal-war
 # Stage 4: 测试
 run_stage "全量测试" bash tool/test_all.sh
 
-# Stage 5: FlutterGuard 安全扫描
+# Stage 5: 测试布局校验
+run_stage "测试布局校验" bash tool/verify_test_layout.sh
+
+# Stage 6: FlutterGuard 安全扫描
 run_stage "FlutterGuard" dart run flutterguard_cli:flutterguard scan . --fail-on high
 
 echo "=== 质量门禁完成 ==="

@@ -43,7 +43,8 @@ bash tool/quality_gate.sh
 2. `dart format .` + `git diff --exit-code -- '*.dart'` (格式不漂移)
 3. `flutter analyze` (无 error)
 4. `bash tool/test_all.sh` (全部测试通过)
-5. `dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题)
+5. `bash tool/verify_test_layout.sh` (测试目录布局合规并输出模块测试覆盖报告)
+6. `dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题)
 
 - `flutter analyze` 必须通过，不允许有 error 级别问题
 - `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题
