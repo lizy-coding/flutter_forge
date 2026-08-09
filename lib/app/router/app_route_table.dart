@@ -22,6 +22,8 @@ import '../../modules/state/status_management/module_entry.dart';
 import '../../modules/ui/adsorption_line/module_entry.dart';
 import '../../modules/ui/download_animation/module_entry.dart';
 import '../../modules/ui/download_animation/module_routes.dart';
+import '../../modules/ui/font_picker/module_entry.dart';
+import '../../modules/ui/font_picker/module_routes.dart';
 import '../../modules/ui/gcode_visualizer/module_entry.dart';
 import '../../modules/popup_table/popup_widgets/module_entry.dart';
 import '../../modules/popup_table/popup_list_interaction/module_entry.dart';
@@ -184,6 +186,27 @@ final List<ModuleEntry> _modules = [
     status: ModuleStatus.ready,
     builder: (context) => const DownloadAnimationEntry(),
     routes: DownloadAnimationRoutes.routes,
+  ),
+  ModuleEntry(
+    title: '字体选择器',
+    path: '/font-picker',
+    subtitle: '命名列表中直观对比不同字体族与字重样式，并通过文件选择器加载本地字体',
+    category: ModuleCategory.ui,
+    difficulty: Difficulty.intermediate,
+    concepts: [
+      'fontFamily',
+      'TextStyle',
+      '字重',
+      '字距',
+      '字体 fallback',
+      '平台字体',
+      'FontLoader',
+      '中台复用',
+    ],
+    estimatedMinutes: 30,
+    status: ModuleStatus.ready,
+    builder: (context) => const FontPickerEntry(),
+    routes: FontPickerRoutes.routes,
   ),
 
   // 弹窗与列表

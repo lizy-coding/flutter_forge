@@ -1,7 +1,7 @@
 {
   "schema": "flutter_study.agent_docs.module_index.v1",
   "registry": "lib/app/router/app_route_table.dart",
-  "count": 19,
+  "count": 20,
   "modules": [
     {
       "id": "tree_state",
@@ -148,6 +148,20 @@
         "go_router"
       ],
       "analysis": "lib/modules/ui/download_animation/AI_ANALYSIS.md"
+    },
+    {
+      "id": "font_picker",
+      "category": "ui",
+      "path": "lib/modules/ui/font_picker",
+      "route": "/font-picker",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "file_picker_bridge",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/ui/font_picker/AI_ANALYSIS.md"
     },
     {
       "id": "popup_widgets",

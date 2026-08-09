@@ -25,6 +25,7 @@ const modules = [
   ['ui', 'gcode_visualizer', '/gcode-visualizer', 'ready', ['flutter_study_learning', 'gcode_core', 'file_picker_bridge', 'module_registry']],
   ['ui', 'adsorption_line', '/adsorption-line', 'ready', ['flutter_study_learning', 'provider', 'module_registry']],
   ['ui', 'download_animation', '/download-animation', 'ready', ['flutter_study_learning', 'module_registry', 'go_router']],
+  ['ui', 'font_picker', '/font-picker', 'ready', ['flutter_study_learning', 'file_picker_bridge', 'module_registry', 'go_router']],
   ['popup_table', 'popup_widgets', '/popup-widgets', 'ready', ['flutter_study_learning', 'module_registry']],
   ['popup_table', 'popup_list_interaction', '/popup-list-interaction', 'ready', ['flutter_study_learning', 'module_registry', 'go_router']],
   ['popup_table', 'scroll_table', '/scroll-table', 'ready', ['flutter_study_learning', 'two_dimensional_scrollables', 'module_registry']],
@@ -39,7 +40,7 @@ const categoryMeta = {
   basic: [['tree_state', 'microtask', 'debounce_throttle'], ['basic_mechanisms'], ['module_registry', 'flutter_study_learning']],
   async: [['stream_subscription', 'isolate_basic', 'isolate_task_manager'], ['async_concurrency'], ['module_registry', 'flutter_study_learning']],
   state: [['status_management', 'flutter_ioc'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core']],
-  ui: [['gcode_visualizer', 'adsorption_line', 'download_animation'], ['ui_animation_custom_paint'], ['provider', 'gcode_core', 'file_picker_bridge', 'flutter_study_learning']],
+  ui: [['gcode_visualizer', 'adsorption_line', 'download_animation', 'font_picker'], ['ui_animation_custom_paint'], ['provider', 'gcode_core', 'file_picker_bridge', 'flutter_study_learning', 'module_registry']],
   popup_table: [['popup_widgets', 'popup_list_interaction', 'scroll_table', 'overlay_follow_compare'], ['popup_overlay_table'], ['module_registry', 'flutter_study_learning', 'two_dimensional_scrollables']],
   platform: [['dio_interceptor', 'usb_detector', 'file_picker', 'online_video_player'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'media_kit', 'media_kit_video', 'flutter_study_learning', 'file_picker_bridge']],
 };
