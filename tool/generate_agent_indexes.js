@@ -31,6 +31,7 @@ const modules = [
   ['popup_table', 'overlay_follow_compare', '/overlay-compare', 'ready', ['flutter_study_learning', 'module_registry']],
   ['platform', 'dio_interceptor', '/dio-interceptor', 'ready', ['flutter_study_learning', 'dio', 'module_registry', 'go_router']],
   ['platform', 'usb_detector', '/usb-detector', 'ready', ['flutter_study_learning', 'usb_serial', 'device_info_plus', 'module_registry']],
+  ['platform', 'file_picker', '/file-picker', 'ready', ['flutter_study_learning', 'file_picker_bridge', 'module_registry']],
   ['platform', 'online_video_player', '/online-video-player', 'ready', ['flutter_study_learning', 'media_kit', 'media_kit_video', 'module_registry']],
 ];
 
@@ -40,7 +41,7 @@ const categoryMeta = {
   state: [['status_management', 'flutter_ioc'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core']],
   ui: [['gcode_visualizer', 'adsorption_line', 'download_animation'], ['ui_animation_custom_paint'], ['provider', 'gcode_core', 'file_picker_bridge', 'flutter_study_learning']],
   popup_table: [['popup_widgets', 'popup_list_interaction', 'scroll_table', 'overlay_follow_compare'], ['popup_overlay_table'], ['module_registry', 'flutter_study_learning', 'two_dimensional_scrollables']],
-  platform: [['dio_interceptor', 'usb_detector', 'online_video_player'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'media_kit', 'media_kit_video', 'flutter_study_learning']],
+  platform: [['dio_interceptor', 'usb_detector', 'file_picker', 'online_video_player'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'media_kit', 'media_kit_video', 'flutter_study_learning', 'file_picker_bridge']],
 };
 
 const flutterGuardDependency = {

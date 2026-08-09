@@ -1,7 +1,7 @@
 {
   "schema": "flutter_study.agent_docs.module_index.v1",
   "registry": "lib/app/router/app_route_table.dart",
-  "count": 18,
+  "count": 19,
   "modules": [
     {
       "id": "tree_state",
@@ -226,6 +226,19 @@
         "module_registry"
       ],
       "analysis": "lib/modules/platform/usb_detector/AI_ANALYSIS.md"
+    },
+    {
+      "id": "file_picker",
+      "category": "platform",
+      "path": "lib/modules/platform/file_picker",
+      "route": "/file-picker",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "file_picker_bridge",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/platform/file_picker/AI_ANALYSIS.md"
     },
     {
       "id": "online_video_player",

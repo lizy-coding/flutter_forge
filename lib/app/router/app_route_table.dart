@@ -31,6 +31,7 @@ import '../../modules/popup_table/overlay_follow_compare/module_entry.dart';
 
 import '../../modules/platform/dio_interceptor/module_entry.dart';
 import '../../modules/platform/dio_interceptor/module_routes.dart';
+import '../../modules/platform/file_picker/module_entry.dart';
 import '../../modules/platform/online_video_player/module_entry.dart';
 import '../../modules/platform/usb_detector/module_entry.dart';
 
@@ -261,6 +262,17 @@ final List<ModuleEntry> _modules = [
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
     builder: (context) => const UsbDetectorEntry(),
+  ),
+  ModuleEntry(
+    title: '文件选择器',
+    path: '/file-picker',
+    subtitle: '复用 file_picker_bridge 中台能力，演示扩展过滤、取消分支与平台差异',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['FilePickerService', 'MethodChannel', '平台桥接', '扩展名过滤', '取消分支'],
+    estimatedMinutes: 20,
+    status: ModuleStatus.ready,
+    builder: (context) => const FilePickerEntry(),
   ),
   ModuleEntry(
     title: '在线视频播放',

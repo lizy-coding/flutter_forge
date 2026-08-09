@@ -11,6 +11,7 @@
   "entrypoints": [
     "dio_interceptor",
     "usb_detector",
+    "file_picker",
     "online_video_player"
   ],
   "owns": [
@@ -22,11 +23,13 @@
     "device_info_plus",
     "media_kit",
     "media_kit_video",
-    "flutter_study_learning"
+    "flutter_study_learning",
+    "file_picker_bridge"
   ],
   "children": [
     "dio_interceptor/AI_ANALYSIS.md",
     "usb_detector/AI_ANALYSIS.md",
+    "file_picker/AI_ANALYSIS.md",
     "online_video_player/AI_ANALYSIS.md"
   ],
   "contracts": {
