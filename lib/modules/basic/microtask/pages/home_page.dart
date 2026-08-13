@@ -55,24 +55,29 @@ class HomePage extends StatelessWidget {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Flutter 事件循环 (Event Loop) 的运作机制',
-          '掌握微任务队列 (Microtask Queue) 和事件队列 (Event Queue) 的区别',
-          '学会使用 scheduleMicrotask 和 Future 管理异步任务',
-          '理解 async/await 背后的微任务调度原理',
-        ]),
-        ConceptChips(concepts: [
-          '事件循环',
-          'Event Loop',
-          '微任务队列',
-          '事件队列',
-          'scheduleMicrotask',
-          'Future',
-          'Zone',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Flutter 事件循环 (Event Loop) 的运作机制',
+            '掌握微任务队列 (Microtask Queue) 和事件队列 (Event Queue) 的区别',
+            '学会使用 scheduleMicrotask 和 Future 管理异步任务',
+            '理解 async/await 背后的微任务调度原理',
+          ],
+        ),
+        ConceptChips(
+          concepts: [
+            '事件循环',
+            'Event Loop',
+            '微任务队列',
+            '事件队列',
+            'scheduleMicrotask',
+            'Future',
+            'Zone',
+          ],
+        ),
         CodeSnippetCard(
           title: '微任务 vs 事件任务',
-          code: 'scheduleMicrotask(() {\n'
+          code:
+              'scheduleMicrotask(() {\n'
               '  print("微任务优先执行");\n'
               '});\n\n'
               'Future(() {\n'
@@ -80,11 +85,13 @@ class HomePage extends StatelessWidget {
               '});',
           explanation: '微任务队列优先级高于事件队列，每次事件循环先清空微任务再处理事件。',
         ),
-        CommonPitfalls(pitfalls: [
-          '微任务会阻塞事件循环 — 过多微任务会导致 UI 卡顿',
-          'Future.then 的回调是微任务，不是事件任务',
-          'scheduleMicrotask 在同一个微任务中嵌套调用仍会优先于事件任务',
-        ]),
+        CommonPitfalls(
+          pitfalls: [
+            '微任务会阻塞事件循环 — 过多微任务会导致 UI 卡顿',
+            'Future.then 的回调是微任务，不是事件任务',
+            'scheduleMicrotask 在同一个微任务中嵌套调用仍会优先于事件任务',
+          ],
+        ),
         ExerciseCard(
           task: '运行"基础微任务测试"观察微任务与事件任务的执行顺序，然后用代码验证你的猜测。',
           hint: '点击导航中的"微任务队列"页面，运行"基础微任务测试"按钮观察日志输出顺序。',
@@ -122,11 +129,14 @@ class HomePage extends StatelessWidget {
                 children: [
                   Icon(icon, color: Colors.grey[800]),
                   const SizedBox(width: 8),
-                  Text(title,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.grey[800])),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.grey[800],
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -134,8 +144,11 @@ class HomePage extends StatelessWidget {
               const Spacer(),
               Align(
                 alignment: Alignment.bottomRight,
-                child: Icon(Icons.arrow_forward,
-                    color: Colors.grey[800], size: 20),
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: Colors.grey[800],
+                  size: 20,
+                ),
               ),
             ],
           ),

@@ -9,18 +9,14 @@
     "status": "active"
   },
   "entrypoints": [
-    "multi_window_manager.dart",
-    "category_window_app.dart",
-    "multi_window_route_filter.dart"
+    "multi_window_manager.dart"
   ],
   "owns": [
     "desktop_window_lifecycle",
-    "category_window_router",
-    "module_route_filter"
+    "desktop_window_arguments"
   ],
   "depends": [
     "desktop_multi_window",
-    "go_router",
     "module_registry"
   ],
   "children": [],
@@ -28,8 +24,8 @@
     "no_natural_language": true,
     "index_only": true,
     "max_index_depth": 2,
-    "doc_consumer": "vibecoding",
-    "doc_mode": "harness",
+    "doc_consumer": "coding_agent",
+    "doc_mode": "machine_contract",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },

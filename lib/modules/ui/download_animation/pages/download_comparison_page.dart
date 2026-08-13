@@ -43,7 +43,8 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
     if (renderBox != null) {
       final position = renderBox.localToGlobal(Offset.zero);
       setState(() {
-        _downloadAreaPosition = position +
+        _downloadAreaPosition =
+            position +
             Offset(renderBox.size.width / 2, renderBox.size.height / 2);
       });
     }
@@ -51,7 +52,10 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
 
   /// 使用自定义 View 方式开始下载
   void _startCustomViewDownload(
-      String fileName, String fileSize, Offset startPosition) {
+    String fileName,
+    String fileSize,
+    Offset startPosition,
+  ) {
     final downloadItem = DownloadItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       fileName: fileName,
@@ -69,7 +73,10 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
 
   /// 使用 Overlay 方式开始下载
   void _startOverlayDownload(
-      String fileName, String fileSize, Offset startPosition) {
+    String fileName,
+    String fileSize,
+    Offset startPosition,
+  ) {
     if (_downloadAreaPosition == null) return;
 
     _overlayService.startDownload(
@@ -88,9 +95,10 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
   void _animateCustomViewDownload(DownloadItem item) {
     final animationController = AnimationController(
       duration: Duration(
-          milliseconds:
-              (animationConfig.animationDuration / animationConfig.flyingSpeed)
-                  .round()),
+        milliseconds:
+            (animationConfig.animationDuration / animationConfig.flyingSpeed)
+                .round(),
+      ),
       vsync: this,
     );
 
@@ -104,21 +112,19 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
       end: item.endPosition,
     ).animate(curveAnimation);
 
-    final scaleAnimation = Tween<double>(
-      begin: 1.2,
-      end: 0.2,
-    ).animate(CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.7, 1.0, curve: Curves.easeIn),
-    ));
+    final scaleAnimation = Tween<double>(begin: 1.2, end: 0.2).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.7, 1.0, curve: Curves.easeIn),
+      ),
+    );
 
-    final opacityAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.8, 1.0, curve: Curves.easeIn),
-    ));
+    final opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.8, 1.0, curve: Curves.easeIn),
+      ),
+    );
 
     item.positionAnimation = positionAnimation;
     item.scaleAnimation = scaleAnimation;
@@ -192,7 +198,7 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
                 'OverlayEntry',
                 'AnimatedBuilder',
                 'Tween',
-                'Interval'
+                'Interval',
               ],
             ),
             CodeSnippetCard(
@@ -258,10 +264,7 @@ Overlay.of(context).insert(overlayEntry);''',
         children: [
           const Text(
             '实现方式对比',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Row(
@@ -312,20 +315,14 @@ Overlay.of(context).insert(overlayEntry);''',
               const SizedBox(width: 8),
               Text(
                 title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, color: color),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             description,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
           ),
         ],
       ),
@@ -337,9 +334,7 @@ Overlay.of(context).insert(overlayEntry);''',
     return Card(
       margin: const EdgeInsets.all(16),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -347,10 +342,7 @@ Overlay.of(context).insert(overlayEntry);''',
           children: [
             const Text(
               '动画参数设置',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 16),
 
@@ -380,7 +372,8 @@ Overlay.of(context).insert(overlayEntry);''',
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    '飞入速度: ${animationConfig.flyingSpeed.toStringAsFixed(1)}x'),
+                  '飞入速度: ${animationConfig.flyingSpeed.toStringAsFixed(1)}x',
+                ),
                 Slider(
                   value: animationConfig.flyingSpeed,
                   min: 0.5,
@@ -407,7 +400,7 @@ Overlay.of(context).insert(overlayEntry);''',
       {
         'name': 'Flutter开发指南.pdf',
         'size': '15.2 MB',
-        'icon': Icons.picture_as_pdf
+        'icon': Icons.picture_as_pdf,
       },
       {'name': '项目源码.zip', 'size': '89.5 MB', 'icon': Icons.folder_zip},
       {'name': '设计稿.psd', 'size': '234.7 MB', 'icon': Icons.image},
@@ -426,8 +419,10 @@ Overlay.of(context).insert(overlayEntry);''',
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -442,17 +437,11 @@ Overlay.of(context).insert(overlayEntry);''',
             ),
             title: Text(
               file['name'] as String,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
             subtitle: Text(
               file['size'] as String,
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -476,18 +465,23 @@ Overlay.of(context).insert(overlayEntry);''',
                         );
                       },
                       child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.download, color: Colors.white, size: 14),
                             SizedBox(width: 4),
-                            Text('View',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12)),
+                            Text(
+                              'View',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -514,19 +508,27 @@ Overlay.of(context).insert(overlayEntry);''',
                         );
                       },
                       child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.cloud_download,
-                                color: Colors.white, size: 14),
+                            Icon(
+                              Icons.cloud_download,
+                              color: Colors.white,
+                              size: 14,
+                            ),
                             SizedBox(width: 4),
-                            Text('Overlay',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12)),
+                            Text(
+                              'Overlay',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -584,10 +586,7 @@ Overlay.of(context).insert(overlayEntry);''',
           const SizedBox(height: 8),
           Text(
             '点击不同按钮体验两种实现方式',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
         ],
       ),
@@ -614,7 +613,8 @@ Overlay.of(context).insert(overlayEntry);''',
                 decoration: BoxDecoration(
                   color: Colors.blue.shade600,
                   borderRadius: BorderRadius.circular(
-                      animationConfig.flyingItemRadius + 2),
+                    animationConfig.flyingItemRadius + 2,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.blue.shade300,

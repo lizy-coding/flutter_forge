@@ -30,12 +30,10 @@ class GcodePlayerController extends ChangeNotifier {
     required TickerProvider vsync,
     FilePickerService filePicker = const MethodChannelFilePicker(),
   }) : _filePicker = filePicker {
-    _animationController = AnimationController(
-      vsync: vsync,
-      duration: const Duration(seconds: 5),
-    )
-      ..addListener(_onAnimationTick)
-      ..addStatusListener(_onAnimationStatusChanged);
+    _animationController =
+        AnimationController(vsync: vsync, duration: const Duration(seconds: 5))
+          ..addListener(_onAnimationTick)
+          ..addStatusListener(_onAnimationStatusChanged);
   }
 
   late final AnimationController _animationController;
@@ -206,8 +204,9 @@ class GcodePlayerController extends ChangeNotifier {
     _currentCommandIndex = -1;
     _animationController.stop();
     _animationController.value = 0;
-    _loadStage =
-        _parseResult == null ? GcodeLoadStage.idle : GcodeLoadStage.ready;
+    _loadStage = _parseResult == null
+        ? GcodeLoadStage.idle
+        : GcodeLoadStage.ready;
     _addLog('重置');
     notifyListeners();
   }
@@ -257,7 +256,8 @@ class GcodePlayerController extends ChangeNotifier {
     final totalSegments = _segments.length;
     final idx = (_progress * totalSegments).floor().clamp(0, totalSegments - 1);
     final cmd = _segments[idx].command;
-    final cmdIdx = _parseResult?.commands.indexWhere(
+    final cmdIdx =
+        _parseResult?.commands.indexWhere(
           (c) => c.lineNumber == cmd.lineNumber,
         ) ??
         -1;
@@ -266,7 +266,8 @@ class GcodePlayerController extends ChangeNotifier {
 
   void _addLog(String message) {
     _logs.add(
-        '[${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}] $message');
+      '[${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}] $message',
+    );
     if (_logs.length > 50) {
       _logs.removeAt(0);
     }

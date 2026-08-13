@@ -12,7 +12,9 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
   }
 
   Future<void> _onLoadInitial(
-      LoadInitial event, Emitter<CounterState> emit) async {
+    LoadInitial event,
+    Emitter<CounterState> emit,
+  ) async {
     emit(state.copyWith(status: CounterStatus.loading));
     try {
       await Future<void>.delayed(const Duration(milliseconds: 200));

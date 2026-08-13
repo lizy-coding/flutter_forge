@@ -63,8 +63,9 @@ class ScrollTable extends StatelessWidget {
       textStyle = const TextStyle(fontWeight: FontWeight.bold);
     } else {
       // 数据单元格
-      backgroundColor =
-          vicinity.row % 2 == 0 ? Colors.white : Colors.grey.shade50;
+      backgroundColor = vicinity.row % 2 == 0
+          ? Colors.white
+          : Colors.grey.shade50;
       text = data[vicinity.row - 1][vicinity.column - 1];
       textStyle = const TextStyle();
     }
@@ -94,15 +95,11 @@ class ScrollTable extends StatelessWidget {
   }
 
   TableSpan _buildColumn(int index) {
-    return TableSpan(
-      extent: FixedTableSpanExtent(cellWidth),
-    );
+    return TableSpan(extent: FixedTableSpanExtent(cellWidth));
   }
 
   TableSpan _buildRow(int index) {
-    return TableSpan(
-      extent: FixedTableSpanExtent(cellHeight),
-    );
+    return TableSpan(extent: FixedTableSpanExtent(cellHeight));
   }
 }
 

@@ -22,20 +22,19 @@ class RiverpodFutureRoute extends ConsumerWidget {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '掌握 Riverpod FutureProvider 的异步数据管理',
-          '理解 when() 方法处理 loading/data/error 三态',
-        ]),
-        ConceptChips(concepts: [
-          'Riverpod',
-          'FutureProvider',
-          'async',
-          'when',
-          '缓存',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '掌握 Riverpod FutureProvider 的异步数据管理',
+            '理解 when() 方法处理 loading/data/error 三态',
+          ],
+        ),
+        ConceptChips(
+          concepts: ['Riverpod', 'FutureProvider', 'async', 'when', '缓存'],
+        ),
         CodeSnippetCard(
           title: 'FutureProvider 模式',
-          code: 'final userProvider = FutureProvider<String>((ref) async {\n'
+          code:
+              'final userProvider = FutureProvider<String>((ref) async {\n'
               '  await Future.delayed(Duration(milliseconds: 300));\n'
               '  return "Alice";\n'
               '});\n'

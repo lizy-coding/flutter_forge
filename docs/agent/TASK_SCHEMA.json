@@ -1,0 +1,26 @@
+{
+  "schema": "flutter_study.agent_docs.task_schema.v1",
+  "consumer": "coding_agent",
+  "description": "Agent 任务输入格式 — 每个任务声明边界、依赖、验收条件和风险等级",
+  "fields": {
+    "id": {"type": "string", "required": true, "description": "唯一任务标识符"},
+    "goal": {"type": "string", "required": true, "description": "任务目标（一句话）"},
+    "background": {"type": "string", "required": false, "description": "背景上下文"},
+    "scope": {
+      "type": "object",
+      "required": true,
+      "description": "允许修改的文件范围",
+      "fields": {
+        "allow": {"type": "array", "items": "string", "description": "允许修改的文件/目录 glob"},
+        "deny": {"type": "array", "items": "string", "description": "禁止修改的文件/目录 glob"}
+      }
+    },
+    "pre_read": {"type": "array", "items": "string", "description": "执行前必须读取的文件"},
+    "dependencies": {"type": "array", "items": "string", "description": "前置依赖任务 ID 列表"},
+    "acceptance": {"type": "array", "items": "string", "description": "验收条件（可执行命令或可验证声明）"},
+    "validation": {"type": "array", "items": "string", "description": "验证命令列表"},
+    "risk": {"type": "string", "enum": ["low", "medium", "high"], "description": "风险等级"},
+    "manual_review": {"type": "boolean", "default": false, "description": "是否需要人工审查"},
+    "status": {"type": "string", "enum": ["pending", "in_progress", "completed", "blocked", "cancelled"], "default": "pending"}
+  }
+}

@@ -71,9 +71,9 @@ class GranularCard extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               '$selected',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
             ),
           ],
         ),

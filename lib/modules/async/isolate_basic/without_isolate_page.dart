@@ -60,8 +60,9 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                      onPressed: _incrementCounter,
-                      child: const Text('点击测试响应')),
+                    onPressed: _incrementCounter,
+                    child: const Text('点击测试响应'),
+                  ),
                   const SizedBox(width: 20),
                   Text('计数: $_counter', style: const TextStyle(fontSize: 18)),
                 ],
@@ -80,8 +81,10 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
-                      child: Text('这个动画应该平滑运行',
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text(
+                        '这个动画应该平滑运行',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                   );
                 },
@@ -115,21 +118,18 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解主 Isolate 被阻塞时界面卡顿的原理',
-          '对比使用和不使用 Isolate 时的界面响应差异',
-          '掌握计算密集型任务对 UI 性能的影响',
-        ]),
-        ConceptChips(concepts: [
-          'Isolate',
-          '主线程',
-          'UI 卡顿',
-          '计算密集型',
-          '事件循环',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解主 Isolate 被阻塞时界面卡顿的原理',
+            '对比使用和不使用 Isolate 时的界面响应差异',
+            '掌握计算密集型任务对 UI 性能的影响',
+          ],
+        ),
+        ConceptChips(concepts: ['Isolate', '主线程', 'UI 卡顿', '计算密集型', '事件循环']),
         CodeSnippetCard(
           title: '主线程计算的问题',
-          code: '// 主线程执行大量计算\n'
+          code:
+              '// 主线程执行大量计算\n'
               'void _findPrimes() {\n'
               '  for (int i = 0; i < 20; i++) {\n'
               '    _calculatePrimes(500000); // 阻塞 UI\n'

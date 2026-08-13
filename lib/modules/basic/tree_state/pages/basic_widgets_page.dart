@@ -111,17 +111,18 @@ class _StatefulBoxState extends State<StatefulBox> {
           child: Text(
             '父组件重建次数: $_counter',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
         const SizedBox(height: 16),
         LayoutBuilder(
           builder: (context, constraints) {
             return Flex(
-              direction:
-                  constraints.maxWidth > 480 ? Axis.horizontal : Axis.vertical,
+              direction: constraints.maxWidth > 480
+                  ? Axis.horizontal
+                  : Axis.vertical,
               children: [
                 Expanded(
                   child: Card(
@@ -202,10 +203,9 @@ class _RebuildAwareBoxState extends State<_RebuildAwareBox>
         return Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Theme.of(context)
-                  .colorScheme
-                  .primary
-                  .withValues(alpha: 1 - _controller.value),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 1 - _controller.value),
               width: 2,
             ),
             borderRadius: BorderRadius.circular(8),
@@ -244,8 +244,10 @@ class StatelessBox extends StatelessWidget {
       children: [
         const Text('接收 count 参数', style: TextStyle(fontSize: 12)),
         const SizedBox(height: 4),
-        Text('count: $count',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(
+          'count: $count',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
@@ -277,7 +279,8 @@ class _StatefulBoxState extends State<StatefulBox> {
   void didUpdateWidget(StatefulBox oldWidget) {
     super.didUpdateWidget(oldWidget);
     debugPrint(
-        '[StatefulBox] didUpdateWidget count=${oldWidget.count} → ${widget.count}');
+      '[StatefulBox] didUpdateWidget count=${oldWidget.count} → ${widget.count}',
+    );
   }
 
   @override
@@ -288,8 +291,10 @@ class _StatefulBoxState extends State<StatefulBox> {
       children: [
         const Text('持有 State 实例', style: TextStyle(fontSize: 12)),
         const SizedBox(height: 4),
-        Text('count: ${widget.count}',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(
+          'count: ${widget.count}',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

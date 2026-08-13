@@ -44,9 +44,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ),
                       onPressed: () {
                         setState(() => _currentPageIndex = 0);
-                        _pageController.animateToPage(0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut);
+                        _pageController.animateToPage(
+                          0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
                       },
                       child: const Text('按钮点击场景'),
                     ),
@@ -61,9 +63,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ),
                       onPressed: () {
                         setState(() => _currentPageIndex = 1);
-                        _pageController.animateToPage(1,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut);
+                        _pageController.animateToPage(
+                          1,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
                       },
                       child: const Text('滚动场景'),
                     ),
@@ -79,13 +83,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   Text(
                     '防抖(Debounce)：在一段时间内多次触发事件，只执行最后一次。',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.red),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
                     '节流(Throttle)：在一段时间内多次触发事件，只执行第一次。',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.blue),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
                   ),
                 ],
               ),
@@ -96,31 +104,27 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 onPageChanged: (index) {
                   setState(() => _currentPageIndex = index);
                 },
-                children: const [
-                  ButtonScene(),
-                  ScrollScene(),
-                ],
+                children: const [ButtonScene(), ScrollScene()],
               ),
             ),
           ],
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解防抖(Debounce)与节流(Throttle)的核心区别',
-          '掌握 Debouncer 和 Throttle 的代码实现',
-          '学会在实际场景中选择合适的频率控制策略',
-        ]),
-        ConceptChips(concepts: [
-          'Debounce',
-          'Throttle',
-          'Timer',
-          '频率控制',
-          '性能优化',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解防抖(Debounce)与节流(Throttle)的核心区别',
+            '掌握 Debouncer 和 Throttle 的代码实现',
+            '学会在实际场景中选择合适的频率控制策略',
+          ],
+        ),
+        ConceptChips(
+          concepts: ['Debounce', 'Throttle', 'Timer', '频率控制', '性能优化'],
+        ),
         CodeSnippetCard(
           title: 'Debouncer 实现',
-          code: 'class Debouncer {\n'
+          code:
+              'class Debouncer {\n'
               '  final Duration delay;\n'
               '  Timer? _timer;\n\n'
               '  void run(VoidCallback action) {\n'
@@ -133,7 +137,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
         CodeSnippetCard(
           title: 'Throttle 实现',
-          code: 'class Throttle {\n'
+          code:
+              'class Throttle {\n'
               '  final Duration limit;\n'
               '  DateTime? _lastCall;\n\n'
               '  void run(VoidCallback action) {\n'
@@ -146,11 +151,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               '}',
           explanation: '节流在限制时间内忽略后续触发，只有第一次生效。',
         ),
-        CommonPitfalls(pitfalls: [
-          '防抖延迟过长会降低响应感 — 按钮点击场景建议 300-500ms，滚动场景可适当延长',
-          '节流可能会导致关键更新丢失 — 不适合需要实时反馈的场景',
-          '忘记 dispose — Timer 和 StreamSubscription 必须在 dispose 中清理',
-        ]),
+        CommonPitfalls(
+          pitfalls: [
+            '防抖延迟过长会降低响应感 — 按钮点击场景建议 300-500ms，滚动场景可适当延长',
+            '节流可能会导致关键更新丢失 — 不适合需要实时反馈的场景',
+            '忘记 dispose — Timer 和 StreamSubscription 必须在 dispose 中清理',
+          ],
+        ),
         ExerciseCard(
           task: '实现一个"先执行一次"的防抖（leading edge debounce），首次点击立即执行，后续连续点击只执行最后一次。',
           hint: '在 Debouncer 中增加 _leadingExecuted 标记，首次调用时立即执行再启动延迟。',
@@ -181,10 +188,12 @@ class _ButtonSceneState extends State<ButtonScene>
   late AnimationController _debounceAnim;
   late AnimationController _throttleAnim;
 
-  final Debouncer _debouncer =
-      Debouncer(delay: const Duration(milliseconds: 500));
-  final Throttle _throttler =
-      Throttle(limit: const Duration(milliseconds: 500));
+  final Debouncer _debouncer = Debouncer(
+    delay: const Duration(milliseconds: 500),
+  );
+  final Throttle _throttler = Throttle(
+    limit: const Duration(milliseconds: 500),
+  );
 
   @override
   void initState() {
@@ -259,11 +268,23 @@ class _ButtonSceneState extends State<ButtonScene>
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildAnimatedButton(
-                  '普通点击', Colors.grey, _handleNormalClick, _normalAnim),
+                '普通点击',
+                Colors.grey,
+                _handleNormalClick,
+                _normalAnim,
+              ),
               _buildAnimatedButton(
-                  '防抖点击', Colors.red, _handleDebounceClick, _debounceAnim),
+                '防抖点击',
+                Colors.red,
+                _handleDebounceClick,
+                _debounceAnim,
+              ),
               _buildAnimatedButton(
-                  '节流点击', Colors.blue, _handleThrottleClick, _throttleAnim),
+                '节流点击',
+                Colors.blue,
+                _handleThrottleClick,
+                _throttleAnim,
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -276,8 +297,10 @@ class _ButtonSceneState extends State<ButtonScene>
             ],
           ),
           const SizedBox(height: 30),
-          const Text('事件触发可视化:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text(
+            '事件触发可视化:',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 10),
           Expanded(
             child: Row(
@@ -295,7 +318,11 @@ class _ButtonSceneState extends State<ButtonScene>
   }
 
   Widget _buildAnimatedButton(
-      String text, Color color, VoidCallback onTap, AnimationController anim) {
+    String text,
+    Color color,
+    VoidCallback onTap,
+    AnimationController anim,
+  ) {
     return ScaleTransition(
       scale: CurvedAnimation(parent: anim, curve: Curves.elasticOut),
       child: ElevatedButton(
@@ -313,9 +340,14 @@ class _ButtonSceneState extends State<ButtonScene>
   Widget _buildCounter(String prefix, int count, Color color) {
     return Column(
       children: [
-        Text('$prefix $count',
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+        Text(
+          '$prefix $count',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
       ],
     );
   }
@@ -330,8 +362,10 @@ class _ButtonSceneState extends State<ButtonScene>
         ),
         child: Column(
           children: [
-            Text(title,
-                style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
@@ -339,9 +373,9 @@ class _ButtonSceneState extends State<ButtonScene>
                 reverse: true,
                 itemBuilder: (context, index) {
                   return Text(
-                    DateTime.fromMillisecondsSinceEpoch(events[index])
-                        .toString()
-                        .substring(11, 19),
+                    DateTime.fromMillisecondsSinceEpoch(
+                      events[index],
+                    ).toString().substring(11, 19),
                     style: TextStyle(color: color.withValues(alpha: 0.8)),
                   );
                 },
@@ -370,10 +404,12 @@ class _ScrollSceneState extends State<ScrollScene>
   final ScrollController _scrollController = ScrollController();
   late AnimationController _positionAnimController;
 
-  final Debouncer _debouncer =
-      Debouncer(delay: const Duration(milliseconds: 500));
-  final Throttle _throttler =
-      Throttle(limit: const Duration(milliseconds: 500));
+  final Debouncer _debouncer = Debouncer(
+    delay: const Duration(milliseconds: 500),
+  );
+  final Throttle _throttler = Throttle(
+    limit: const Duration(milliseconds: 500),
+  );
 
   @override
   void initState() {
@@ -414,18 +450,27 @@ class _ScrollSceneState extends State<ScrollScene>
           child: Column(
             children: [
               _buildPositionIndicator(
-                  '实时位置', _scrollPosition, Colors.grey[800]!),
+                '实时位置',
+                _scrollPosition,
+                Colors.grey[800]!,
+              ),
               const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
                     child: _buildAnimatedPositionIndicator(
-                        '防抖位置', _debouncePosition, Colors.red),
+                      '防抖位置',
+                      _debouncePosition,
+                      Colors.red,
+                    ),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
                     child: _buildAnimatedPositionIndicator(
-                        '节流位置', _throttlePosition, Colors.blue),
+                      '节流位置',
+                      _throttlePosition,
+                      Colors.blue,
+                    ),
                   ),
                 ],
               ),
@@ -452,14 +497,21 @@ class _ScrollSceneState extends State<ScrollScene>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('列表项 #$index',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(
+                        '列表项 #$index',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Row(
                         children: [
                           _buildPositionDot(
-                              '实时', isNearReal, Colors.grey[800]!),
+                            '实时',
+                            isNearReal,
+                            Colors.grey[800]!,
+                          ),
                           _buildPositionDot('防抖', isNearDebounce, Colors.red),
                           _buildPositionDot('节流', isNearThrottle, Colors.blue),
                         ],
@@ -480,8 +532,10 @@ class _ScrollSceneState extends State<ScrollScene>
       children: [
         SizedBox(
           width: 100,
-          child: Text(title,
-              style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          child: Text(
+            title,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold),
+          ),
         ),
         Expanded(
           child: Container(
@@ -492,11 +546,12 @@ class _ScrollSceneState extends State<ScrollScene>
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
-              widthFactor: (position /
-                      (_scrollController.hasClients
-                          ? _scrollController.position.maxScrollExtent
-                          : 1))
-                  .clamp(0.0, 1.0),
+              widthFactor:
+                  (position /
+                          (_scrollController.hasClients
+                              ? _scrollController.position.maxScrollExtent
+                              : 1))
+                      .clamp(0.0, 1.0),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
@@ -509,21 +564,29 @@ class _ScrollSceneState extends State<ScrollScene>
         const SizedBox(width: 8),
         SizedBox(
           width: 60,
-          child: Text('${position.toStringAsFixed(0)}px',
-              textAlign: TextAlign.right, style: TextStyle(color: color)),
+          child: Text(
+            '${position.toStringAsFixed(0)}px',
+            textAlign: TextAlign.right,
+            style: TextStyle(color: color),
+          ),
         ),
       ],
     );
   }
 
   Widget _buildAnimatedPositionIndicator(
-      String title, double position, Color color) {
+    String title,
+    double position,
+    Color color,
+  ) {
     return Row(
       children: [
         SizedBox(
           width: 80,
-          child: Text(title,
-              style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          child: Text(
+            title,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold),
+          ),
         ),
         Expanded(
           child: Stack(
@@ -542,7 +605,8 @@ class _ScrollSceneState extends State<ScrollScene>
                 ),
                 child: Container(
                   height: 12,
-                  width: (position /
+                  width:
+                      (position /
                           (_scrollController.hasClients
                               ? _scrollController.position.maxScrollExtent
                               : 1)) *
@@ -560,8 +624,11 @@ class _ScrollSceneState extends State<ScrollScene>
         const SizedBox(width: 8),
         SizedBox(
           width: 60,
-          child: Text('${position.toStringAsFixed(0)}px',
-              textAlign: TextAlign.right, style: TextStyle(color: color)),
+          child: Text(
+            '${position.toStringAsFixed(0)}px',
+            textAlign: TextAlign.right,
+            style: TextStyle(color: color),
+          ),
         ),
       ],
     );
@@ -582,11 +649,13 @@ class _ScrollSceneState extends State<ScrollScene>
             ),
           ),
           const SizedBox(width: 4),
-          Text(label,
-              style: TextStyle(
-                color: color,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              )),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
         ],
       ),
     );

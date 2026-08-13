@@ -115,8 +115,9 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
       ),
     );
     if (!mounted || result == null) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('选择了: $result')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('选择了: $result')));
   }
 
   Future<void> _showModalBottomSheet() async {
@@ -205,10 +206,7 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
   }
 
   Future<void> _showTimePicker() async {
-    await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
+    await showTimePicker(context: context, initialTime: TimeOfDay.now());
   }
 
   void _showAbout() {
@@ -236,8 +234,9 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
       ],
     );
     if (!mounted || selected == null) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('选择了: $selected')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('选择了: $selected')));
   }
 }
 
@@ -315,17 +314,17 @@ extension _PopupDialogRoutes on _PopDemoHomePageState {
       ),
     ]);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('已按顺序打开：A → B → C')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('已按顺序打开：A → B → C')));
   }
 
   Future<void> _demoCloseChain() async {
     await _closeDialogsInOrder(const ['B', 'A', 'C']);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('已按顺序关闭：B → A → C')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('已按顺序关闭：B → A → C')));
   }
 
   void _closeDialogById(String id) {
@@ -348,10 +347,7 @@ extension _PopupOverlayDialogs on _PopDemoHomePageState {
     );
     final content = OverlayEntry(
       builder: (context) => Center(
-        child: Material(
-          type: MaterialType.transparency,
-          child: dialog,
-        ),
+        child: Material(type: MaterialType.transparency, child: dialog),
       ),
     );
     return [barrier, content];

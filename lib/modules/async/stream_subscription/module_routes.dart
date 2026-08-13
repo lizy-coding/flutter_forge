@@ -11,13 +11,10 @@ class StreamSubscriptionRoutes {
   static const String broadcastDemo = '/broadcast-demo';
 
   static List<GoRoute> get routes => [
-        GoRoute(
-          path: 'stream-demo',
-          builder: (_, __) => const StreamDemoPage(),
-        ),
-        GoRoute(
-          path: 'broadcast-demo',
-          builder: (_, __) => const BroadcastDemoPage(),
-        ),
-      ];
+    GoRoute(path: 'stream-demo', builder: (_, __) => const StreamDemoPage()),
+    GoRoute(
+      path: 'broadcast-demo',
+      builder: (_, __) => const BroadcastDemoPage(),
+    ),
+  ];
 }

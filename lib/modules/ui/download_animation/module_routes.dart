@@ -21,21 +21,19 @@ class DownloadAnimationRoutes {
   );
 
   static List<GoRoute> get routes => [
-        GoRoute(
-          path: 'custom-view',
-          builder: (_, __) => const DownloadAnimationPage(
-            animationConfig: defaultConfig,
-          ),
-        ),
-        GoRoute(
-          path: 'paint',
-          builder: (_, __) => const PaintAnimationPage(
-            animationConfig: defaultConfig,
-          ),
-        ),
-        GoRoute(
-          path: 'comparison',
-          builder: (_, __) => const DownloadComparisonPage(),
-        ),
-      ];
+    GoRoute(
+      path: 'custom-view',
+      builder: (_, __) =>
+          const DownloadAnimationPage(animationConfig: defaultConfig),
+    ),
+    GoRoute(
+      path: 'paint',
+      builder: (_, __) =>
+          const PaintAnimationPage(animationConfig: defaultConfig),
+    ),
+    GoRoute(
+      path: 'comparison',
+      builder: (_, __) => const DownloadComparisonPage(),
+    ),
+  ];
 }

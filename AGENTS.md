@@ -5,9 +5,12 @@
 ## 前置阅读
 
 执行任何修改前，agent 必须读取：
-1. `AI_PROJECT_CONTEXT.md` - 项目整体上下文
-2. `REFACTOR_PLAN.md` - 整改计划与优先级
-3. 目标模块的 `AI_ANALYSIS.md` - 模块结构与修改建议
+1. `AI_ANALYSIS_SCHEMA.json` - agent 文档 schema
+2. `AI_PROJECT_CONTEXT.md` - 机器可解析项目契约
+3. `REFACTOR_PLAN.md` - 机器可解析任务队列
+4. 目标模块的 `AI_ANALYSIS.md` - 机器可解析模块契约
+
+以上 agent 文档均为 JSON，禁止加入 Markdown、自然语言段落或手工文件清单。
 
 ## 新增模块规则
 
@@ -16,7 +19,7 @@
 | 必需项 | 说明 |
 |--------|------|
 | `module_entry.dart` | 导出 `*Entry` Widget，作为模块入口 |
-| `AI_ANALYSIS.md` | 模块分析文档：功能、文件结构、数据流、关键类、修改建议 |
+| `AI_ANALYSIS.md` | 模块机器契约：route、category、status、entrypoints、owns、depends、analysis_parent、validation |
 | 路由注册 | 在 `lib/router/app_route_table.dart` 的 `_modules` 中注册 |
 | 模块元数据 | `ModuleEntry` 必须填写 `category`、`difficulty`、`concepts`、`estimatedMinutes`、`status`、`subtitle` |
 | 教学页面 | 至少 1 个页面使用外部 `flutter_study_learning` 包中的教学模板组件（`LearningScaffold` 等） |
@@ -24,21 +27,28 @@
 ## 修改模块规则
 
 1. 修改前先读取该模块的 `AI_ANALYSIS.md`
-2. 修改后同步更新 `AI_ANALYSIS.md` 中的文件结构和关键类信息
-3. 如果修改了路由注册，同步更新元数据字段
+2. 修改模块、依赖、路由或层级时，更新 `tool/generate_agent_indexes.js` 中的生成源
+3. 执行 `bash tool/generate_harness_ai_analysis.sh` 重新生成并校验 agent 文档
+4. 如果修改了路由注册，同步更新元数据字段
 
 ## 验收规则
 
 每次代码修改后 **必须** 执行：
 ```bash
-dart format .
-flutter analyze
-dart run flutterguard_cli:flutterguard scan --path . --fail-on high
+bash tool/quality_gate.sh
 ```
+
+等效手动步骤（quality_gate.sh 内部执行顺序）:
+1. `bash tool/generate_harness_ai_analysis.sh` + `git diff --exit-code` (文档不漂移)
+2. `dart format .` + `git diff --exit-code -- '*.dart'` (格式不漂移)
+3. `flutter analyze` (无 error)
+4. `bash tool/test_all.sh` (全部测试通过)
+5. `bash tool/verify_test_layout.sh` (测试目录布局合规并输出模块测试覆盖报告)
+6. `dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题)
 
 - `flutter analyze` 必须通过，不允许有 error 级别问题
 - `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题
-- 涉及逻辑代码时补充测试（如有测试框架）
+- 涉及逻辑代码时补充测试
 - 涉及 UI 教学页时进行人工验收或截图说明
 
 ## 禁止事项

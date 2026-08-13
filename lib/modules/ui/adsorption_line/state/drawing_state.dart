@@ -42,8 +42,9 @@ class DrawingState extends ChangeNotifier {
   }
 
   void updateElement(DrawingElement updatedElement) {
-    final index =
-        _elements.indexWhere((element) => element.id == updatedElement.id);
+    final index = _elements.indexWhere(
+      (element) => element.id == updatedElement.id,
+    );
     if (index != -1) {
       _elements[index] = updatedElement;
       if (_selectedElement?.id == updatedElement.id) {

@@ -45,8 +45,10 @@ class UsbDetectionService {
 
       return _isInitialized;
     } catch (e) {
-      developer.log('USB initialization failed: $e',
-          name: 'UsbDetectionService');
+      developer.log(
+        'USB initialization failed: $e',
+        name: 'UsbDetectionService',
+      );
       _statusStreamController.add('初始化错误: $e');
       return false;
     }
@@ -74,8 +76,10 @@ class UsbDetectionService {
 
           deviceInfoList.add(deviceInfo);
         } catch (e) {
-          developer.log('Error getting device info: $e',
-              name: 'UsbDetectionService');
+          developer.log(
+            'Error getting device info: $e',
+            name: 'UsbDetectionService',
+          );
 
           UsbDeviceInfo deviceInfo = UsbDeviceInfo(
             vendorId: device.vid ?? 0,
@@ -91,8 +95,10 @@ class UsbDetectionService {
 
       _statusStreamController.add('发现 ${_connectedDevices.length} 个USB设备');
     } catch (e) {
-      developer.log('Error refreshing device list: $e',
-          name: 'UsbDetectionService');
+      developer.log(
+        'Error refreshing device list: $e',
+        name: 'UsbDetectionService',
+      );
       _statusStreamController.add('扫描错误: $e');
     }
   }
@@ -143,8 +149,10 @@ class UsbDetectionService {
       WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
       return '系统：${windowsInfo.productName} ${windowsInfo.displayVersion}';
     } catch (e) {
-      developer.log('Error getting system info: $e',
-          name: 'UsbDetectionService');
+      developer.log(
+        'Error getting system info: $e',
+        name: 'UsbDetectionService',
+      );
     }
     return '系统信息获取失败';
   }

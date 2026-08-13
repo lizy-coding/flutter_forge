@@ -68,10 +68,7 @@ class TaskManager {
 
   // 创建并启动新任务
   Task startNewTask() {
-    final task = Task(
-      id: _nextTaskId++,
-      name: '任务 ${_nextTaskId - 1}',
-    );
+    final task = Task(id: _nextTaskId++, name: '任务 ${_nextTaskId - 1}');
 
     _tasks.add(task);
     _startTaskInIsolate(task);
@@ -84,14 +81,11 @@ class TaskManager {
     task.receivePort = ReceivePort();
 
     // 启动Isolate，传递任务ID、初始进度和sendPort
-    task.isolate = await Isolate.spawn(
-      _taskIsolate,
-      {
-        'sendPort': task.receivePort!.sendPort,
-        'taskId': task.id,
-        'initialProgress': task.progress,
-      },
-    );
+    task.isolate = await Isolate.spawn(_taskIsolate, {
+      'sendPort': task.receivePort!.sendPort,
+      'taskId': task.id,
+      'initialProgress': task.progress,
+    });
 
     // 监听任务进度更新和Isolate的SendPort
     task.subscription = task.receivePort!.listen((dynamic data) {
@@ -100,8 +94,9 @@ class TaskManager {
         task.isolateSendPort = data;
       } else if (data is Map<String, dynamic>) {
         final int taskId = data['taskId'];
-        final Task? updatedTask =
-            _tasks.firstWhereOrNull((t) => t.id == taskId);
+        final Task? updatedTask = _tasks.firstWhereOrNull(
+          (t) => t.id == taskId,
+        );
 
         if (updatedTask != null) {
           if (data.containsKey('progress')) {
@@ -195,11 +190,7 @@ void _taskIsolate(dynamic message) {
 
         // 任务完成时停止定时器
         if (progress >= 100 || t.tick >= totalSteps) {
-          sendPort.send({
-            'taskId': taskId,
-            'progress': 100,
-            'completed': true,
-          });
+          sendPort.send({'taskId': taskId, 'progress': 100, 'completed': true});
           t.cancel();
           isRunning = false;
           commandPort.close();

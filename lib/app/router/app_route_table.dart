@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../module_home_page.dart';
 import '../../module_registry/module_category.dart';
 import '../../module_registry/module_entry.dart';
-import '../../shared/multi_window/category_window_app.dart';
-import '../../shared/multi_window/multi_window_manager.dart';
-import '../../shared/multi_window/multi_window_route_filter.dart';
 import '../../modules/basic/debounce_throttle/module_entry.dart';
 import '../../modules/basic/microtask/module_entry.dart';
 import '../../modules/basic/microtask/module_routes.dart';
@@ -25,6 +22,8 @@ import '../../modules/state/status_management/module_entry.dart';
 import '../../modules/ui/adsorption_line/module_entry.dart';
 import '../../modules/ui/download_animation/module_entry.dart';
 import '../../modules/ui/download_animation/module_routes.dart';
+import '../../modules/ui/font_picker/module_entry.dart';
+import '../../modules/ui/font_picker/module_routes.dart';
 import '../../modules/ui/gcode_visualizer/module_entry.dart';
 import '../../modules/popup_table/popup_widgets/module_entry.dart';
 import '../../modules/popup_table/popup_list_interaction/module_entry.dart';
@@ -34,20 +33,22 @@ import '../../modules/popup_table/overlay_follow_compare/module_entry.dart';
 
 import '../../modules/platform/dio_interceptor/module_entry.dart';
 import '../../modules/platform/dio_interceptor/module_routes.dart';
+import '../../modules/platform/file_picker/module_entry.dart';
+import '../../modules/platform/online_video_player/module_entry.dart';
 import '../../modules/platform/usb_detector/module_entry.dart';
 
 // ==================== 状态管理子路由（模块内部已定义映射） ====================
 
-List<GoRoute> _buildStatusManageRoutes() =>
-    StatusManagementRoutes.routes.entries
-        .map(
-          (entry) => GoRoute(
-            path:
-                entry.key.startsWith('/') ? entry.key.substring(1) : entry.key,
-            builder: (context, state) => entry.value(context),
-          ),
-        )
-        .toList();
+List<GoRoute> _buildStatusManageRoutes() => StatusManagementRoutes
+    .routes
+    .entries
+    .map(
+      (entry) => GoRoute(
+        path: entry.key.startsWith('/') ? entry.key.substring(1) : entry.key,
+        builder: (context, state) => entry.value(context),
+      ),
+    )
+    .toList();
 
 // ==================== 模块注册 ====================
 
@@ -186,6 +187,27 @@ final List<ModuleEntry> _modules = [
     builder: (context) => const DownloadAnimationEntry(),
     routes: DownloadAnimationRoutes.routes,
   ),
+  ModuleEntry(
+    title: '字体选择器',
+    path: '/font-picker',
+    subtitle: '命名列表中直观对比不同字体族与字重样式，并通过文件选择器加载本地字体',
+    category: ModuleCategory.ui,
+    difficulty: Difficulty.intermediate,
+    concepts: [
+      'fontFamily',
+      'TextStyle',
+      '字重',
+      '字距',
+      '字体 fallback',
+      '平台字体',
+      'FontLoader',
+      '中台复用',
+    ],
+    estimatedMinutes: 30,
+    status: ModuleStatus.ready,
+    builder: (context) => const FontPickerEntry(),
+    routes: FontPickerRoutes.routes,
+  ),
 
   // 弹窗与列表
   ModuleEntry(
@@ -233,7 +255,7 @@ final List<ModuleEntry> _modules = [
       'LayerLink',
       'CompositedTransformFollower',
       'markNeedsBuild',
-      'ScrollController'
+      'ScrollController',
     ],
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
@@ -264,25 +286,29 @@ final List<ModuleEntry> _modules = [
     status: ModuleStatus.ready,
     builder: (context) => const UsbDetectorEntry(),
   ),
+  ModuleEntry(
+    title: '文件选择器',
+    path: '/file-picker',
+    subtitle: '复用 file_picker_bridge 中台能力，演示扩展过滤、取消分支与平台差异',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['FilePickerService', 'MethodChannel', '平台桥接', '扩展名过滤', '取消分支'],
+    estimatedMinutes: 20,
+    status: ModuleStatus.ready,
+    builder: (context) => const FilePickerEntry(),
+  ),
+  ModuleEntry(
+    title: '在线视频播放',
+    path: '/online-video-player',
+    subtitle: '使用 media_kit 播放在线 HTTP 视频流并操控播放参数',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['media_kit', 'libmpv', 'HTTP 流', '播放控制', '倍速', 'Player 生命周期'],
+    estimatedMinutes: 35,
+    status: ModuleStatus.ready,
+    builder: (context) => const OnlineVideoPlayerEntry(),
+  ),
 ];
-
-// ==================== 路由聚合 ====================
-
-Future<void> _openCategoryWindow(
-  BuildContext context,
-  ModuleCategory category,
-) async {
-  final filtered = filterModulesByCategory(_modules, category);
-  if (MultiWindowManager.isSupported) {
-    await MultiWindowManager.instance.createCategoryWindow(category);
-  } else {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => CategoryHomePage(category: category, modules: filtered),
-      ),
-    );
-  }
-}
 
 final List<GoRoute> _routes = [
   GoRoute(
@@ -300,138 +326,4 @@ final List<GoRoute> _routes = [
 class AppRouteTable {
   static List<GoRoute> get routes => _routes;
   static List<ModuleEntry> get modules => _modules;
-}
-
-// ==================== 首页 ====================
-
-class ModuleHomePage extends StatelessWidget {
-  const ModuleHomePage({super.key, required this.modules});
-
-  final List<ModuleEntry> modules;
-
-  @override
-  Widget build(BuildContext context) {
-    const categories = ModuleCategory.values;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter 学习实验室'),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          final categoryModules =
-              modules.where((m) => m.category == category).toList();
-
-          if (categoryModules.isEmpty) return const SizedBox.shrink();
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        category.label,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.open_in_new, size: 20),
-                      tooltip: '在新窗口打开',
-                      onPressed: () {
-                        _openCategoryWindow(context, category);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              ...categoryModules.map((module) => ModuleCard(module: module)),
-              const Divider(height: 1),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class ModuleCard extends StatelessWidget {
-  const ModuleCard({super.key, required this.module});
-
-  final ModuleEntry module;
-
-  Color _difficultyColor(Difficulty d) {
-    return switch (d) {
-      Difficulty.beginner => Colors.green,
-      Difficulty.intermediate => Colors.orange,
-      Difficulty.advanced => Colors.red,
-    };
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Row(
-        children: [
-          Expanded(child: Text(module.title)),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color:
-                  _difficultyColor(module.difficulty).withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              module.difficulty.label,
-              style: TextStyle(
-                fontSize: 11,
-                color: _difficultyColor(module.difficulty),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(module.subtitle, style: const TextStyle(fontSize: 12)),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 4,
-            runSpacing: 4,
-            children: module.concepts
-                .map(
-                  (c) => Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(c, style: const TextStyle(fontSize: 10)),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '预计 ${module.estimatedMinutes} 分钟 · ${module.status.label}',
-            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-          ),
-        ],
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.push(module.path),
-    );
-  }
 }

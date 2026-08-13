@@ -1,20 +1,26 @@
 name: main_app
 description: A Flutter app shell.
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ^3.11.5
+
+workspace:
+  - packages/gcode_core
+  - packages/flutter_study_learning
+  - packages/file_picker_bridge
+  - packages/flutter_ioc_core
 
 dependencies:
   gcode_core:
-    path: ../gcode_core
+    path: packages/gcode_core
   flutter_study_learning:
-    path: ../flutter_study_learning
+    path: packages/flutter_study_learning
   file_picker_bridge:
-    path: ../file_picker_bridge
+    path: packages/file_picker_bridge
   flutter_ioc_core:
-    path: ../flutter_ioc_core
+    path: packages/flutter_ioc_core
   flutter:
     sdk: flutter
   go_router: ^14.2.0
@@ -29,13 +35,16 @@ dependencies:
   usb_serial: ^0.5.0
   device_info_plus: ^10.1.2
   desktop_multi_window: ^0.3.0
+  media_kit: ^1.2.6
+  media_kit_video: ^2.0.1
+  media_kit_libs_video: ^1.0.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
   flutterguard_cli:
-    path: ../flutterguard/packages/flutterguard_cli
+    path: ../flutterguard
 
 flutter:
   uses-material-design: true

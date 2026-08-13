@@ -32,8 +32,9 @@ class _TodoRP extends StateNotifier<List<_Todo>> {
   }
 }
 
-final _todoProvider =
-    StateNotifierProvider<_TodoRP, List<_Todo>>((ref) => _TodoRP());
+final _todoProvider = StateNotifierProvider<_TodoRP, List<_Todo>>(
+  (ref) => _TodoRP(),
+);
 
 class _TodoContent extends ConsumerWidget {
   @override
@@ -61,30 +62,29 @@ class _TodoContent extends ConsumerWidget {
             final item = list[i];
             return ListTile(
               title: Text(item.title),
-              leading:
-                  Checkbox(value: item.done, onChanged: (_) => n.toggle(i)),
+              leading: Checkbox(
+                value: item.done,
+                onChanged: (_) => n.toggle(i),
+              ),
               trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  onPressed: () => n.remove(i)),
+                icon: const Icon(Icons.delete_outline),
+                onPressed: () => n.remove(i),
+              ),
             );
           },
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '掌握 Riverpod 管理全局列表状态',
-          '理解 StateNotifier 不可变状态更新模式',
-        ]),
-        ConceptChips(concepts: [
-          'Riverpod',
-          '全局状态',
-          'CRUD',
-          '不可变数据',
-          'StateNotifier',
-        ]),
+        LearningObjectives(
+          objectives: ['掌握 Riverpod 管理全局列表状态', '理解 StateNotifier 不可变状态更新模式'],
+        ),
+        ConceptChips(
+          concepts: ['Riverpod', '全局状态', 'CRUD', '不可变数据', 'StateNotifier'],
+        ),
         CodeSnippetCard(
           title: 'Riverpod Todo 模式',
-          code: 'class TodoRP extends StateNotifier<List<Todo>> {\n'
+          code:
+              'class TodoRP extends StateNotifier<List<Todo>> {\n'
               '  void add(t) => state = [...state, Todo(t)];\n'
               '  void remove(i) => state = [...state]..removeAt(i);\n'
               '}',

@@ -1,0 +1,14 @@
+name: flutter_ioc_core
+description: Pure Dart IoC container core extracted from Flutter study.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+
+resolution: workspace
+
+dev_dependencies:
+  lints: ^4.0.0
+  flutter_test:
+    sdk: flutter

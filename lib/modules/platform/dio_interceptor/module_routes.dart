@@ -9,9 +9,6 @@ class InterceptorTestRoutes {
   static const String login = '/login';
 
   static List<GoRoute> get routes => [
-        GoRoute(
-          path: 'login',
-          builder: (_, __) => const LoginPage(),
-        ),
-      ];
+    GoRoute(path: 'login', builder: (_, __) => const LoginPage()),
+  ];
 }

@@ -10,7 +10,9 @@
   },
   "entrypoints": [
     "dio_interceptor",
-    "usb_detector"
+    "usb_detector",
+    "file_picker",
+    "online_video_player"
   ],
   "owns": [
     "network_platform"
@@ -19,18 +21,23 @@
     "dio",
     "usb_serial",
     "device_info_plus",
-    "flutter_study_learning"
+    "media_kit",
+    "media_kit_video",
+    "flutter_study_learning",
+    "file_picker_bridge"
   ],
   "children": [
     "dio_interceptor/AI_ANALYSIS.md",
-    "usb_detector/AI_ANALYSIS.md"
+    "usb_detector/AI_ANALYSIS.md",
+    "file_picker/AI_ANALYSIS.md",
+    "online_video_player/AI_ANALYSIS.md"
   ],
   "contracts": {
     "no_natural_language": true,
     "index_only": true,
     "max_index_depth": 2,
-    "doc_consumer": "vibecoding",
-    "doc_mode": "harness",
+    "doc_consumer": "coding_agent",
+    "doc_mode": "machine_contract",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },

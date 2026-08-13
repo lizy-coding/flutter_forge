@@ -101,7 +101,9 @@ _controller.close();''',
                       return Text(
                         controller.messages[index],
                         style: const TextStyle(
-                            fontFamily: 'monospace', fontSize: 12),
+                          fontFamily: 'monospace',
+                          fontSize: 12,
+                        ),
                       );
                     },
                   ),
@@ -133,15 +135,18 @@ _controller.close();''',
       children: [
         Row(
           children: [
-            Icon(Icons.tune,
-                size: 18, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.tune,
+              size: 18,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(width: 8),
             Text(
               '控制面板',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ],
         ),
@@ -163,8 +168,9 @@ _controller.close();''',
               child: const Text('订阅'),
             ),
             ElevatedButton(
-              onPressed:
-                  controller.isSubscribed ? null : controller.unsubscribe,
+              onPressed: controller.isSubscribed
+                  ? null
+                  : controller.unsubscribe,
               child: const Text('取消订阅'),
             ),
             ElevatedButton(

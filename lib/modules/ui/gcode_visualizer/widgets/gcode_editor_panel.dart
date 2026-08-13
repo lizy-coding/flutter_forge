@@ -88,17 +88,26 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
                   onPressedChanged: (v) => setState(() => _resetPressed = v),
                   onTap: widget.onResetSample,
                   borderRadius: 6,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.refresh,
-                          size: 16, color: theme.colorScheme.primary),
+                      Icon(
+                        Icons.refresh,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
                       const SizedBox(width: 4),
-                      Text('示例',
-                          style: TextStyle(
-                              fontSize: 12, color: theme.colorScheme.primary)),
+                      Text(
+                        '示例',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -109,19 +118,27 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
                   onPressedChanged: (v) => setState(() => _parsePressed = v),
                   onTap: widget.onParse,
                   borderRadius: 6,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   background: theme.colorScheme.primary,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.play_arrow,
-                          size: 16, color: theme.colorScheme.onPrimary),
+                      Icon(
+                        Icons.play_arrow,
+                        size: 16,
+                        color: theme.colorScheme.onPrimary,
+                      ),
                       const SizedBox(width: 4),
-                      Text('解析',
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: theme.colorScheme.onPrimary)),
+                      Text(
+                        '解析',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -138,10 +155,7 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
             child: TextField(
               controller: _controller,
               maxLines: 8,
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 12,
-              ),
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
               decoration: InputDecoration(
                 isDense: true,
                 contentPadding: const EdgeInsets.all(8),
@@ -151,9 +165,7 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(6),
-                  borderSide: BorderSide(
-                    color: theme.colorScheme.primary,
-                  ),
+                  borderSide: BorderSide(color: theme.colorScheme.primary),
                 ),
                 filled: true,
                 fillColor: Colors.white,
@@ -167,19 +179,34 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
                 spacing: 6,
                 runSpacing: 4,
                 children: [
-                  _badge(widget.loadStageLabel, Colors.grey.shade700,
-                      Colors.grey.withValues(alpha: 0.12)),
+                  _badge(
+                    widget.loadStageLabel,
+                    Colors.grey.shade700,
+                    Colors.grey.withValues(alpha: 0.12),
+                  ),
                   if (widget.linesRead > 0)
-                    _badge('${widget.linesRead} 行', Colors.teal,
-                        Colors.teal.withValues(alpha: 0.1)),
-                  _badge('${widget.commandCount} 指令', Colors.blue,
-                      Colors.blue.withValues(alpha: 0.1)),
+                    _badge(
+                      '${widget.linesRead} 行',
+                      Colors.teal,
+                      Colors.teal.withValues(alpha: 0.1),
+                    ),
+                  _badge(
+                    '${widget.commandCount} 指令',
+                    Colors.blue,
+                    Colors.blue.withValues(alpha: 0.1),
+                  ),
                   if (widget.segmentCount > 0)
-                    _badge('${widget.segmentCount} 轨迹段', Colors.teal,
-                        Colors.teal.withValues(alpha: 0.1)),
+                    _badge(
+                      '${widget.segmentCount} 轨迹段',
+                      Colors.teal,
+                      Colors.teal.withValues(alpha: 0.1),
+                    ),
                   if (widget.errorCount > 0)
-                    _badge('${widget.errorCount} 错误', Colors.red,
-                        Colors.red.withValues(alpha: 0.1)),
+                    _badge(
+                      '${widget.errorCount} 错误',
+                      Colors.red,
+                      Colors.red.withValues(alpha: 0.1),
+                    ),
                 ],
               ),
             ),
@@ -260,13 +287,10 @@ class GcodeEditorPanelState extends State<GcodeEditorPanel> {
               scale: pressed
                   ? 0.92
                   : hovered
-                      ? 1.06
-                      : 1.0,
+                  ? 1.06
+                  : 1.0,
               duration: const Duration(milliseconds: 100),
-              child: Padding(
-                padding: padding,
-                child: child,
-              ),
+              child: Padding(padding: padding, child: child),
             ),
           ),
         ),
@@ -317,10 +341,7 @@ class _GcodeFilePathInputState extends State<_GcodeFilePathInput> {
               controller: _controller,
               minLines: 1,
               maxLines: 1,
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                fontSize: 12,
-              ),
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
               decoration: InputDecoration(
                 isDense: true,
                 hintText: '输入 G-code 文件路径',
@@ -339,9 +360,7 @@ class _GcodeFilePathInputState extends State<_GcodeFilePathInput> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(6),
-                  borderSide: BorderSide(
-                    color: theme.colorScheme.primary,
-                  ),
+                  borderSide: BorderSide(color: theme.colorScheme.primary),
                 ),
                 filled: true,
                 fillColor: Colors.white,

@@ -19,10 +19,17 @@ class _DrawingBoardState extends State<DrawingBoard> {
   ElementType _selectedTool = ElementType.rectangle;
   Color _selectedColor = Colors.blue;
   double _strokeWidth = 2.0;
+  final FocusNode _keyboardFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _keyboardFocusNode.requestFocus();
+  }
 
   @override
   void dispose() {
-    // 清理吸附管理器的计时器
+    _keyboardFocusNode.dispose();
     AdsorptionManager.dispose();
     super.dispose();
   }
@@ -32,7 +39,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
     final body = _buildBody(context);
     if (!widget.embedInScaffold) return body;
     return KeyboardListener(
-      focusNode: FocusNode()..requestFocus(),
+      focusNode: _keyboardFocusNode,
       onKeyEvent: (event) {
         context.read<DrawingState>().handleKeyEvent(event);
       },
@@ -101,9 +108,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
       ),
       child: Row(
         children: [
@@ -127,11 +132,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
           ),
           const SizedBox(width: 16),
           // 分隔线
-          Container(
-            width: 1,
-            height: 30,
-            color: Colors.grey[300],
-          ),
+          Container(width: 1, height: 30, color: Colors.grey[300]),
           const SizedBox(width: 16),
           // 颜色选择
           const Text('颜色: '),
@@ -194,10 +195,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
             ),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: Icon(
-            icon,
-            color: isSelected ? Colors.blue : Colors.grey[600],
-          ),
+          child: Icon(icon, color: isSelected ? Colors.blue : Colors.grey[600]),
         ),
       ),
     );
@@ -237,27 +235,19 @@ class _DrawingBoardState extends State<DrawingBoard> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: Colors.grey[100],
-            border: Border(
-              top: BorderSide(color: Colors.grey[300]!),
-            ),
+            border: Border(top: BorderSide(color: Colors.grey[300]!)),
           ),
           child: Row(
             children: [
               Text(
                 '元素数量: ${drawingState.elements.length}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
               const SizedBox(width: 16),
               if (drawingState.selectedElement != null)
                 Text(
                   '已选择: ${drawingState.selectedElement!.type.name}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
             ],
           ),

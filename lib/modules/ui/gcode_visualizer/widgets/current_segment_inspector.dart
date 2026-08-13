@@ -27,8 +27,11 @@ class CurrentSegmentInspector extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline,
-                  size: 14, color: theme.colorScheme.primary),
+              Icon(
+                Icons.info_outline,
+                size: 14,
+                color: theme.colorScheme.primary,
+              ),
               const SizedBox(width: 6),
               Text(
                 '当前轨迹段',
@@ -56,14 +59,17 @@ class CurrentSegmentInspector extends StatelessWidget {
       _infoRow('行号', '#${seg.command.lineNumber}'),
       _infoRow('指令', seg.command.rawLine),
       _infoRow(
-          '类型', seg.type == GcodeSegmentType.rapid ? 'G0 快速移动' : 'G1 线性移动'),
+        '类型',
+        seg.type == GcodeSegmentType.rapid ? 'G0 快速移动' : 'G1 线性移动',
+      ),
       _infoRow('起点', 'X ${_fmt(seg.start.x)}  Y ${_fmt(seg.start.y)}'),
       _infoRow('终点', 'X ${_fmt(seg.end.x)}  Y ${_fmt(seg.end.y)}'),
       _infoRow(
-          '进给率',
-          seg.command.feedRate != null
-              ? 'F ${_fmt(seg.command.feedRate!)}'
-              : '--'),
+        '进给率',
+        seg.command.feedRate != null
+            ? 'F ${_fmt(seg.command.feedRate!)}'
+            : '--',
+      ),
       _infoRow('段进度', '${(progress * 100).toStringAsFixed(0)}%'),
     ];
   }

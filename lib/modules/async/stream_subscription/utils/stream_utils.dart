@@ -75,15 +75,17 @@ class StreamUtils {
     // 当所有Stream都完成时，关闭控制器
     var completedCount = 0;
     for (var stream in streams) {
-      stream.listen(
-        null,
-        onDone: () {
-          completedCount++;
-          if (completedCount == streams.length) {
-            controller.close();
-          }
-        },
-      ).cancel(); // 立即取消这个监听，因为我们只关心完成事件
+      stream
+          .listen(
+            null,
+            onDone: () {
+              completedCount++;
+              if (completedCount == streams.length) {
+                controller.close();
+              }
+            },
+          )
+          .cancel(); // 立即取消这个监听，因为我们只关心完成事件
     }
 
     controller.onCancel = () {
@@ -180,8 +182,10 @@ class StreamUtils {
   }
 
   /// 创建一个当数据发生变化时才发送的Stream
-  static Stream<T> distinct<T>(Stream<T> stream,
-      {bool Function(T previous, T current)? equals}) {
+  static Stream<T> distinct<T>(
+    Stream<T> stream, {
+    bool Function(T previous, T current)? equals,
+  }) {
     final controller = StreamController<T>();
     T? previousValue;
     bool isFirst = true;

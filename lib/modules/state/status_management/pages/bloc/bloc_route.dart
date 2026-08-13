@@ -34,17 +34,15 @@ class BlocRoute extends StatelessWidget {
               onReset: () => bloc.add(ResetPressed()),
             ),
             sections: [
-              LearningObjectives(objectives: [
-                '理解 Bloc 的事件驱动状态管理机制',
-                '掌握 Event → Bloc → State 的完整链路',
-              ]),
-              ConceptChips(concepts: [
-                'Bloc',
-                'Event',
-                'State',
-                'emit',
-                'BlocBuilder',
-              ]),
+              LearningObjectives(
+                objectives: [
+                  '理解 Bloc 的事件驱动状态管理机制',
+                  '掌握 Event → Bloc → State 的完整链路',
+                ],
+              ),
+              ConceptChips(
+                concepts: ['Bloc', 'Event', 'State', 'emit', 'BlocBuilder'],
+              ),
               CodeSnippetCard(
                 title: 'Bloc 核心模式',
                 code:

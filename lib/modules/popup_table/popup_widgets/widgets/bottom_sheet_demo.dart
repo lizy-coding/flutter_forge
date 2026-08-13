@@ -15,10 +15,7 @@ class PersistentBottomSheetBar extends StatelessWidget {
           const Icon(Icons.tips_and_updates_outlined),
           const SizedBox(width: 8),
           const Expanded(child: Text('这是一个持久化底部工具条，你可以手动关闭。')),
-          TextButton(
-            onPressed: onClose,
-            child: const Text('关闭'),
-          ),
+          TextButton(onPressed: onClose, child: const Text('关闭')),
         ],
       ),
     );
@@ -109,8 +106,10 @@ class _OverlayOrderEditorState extends State<OverlayOrderEditor> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('编辑 Overlay 打开顺序',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                '编辑 Overlay 打开顺序',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 8),
               _OrderList(
                 keyPrefix: 'open',
@@ -118,8 +117,10 @@ class _OverlayOrderEditorState extends State<OverlayOrderEditor> {
                 onReorder: _reorderOpen,
               ),
               const SizedBox(height: 12),
-              Text('编辑 Overlay 关闭顺序',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                '编辑 Overlay 关闭顺序',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 8),
               _OrderList(
                 keyPrefix: 'close',
@@ -209,15 +210,9 @@ class _EditorActions extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        TextButton(
-          onPressed: onReset,
-          child: const Text('重置'),
-        ),
+        TextButton(onPressed: onReset, child: const Text('重置')),
         const SizedBox(width: 8),
-        ElevatedButton(
-          onPressed: onSave,
-          child: const Text('保存'),
-        ),
+        ElevatedButton(onPressed: onSave, child: const Text('保存')),
       ],
     );
   }

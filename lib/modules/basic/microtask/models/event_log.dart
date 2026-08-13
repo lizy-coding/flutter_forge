@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum EventType {
-  sync,
-  microtask,
-  event,
-  info,
-}
+enum EventType { sync, microtask, event, info }
 
 class EventLog {
   final String message;
@@ -13,11 +8,8 @@ class EventLog {
   final DateTime timestamp;
   final int id;
 
-  EventLog({
-    required this.message,
-    required this.type,
-    required this.id,
-  }) : timestamp = DateTime.now();
+  EventLog({required this.message, required this.type, required this.id})
+    : timestamp = DateTime.now();
 
   Color get color {
     switch (type) {

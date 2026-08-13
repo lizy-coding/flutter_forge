@@ -1,58 +1,272 @@
-# AI 模块索引
-
-> 此文件描述 lib/ 下所有模块的结构，AI 修改模块代码前请查阅对应模块的 AI_ANALYSIS.md。
-
-## 模块列表
-
-| 模块 | 路径 | 路由路径 | 状态管理 | 复杂度 | AI 分析文件 |
-|------|------|---------|---------|--------|------------|
-| adsorption_line | `modules/ui/adsorption_line` | /adsorption-line | ChangeNotifier + Provider | 高 | `modules/ui/adsorption_line/AI_ANALYSIS.md` |
-| debounce_throttle | `modules/basic/debounce_throttle` | /debounce-throttle | StatefulWidget | 低 | `modules/basic/debounce_throttle/AI_ANALYSIS.md` |
-| download_animation | `modules/ui/download_animation` | /download-animation | StatefulWidget | 中 | `modules/ui/download_animation/AI_ANALYSIS.md` |
-| flutter_ioc | `modules/state/flutter_ioc` | /flutter-ioc | 自研 IoC + Provider | 中 | `modules/state/flutter_ioc/AI_ANALYSIS.md` |
-| gcode_visualizer | `modules/ui/gcode_visualizer` | /gcode-visualizer | ChangeNotifier + AnimationController | 高 | `modules/ui/gcode_visualizer/AI_ANALYSIS.md` |
-| dio_interceptor | `modules/platform/dio_interceptor` | /dio-interceptor | 无（Dio 拦截器） | 中 | `modules/platform/dio_interceptor/AI_ANALYSIS.md` |
-| isolate_task_manager | `modules/async/isolate_task_manager` | /isolate-stream | StatefulWidget | 中 | `modules/async/isolate_task_manager/AI_ANALYSIS.md` |
-| isolate_basic | `modules/async/isolate_basic` | /isolate-basic | StatefulWidget | 低 | `modules/async/isolate_basic/AI_ANALYSIS.md` |
-| microtask | `modules/basic/microtask` | /microtask | StatefulWidget | 低 | `modules/basic/microtask/AI_ANALYSIS.md` |
-| popup_widgets | `modules/popup_table/popup_widgets` | /popup-widgets | StatefulWidget | 高 | `modules/popup_table/popup_widgets/AI_ANALYSIS.md` |
-| popup_list_interaction | `modules/popup_table/popup_list_interaction` | /popup-list-interaction | StatefulWidget | 低 | `modules/popup_table/popup_list_interaction/AI_ANALYSIS.md` |
-| scroll_table | `modules/popup_table/scroll_table` | /scroll-table | 无 | 低 | `modules/popup_table/scroll_table/AI_ANALYSIS.md` |
-| overlay_follow_compare | `modules/popup_table/overlay_follow_compare` | /overlay-compare | StatefulWidget | 中 | `modules/popup_table/overlay_follow_compare/AI_ANALYSIS.md` |
-| status_management | `modules/state/status_management` | /status-management | Provider/Riverpod/Bloc | 高 | `modules/state/status_management/AI_ANALYSIS.md` |
-| stream_subscription | `modules/async/stream_subscription` | /stream-subscription | StreamController | 中 | `modules/async/stream_subscription/AI_ANALYSIS.md` |
-| tree_state | `modules/basic/tree_state` | /tree-state | StatefulWidget | 低 | `modules/basic/tree_state/AI_ANALYSIS.md` |
-| usb_detector | `modules/platform/usb_detector` | /usb-detector | StreamController | 中 | `modules/platform/usb_detector/AI_ANALYSIS.md` |
-
-## 模块模式分类
-
-### 模式 A: 简单入口（module_entry -> module_root）
-- debounce_throttle
-- download_animation
-- flutter_ioc
-- isolate_basic
-- isolate_task_manager
-- overlay_follow_compare
-- popup_list_interaction
-- popup_widgets
-- scroll_table
-- usb_detector
-
-### 模式 B: 页面路由型（module_entry -> module_routes -> pages）
-- tree_state
-- microtask
-- stream_subscription
-- dio_interceptor
-- status_management
-
-### 模式 C: 功能分区型（module_entry 直接装配 pages/state/widgets/services）
-- adsorption_line（models/state/services/widgets）
-- gcode_visualizer（models/parser/services/state/widgets/pages）
-
-## 层级维护规则
-
-- 根级 `AI_ANALYSIS.md` 只记录工作区层级、模块总数、外部包边界和下一步队列。
-- `lib/app/**/AI_ANALYSIS.md` 只记录应用壳和路由聚合，不展开模块内部细节。
-- `lib/shared/**/AI_ANALYSIS.md` 只记录业务无关共享能力、平台边界和可复用 API。
-- `lib/modules/**/AI_ANALYSIS.md` 只记录单模块结构、数据流、关键类、教学组件和变更备注。
-- 新增或迁移模块时，同步更新本索引、模块自身 `AI_ANALYSIS.md` 和 `lib/app/router/app_route_table.dart`。
+{
+  "schema": "flutter_study.agent_docs.module_index.v1",
+  "registry": "lib/app/router/app_route_table.dart",
+  "count": 20,
+  "modules": [
+    {
+      "id": "tree_state",
+      "category": "basic",
+      "path": "lib/modules/basic/tree_state",
+      "route": "/tree-state",
+      "status": "recommended",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/basic/tree_state/AI_ANALYSIS.md"
+    },
+    {
+      "id": "microtask",
+      "category": "basic",
+      "path": "lib/modules/basic/microtask",
+      "route": "/microtask",
+      "status": "recommended",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/basic/microtask/AI_ANALYSIS.md"
+    },
+    {
+      "id": "debounce_throttle",
+      "category": "basic",
+      "path": "lib/modules/basic/debounce_throttle",
+      "route": "/debounce-throttle",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/basic/debounce_throttle/AI_ANALYSIS.md"
+    },
+    {
+      "id": "stream_subscription",
+      "category": "async",
+      "path": "lib/modules/async/stream_subscription",
+      "route": "/stream-subscription",
+      "status": "recommended",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/async/stream_subscription/AI_ANALYSIS.md"
+    },
+    {
+      "id": "isolate_basic",
+      "category": "async",
+      "path": "lib/modules/async/isolate_basic",
+      "route": "/isolate-basic",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/async/isolate_basic/AI_ANALYSIS.md"
+    },
+    {
+      "id": "isolate_task_manager",
+      "category": "async",
+      "path": "lib/modules/async/isolate_task_manager",
+      "route": "/isolate-stream",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/async/isolate_task_manager/AI_ANALYSIS.md"
+    },
+    {
+      "id": "status_management",
+      "category": "state",
+      "path": "lib/modules/state/status_management",
+      "route": "/status-management",
+      "status": "recommended",
+      "depends": [
+        "flutter_study_learning",
+        "provider",
+        "flutter_riverpod",
+        "flutter_bloc",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/state/status_management/AI_ANALYSIS.md"
+    },
+    {
+      "id": "flutter_ioc",
+      "category": "state",
+      "path": "lib/modules/state/flutter_ioc",
+      "route": "/flutter-ioc",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "flutter_ioc_core",
+        "provider",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/state/flutter_ioc/AI_ANALYSIS.md"
+    },
+    {
+      "id": "gcode_visualizer",
+      "category": "ui",
+      "path": "lib/modules/ui/gcode_visualizer",
+      "route": "/gcode-visualizer",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "gcode_core",
+        "file_picker_bridge",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md"
+    },
+    {
+      "id": "adsorption_line",
+      "category": "ui",
+      "path": "lib/modules/ui/adsorption_line",
+      "route": "/adsorption-line",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "provider",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/ui/adsorption_line/AI_ANALYSIS.md"
+    },
+    {
+      "id": "download_animation",
+      "category": "ui",
+      "path": "lib/modules/ui/download_animation",
+      "route": "/download-animation",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/ui/download_animation/AI_ANALYSIS.md"
+    },
+    {
+      "id": "font_picker",
+      "category": "ui",
+      "path": "lib/modules/ui/font_picker",
+      "route": "/font-picker",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "file_picker_bridge",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/ui/font_picker/AI_ANALYSIS.md"
+    },
+    {
+      "id": "popup_widgets",
+      "category": "popup_table",
+      "path": "lib/modules/popup_table/popup_widgets",
+      "route": "/popup-widgets",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/popup_table/popup_widgets/AI_ANALYSIS.md"
+    },
+    {
+      "id": "popup_list_interaction",
+      "category": "popup_table",
+      "path": "lib/modules/popup_table/popup_list_interaction",
+      "route": "/popup-list-interaction",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/popup_table/popup_list_interaction/AI_ANALYSIS.md"
+    },
+    {
+      "id": "scroll_table",
+      "category": "popup_table",
+      "path": "lib/modules/popup_table/scroll_table",
+      "route": "/scroll-table",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "two_dimensional_scrollables",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/popup_table/scroll_table/AI_ANALYSIS.md"
+    },
+    {
+      "id": "overlay_follow_compare",
+      "category": "popup_table",
+      "path": "lib/modules/popup_table/overlay_follow_compare",
+      "route": "/overlay-compare",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/popup_table/overlay_follow_compare/AI_ANALYSIS.md"
+    },
+    {
+      "id": "dio_interceptor",
+      "category": "platform",
+      "path": "lib/modules/platform/dio_interceptor",
+      "route": "/dio-interceptor",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "dio",
+        "module_registry",
+        "go_router"
+      ],
+      "analysis": "lib/modules/platform/dio_interceptor/AI_ANALYSIS.md"
+    },
+    {
+      "id": "usb_detector",
+      "category": "platform",
+      "path": "lib/modules/platform/usb_detector",
+      "route": "/usb-detector",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "usb_serial",
+        "device_info_plus",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/platform/usb_detector/AI_ANALYSIS.md"
+    },
+    {
+      "id": "file_picker",
+      "category": "platform",
+      "path": "lib/modules/platform/file_picker",
+      "route": "/file-picker",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "file_picker_bridge",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/platform/file_picker/AI_ANALYSIS.md"
+    },
+    {
+      "id": "online_video_player",
+      "category": "platform",
+      "path": "lib/modules/platform/online_video_player",
+      "route": "/online-video-player",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "media_kit",
+        "media_kit_video",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/platform/online_video_player/AI_ANALYSIS.md"
+    }
+  ]
+}

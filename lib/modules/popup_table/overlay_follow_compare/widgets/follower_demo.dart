@@ -79,10 +79,7 @@ class _FollowerDemoState extends State<FollowerDemo> {
   Widget _buildButton(String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ElevatedButton(
-        onPressed: _toggleOverlay,
-        child: Text(label),
-      ),
+      child: ElevatedButton(onPressed: _toggleOverlay, child: Text(label)),
     );
   }
 }

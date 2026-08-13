@@ -1,11 +1,24 @@
 {
-  "schema": "vibecoding.harness.ai_analysis_schema.v1",
+  "schema": "flutter_study.agent_docs.schema.v2",
   "syntax": "json_config",
   "prose": "forbidden",
   "markdown": "forbidden",
+  "generated_by": "tool/generate_agent_indexes.js",
+  "documents": {
+    "project_context": "AI_PROJECT_CONTEXT.md",
+    "refactor_plan": "REFACTOR_PLAN.md",
+    "module_index": "lib/AI_MODULE_INDEX.md",
+    "analysis_glob": "**/AI_ANALYSIS.md"
+  },
   "levels": {
     "workspace": [
       "AI_ANALYSIS.md"
+    ],
+    "package_contract": [
+      "packages/gcode_core/AI_ANALYSIS.md",
+      "packages/flutter_study_learning/AI_ANALYSIS.md",
+      "packages/file_picker_bridge/AI_ANALYSIS.md",
+      "packages/flutter_ioc_core/AI_ANALYSIS.md"
     ],
     "section": [
       "lib/AI_ANALYSIS.md",
@@ -51,8 +64,8 @@
     "no_natural_language": true,
     "index_only": true,
     "max_index_depth": 2,
-    "doc_consumer": "vibecoding",
-    "doc_mode": "harness"
+    "doc_consumer": "coding_agent",
+    "doc_mode": "machine_contract"
   },
   "module_contract_policy": {
     "keep_for_module_rule": true,
@@ -66,6 +79,22 @@
     "avoid": [
       "class_descriptions",
       "long_file_inventory",
+      "natural_language_notes"
+    ]
+  },
+  "package_contract_policy": {
+    "required_for_workspace_member": true,
+    "content": [
+      "package_type",
+      "workspace",
+      "entrypoints",
+      "owns",
+      "depends",
+      "validation",
+      "test_status"
+    ],
+    "avoid": [
+      "platform_claims_not_proven_by_manifest",
       "natural_language_notes"
     ]
   }

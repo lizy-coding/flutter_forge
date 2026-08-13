@@ -11,13 +11,10 @@ class IsolateTestRoutes {
   static const String withIsolate = '/with-isolate';
 
   static List<GoRoute> get routes => [
-        GoRoute(
-          path: 'without-isolate',
-          builder: (_, __) => const WithoutIsolatePage(),
-        ),
-        GoRoute(
-          path: 'with-isolate',
-          builder: (_, __) => const WithIsolatePage(),
-        ),
-      ];
+    GoRoute(
+      path: 'without-isolate',
+      builder: (_, __) => const WithoutIsolatePage(),
+    ),
+    GoRoute(path: 'with-isolate', builder: (_, __) => const WithIsolatePage()),
+  ];
 }

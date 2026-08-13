@@ -16,7 +16,7 @@
     "host_channel_registry"
   ],
   "depends": [
-    "../file_picker_bridge",
+    "packages/file_picker_bridge",
     "macos/Runner/AppDelegate.swift"
   ],
   "children": [],
@@ -24,8 +24,8 @@
     "no_natural_language": true,
     "index_only": true,
     "max_index_depth": 2,
-    "doc_consumer": "vibecoding",
-    "doc_mode": "harness",
+    "doc_consumer": "coding_agent",
+    "doc_mode": "machine_contract",
     "update_required_on_file_change": true,
     "import_direction_enforced": true
   },

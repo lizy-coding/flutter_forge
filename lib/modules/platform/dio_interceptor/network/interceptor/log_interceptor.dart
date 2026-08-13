@@ -15,7 +15,8 @@ class LoggingInterceptor extends Interceptor {
 
     if (kDebugMode) {
       debugPrint(
-          '┌────────────────────────────────────────────────────────────────────────────────────────────────────');
+        '┌────────────────────────────────────────────────────────────────────────────────────────────────────',
+      );
       debugPrint('│ 请求 [${options.method}] → ${options.uri}');
 
       if (options.headers.isNotEmpty) {
@@ -37,7 +38,8 @@ class LoggingInterceptor extends Interceptor {
       }
 
       debugPrint(
-          '└────────────────────────────────────────────────────────────────────────────────────────────────────');
+        '└────────────────────────────────────────────────────────────────────────────────────────────────────',
+      );
     }
 
     handler.next(options);
@@ -56,9 +58,11 @@ class LoggingInterceptor extends Interceptor {
 
     if (kDebugMode) {
       debugPrint(
-          '┌────────────────────────────────────────────────────────────────────────────────────────────────────');
+        '┌────────────────────────────────────────────────────────────────────────────────────────────────────',
+      );
       debugPrint(
-          '│ 响应 [${response.statusCode}] ← ${response.requestOptions.uri}');
+        '│ 响应 [${response.statusCode}] ← ${response.requestOptions.uri}',
+      );
 
       if (duration != null) {
         debugPrint('│ 耗时: ${duration}ms');
@@ -75,7 +79,8 @@ class LoggingInterceptor extends Interceptor {
       printWrapped(response.data.toString());
 
       debugPrint(
-          '└────────────────────────────────────────────────────────────────────────────────────────────────────');
+        '└────────────────────────────────────────────────────────────────────────────────────────────────────',
+      );
     }
 
     handler.next(response);
@@ -94,9 +99,11 @@ class LoggingInterceptor extends Interceptor {
 
     if (kDebugMode) {
       debugPrint(
-          '┌────────────────────────────────────────────────────────────────────────────────────────────────────');
+        '┌────────────────────────────────────────────────────────────────────────────────────────────────────',
+      );
       debugPrint(
-          '│ 错误 [${err.response?.statusCode ?? "未知状态码"}] ← ${err.requestOptions.uri}');
+        '│ 错误 [${err.response?.statusCode ?? "未知状态码"}] ← ${err.requestOptions.uri}',
+      );
       debugPrint('│ 类型: ${err.type}');
 
       if (duration != null) {
@@ -111,7 +118,8 @@ class LoggingInterceptor extends Interceptor {
       }
 
       debugPrint(
-          '└────────────────────────────────────────────────────────────────────────────────────────────────────');
+        '└────────────────────────────────────────────────────────────────────────────────────────────────────',
+      );
     }
 
     handler.next(err);

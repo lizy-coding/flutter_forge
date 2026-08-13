@@ -8,8 +8,8 @@ class CounterModel extends ChangeNotifier {
 
   // Default constructor
   CounterModel({int count = 0, String name = "Default Counter"})
-      : _count = count,
-        _name = name;
+    : _count = count,
+      _name = name;
 
   int get count => _count;
   String get name => _name;
@@ -25,10 +25,7 @@ class CounterModel extends ChangeNotifier {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'count': _count,
-      'name': _name,
-    };
+    return {'count': _count, 'name': _name};
   }
 
   factory CounterModel.fromMap(Map<String, dynamic> map) {

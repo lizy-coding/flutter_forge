@@ -125,8 +125,9 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -156,9 +157,13 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('控制面板',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      '控制面板',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -219,8 +224,10 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
                 '订阅者 (${_subscribers.length}):',
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(height: 4),
@@ -239,8 +246,10 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
                               ListTile(
                                 title: Text(subscriber.name),
                                 trailing: IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.red),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
                                   onPressed: () =>
                                       _removeSubscriber(subscriber.id),
                                 ),
@@ -249,7 +258,8 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
                               Padding(
                                 padding: const EdgeInsets.all(8),
                                 child: Text(
-                                    '收到的消息 (${subscriber.messages.length}):'),
+                                  '收到的消息 (${subscriber.messages.length}):',
+                                ),
                               ),
                               SizedBox(
                                 height: 80,
@@ -260,7 +270,9 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
                                         itemBuilder: (context, messageIndex) {
                                           return Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 2),
+                                              horizontal: 16,
+                                              vertical: 2,
+                                            ),
                                             child: Text(
                                               subscriber.messages[messageIndex],
                                               style: TextStyle(
@@ -294,21 +306,20 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解广播 Stream 的多订阅者特性',
-          '掌握 StreamController.broadcast() 的创建与使用',
-          '学会管理多个 StreamSubscription 的生命周期',
-        ]),
-        ConceptChips(concepts: [
-          '广播 Stream',
-          '多订阅者',
-          'StreamController',
-          '错误处理',
-          '定时推送',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解广播 Stream 的多订阅者特性',
+            '掌握 StreamController.broadcast() 的创建与使用',
+            '学会管理多个 StreamSubscription 的生命周期',
+          ],
+        ),
+        ConceptChips(
+          concepts: ['广播 Stream', '多订阅者', 'StreamController', '错误处理', '定时推送'],
+        ),
         CodeSnippetCard(
           title: '广播模式核心代码',
-          code: 'final controller = StreamController<String>.broadcast(\n'
+          code:
+              'final controller = StreamController<String>.broadcast(\n'
               '  onListen: () => print("首次订阅"),\n'
               '  onCancel: () => print("末次取消"),\n'
               ');\n'
@@ -317,11 +328,13 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
               'controller.add("hello"); // 两个订阅者都收到',
           explanation: '广播流允许任意数量的监听器同时订阅同一个数据源。',
         ),
-        CommonPitfalls(pitfalls: [
-          '广播 Stream 没有缓存 — 在订阅前发送的消息会被丢失',
-          'onListen 只在第一个订阅者加入时触发，onCancel 在最后一个离开时触发',
-          'close() 后不能再用 add()，需重新创建 StreamController',
-        ]),
+        CommonPitfalls(
+          pitfalls: [
+            '广播 Stream 没有缓存 — 在订阅前发送的消息会被丢失',
+            'onListen 只在第一个订阅者加入时触发，onCancel 在最后一个离开时触发',
+            'close() 后不能再用 add()，需重新创建 StreamController',
+          ],
+        ),
         ExerciseCard(
           task: '为每个订阅者设置独立的过滤器，让其只接收包含特定关键词的消息。',
           hint:

@@ -32,26 +32,16 @@ class HomePage extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.download,
-                    size: 64,
-                    color: Colors.blue.shade600,
-                  ),
+                  Icon(Icons.download, size: 64, color: Colors.blue.shade600),
                   const SizedBox(height: 16),
                   const Text(
                     '下载动画演示',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '体验不同的下载动画实现方式',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -96,8 +86,11 @@ class HomePage extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.info_outline,
-                          color: Colors.blue.shade600, size: 20),
+                      Icon(
+                        Icons.info_outline,
+                        color: Colors.blue.shade600,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         '实现说明',
@@ -113,10 +106,7 @@ class HomePage extends StatelessWidget {
                     '• Custom View: 使用 Stack + AnimatedBuilder 实现\n'
                     '• Paint: 使用 CustomPaint 绘制动画\n'
                     '• Overlay: 使用全局 Overlay 实现，不受视图层级限制',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.blue.shade700,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.blue.shade700),
                   ),
                 ],
               ),
@@ -125,22 +115,27 @@ class HomePage extends StatelessWidget {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Flutter 动画的基础实现方式',
-          '对比 Custom View、CustomPaint、Overlay 三种方案的差异',
-          '掌握不同场景下选择合适的动画实现策略',
-        ]),
-        ConceptChips(concepts: [
-          'Tween 动画',
-          'CustomPaint',
-          'OverlayEntry',
-          'Stack',
-          'AnimatedBuilder',
-          '动画配置',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 Flutter 动画的基础实现方式',
+            '对比 Custom View、CustomPaint、Overlay 三种方案的差异',
+            '掌握不同场景下选择合适的动画实现策略',
+          ],
+        ),
+        ConceptChips(
+          concepts: [
+            'Tween 动画',
+            'CustomPaint',
+            'OverlayEntry',
+            'Stack',
+            'AnimatedBuilder',
+            '动画配置',
+          ],
+        ),
         CodeSnippetCard(
           title: '三种动画实现对比',
-          code: '// 1. Custom View (Stack)\n'
+          code:
+              '// 1. Custom View (Stack)\n'
               'Stack(children: [\n'
               '  AnimatedBuilder(\n'
               '    animation: controller,\n'
@@ -196,18 +191,29 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text(subtitle,
-                        style: TextStyle(
-                            fontSize: 14, color: Colors.grey.shade600)),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios,
-                  color: Colors.grey.shade400, size: 16),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.grey.shade400,
+                size: 16,
+              ),
             ],
           ),
         ),

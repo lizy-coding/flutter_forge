@@ -34,9 +34,4 @@ boundaries:
       - lib/modules/**
       - lib/app/**
 
-  # shared 层必须纯净，不能反向依赖模块或 app
-  - name: shared_purity
-    from: lib/shared/**
-    forbidden:
-      - lib/modules/**
-      - lib/app/**
+

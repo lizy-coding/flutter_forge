@@ -74,8 +74,10 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: Colors.red.shade200),
                   ),
-                  child: Text(_errorMessage!,
-                      style: const TextStyle(color: Colors.red)),
+                  child: Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 ),
               TextFormField(
                 controller: _usernameController,
@@ -126,14 +128,14 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 Token 认证流程及拦截器自动注入机制',
-          '掌握 AuthInterceptor 的实现与使用',
-        ]),
+        LearningObjectives(
+          objectives: ['理解 Token 认证流程及拦截器自动注入机制', '掌握 AuthInterceptor 的实现与使用'],
+        ),
         ConceptChips(concepts: ['Token', '认证', '登录', 'AuthInterceptor']),
         CodeSnippetCard(
           title: 'AuthInterceptor 实现',
-          code: 'class AuthInterceptor extends Interceptor {\n'
+          code:
+              'class AuthInterceptor extends Interceptor {\n'
               '  @override\n'
               '  void onRequest(options, handler) {\n'
               '    final token = getToken();\n'

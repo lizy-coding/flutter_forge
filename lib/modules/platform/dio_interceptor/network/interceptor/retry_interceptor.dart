@@ -20,12 +20,13 @@ class RetryInterceptor extends Interceptor {
     this.maxRetries = 3,
     this.retryInterval = 1000,
     Set<DioExceptionType>? retryableErrors,
-  }) : retryableErrors = retryableErrors ??
-            {
-              DioExceptionType.connectionTimeout,
-              DioExceptionType.receiveTimeout,
-              DioExceptionType.connectionError,
-            };
+  }) : retryableErrors =
+           retryableErrors ??
+           {
+             DioExceptionType.connectionTimeout,
+             DioExceptionType.receiveTimeout,
+             DioExceptionType.connectionError,
+           };
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
@@ -36,7 +37,8 @@ class RetryInterceptor extends Interceptor {
     final int currentRetryCount = _retryCountMap[requestId] ?? 0;
 
     // 判断是否满足重试条件
-    bool shouldRetry = currentRetryCount < maxRetries && // 未超过最大重试次数
+    bool shouldRetry =
+        currentRetryCount < maxRetries && // 未超过最大重试次数
         _shouldRetryError(err) && // 是可重试的错误类型
         _isIdempotentRequest(err.requestOptions); // 是幂等请求
 
@@ -46,7 +48,8 @@ class RetryInterceptor extends Interceptor {
 
       if (kDebugMode) {
         print(
-            'RetryInterceptor - 将在${retryInterval}ms后进行第${currentRetryCount + 1}次重试');
+          'RetryInterceptor - 将在${retryInterval}ms后进行第${currentRetryCount + 1}次重试',
+        );
         print('请求: ${err.requestOptions.uri}');
       }
 
@@ -126,8 +129,13 @@ class RetryInterceptor extends Interceptor {
   /// 判断请求是否是幂等的（可以安全重试）
   bool _isIdempotentRequest(RequestOptions options) {
     // GET、HEAD、OPTIONS 请求通常是幂等的
-    return ['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE']
-        .contains(options.method.toUpperCase());
+    return [
+      'GET',
+      'HEAD',
+      'OPTIONS',
+      'PUT',
+      'DELETE',
+    ].contains(options.method.toUpperCase());
     // 注意：POST请求通常不是幂等的，但某些特定API可能设计为幂等，这需要具体情况具体分析
   }
 

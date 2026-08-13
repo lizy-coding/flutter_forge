@@ -3,9 +3,7 @@
 set -euo pipefail
 
 echo "🔍 Running FlutterGuard static scan..."
-dart run flutterguard_cli:flutterguard scan --path . --fail-on high
-
-if [ $? -ne 0 ]; then
+if ! dart run flutterguard_cli:flutterguard scan . --fail-on high; then
   echo ""
   echo "❌ FlutterGuard 检测到高优问题，提交被阻止。"
   echo "   运行 'dart run flutterguard_cli:flutterguard scan' 查看详情。"

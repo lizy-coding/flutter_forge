@@ -75,8 +75,8 @@ class OverlayDownloadService {
     // 使用单例 Ticker Provider
     final animationController = AnimationController(
       duration: Duration(
-          milliseconds:
-              (config.animationDuration / config.flyingSpeed).round()),
+        milliseconds: (config.animationDuration / config.flyingSpeed).round(),
+      ),
       vsync: _OverlayTickerProvider(),
     );
 
@@ -90,21 +90,19 @@ class OverlayDownloadService {
       end: item.endPosition,
     ).animate(curveAnimation);
 
-    final scaleAnimation = Tween<double>(
-      begin: 1.2,
-      end: 0.2,
-    ).animate(CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.7, 1.0, curve: Curves.easeIn),
-    ));
+    final scaleAnimation = Tween<double>(begin: 1.2, end: 0.2).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.7, 1.0, curve: Curves.easeIn),
+      ),
+    );
 
-    final opacityAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.8, 1.0, curve: Curves.easeIn),
-    ));
+    final opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.8, 1.0, curve: Curves.easeIn),
+      ),
+    );
 
     item.animationController = animationController;
     item.positionAnimation = positionAnimation;
@@ -151,8 +149,9 @@ class OverlayDownloadService {
                 padding: EdgeInsets.all(config.flyingItemPadding + 4),
                 decoration: BoxDecoration(
                   color: Colors.green.shade600,
-                  borderRadius:
-                      BorderRadius.circular(config.flyingItemRadius + 2),
+                  borderRadius: BorderRadius.circular(
+                    config.flyingItemRadius + 2,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.green.shade300,

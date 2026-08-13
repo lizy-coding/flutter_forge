@@ -34,25 +34,22 @@ class _FutureContent extends StatelessWidget {
           child: Consumer<_UserModel>(
             builder: (_, m, __) => m.name == null
                 ? const CircularProgressIndicator()
-                : Text(m.name!,
-                    style: Theme.of(context).textTheme.headlineSmall),
+                : Text(
+                    m.name!,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
           ),
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '掌握 Provider 中异步数据获取的模式',
-          '理解 ChangeNotifier 中的状态缓存机制',
-        ]),
-        ConceptChips(concepts: [
-          'Provider',
-          'Future',
-          '缓存',
-          'ChangeNotifier',
-        ]),
+        LearningObjectives(
+          objectives: ['掌握 Provider 中异步数据获取的模式', '理解 ChangeNotifier 中的状态缓存机制'],
+        ),
+        ConceptChips(concepts: ['Provider', 'Future', '缓存', 'ChangeNotifier']),
         CodeSnippetCard(
           title: 'Provider 异步加载',
-          code: 'class _UserModel extends ChangeNotifier {\n'
+          code:
+              'class _UserModel extends ChangeNotifier {\n'
               '  String? name;\n'
               '  Future<void> load() async {\n'
               '    name = await fetchUser();\n'

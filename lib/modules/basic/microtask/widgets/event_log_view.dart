@@ -24,10 +24,7 @@ class EventLogView extends StatelessWidget {
       ),
       child: logs.isEmpty
           ? const Center(
-              child: Text(
-                '点击上方按钮运行测试',
-                style: TextStyle(color: Colors.grey),
-              ),
+              child: Text('点击上方按钮运行测试', style: TextStyle(color: Colors.grey)),
             )
           : ListView.builder(
               controller: scrollController,

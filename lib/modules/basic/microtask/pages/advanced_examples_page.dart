@@ -82,11 +82,7 @@ runZoned(() {
   void _addLog(String message, EventType type) {
     if (!_isRunning) return;
     setState(() {
-      _logs.add(EventLog(
-        message: message,
-        type: type,
-        id: _logs.length + 1,
-      ));
+      _logs.add(EventLog(message: message, type: type, id: _logs.length + 1));
     });
     scheduleMicrotask(_scrollToBottom);
   }
@@ -116,8 +112,10 @@ runZoned(() {
     _addLog('await之前的代码', EventType.sync);
     await Future(() => _addLog('await的Future执行', EventType.event));
     _addLog('await之后的代码', EventType.microtask);
-    await Future.delayed(const Duration(milliseconds: 500),
-        () => _addLog('第二个await的Future执行', EventType.event));
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+      () => _addLog('第二个await的Future执行', EventType.event),
+    );
     _addLog('第二个await之后的代码', EventType.microtask);
     _addLog('async函数结束', EventType.microtask);
   }
@@ -128,8 +126,9 @@ runZoned(() {
     _clearLogs();
     _addLog('开始Future.value测试', EventType.info);
     _addLog('代码开始执行', EventType.sync);
-    Future.value('立即值').then(
-        (value) => _addLog('Future.value微任务: $value', EventType.microtask));
+    Future.value(
+      '立即值',
+    ).then((value) => _addLog('Future.value微任务: $value', EventType.microtask));
     Future(() {
       _addLog('普通Future事件任务执行', EventType.event);
       return '计算值';
@@ -152,9 +151,10 @@ runZoned(() {
     Future(() => _addLog('初始Future', EventType.event))
         .then((_) => _addLog('第一个then微任务', EventType.microtask))
         .then((_) {
-      _addLog('第二个then微任务', EventType.microtask);
-      return Future(() => _addLog('嵌套事件任务', EventType.event));
-    }).then((_) => _addLog('第三个then微任务', EventType.microtask));
+          _addLog('第二个then微任务', EventType.microtask);
+          return Future(() => _addLog('嵌套事件任务', EventType.event));
+        })
+        .then((_) => _addLog('第三个then微任务', EventType.microtask));
     scheduleMicrotask(() => _addLog('独立的微任务', EventType.microtask));
     Future(() => _addLog('独立的事件任务', EventType.event));
     _addLog('代码结束执行', EventType.sync);
@@ -170,22 +170,26 @@ runZoned(() {
     _clearLogs();
     _addLog('开始Zone测试', EventType.info);
     _addLog('代码开始执行', EventType.sync);
-    runZoned(() {
-      _addLog('进入自定义Zone', EventType.sync);
-      Future(() => _addLog('在自定义Zone中执行的Future', EventType.event));
-      scheduleMicrotask(() => _addLog('在自定义Zone中执行的微任务', EventType.microtask));
-      _addLog('离开自定义Zone', EventType.sync);
-    },
-        zoneSpecification: ZoneSpecification(
-          scheduleMicrotask: (self, parent, zone, f) {
-            _addLog('微任务被调度', EventType.info);
-            parent.scheduleMicrotask(zone, f);
-          },
-          createTimer: (self, parent, zone, duration, f) {
-            _addLog('计时器被创建，持续时间: $duration', EventType.info);
-            return parent.createTimer(zone, duration, f);
-          },
-        ));
+    runZoned(
+      () {
+        _addLog('进入自定义Zone', EventType.sync);
+        Future(() => _addLog('在自定义Zone中执行的Future', EventType.event));
+        scheduleMicrotask(
+          () => _addLog('在自定义Zone中执行的微任务', EventType.microtask),
+        );
+        _addLog('离开自定义Zone', EventType.sync);
+      },
+      zoneSpecification: ZoneSpecification(
+        scheduleMicrotask: (self, parent, zone, f) {
+          _addLog('微任务被调度', EventType.info);
+          parent.scheduleMicrotask(zone, f);
+        },
+        createTimer: (self, parent, zone, duration, f) {
+          _addLog('计时器被创建，持续时间: $duration', EventType.info);
+          return parent.createTimer(zone, duration, f);
+        },
+      ),
+    );
     Future(() => _addLog('在主Zone中执行的Future', EventType.event));
     scheduleMicrotask(() => _addLog('在主Zone中执行的微任务', EventType.microtask));
     _addLog('代码结束执行', EventType.sync);
@@ -209,78 +213,75 @@ runZoned(() {
           children: [
             SizedBox(
               height: 380,
-              child: DefaultTabController(
-                length: 4,
-                child: Column(
-                  children: [
-                    TabBar(
+              child: Column(
+                children: [
+                  TabBar(
+                    controller: _tabController,
+                    tabs: const [
+                      Tab(text: 'async/await'),
+                      Tab(text: 'Future.value'),
+                      Tab(text: 'Future链'),
+                      Tab(text: 'Zone'),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
                       controller: _tabController,
-                      tabs: const [
-                        Tab(text: 'async/await'),
-                        Tab(text: 'Future.value'),
-                        Tab(text: 'Future链'),
-                        Tab(text: 'Zone'),
+                      children: [
+                        _buildTabContent(
+                          'async/await',
+                          'async/await语法是Future的语法糖。'
+                              'await会暂停函数并将后续代码包装成微任务。',
+                          _runAsyncAwaitTest,
+                        ),
+                        _buildTabContent(
+                          'Future.value',
+                          'Future.value立即完成，then回调直接进微任务队列。',
+                          _runFutureValueTest,
+                        ),
+                        _buildTabContent(
+                          'Future链式调用',
+                          '每个then回调都是微任务，不是事件任务。',
+                          _runFutureChainTest,
+                        ),
+                        _buildTabContent(
+                          'Zone',
+                          'Zone可拦截和修改异步操作调度。',
+                          _runZoneTest,
+                        ),
                       ],
                     ),
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabController,
-                        children: [
-                          _buildTabContent(
-                            'async/await',
-                            'async/await语法是Future的语法糖。'
-                                'await会暂停函数并将后续代码包装成微任务。',
-                            _runAsyncAwaitTest,
-                          ),
-                          _buildTabContent(
-                            'Future.value',
-                            'Future.value立即完成，then回调直接进微任务队列。',
-                            _runFutureValueTest,
-                          ),
-                          _buildTabContent(
-                            'Future链式调用',
-                            '每个then回调都是微任务，不是事件任务。',
-                            _runFutureChainTest,
-                          ),
-                          _buildTabContent(
-                            'Zone',
-                            'Zone可拦截和修改异步操作调度。',
-                            _runZoneTest,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 4),
             Expanded(
-                child: EventLogView(
-              logs: _logs,
-              showTimestamp: _showTimestamps,
-              scrollController: _scrollController,
-            )),
+              child: EventLogView(
+                logs: _logs,
+                showTimestamp: _showTimestamps,
+                scrollController: _scrollController,
+              ),
+            ),
           ],
         ),
       ),
       sections: [
-        LearningObjectives(objectives: [
-          '理解 async/await 背后的微任务调度机制',
-          '掌握 Future.value 与普通 Future 的区别',
-          '理解 Future 链式调用中 then 回调的调度行为',
-          '了解 Zone 的异步操作拦截机制',
-        ]),
-        ConceptChips(concepts: [
-          'async/await',
-          'Future.value',
-          '链式调用',
-          'Zone',
-          '微任务调度',
-        ]),
+        LearningObjectives(
+          objectives: [
+            '理解 async/await 背后的微任务调度机制',
+            '掌握 Future.value 与普通 Future 的区别',
+            '理解 Future 链式调用中 then 回调的调度行为',
+            '了解 Zone 的异步操作拦截机制',
+          ],
+        ),
+        ConceptChips(
+          concepts: ['async/await', 'Future.value', '链式调用', 'Zone', '微任务调度'],
+        ),
         CodeSnippetCard(
           title: 'async/await 调度原理',
-          code: 'void main() async {\n'
+          code:
+              'void main() async {\n'
               '  print("1: 同步");\n'
               '  await Future(() => print("3: 事件"));\n'
               '  print("2: await后的微任务");\n'
@@ -296,7 +297,10 @@ runZoned(() {
   }
 
   Widget _buildTabContent(
-      String title, String description, VoidCallback onRun) {
+    String title,
+    String description,
+    VoidCallback onRun,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(8),
       child: Column(
