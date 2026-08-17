@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:main_app/modules/platform/online_video_player/module_root.dart';
-import 'package:main_app/modules/platform/online_video_player/state/media_kit_player_adapter.dart';
+import 'package:main_app/modules/platform/online_video_player/state/video_player_adapter.dart';
 import 'package:main_app/modules/platform/online_video_player/widgets/video_player_controls.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:video_player/video_player.dart';
 
 void main() {
   testWidgets('controls render playback, seek, rate and volume controls', (
@@ -88,7 +88,7 @@ class FakeVideoPlayerAdapter implements VideoPlayerAdapter {
   final ValueNotifier<double> rate = ValueNotifier(1);
 
   @override
-  VideoController? get videoController => null;
+  VideoPlayerController? get videoController => null;
 
   @override
   Future<void> openAndPlay() async {

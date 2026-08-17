@@ -23,8 +23,7 @@
   ],
   "depends": [
     "flutter_study_learning",
-    "media_kit",
-    "media_kit_video",
+    "video_player",
     "module_registry"
   ],
   "children": [],

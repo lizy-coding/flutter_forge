@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../state/media_kit_player_adapter.dart';
+import '../state/video_player_adapter.dart';
 
 class VideoPlayerControls extends StatelessWidget {
   const VideoPlayerControls({super.key, required this.adapter});

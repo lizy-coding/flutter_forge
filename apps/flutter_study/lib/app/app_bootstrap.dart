@@ -1,7 +1,6 @@
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:media_kit/media_kit.dart';
 
 import '../shared/multi_window/multi_window_manager.dart';
 import 'app.dart';
@@ -10,7 +9,6 @@ import 'category_window_app.dart';
 /// Resolves the host-specific application shell before mounting Flutter.
 Future<void> bootstrapFlutterStudyApp() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MediaKit.ensureInitialized();
 
   Widget root = const App();
   if (MultiWindowManager.isSupported) {

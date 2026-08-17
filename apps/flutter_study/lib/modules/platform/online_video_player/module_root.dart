@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_study_learning/flutter_study_learning.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:video_player/video_player.dart';
 
-import 'state/media_kit_player_adapter.dart';
+import 'state/video_player_adapter.dart';
 import 'widgets/video_player_controls.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -17,7 +17,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late final VideoPlayerAdapter _adapter =
-      widget.adapter ?? MediaKitPlayerAdapter();
+      widget.adapter ?? VideoPlayerPluginAdapter();
 
   @override
   void initState() {
@@ -75,10 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     return Stack(
                       fit: StackFit.expand,
                       children: [
-                        Video(
-                          controller: controller,
-                          controls: NoVideoControls,
-                        ),
+                        VideoPlayer(controller),
                         if (state == PlayerUiState.loading)
                           const ColoredBox(
                             color: Color(0x66000000),
@@ -103,37 +100,37 @@ class _MyHomePageState extends State<MyHomePage> {
       sections: const [
         LearningObjectives(
           objectives: [
-            '理解 media_kit、VideoController 与原生 libmpv 的职责边界',
+            '理解 video_player、VideoPlayerController 与平台播放器的职责边界',
             '掌握在线媒体打开、播放、暂停、跳转、音量和倍速控制',
-            '正确管理 Player、流订阅和 ValueNotifier 的生命周期',
+            '正确管理 VideoPlayerController、监听器和 ValueNotifier 的生命周期',
           ],
         ),
         ConceptChips(
           concepts: [
-            'media_kit',
-            'libmpv',
+            'video_player',
+            '平台播放器',
             'HTTP 流',
             '播放控制',
             '倍速',
-            'Player 生命周期',
+            'Controller 生命周期',
           ],
         ),
         CodeSnippetCard(
           title: '打开并播放在线媒体',
           code:
-              "final player = Player();\n"
-              "final controller = VideoController(player);\n"
-              "await player.open(\n"
-              "  Media('https://example.com/video.mp4'),\n"
-              "  play: true,\n"
-              ");",
-          explanation: 'Player 负责媒体状态，VideoController 将视频画面连接到 Flutter Widget。',
+              "final controller = VideoPlayerController.networkUrl(\n"
+              "  Uri.parse('https://example.com/video.mp4'),\n"
+              ");\n"
+              "await controller.initialize();\n"
+              "await controller.play();",
+          explanation:
+              'VideoPlayerController 负责媒体状态，并把平台播放器画面连接到 Flutter Widget。',
         ),
         CommonPitfalls(
           pitfalls: [
             'macOS 沙箱默认禁止外部网络访问，需要同时配置 DebugProfile 与 Release 的 network.client 权限',
-            'media_kit 必须在 runApp 前完成全局初始化，否则原生后端可能无法正确加载',
-            'Player、流订阅和监听器必须在页面销毁时释放，避免原生资源与回调泄漏',
+            'VideoPlayerController 必须先完成 initialize，才能可靠读取时长并渲染画面',
+            'VideoPlayerController 和监听器必须在页面销毁时释放，避免原生资源与回调泄漏',
           ],
         ),
         ExerciseCard(

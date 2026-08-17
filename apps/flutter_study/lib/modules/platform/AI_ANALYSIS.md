@@ -21,8 +21,7 @@
     "dio",
     "usb_serial",
     "device_info_plus",
-    "media_kit",
-    "media_kit_video",
+    "video_player",
     "flutter_study_learning",
     "file_picker_bridge"
   ],

@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:video_player/video_player.dart';
 
 const sampleStreamUrl = 'https://media.w3.org/2010/05/sintel/trailer.mp4';
 
@@ -14,7 +13,7 @@ abstract interface class VideoPlayerAdapter {
   ValueNotifier<Duration> get duration;
   ValueNotifier<double> get volume;
   ValueNotifier<double> get rate;
-  VideoController? get videoController;
+  VideoPlayerController? get videoController;
 
   Future<void> openAndPlay();
   Future<void> play();
@@ -26,30 +25,16 @@ abstract interface class VideoPlayerAdapter {
   void dispose();
 }
 
-class MediaKitPlayerAdapter implements VideoPlayerAdapter {
-  MediaKitPlayerAdapter({Player? player}) : _player = player ?? Player() {
-    videoController = VideoController(_player);
-    _subscriptions.addAll([
-      _player.stream.position.listen((value) => position.value = value),
-      _player.stream.duration.listen((value) => duration.value = value),
-      _player.stream.playing.listen((isPlaying) {
-        if (uiState.value == PlayerUiState.loading ||
-            uiState.value == PlayerUiState.error) {
-          if (!isPlaying) return;
-        }
-        uiState.value = isPlaying
-            ? PlayerUiState.playing
-            : PlayerUiState.paused;
-      }),
-      _player.stream.error.listen((_) => uiState.value = PlayerUiState.error),
-    ]);
+class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
+  VideoPlayerPluginAdapter({VideoPlayerController? controller})
+    : videoController =
+          controller ??
+          VideoPlayerController.networkUrl(Uri.parse(sampleStreamUrl)) {
+    videoController.addListener(_synchronizeState);
   }
 
-  final Player _player;
-  final List<StreamSubscription<Object?>> _subscriptions = [];
-
   @override
-  late final VideoController videoController;
+  final VideoPlayerController videoController;
 
   @override
   final ValueNotifier<PlayerUiState> uiState = ValueNotifier(
@@ -73,43 +58,60 @@ class MediaKitPlayerAdapter implements VideoPlayerAdapter {
     uiState.value = PlayerUiState.loading;
     position.value = Duration.zero;
     try {
-      await _player.open(Media(sampleStreamUrl), play: true);
+      await videoController.initialize();
+      await videoController.play();
     } on Object {
       uiState.value = PlayerUiState.error;
     }
   }
 
   @override
-  Future<void> play() => _player.play();
+  Future<void> play() => videoController.play();
 
   @override
-  Future<void> pause() => _player.pause();
+  Future<void> pause() => videoController.pause();
 
   @override
-  Future<void> togglePlayPause() => _player.playOrPause();
+  Future<void> togglePlayPause() =>
+      videoController.value.isPlaying ? pause() : play();
 
   @override
-  Future<void> seek(Duration value) => _player.seek(value);
+  Future<void> seek(Duration value) => videoController.seekTo(value);
 
   @override
   Future<void> setVolume(double value) async {
     final normalized = value.clamp(0.0, 1.0);
     volume.value = normalized;
-    await _player.setVolume(normalized * 100);
+    await videoController.setVolume(normalized);
   }
 
   @override
   Future<void> setRate(double value) async {
     rate.value = value;
-    await _player.setRate(value);
+    await videoController.setPlaybackSpeed(value);
+  }
+
+  void _synchronizeState() {
+    final value = videoController.value;
+    if (value.hasError) {
+      uiState.value = PlayerUiState.error;
+      return;
+    }
+    position.value = value.position;
+    duration.value = value.duration;
+    volume.value = value.volume;
+    rate.value = value.playbackSpeed;
+    if (value.isInitialized) {
+      uiState.value = value.isPlaying
+          ? PlayerUiState.playing
+          : PlayerUiState.paused;
+    }
   }
 
   @override
   void dispose() {
-    for (final subscription in _subscriptions) {
-      unawaited(subscription.cancel());
-    }
-    unawaited(_player.dispose());
+    videoController.removeListener(_synchronizeState);
+    unawaited(videoController.dispose());
     uiState.dispose();
     position.dispose();
     duration.dispose();

@@ -262,8 +262,7 @@
       "status": "ready",
       "depends": [
         "flutter_study_learning",
-        "media_kit",
-        "media_kit_video",
+        "video_player",
         "module_registry"
       ],
       "analysis": "lib/modules/platform/online_video_player/AI_ANALYSIS.md"
