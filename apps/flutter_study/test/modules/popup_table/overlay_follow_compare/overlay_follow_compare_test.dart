@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:main_app/modules/popup_table/overlay_follow_compare/module_root.dart';
+import 'package:flutter_study_app/modules/popup_table/overlay_follow_compare/module_root.dart';
 
 void main() {
   testWidgets('OverlayComparePage renders teaching components', (tester) async {

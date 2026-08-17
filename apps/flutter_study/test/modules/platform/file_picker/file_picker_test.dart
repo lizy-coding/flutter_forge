@@ -2,7 +2,7 @@ import 'package:file_picker_bridge/file_picker_bridge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:main_app/modules/platform/file_picker/module_root.dart';
+import 'package:flutter_study_app/modules/platform/file_picker/module_root.dart';
 
 void main() {
   testWidgets('picked file shows its name and path', (tester) async {

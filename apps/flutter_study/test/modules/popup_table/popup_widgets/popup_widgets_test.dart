@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:main_app/modules/popup_table/popup_widgets/module_entry.dart';
-import 'package:main_app/modules/popup_table/popup_widgets/module_root.dart';
+import 'package:flutter_study_app/modules/popup_table/popup_widgets/module_entry.dart';
+import 'package:flutter_study_app/modules/popup_table/popup_widgets/module_root.dart';
 
 void main() {
   testWidgets('PopWidgetEntry renders module page', (tester) async {

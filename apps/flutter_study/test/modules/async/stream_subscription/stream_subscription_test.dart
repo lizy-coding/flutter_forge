@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:main_app/modules/async/stream_subscription/pages/stream_demo_page.dart';
+import 'package:flutter_study_app/modules/async/stream_subscription/pages/stream_demo_page.dart';
 
 void main() {
   testWidgets('StreamDemoPage renders teaching components', (tester) async {

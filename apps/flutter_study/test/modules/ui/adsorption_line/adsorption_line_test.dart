@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-import 'package:main_app/modules/ui/adsorption_line/pages/adsorption_line_page.dart';
-import 'package:main_app/modules/ui/adsorption_line/state/drawing_state.dart';
+import 'package:flutter_study_app/modules/ui/adsorption_line/pages/adsorption_line_page.dart';
+import 'package:flutter_study_app/modules/ui/adsorption_line/state/drawing_state.dart';
 
 void main() {
   testWidgets('AdsorptionLinePage renders teaching components', (tester) async {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:main_app/modules/ui/gcode_visualizer/pages/gcode_visualizer_page.dart';
+import 'package:flutter_study_app/modules/ui/gcode_visualizer/pages/gcode_visualizer_page.dart';
 
 void main() {
   testWidgets('GcodeVisualizerPage renders key elements', (tester) async {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:main_app/modules/platform/online_video_player/module_root.dart';
-import 'package:main_app/modules/platform/online_video_player/state/video_player_adapter.dart';
-import 'package:main_app/modules/platform/online_video_player/widgets/video_player_controls.dart';
+import 'package:flutter_study_app/modules/platform/online_video_player/module_root.dart';
+import 'package:flutter_study_app/modules/platform/online_video_player/state/video_player_adapter.dart';
+import 'package:flutter_study_app/modules/platform/online_video_player/widgets/video_player_controls.dart';
 import 'package:video_player/video_player.dart';
 
 void main() {

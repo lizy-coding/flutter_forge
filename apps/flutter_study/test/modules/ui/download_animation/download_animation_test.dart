@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:main_app/modules/ui/download_animation/pages/download_animation_page.dart';
+import 'package:flutter_study_app/modules/ui/download_animation/pages/download_animation_page.dart';
 
 void main() {
   testWidgets('DownloadAnimationPage renders teaching components', (

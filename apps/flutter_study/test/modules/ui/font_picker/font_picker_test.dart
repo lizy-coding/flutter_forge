@@ -2,10 +2,10 @@ import 'package:file_picker_bridge/file_picker_bridge.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:main_app/modules/ui/font_picker/data/font_catalog.dart';
-import 'package:main_app/modules/ui/font_picker/pages/font_picker_page.dart';
-import 'package:main_app/modules/ui/font_picker/pages/weight_compare_page.dart';
-import 'package:main_app/modules/ui/font_picker/state/font_loader_service.dart';
+import 'package:flutter_study_app/modules/ui/font_picker/data/font_catalog.dart';
+import 'package:flutter_study_app/modules/ui/font_picker/pages/font_picker_page.dart';
+import 'package:flutter_study_app/modules/ui/font_picker/pages/weight_compare_page.dart';
+import 'package:flutter_study_app/modules/ui/font_picker/state/font_loader_service.dart';
 
 void main() {
   test('catalog exposes platform fonts and a fallback', () {

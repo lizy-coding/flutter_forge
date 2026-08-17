@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:main_app/module_registry/module_catalog_utils.dart';
-import 'package:main_app/module_registry/module_category.dart';
-import 'package:main_app/module_registry/module_entry.dart';
+import 'package:flutter_study_app/module_registry/module_catalog_utils.dart';
+import 'package:flutter_study_app/module_registry/module_category.dart';
+import 'package:flutter_study_app/module_registry/module_entry.dart';
 
 void main() {
   ModuleEntry createModule({
