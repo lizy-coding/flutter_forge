@@ -195,6 +195,13 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
     });
   }
 
+  void _saveOverlayOrders(List<String> open, List<String> close) {
+    setState(() {
+      _orderStore.setOrders(open: open, close: close);
+      _overlayApplyVisibleOrder(open);
+    });
+  }
+
   Future<void> _showDatePicker() async {
     final now = DateTime.now();
     await showDatePicker(
@@ -444,12 +451,7 @@ extension _PopupOverlayDialogs on _PopDemoHomePageState {
         fixedIds: kChainDialogIds,
         initialOpen: List<String>.of(_orderStore.openOrder.value),
         initialClose: List<String>.of(_orderStore.closeOrder.value),
-        onSave: (open, close) {
-          setState(() {
-            _orderStore.setOrders(open: open, close: close);
-            _overlayApplyVisibleOrder(open);
-          });
-        },
+        onSave: _saveOverlayOrders,
       ),
     );
   }
