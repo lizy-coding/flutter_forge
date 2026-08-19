@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const appRoot = path.join(root, 'apps/flutter_study');
+const appRoot = path.join(root, 'apps/flutter_forge');
 
 const contracts = {
   no_natural_language: true,
@@ -126,7 +126,7 @@ function writeIndex({
     node: {
       id,
       kind,
-      package: 'main_app',
+      package: 'flutter_forge_app',
       path: nodePath(rel),
       status,
     },
@@ -141,7 +141,7 @@ function writeIndex({
 
 function writeSchema() {
   writeJson('AI_ANALYSIS_SCHEMA.json', {
-    schema: 'flutter_study.agent_docs.schema.v2',
+    schema: 'flutter_forge.agent_docs.schema.v2',
     syntax: 'json_config',
     prose: 'forbidden',
     markdown: 'forbidden',
@@ -199,10 +199,10 @@ function writeSchema() {
 
 function writeProjectContext() {
   writeJson('AI_PROJECT_CONTEXT.md', {
-    schema: 'flutter_study.agent_docs.project_context.v1',
+    schema: 'flutter_forge.agent_docs.project_context.v1',
     consumer: 'coding_agent',
     package: {
-      name: 'main_app',
+      name: 'flutter_forge_app',
       type: 'flutter_modular_learning_app',
       sdk: ['flutter_3', 'dart_3'],
     },
@@ -288,7 +288,7 @@ function writeProjectContext() {
 
 function writeRefactorPlan() {
   writeJson('REFACTOR_PLAN.md', {
-    schema: 'flutter_study.agent_docs.refactor_plan.v1',
+    schema: 'flutter_forge.agent_docs.refactor_plan.v1',
     objective: 'android_readiness_after_architecture_convergence',
     active_phase: 'agent_managed',
     completed_milestones: [
@@ -364,7 +364,7 @@ function writeRefactorPlan() {
 
 function writeModuleIndex() {
   writeJson('lib/AI_MODULE_INDEX.md', {
-    schema: 'flutter_study.agent_docs.module_index.v1',
+    schema: 'flutter_forge.agent_docs.module_index.v1',
     registry: 'lib/app/router/app_route_table.dart',
     count: modules.length,
     modules: modules.map(([category, module, route, status, depends]) => ({
@@ -382,7 +382,7 @@ function writeModuleIndex() {
 function writeRootIndexes() {
   writeIndex({
     rel: 'AI_ANALYSIS.md',
-    id: 'flutter_study.root',
+    id: 'flutter_forge.root',
     kind: 'workspace_index',
     entrypoints: ['lib/main.dart', 'lib/app/app_bootstrap.dart', 'lib/app/app.dart', 'lib/app/router/app_route_table.dart'],
     owns: ['app_shell', 'module_registry', 'shared_capabilities', 'learning_modules', 'host_integrations'],
@@ -405,7 +405,7 @@ function writeRootIndexes() {
   });
   writeIndex({
     rel: 'lib/AI_ANALYSIS.md',
-    id: 'main_app.lib',
+    id: 'flutter_forge_app.lib',
     kind: 'source_index',
     entrypoints: ['main.dart', 'app/app_bootstrap.dart', 'app/app.dart', 'app/router/app_route_table.dart'],
     owns: ['app', 'module_registry', 'shared', 'modules'],
@@ -417,7 +417,7 @@ function writeRootIndexes() {
 function writeLayerIndexes() {
   writeIndex({
     rel: 'lib/app/AI_ANALYSIS.md',
-    id: 'main_app.app',
+    id: 'flutter_forge_app.app',
     kind: 'app_index',
     entrypoints: ['app.dart', 'app_bootstrap.dart', 'module_home_page.dart', 'category_navigation.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
     owns: ['host_bootstrap', 'material_app_router', 'router', 'module_home', 'adaptive_category_navigation', 'desktop_category_window_shell'],
@@ -426,7 +426,7 @@ function writeLayerIndexes() {
   });
   writeIndex({
     rel: 'lib/app/router/AI_ANALYSIS.md',
-    id: 'main_app.app.router',
+    id: 'flutter_forge_app.app.router',
     kind: 'router_index',
     entrypoints: ['app_router.dart', 'app_route_table.dart'],
     owns: ['go_router_root', 'module_route_aggregation', 'module_catalog_composition'],
@@ -434,7 +434,7 @@ function writeLayerIndexes() {
   });
   writeIndex({
     rel: 'lib/module_registry/AI_ANALYSIS.md',
-    id: 'main_app.module_registry',
+    id: 'flutter_forge_app.module_registry',
     kind: 'registry_index',
     entrypoints: ['module_entry.dart', 'module_category.dart', 'module_catalog_utils.dart'],
     owns: ['module_entry_model', 'module_category_enum', 'difficulty_enum', 'module_status_enum', 'module_catalog_filtering', 'category_route_rebasing'],
@@ -442,7 +442,7 @@ function writeLayerIndexes() {
   });
   writeIndex({
     rel: 'lib/shared/AI_ANALYSIS.md',
-    id: 'main_app.shared',
+    id: 'flutter_forge_app.shared',
     kind: 'shared_index',
     entrypoints: ['multi_window', 'platform'],
     owns: ['business_free_capabilities', 'desktop_window_lifecycle', 'platform_boundaries'],
@@ -451,7 +451,7 @@ function writeLayerIndexes() {
   });
   writeIndex({
     rel: 'lib/shared/multi_window/AI_ANALYSIS.md',
-    id: 'main_app.shared.multi_window',
+    id: 'flutter_forge_app.shared.multi_window',
     kind: 'shared_capability_index',
     entrypoints: ['multi_window_manager.dart'],
     owns: ['desktop_window_lifecycle', 'desktop_window_arguments'],
@@ -459,7 +459,7 @@ function writeLayerIndexes() {
   });
   writeIndex({
     rel: 'lib/shared/platform/AI_ANALYSIS.md',
-    id: 'main_app.shared.platform',
+    id: 'flutter_forge_app.shared.platform',
     kind: 'shared_boundary_index',
     status: 'transition',
     entrypoints: ['AI_ANALYSIS.md'],
@@ -472,7 +472,7 @@ function writeLayerIndexes() {
 function writeModuleIndexes() {
   writeIndex({
     rel: 'lib/modules/AI_ANALYSIS.md',
-    id: 'main_app.modules',
+    id: 'flutter_forge_app.modules',
     kind: 'modules_index',
     entrypoints: ['basic', 'async', 'state', 'ui', 'popup_table', 'platform'],
     owns: ['learning_module_categories', 'route_registered_modules'],
@@ -482,7 +482,7 @@ function writeModuleIndexes() {
   for (const [category, [children, owns, depends]] of Object.entries(categoryMeta)) {
     writeIndex({
       rel: `lib/modules/${category}/AI_ANALYSIS.md`,
-      id: `main_app.modules.${category}`,
+      id: `flutter_forge_app.modules.${category}`,
       kind: 'module_category_index',
       entrypoints: children,
       owns,
@@ -506,9 +506,9 @@ function writeModuleContracts() {
       schema: 'vibecoding.harness.ai_analysis.v2',
       mode: 'module_contract',
       node: {
-        id: `main_app.modules.${category}.${module}`,
+        id: `flutter_forge_app.modules.${category}.${module}`,
         kind: 'learning_module',
-        package: 'main_app',
+        package: 'flutter_forge_app',
         path: `lib/modules/${category}/${module}`,
         status,
       },
@@ -531,7 +531,7 @@ function writePackageContracts() {
       schema: 'vibecoding.harness.ai_analysis.v2',
       mode: 'package_contract',
       node: {
-        id: `flutter_study.workspace.${packageMeta.name}`,
+        id: `flutter_forge.workspace.${packageMeta.name}`,
         kind: packageMeta.kind,
         package: packageMeta.name,
         path: packageMeta.path,

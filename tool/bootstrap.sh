@@ -7,7 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-echo "=== Flutter Study 环境自举 ==="
+echo "=== Flutter Forge 环境自举 ==="
 echo ""
 
 # 1. 环境校验

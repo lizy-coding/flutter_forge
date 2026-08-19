@@ -29,7 +29,7 @@ run_stage() {
   echo ""
 }
 
-echo "=== Flutter Study 质量门禁 ==="
+echo "=== Flutter Forge 质量门禁 ==="
 echo ""
 
 # Stage 1: Agent 文档生成 + 校验 + 漂移检测

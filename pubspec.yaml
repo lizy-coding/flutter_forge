@@ -1,12 +1,12 @@
-name: flutter_study_workspace
-description: Flutter Study workspace container.
+name: flutter_forge_workspace
+description: Flutter Forge workspace container.
 publish_to: 'none'
 
 environment:
   sdk: ^3.11.5
 
 workspace:
-  - apps/flutter_study
+  - apps/flutter_forge
   - packages/gcode_core
   - packages/flutter_study_learning
   - packages/file_picker_bridge
