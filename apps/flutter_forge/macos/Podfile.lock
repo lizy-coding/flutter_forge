@@ -5,6 +5,7 @@ PODS:
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - video_player_avfoundation (0.0.1):
+    - Flutter
     - FlutterMacOS
 
 DEPENDENCIES:
@@ -27,8 +28,8 @@ SPEC CHECKSUMS:
   desktop_multi_window: 93667594ccc4b88d91a97972fd3b1b89667fa80a
   device_info_plus: a56e6e74dbbd2bb92f2da12c64ddd4f67a749041
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
-  video_player_avfoundation: 2618e5754e2ab98a816bc4e0c1e9157298b50b17
+  video_player_avfoundation: 3453f792138786248960ca029747fcd9f318ef52
 
 PODFILE CHECKSUM: 54d867c82ac51cbd61b565781b9fada492027009
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0
