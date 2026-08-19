@@ -1,8 +1,8 @@
 {
-  "schema": "flutter_study.agent_docs.project_context.v1",
+  "schema": "flutter_forge.agent_docs.project_context.v1",
   "consumer": "coding_agent",
   "package": {
-    "name": "main_app",
+    "name": "flutter_forge_app",
     "type": "flutter_modular_learning_app",
     "sdk": [
       "flutter_3",

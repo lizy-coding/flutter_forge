@@ -1,5 +1,5 @@
 {
-  "schema": "flutter_study.agent_docs.refactor_plan.v1",
+  "schema": "flutter_forge.agent_docs.refactor_plan.v1",
   "objective": "android_readiness_after_architecture_convergence",
   "active_phase": "agent_managed",
   "completed_milestones": [

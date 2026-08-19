@@ -12,5 +12,5 @@ It must not own Flutter widgets, app bootstrap, route composition, module teachi
 
 ## Maintenance Owners
 
-- Flutter Study package maintainers
+- Flutter Forge package maintainers
 - IoC core maintainers

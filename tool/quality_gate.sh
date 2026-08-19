@@ -35,7 +35,7 @@ echo ""
 # Stage 1: Agent 文档生成 + 校验 + 漂移检测
 run_stage "Agent 文档生成与校验" bash -c "
   bash tool/generate_harness_ai_analysis.sh &&
-  git diff --exit-code -- AI_ANALYSIS_SCHEMA.json AI_PROJECT_CONTEXT.md REFACTOR_PLAN.md lib/**/AI_ANALYSIS.md lib/AI_MODULE_INDEX.md packages/**/AI_ANALYSIS.md
+  git diff --exit-code -- AI_ANALYSIS_SCHEMA.json AI_PROJECT_CONTEXT.md REFACTOR_PLAN.md AI_ANALYSIS.md apps/flutter_forge/lib/**/AI_ANALYSIS.md apps/flutter_forge/lib/AI_MODULE_INDEX.md packages/**/AI_ANALYSIS.md
 "
 
 # Stage 2: 代码格式
@@ -54,7 +54,10 @@ run_stage "全量测试" bash tool/test_all.sh
 run_stage "测试布局校验" bash tool/verify_test_layout.sh
 
 # Stage 6: FlutterGuard 安全扫描
-run_stage "FlutterGuard" dart run flutterguard_cli:flutterguard scan . --fail-on high
+run_stage "FlutterGuard" bash -c "
+  cd apps/flutter_forge &&
+  dart run flutterguard_cli:flutterguard scan . --fail-on high
+"
 
 echo "=== 质量门禁完成 ==="
 echo -e "  通过: ${GREEN}$PASS_COUNT${NC}"

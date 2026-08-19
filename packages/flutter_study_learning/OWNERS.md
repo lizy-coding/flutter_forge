@@ -6,11 +6,11 @@
 
 ## Public Contract
 
-`flutter_study_learning` owns shared teaching UI components for Flutter Study learning modules, including scaffolds, learning objectives, concept chips, code snippets, state logs, pitfalls, and exercise cards.
+`flutter_study_learning` owns shared teaching UI components for Flutter Forge learning modules, including scaffolds, learning objectives, concept chips, code snippets, state logs, pitfalls, and exercise cards.
 
 It must not own module-specific business logic, route registration, module metadata, persistence, platform capabilities, or app shell behavior.
 
 ## Maintenance Owners
 
-- Flutter Study package maintainers
+- Flutter Forge package maintainers
 - Learning UI maintainers

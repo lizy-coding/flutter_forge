@@ -2,7 +2,7 @@
   "schema": "vibecoding.harness.ai_analysis.v2",
   "mode": "package_contract",
   "node": {
-    "id": "flutter_study.workspace.flutter_study_learning",
+    "id": "flutter_forge.workspace.flutter_study_learning",
     "kind": "flutter_package",
     "package": "flutter_study_learning",
     "path": "packages/flutter_study_learning",

@@ -12,5 +12,5 @@ It must not own native application UI, business-specific file parsing, G-code lo
 
 ## Maintenance Owners
 
-- Flutter Study package maintainers
+- Flutter Forge package maintainers
 - Platform bridge maintainers

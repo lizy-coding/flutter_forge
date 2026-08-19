@@ -40,7 +40,7 @@ echo "=== Flutter Forge 全量测试 ==="
 echo ""
 
 # 主应用
-run_tests "." "flutter_forge_app" "flutter test"
+run_tests "apps/flutter_forge" "flutter_forge_app" "flutter test"
 
 # Workspace packages
 run_tests "packages/gcode_core" "gcode_core" "flutter test"

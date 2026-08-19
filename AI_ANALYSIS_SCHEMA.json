@@ -1,5 +1,5 @@
 {
-  "schema": "flutter_study.agent_docs.schema.v2",
+  "schema": "flutter_forge.agent_docs.schema.v2",
   "syntax": "json_config",
   "prose": "forbidden",
   "markdown": "forbidden",

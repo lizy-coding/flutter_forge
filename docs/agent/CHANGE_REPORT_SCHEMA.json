@@ -1,5 +1,5 @@
 {
-  "schema": "flutter_study.agent_docs.change_report_schema.v1",
+  "schema": "flutter_forge.agent_docs.change_report_schema.v1",
   "consumer": "coding_agent",
   "description": "Agent 变更报告格式 — 每次任务完成后的结构化输出",
   "fields": {

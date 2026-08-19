@@ -1,5 +1,5 @@
 {
-  "schema": "flutter_study.agent_docs.commands.v1",
+  "schema": "flutter_forge.agent_docs.commands.v1",
   "consumer": "coding_agent",
   "description": "项目命令清单 — 所有可执行命令的标准化描述",
   "commands": {

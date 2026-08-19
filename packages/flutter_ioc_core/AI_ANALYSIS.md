@@ -2,7 +2,7 @@
   "schema": "vibecoding.harness.ai_analysis.v2",
   "mode": "package_contract",
   "node": {
-    "id": "flutter_study.workspace.flutter_ioc_core",
+    "id": "flutter_forge.workspace.flutter_ioc_core",
     "kind": "dart_package",
     "package": "flutter_ioc_core",
     "path": "packages/flutter_ioc_core",
