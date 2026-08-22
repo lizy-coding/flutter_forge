@@ -21,6 +21,9 @@ class ErrorInterceptor extends Interceptor {
       case DioExceptionType.receiveTimeout:
         errorMessage = "响应超时";
         break;
+      case DioExceptionType.transformTimeout:
+        errorMessage = "数据转换超时";
+        break;
       case DioExceptionType.badResponse:
         // 服务器返回的错误信息
         final int? statusCode = err.response?.statusCode;
