@@ -219,7 +219,7 @@ packages:
   flutterguard_cli:
     dependency: transitive
     description:
-      path: "../../flutterguard"
+      path: "../flutterguard"
       relative: true
     source: path
     version: "0.7.1"
