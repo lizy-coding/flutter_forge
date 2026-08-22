@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解 Flutter 事件循环 (Event Loop) 的运作机制',

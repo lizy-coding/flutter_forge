@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: ['理解 Token 认证流程及拦截器自动注入机制', '掌握 AuthInterceptor 的实现与使用'],
         ),

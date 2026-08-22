@@ -16,7 +16,7 @@ class _MicrotaskQueuePageState extends State<MicrotaskQueuePage> {
   final List<EventLog> _logs = [];
   bool _isRunning = false;
   final ScrollController _scrollController = ScrollController();
-  bool _showTimestamps = true;
+  final bool _showTimestamps = true;
 
   @override
   void dispose() {
@@ -174,7 +174,7 @@ Future(() { print('事件任务执行'); })
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解微任务队列 (Microtask Queue) 的优先级特性',

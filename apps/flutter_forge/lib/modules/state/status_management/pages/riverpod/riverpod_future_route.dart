@@ -21,7 +21,7 @@ class RiverpodFutureRoute extends ConsumerWidget {
           ),
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '掌握 Riverpod FutureProvider 的异步数据管理',

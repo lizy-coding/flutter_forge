@@ -157,7 +157,7 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       '控制面板',
                       style: TextStyle(
                         fontSize: 18,
@@ -305,7 +305,7 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解广播 Stream 的多订阅者特性',

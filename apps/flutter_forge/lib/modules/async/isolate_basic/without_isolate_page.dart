@@ -117,7 +117,7 @@ class _WithoutIsolatePageState extends State<WithoutIsolatePage>
           ),
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解主 Isolate 被阻塞时界面卡顿的原理',

@@ -17,7 +17,7 @@ class _AdvancedExamplesPageState extends State<AdvancedExamplesPage>
   final List<EventLog> _logs = [];
   bool _isRunning = false;
   final ScrollController _scrollController = ScrollController();
-  bool _showTimestamps = true;
+  final bool _showTimestamps = true;
   late TabController _tabController;
 
   final Map<String, String> _codeExamples = {
@@ -266,7 +266,7 @@ runZoned(() {
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解 async/await 背后的微任务调度机制',

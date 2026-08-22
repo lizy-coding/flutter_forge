@@ -41,7 +41,7 @@ class _FutureContent extends StatelessWidget {
           ),
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: ['掌握 Provider 中异步数据获取的模式', '理解 ChangeNotifier 中的状态缓存机制'],
         ),

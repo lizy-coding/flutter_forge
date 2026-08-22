@@ -7,13 +7,13 @@ class RiverpodLiftingRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return LearningScaffold(
+    return const LearningScaffold(
       title: 'Riverpod 状态提升',
       interactiveDemo: SizedBox(
         height: 200,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [_LDisplay(), const SizedBox(height: 16), _LControls()],
+          children: [_LDisplay(), SizedBox(height: 16), _LControls()],
         ),
       ),
       sections: [

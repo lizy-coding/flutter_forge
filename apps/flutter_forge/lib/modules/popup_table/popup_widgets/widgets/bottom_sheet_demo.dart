@@ -163,7 +163,6 @@ class _OverlayOrderEditorState extends State<OverlayOrderEditor> {
   }
 
   void _reorder(List<String> ids, int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) newIndex--;
     final item = ids.removeAt(oldIndex);
     ids.insert(newIndex, item);
   }
@@ -186,7 +185,7 @@ class _OrderList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       buildDefaultDragHandles: true,
-      onReorder: onReorder,
+      onReorderItem: onReorder,
       children: [
         for (final id in ids)
           ListTile(

@@ -74,7 +74,7 @@ class _TodoContent extends ConsumerWidget {
           },
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: ['掌握 Riverpod 管理全局列表状态', '理解 StateNotifier 不可变状态更新模式'],
         ),

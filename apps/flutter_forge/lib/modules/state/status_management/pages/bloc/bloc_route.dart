@@ -33,7 +33,7 @@ class BlocRoute extends StatelessWidget {
               onAdd: () => bloc.add(IncrementPressed()),
               onReset: () => bloc.add(ResetPressed()),
             ),
-            sections: [
+            sections: const [
               LearningObjectives(
                 objectives: [
                   '理解 Bloc 的事件驱动状态管理机制',

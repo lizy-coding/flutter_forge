@@ -49,7 +49,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解 Flutter Stream 的概念与工作原理',

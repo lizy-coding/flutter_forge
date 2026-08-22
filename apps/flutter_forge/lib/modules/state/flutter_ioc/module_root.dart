@@ -46,7 +46,7 @@ class CounterScreen extends StatelessWidget {
           ),
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解 IoC 容器与依赖注入的基本概念',

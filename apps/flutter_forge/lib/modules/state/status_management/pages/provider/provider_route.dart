@@ -39,7 +39,7 @@ class ProviderRoute extends StatelessWidget {
               onReset: counter.reset,
               extra: const ProviderPerks(),
             ),
-            sections: [
+            sections: const [
               LearningObjectives(
                 objectives: [
                   '理解 Provider + ChangeNotifier 的状态刷新链路',

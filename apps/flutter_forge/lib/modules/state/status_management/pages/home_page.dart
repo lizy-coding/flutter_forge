@@ -111,7 +111,7 @@ class StateFlowHome extends StatelessWidget {
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解三大状态管理框架的核心机制',

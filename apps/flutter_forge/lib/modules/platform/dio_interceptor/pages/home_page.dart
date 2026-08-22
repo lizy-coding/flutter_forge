@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解 Dio 拦截器的工作原理和链路机制',

@@ -40,9 +40,9 @@ class _RepaintBoundaryDemoPageState extends State<RepaintBoundaryDemoPage> {
                   Expanded(
                     child: _buildSection(
                       label: '无 RepaintBoundary',
-                      child: CustomPaint(
+                      child: const CustomPaint(
                         painter: NoBoundaryPainter(),
-                        child: const SizedBox.expand(),
+                        child: SizedBox.expand(),
                       ),
                     ),
                   ),

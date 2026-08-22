@@ -118,7 +118,7 @@ class _WithIsolatePageState extends State<WithIsolatePage>
           ),
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解 Isolate 在 Flutter 中的工作原理',

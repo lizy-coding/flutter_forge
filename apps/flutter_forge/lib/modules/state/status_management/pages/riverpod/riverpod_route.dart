@@ -27,7 +27,7 @@ class RiverpodRoute extends ConsumerWidget {
         onAdd: () => ref.read(counterProvider.notifier).increment(),
         onReset: () => ref.read(counterProvider.notifier).reset(),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解 Riverpod StateNotifier 的状态管理机制',

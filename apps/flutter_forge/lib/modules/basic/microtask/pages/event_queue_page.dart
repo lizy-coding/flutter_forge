@@ -16,7 +16,7 @@ class _EventQueuePageState extends State<EventQueuePage> {
   final List<EventLog> _logs = [];
   bool _isRunning = false;
   final ScrollController _scrollController = ScrollController();
-  bool _showTimestamps = true;
+  final bool _showTimestamps = true;
 
   @override
   void dispose() {
@@ -157,7 +157,7 @@ Timer.run(() { print('Timer事件队列任务执行'); });''',
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '理解事件队列 (Event Queue) 的工作原理',

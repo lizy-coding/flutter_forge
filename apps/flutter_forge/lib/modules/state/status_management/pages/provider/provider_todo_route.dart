@@ -67,7 +67,7 @@ class _TodoContent extends StatelessWidget {
           ),
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '掌握 Provider 管理全局列表状态',

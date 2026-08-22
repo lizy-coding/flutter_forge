@@ -37,7 +37,7 @@ class ScrollTableDemo extends StatelessWidget {
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
             '掌握二维滚动表格的基本使用方式',
