@@ -577,11 +577,25 @@ function writeProjectContext() {
       update_source: ['tool/generate_agent_indexes.js'],
       generate: 'bash tool/generate_harness_ai_analysis.sh',
       validate: [
-        'bash tool/generate_harness_ai_analysis.sh',
-        'dart format .',
-        'flutter analyze',
-        'dart run flutterguard_cli:flutterguard scan . --fail-on high',
+        'bash tool/generate_harness_ai_analysis.sh + git diff --exit-code',
+        'dart format . + git diff --exit-code -- *.dart',
+        'flutter analyze (bare)',
+        'bash tool/test_all.sh',
+        'bash tool/verify_test_layout.sh',
+        'dart run flutterguard_cli:flutterguard scan . --fail-on high (cd apps/flutter_forge)',
       ],
+      ci: {
+        authoritative_remote_packaging_gate: '.github/workflows/ci.yml',
+        analyze_standard: 'bare flutter analyze (info/warning treated as failure)',
+        steps: [
+          'flutter pub get',
+          'agent doc generation + drift check',
+          'dart format + drift check',
+          'flutter analyze (bare)',
+          'bash tool/test_all.sh',
+        ],
+        flutterguard: 'not run in CI (previously failed from repo root with empty match); enforced only by local quality_gate.sh stage 6',
+      },
     },
   });
 }

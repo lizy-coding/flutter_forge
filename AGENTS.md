@@ -41,13 +41,14 @@ bash tool/quality_gate.sh
 等效手动步骤（quality_gate.sh 内部执行顺序）:
 1. `bash tool/generate_harness_ai_analysis.sh` + `git diff --exit-code` (文档不漂移)
 2. `dart format .` + `git diff --exit-code -- '*.dart'` (格式不漂移)
-3. `flutter analyze` (无 error)
+3. `flutter analyze` (bare：info/warning 同样视为失败)
 4. `bash tool/test_all.sh` (全部测试通过)
 5. `bash tool/verify_test_layout.sh` (测试目录布局合规并输出模块测试覆盖报告)
-6. `dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题)
+6. `cd apps/flutter_forge && dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题，仅本地执行)
 
-- `flutter analyze` 必须通过，不允许有 error 级别问题
-- `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题
+- `flutter analyze` 必须通过（bare，不允许任何 issue，含 info）
+- `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题（仅本地；CI 不运行 flutterguard）
+- 远端打包门禁为 `.github/workflows/ci.yml`，同样使用 bare `flutter analyze`，是唯一权威的远端验收
 - 涉及逻辑代码时补充测试
 - 涉及 UI 教学页时进行人工验收或截图说明
 
@@ -60,6 +61,7 @@ bash tool/quality_gate.sh
 | 跳过分析文档 | 禁止修改模块后不更新 `AI_ANALYSIS.md` |
 | 绕过分析 | 禁止绕过 `flutter analyze` 直接提交 |
 | 破坏元数据 | 禁止注册 `ModuleEntry` 时省略 `subtitle`、`category`、`difficulty` 等字段 |
+| 修改打包门禁 | 禁止修改 `.github/workflows/ci.yml`、`tool/quality_gate.sh` 及其余 `tool/*.sh` 门禁脚本的语义，除非任务显式声明并经人工验收（agent-hub 侧同样受 `packaging_change` 保护路径守卫约束） |
 
 ## Harless 巡检职责
 
