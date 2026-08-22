@@ -1,0 +1,77 @@
+name: Release installers
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: "3.44.6"
+  NODE_VERSION: "20.20.2"
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }} installer
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: macos-latest
+            platform: macos
+            artifact: flutter_forge-macos-x64.zip
+          - os: windows-latest
+            platform: windows
+            artifact: flutter_forge-windows-x64.zip
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Bootstrap
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
+      - name: Tests
+        shell: bash
+        run: bash tool/test_all.sh
+      - name: Build macOS
+        if: matrix.platform == 'macos'
+        run: flutter build macos --release
+      - name: Package macOS
+        if: matrix.platform == 'macos'
+        run: ditto -c -k --keepParent 'apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app' ${{ matrix.artifact }}
+      - name: Build Windows
+        if: matrix.platform == 'windows'
+        run: flutter build windows --release
+      - name: Package Windows
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: Compress-Archive -Path apps/flutter_forge/build/windows/x64/runner/Release/* -DestinationPath ${{ matrix.artifact }} -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
+          retention-days: 14
+
+  release:
+    name: Create GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" release-assets/*.zip --title "Flutter Forge ${{ github.ref_name }}" --notes "首个桌面安装器发布。macOS 构建未签名，首次打开可能需要右键选择打开。"
