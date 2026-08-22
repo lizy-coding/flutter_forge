@@ -38,7 +38,9 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
   flutterguard_cli:
-    path: ../../../flutterguard
+    git:
+      url: https://github.com/lizy-coding/flutterguard.git
+      ref: 9f9be84a73dc4b99a956a8529b8c334849566b03
 
 flutter:
   uses-material-design: true

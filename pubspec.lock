@@ -219,9 +219,11 @@ packages:
   flutterguard_cli:
     dependency: transitive
     description:
-      path: "../flutterguard"
-      relative: true
-    source: path
+      path: "."
+      ref: "9f9be84a73dc4b99a956a8529b8c334849566b03"
+      resolved-ref: "9f9be84a73dc4b99a956a8529b8c334849566b03"
+      url: "https://github.com/lizy-coding/flutterguard.git"
+    source: git
     version: "0.7.1"
   glob:
     dependency: transitive

@@ -23,10 +23,11 @@
     "workspace_resolution_blocker": "none",
     "external_tool": {
       "package": "flutterguard_cli",
-      "source": "path",
-      "path": "../../../flutterguard",
-      "immutable": false,
-      "lock_status": "local_path"
+      "source": "git",
+      "url": "https://github.com/lizy-coding/flutterguard.git",
+      "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
+      "immutable": true,
+      "lock_status": "git_pinned"
     }
   },
   "work_queue": [
