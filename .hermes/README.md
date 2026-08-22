@@ -1,16 +1,16 @@
 # Hermes Agent 项目架构记录
 
-> flutter_study 项目 Hermes Agent 托管架构 — 完全托管模式
+> flutter_forge 项目 Hermes Agent 托管架构 — 完全托管模式
 > 里程碑: online_video_player_landed | 阶段: agent_managed | 更新: 2026-08-02
 
 ## 项目概述
 
-flutter_study 是一个 Flutter 模块化学习应用，涵盖基础机制、异步并发、状态管理、UI 动效、弹窗列表、网络平台六大分类共 18 个学习模块。通过 Dart Pub Workspace 管理 4 个内部共享包。
+flutter_forge 是一个 Flutter 模块化学习应用，涵盖基础机制、异步并发、状态管理、UI 动效、弹窗列表、网络平台六大分类共 18 个学习模块。通过 Dart Pub Workspace 管理 4 个内部共享包。
 
 ## Agent 文档体系
 
 ```
-flutter_study/
+flutter_forge/
 ├── AGENTS.md                          # Agent 行为契约（入口）
 ├── AI_ANALYSIS_SCHEMA.json            # 文档 schema 定义
 ├── AI_PROJECT_CONTEXT.md              # 项目架构上下文（JSON 机器契约）
@@ -160,4 +160,4 @@ bash tool/quality_gate.sh
 4. 门禁: bash tool/quality_gate.sh
 5. 禁止: 提交/推送/合并（除非用户明确授权）
 6. 禁止: 手改 AI_MODULE_INDEX.md / AI_PROJECT_CONTEXT.md / REFACTOR_PLAN.md / packages/*/AI_ANALYSIS.md
-7. 任务提词: 写入 .hermes/<task>.codex.json（schema: flutter_study.agent_task.v1），Codex 只执行提词，Hermes 独立验收
+7. 任务提词: 写入 .hermes/<task>.codex.json（schema: flutter_forge.agent_task.v1），Codex 只执行提词，Hermes 独立验收

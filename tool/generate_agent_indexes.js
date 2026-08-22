@@ -48,11 +48,10 @@ const categoryMeta = {
 
 const flutterGuardDependency = {
   package: 'flutterguard_cli',
-  source: 'git',
-  url: 'https://github.com/lizy-coding/flutterguard.git',
-  ref: '9f9be84a73dc4b99a956a8529b8c334849566b03',
-  immutable: true,
-  lock_status: 'active',
+  source: 'path',
+  path: '../../../flutterguard',
+  immutable: false,
+  lock_status: 'local_path',
 };
 
 const workspacePackages = [
@@ -391,7 +390,7 @@ function writeRootIndexes() {
       'packages/flutter_study_learning',
       'packages/file_picker_bridge',
       'packages/flutter_ioc_core',
-      `git:${flutterGuardDependency.url}#${flutterGuardDependency.ref}`,
+      `path:${flutterGuardDependency.path}`,
     ],
     children: [
       'lib/AI_ANALYSIS.md',

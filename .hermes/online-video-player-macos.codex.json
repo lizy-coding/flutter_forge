@@ -1,17 +1,20 @@
 {
-  "schema": "flutter_study.agent_task.v1",
+  "schema": "flutter_forge.agent_task.v1",
   "task_id": "FEAT-20260802-online-video-player-macos",
   "objective": "macos_first_online_video_player_module",
   "scope": "macos_only",
   "agent_role": "code_executor",
   "background": {
-    "repo": "/Users/forest/code/flutter_study",
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
     "branch": "dev",
     "host": "macos",
     "flutter": "3.44.6",
     "macos_deployment_target": "10.15",
     "workspace": "pub_workspace, 4 internal packages",
-    "existing_platform_modules": ["dio_interceptor", "usb_detector"],
+    "existing_platform_modules": [
+      "dio_interceptor",
+      "usb_detector"
+    ],
     "reference_module": "lib/modules/platform/usb_detector",
     "learning_package": "packages/flutter_study_learning (exports LearningScaffold, LearningObjectives, ConceptChips, CodeSnippetCard, CommonPitfalls, ExerciseCard)",
     "plugin_decision": "media_kit ^1.2.6 + media_kit_video ^2.0.1 + media_kit_libs_video ^1.0.7. NOT flutter official video_player (no first-class macOS support).",
@@ -31,7 +34,14 @@
     "difficulty": "intermediate",
     "title": "在线视频播放",
     "subtitle": "使用 media_kit 播放在线 HTTP 视频流并操控播放参数",
-    "concepts": ["media_kit", "libmpv", "HTTP 流", "播放控制", "倍速", "Player 生命周期"],
+    "concepts": [
+      "media_kit",
+      "libmpv",
+      "HTTP 流",
+      "播放控制",
+      "倍速",
+      "Player 生命周期"
+    ],
     "estimatedMinutes": 35,
     "status": "ready",
     "required_files": [

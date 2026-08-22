@@ -26,7 +26,7 @@
     "packages/flutter_study_learning",
     "packages/file_picker_bridge",
     "packages/flutter_ioc_core",
-    "git:https://github.com/lizy-coding/flutterguard.git#9f9be84a73dc4b99a956a8529b8c334849566b03"
+    "path:../../../flutterguard"
   ],
   "children": [
     "lib/AI_ANALYSIS.md",
