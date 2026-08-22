@@ -54,8 +54,7 @@ flutter_forge/
 ├── .nvmrc                             # Node 20.20.2
 └── .hermes/
     ├── README.md                      # 本文档
-    ├── <task>.codex.json              # 单次任务 JSON 提词（Codex 执行依据）
-    └── plans/                         # Agent 执行计划归档
+    └── <task>.codex.json              # 单次任务 JSON 提词（Codex 执行依据）
 ```
 
 总计: 37 个 lib AI_ANALYSIS.md + 4 个 packages AI_ANALYSIS.md = 41 个验证通过。
