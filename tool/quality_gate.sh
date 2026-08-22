@@ -44,8 +44,8 @@ run_stage "Dart 格式" bash -c "
   git diff --exit-code -- '*.dart'
 "
 
-# Stage 3: 静态分析
-run_stage "Flutter 静态分析" flutter analyze --no-fatal-infos --no-fatal-warnings
+# Stage 3: 静态分析（bare analyze：info/warning 同样视为失败，对齐远端打包行为）
+run_stage "Flutter 静态分析" flutter analyze
 
 # Stage 4: 测试
 run_stage "全量测试" bash tool/test_all.sh
