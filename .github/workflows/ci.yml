@@ -45,7 +45,7 @@ jobs:
           git diff --exit-code -- '*.dart'
 
       - name: Flutter analyze
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        run: flutter analyze
 
       - name: Tests
         run: bash tool/test_all.sh
