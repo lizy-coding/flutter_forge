@@ -44,12 +44,14 @@ jobs:
         run: bash tool/test_all.sh
       - name: Build macOS
         if: matrix.platform == 'macos'
+        working-directory: apps/flutter_forge
         run: flutter build macos --release
       - name: Package macOS
         if: matrix.platform == 'macos'
         run: ditto -c -k --keepParent 'apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app' ${{ matrix.artifact }}
       - name: Build Windows
         if: matrix.platform == 'windows'
+        working-directory: apps/flutter_forge
         run: flutter build windows --release
       - name: Package Windows
         if: matrix.platform == 'windows'
