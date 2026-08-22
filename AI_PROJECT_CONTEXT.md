@@ -1,8 +1,8 @@
 {
-  "schema": "flutter_study.agent_docs.project_context.v1",
+  "schema": "flutter_forge.agent_docs.project_context.v1",
   "consumer": "coding_agent",
   "package": {
-    "name": "main_app",
+    "name": "flutter_forge_app",
     "type": "flutter_modular_learning_app",
     "sdk": [
       "flutter_3",
@@ -74,7 +74,7 @@
       "url": "https://github.com/lizy-coding/flutterguard.git",
       "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
       "immutable": true,
-      "lock_status": "active"
+      "lock_status": "git_pinned"
     }
   ],
   "layers": [

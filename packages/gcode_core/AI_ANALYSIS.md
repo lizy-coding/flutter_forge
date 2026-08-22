@@ -2,7 +2,7 @@
   "schema": "vibecoding.harness.ai_analysis.v2",
   "mode": "package_contract",
   "node": {
-    "id": "flutter_study.workspace.gcode_core",
+    "id": "flutter_forge.workspace.gcode_core",
     "kind": "flutter_package",
     "package": "gcode_core",
     "path": "packages/gcode_core",

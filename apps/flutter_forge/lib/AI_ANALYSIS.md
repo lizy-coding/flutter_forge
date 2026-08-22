@@ -1,0 +1,46 @@
+{
+  "schema": "vibecoding.harness.ai_analysis.v2",
+  "mode": "index",
+  "node": {
+    "id": "flutter_forge_app.lib",
+    "kind": "source_index",
+    "package": "flutter_forge_app",
+    "path": "lib",
+    "status": "active"
+  },
+  "entrypoints": [
+    "main.dart",
+    "app/app_bootstrap.dart",
+    "app/app.dart",
+    "app/router/app_route_table.dart"
+  ],
+  "owns": [
+    "app",
+    "module_registry",
+    "shared",
+    "modules"
+  ],
+  "depends": [
+    "flutter_sdk",
+    "go_router",
+    "flutter_riverpod"
+  ],
+  "children": [
+    "app/AI_ANALYSIS.md",
+    "module_registry/AI_ANALYSIS.md",
+    "shared/AI_ANALYSIS.md",
+    "modules/AI_ANALYSIS.md"
+  ],
+  "contracts": {
+    "no_natural_language": true,
+    "index_only": true,
+    "max_index_depth": 2,
+    "doc_consumer": "coding_agent",
+    "doc_mode": "machine_contract",
+    "update_required_on_file_change": true,
+    "import_direction_enforced": true
+  },
+  "validation": [
+    "flutter analyze"
+  ]
+}

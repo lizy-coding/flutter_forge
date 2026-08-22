@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
+const appRoot = path.join(root, 'apps/flutter_forge');
 const failures = [];
 const documents = new Map();
 
@@ -17,7 +18,7 @@ const workspacePackages = [
 
 function readJson(rel) {
   try {
-    const source = fs.readFileSync(path.join(root, rel), 'utf8');
+    const source = fs.readFileSync(resolveProjectPath(rel), 'utf8');
     if (/[^\x00-\x7F]/.test(source)) failures.push(`${rel}:non_ascii_content`);
     const document = JSON.parse(source);
     documents.set(rel, document);
@@ -28,33 +29,37 @@ function readJson(rel) {
   }
 }
 
-function collectAnalysisFiles(dir) {
+function collectAnalysisFiles(dir, base = dir) {
   const result = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.name.startsWith('.') || entry.name === 'build') continue;
     const absolute = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      result.push(...collectAnalysisFiles(absolute));
+      result.push(...collectAnalysisFiles(absolute, base));
     } else if (entry.name === 'AI_ANALYSIS.md') {
-      result.push(path.relative(root, absolute));
+      result.push(path.relative(base, absolute));
     }
   }
   return result;
 }
 
 function fileExists(rel) {
-  return fs.existsSync(path.join(root, rel));
+  return fs.existsSync(resolveProjectPath(rel));
+}
+
+function resolveProjectPath(rel) {
+  return path.join(rel === 'lib' || rel.startsWith('lib/') ? appRoot : root, rel);
 }
 
 function grepInFile(rel, pattern) {
   if (!fileExists(rel)) return false;
-  const content = fs.readFileSync(path.join(root, rel), 'utf8');
+  const content = fs.readFileSync(resolveProjectPath(rel), 'utf8');
   return pattern.test(content);
 }
 
 function scanModuleDirs() {
   const dirs = [];
-  const modulesRoot = path.join(root, 'lib/modules');
+  const modulesRoot = path.join(appRoot, 'lib/modules');
   if (!fs.existsSync(modulesRoot)) return dirs;
   for (const cat of fs.readdirSync(modulesRoot, { withFileTypes: true })) {
     if (!cat.isDirectory() || cat.name.startsWith('.')) continue;
@@ -74,7 +79,9 @@ const machineDocuments = [
   'AI_PROJECT_CONTEXT.md',
   'REFACTOR_PLAN.md',
   'lib/AI_MODULE_INDEX.md',
-  ...collectAnalysisFiles(root),
+  'AI_ANALYSIS.md',
+  ...collectAnalysisFiles(appRoot),
+  ...workspacePackages.map(([, packagePath]) => `${packagePath}/AI_ANALYSIS.md`),
 ];
 
 // ── phase 1: JSON parse + key validation ──────────────────────────
@@ -105,7 +112,7 @@ for (const rel of [...new Set(machineDocuments)].sort()) {
 
   for (const child of document.children ?? []) {
     const childPath = path.normalize(path.join(path.dirname(rel), child));
-    if (!fs.existsSync(path.join(root, childPath))) {
+    if (!fileExists(childPath)) {
       failures.push(`${rel}:missing_child:${child}`);
     }
   }
@@ -199,7 +206,7 @@ if (moduleIndex) {
     }
 
     // Check at least one .dart file in the module imports flutter_study_learning
-    const modDir = path.join(root, mod.path);
+    const modDir = resolveProjectPath(mod.path);
     if (fs.existsSync(modDir)) {
       let hasTeachingDep = false;
       function walk(dir) {
@@ -220,6 +227,50 @@ if (moduleIndex) {
       if (!hasTeachingDep) {
         failures.push(`${mod.path}:missing_teaching_dependency — no file imports flutter_study_learning`);
       }
+    }
+  }
+
+  // ── phase 5b: single-source consistency — generate source vs index vs route table ──
+
+  function readGenerateSourceModules() {
+    const source = fs.readFileSync(path.join(root, 'tool/generate_agent_indexes.js'), 'utf8');
+    const start = source.indexOf('const modules = [');
+    if (start === -1) return [];
+    const end = source.indexOf('];', start);
+    const block = source.slice(start, end);
+    const result = [];
+    const re = /\{\s*category:\s*'([a-z0-9_]+)'\s*,\s*id:\s*'([a-z0-9_]+)'\s*,\s*route:\s*'([^']+)'\s*,\s*status:\s*'([a-z_]+)'/g;
+    let match;
+    while ((match = re.exec(block))) {
+      result.push({ category: match[1], id: match[2], route: match[3], status: match[4] });
+    }
+    return result;
+  }
+
+  const generateModules = readGenerateSourceModules();
+  const generateById = new Map(generateModules.map((m) => [m.id, m]));
+  const routeTableContent = fileExists('lib/app/router/app_route_table.dart')
+    ? fs.readFileSync(resolveProjectPath('lib/app/router/app_route_table.dart'), 'utf8')
+    : '';
+
+  for (const mod of moduleIndex.modules ?? []) {
+    const gen = generateById.get(mod.id);
+    if (!gen) {
+      failures.push(`generate source:missing_module:${mod.id} — not in tool/generate_agent_indexes.js`);
+      continue;
+    }
+    for (const key of ['category', 'route', 'status']) {
+      if (gen[key] !== mod[key]) {
+        failures.push(`generate source:${mod.id}:mismatch:${key} index=${mod[key]} source=${gen[key]}`);
+      }
+    }
+    if (routeTableContent && !routeTableContent.includes(`path: '${mod.route}'`)) {
+      failures.push(`app_route_table.dart:missing_module_path:${mod.route}`);
+    }
+  }
+  for (const gen of generateModules) {
+    if (!ids.has(gen.id)) {
+      failures.push(`generate source:orphan_module:${gen.id} — registered but missing from lib/AI_MODULE_INDEX.md`);
     }
   }
 }

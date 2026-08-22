@@ -1,5 +1,5 @@
 {
-  "schema": "flutter_study.agent_docs.refactor_plan.v1",
+  "schema": "flutter_forge.agent_docs.refactor_plan.v1",
   "objective": "android_readiness_after_architecture_convergence",
   "active_phase": "agent_managed",
   "completed_milestones": [
@@ -27,7 +27,7 @@
       "url": "https://github.com/lizy-coding/flutterguard.git",
       "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
       "immutable": true,
-      "lock_status": "active"
+      "lock_status": "git_pinned"
     }
   },
   "work_queue": [

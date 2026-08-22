@@ -2,7 +2,7 @@
 
 ![example](https://github.com/lizy-coding/gcode_core/blob/master/gcode_print.gif)
 
-G-code parsing and visualization package extracted from `flutter_study`.
+G-code parsing and visualization package extracted for Flutter Forge.
 
 ## Scope
 

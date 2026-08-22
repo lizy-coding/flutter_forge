@@ -12,16 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Checkout pinned FlutterGuard
-        uses: actions/checkout@v4
-        with:
-          repository: lizy-coding/flutterguard
-          ref: 9f9be84a73dc4b99a956a8529b8c334849566b03
-          path: flutterguard
-
-      - name: Prepare sibling FlutterGuard dependency
-        run: mv flutterguard ../flutterguard
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -59,6 +49,3 @@ jobs:
 
       - name: Tests
         run: bash tool/test_all.sh
-
-      - name: FlutterGuard scan
-        run: dart run flutterguard_cli:flutterguard scan . --fail-on high

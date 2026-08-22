@@ -2,7 +2,7 @@
   "schema": "vibecoding.harness.ai_analysis.v2",
   "mode": "package_contract",
   "node": {
-    "id": "flutter_study.workspace.file_picker_bridge",
+    "id": "flutter_forge.workspace.file_picker_bridge",
     "kind": "flutter_bridge_package",
     "package": "file_picker_bridge",
     "path": "packages/file_picker_bridge",

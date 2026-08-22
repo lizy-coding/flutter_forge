@@ -9,7 +9,8 @@ import sys
 from pathlib import Path
 
 root = Path(sys.argv[1])
-test_root = root / "test"
+app_root = root / "apps" / "flutter_forge"
+test_root = app_root / "test"
 allowed_top_level = {"modules", "shared"}
 actual_top_level = {entry.name for entry in test_root.iterdir() if entry.is_dir()}
 unexpected = sorted(actual_top_level - allowed_top_level)
@@ -23,7 +24,7 @@ if unexpected:
 
 print("PASS: test/ top-level directories are modules/ and shared/")
 
-module_index = json.loads((root / "lib/AI_MODULE_INDEX.md").read_text())
+module_index = json.loads((app_root / "lib/AI_MODULE_INDEX.md").read_text())
 modules = module_index["modules"]
 present = []
 missing = []
@@ -36,7 +37,7 @@ for module in modules:
         module["id"],
         f'{module["id"]}_test.dart',
     )
-    if (root / relative).is_file():
+    if (app_root / relative).is_file():
         present.append(relative)
     else:
         missing.append(relative)

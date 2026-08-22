@@ -44,7 +44,7 @@ ROOT_README_TEMPLATE = """# Flutter 学习示例集合
 
 ```bash
 git clone <repository-url>
-cd flutter_study
+cd flutter_forge
 ```
 
 2. **安装依赖**
@@ -101,7 +101,7 @@ flutter run
 ## 📁 项目结构
 
 ```
-flutter_study/
+flutter_forge/
 ├── lib/
 │   ├── main.dart                 # 应用入口
 │   ├── app.dart                  # App 配置

@@ -1,5 +1,5 @@
 {
-  "schema": "flutter_study.agent_docs.task_schema.v1",
+  "schema": "flutter_forge.agent_docs.task_schema.v1",
   "consumer": "coding_agent",
   "description": "Agent 任务输入格式 — 每个任务声明边界、依赖、验收条件和风险等级",
   "fields": {

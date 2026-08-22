@@ -2,9 +2,9 @@
   "schema": "vibecoding.harness.ai_analysis.v2",
   "mode": "index",
   "node": {
-    "id": "flutter_study.root",
+    "id": "flutter_forge.root",
     "kind": "workspace_index",
-    "package": "main_app",
+    "package": "flutter_forge_app",
     "path": ".",
     "status": "active"
   },

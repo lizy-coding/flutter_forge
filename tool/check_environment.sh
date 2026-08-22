@@ -31,7 +31,7 @@ check_cmd() {
   fi
 }
 
-echo "=== Flutter Study 环境检查 ==="
+echo "=== Flutter Forge 环境检查 ==="
 echo ""
 
 echo "--- 核心工具链 ---"
