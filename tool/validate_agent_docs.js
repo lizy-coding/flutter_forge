@@ -229,6 +229,50 @@ if (moduleIndex) {
       }
     }
   }
+
+  // ── phase 5b: single-source consistency — generate source vs index vs route table ──
+
+  function readGenerateSourceModules() {
+    const source = fs.readFileSync(path.join(root, 'tool/generate_agent_indexes.js'), 'utf8');
+    const start = source.indexOf('const modules = [');
+    if (start === -1) return [];
+    const end = source.indexOf('];', start);
+    const block = source.slice(start, end);
+    const result = [];
+    const re = /\{\s*category:\s*'([a-z0-9_]+)'\s*,\s*id:\s*'([a-z0-9_]+)'\s*,\s*route:\s*'([^']+)'\s*,\s*status:\s*'([a-z_]+)'/g;
+    let match;
+    while ((match = re.exec(block))) {
+      result.push({ category: match[1], id: match[2], route: match[3], status: match[4] });
+    }
+    return result;
+  }
+
+  const generateModules = readGenerateSourceModules();
+  const generateById = new Map(generateModules.map((m) => [m.id, m]));
+  const routeTableContent = fileExists('lib/app/router/app_route_table.dart')
+    ? fs.readFileSync(resolveProjectPath('lib/app/router/app_route_table.dart'), 'utf8')
+    : '';
+
+  for (const mod of moduleIndex.modules ?? []) {
+    const gen = generateById.get(mod.id);
+    if (!gen) {
+      failures.push(`generate source:missing_module:${mod.id} — not in tool/generate_agent_indexes.js`);
+      continue;
+    }
+    for (const key of ['category', 'route', 'status']) {
+      if (gen[key] !== mod[key]) {
+        failures.push(`generate source:${mod.id}:mismatch:${key} index=${mod[key]} source=${gen[key]}`);
+      }
+    }
+    if (routeTableContent && !routeTableContent.includes(`path: '${mod.route}'`)) {
+      failures.push(`app_route_table.dart:missing_module_path:${mod.route}`);
+    }
+  }
+  for (const gen of generateModules) {
+    if (!ids.has(gen.id)) {
+      failures.push(`generate source:orphan_module:${gen.id} — registered but missing from lib/AI_MODULE_INDEX.md`);
+    }
+  }
 }
 
 // ── phase 6: workspace package contract validation ─────────────────

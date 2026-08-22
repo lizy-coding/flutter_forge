@@ -15,26 +15,326 @@ const contracts = {
 };
 
 const modules = [
-  ['basic', 'tree_state', '/tree-state', 'recommended', ['flutter_study_learning', 'module_registry', 'go_router']],
-  ['basic', 'microtask', '/microtask', 'recommended', ['flutter_study_learning', 'module_registry', 'go_router']],
-  ['basic', 'debounce_throttle', '/debounce-throttle', 'ready', ['flutter_study_learning', 'module_registry']],
-  ['async', 'stream_subscription', '/stream-subscription', 'recommended', ['flutter_study_learning', 'module_registry', 'go_router']],
-  ['async', 'isolate_basic', '/isolate-basic', 'ready', ['flutter_study_learning', 'module_registry', 'go_router']],
-  ['async', 'isolate_task_manager', '/isolate-stream', 'ready', ['flutter_study_learning', 'module_registry']],
-  ['state', 'status_management', '/status-management', 'recommended', ['flutter_study_learning', 'provider', 'flutter_riverpod', 'flutter_bloc', 'module_registry', 'go_router']],
-  ['state', 'flutter_ioc', '/flutter-ioc', 'ready', ['flutter_study_learning', 'flutter_ioc_core', 'provider', 'module_registry']],
-  ['ui', 'gcode_visualizer', '/gcode-visualizer', 'ready', ['flutter_study_learning', 'gcode_core', 'file_picker_bridge', 'module_registry']],
-  ['ui', 'adsorption_line', '/adsorption-line', 'ready', ['flutter_study_learning', 'provider', 'module_registry']],
-  ['ui', 'download_animation', '/download-animation', 'ready', ['flutter_study_learning', 'module_registry', 'go_router']],
-  ['ui', 'font_picker', '/font-picker', 'ready', ['flutter_study_learning', 'file_picker_bridge', 'module_registry', 'go_router']],
-  ['popup_table', 'popup_widgets', '/popup-widgets', 'ready', ['flutter_study_learning', 'module_registry']],
-  ['popup_table', 'popup_list_interaction', '/popup-list-interaction', 'ready', ['flutter_study_learning', 'module_registry', 'go_router']],
-  ['popup_table', 'scroll_table', '/scroll-table', 'ready', ['flutter_study_learning', 'two_dimensional_scrollables', 'module_registry']],
-  ['popup_table', 'overlay_follow_compare', '/overlay-compare', 'ready', ['flutter_study_learning', 'module_registry']],
-  ['platform', 'dio_interceptor', '/dio-interceptor', 'ready', ['flutter_study_learning', 'dio', 'module_registry', 'go_router']],
-  ['platform', 'usb_detector', '/usb-detector', 'ready', ['flutter_study_learning', 'usb_serial', 'device_info_plus', 'module_registry']],
-  ['platform', 'file_picker', '/file-picker', 'ready', ['flutter_study_learning', 'file_picker_bridge', 'module_registry']],
-  ['platform', 'online_video_player', '/online-video-player', 'ready', ['flutter_study_learning', 'video_player', 'module_registry']],
+  {
+    category: 'basic',
+    id: 'tree_state',
+    route: '/tree-state',
+    status: 'recommended',
+    depends: ['flutter_study_learning', 'module_registry', 'go_router'],
+    title: '三棵树与生命周期',
+    subtitle: '理解 Widget/Element/RenderObject 的关系与重建机制',
+    difficulty: 'beginner',
+    concepts: ['Widget 树', 'Element 树', 'RenderObject', '生命周期'],
+    estimatedMinutes: 30,
+    entry: 'TreeStateEntry',
+    routes: 'TreeStateRoutes',
+  },
+  {
+    category: 'basic',
+    id: 'microtask',
+    route: '/microtask',
+    status: 'recommended',
+    depends: ['flutter_study_learning', 'module_registry', 'go_router'],
+    title: '事件循环与微任务',
+    subtitle: '掌握 Dart 事件循环中微任务队列与事件队列的执行顺序',
+    difficulty: 'beginner',
+    concepts: ['Microtask', 'Event Queue', 'async/await', 'Zone'],
+    estimatedMinutes: 25,
+    entry: 'MicrotaskEntry',
+    routes: 'MicrotaskRoutes',
+  },
+  {
+    category: 'basic',
+    id: 'debounce_throttle',
+    route: '/debounce-throttle',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'module_registry'],
+    title: '防抖与节流',
+    subtitle: '对比防抖和节流的执行时序，理解适用场景',
+    difficulty: 'beginner',
+    concepts: ['Debouncer', 'Throttle', 'Timer'],
+    estimatedMinutes: 15,
+    entry: 'DebounceThrottleEntry',
+  },
+  {
+    category: 'async',
+    id: 'stream_subscription',
+    route: '/stream-subscription',
+    status: 'recommended',
+    depends: ['flutter_study_learning', 'module_registry', 'go_router'],
+    title: 'Stream 订阅机制',
+    subtitle: '学习单订阅流与广播流的区别及使用场景',
+    difficulty: 'intermediate',
+    concepts: ['StreamController', '单订阅', '广播流', 'Stream 变换'],
+    estimatedMinutes: 30,
+    entry: 'StreamSubscriptionEntry',
+    routes: 'StreamSubscriptionRoutes',
+  },
+  {
+    category: 'async',
+    id: 'isolate_basic',
+    route: '/isolate-basic',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'module_registry', 'go_router'],
+    title: 'Isolate 并发对比',
+    subtitle: '对比主线程与 Isolate 执行耗时计算对 UI 流畅度的影响',
+    difficulty: 'intermediate',
+    concepts: ['Isolate', 'SendPort', 'ReceivePort', '性能优化'],
+    estimatedMinutes: 20,
+    entry: 'IsolateTestEntry',
+    routes: 'IsolateTestRoutes',
+  },
+  {
+    category: 'async',
+    id: 'isolate_task_manager',
+    route: '/isolate-stream',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'module_registry'],
+    title: '多任务 Isolate 管理器',
+    subtitle: '使用 Isolate 并行处理多任务，通过 Stream 实时上报进度',
+    difficulty: 'advanced',
+    concepts: ['Isolate.spawn', '多任务', '进度上报', '暂停/恢复'],
+    estimatedMinutes: 35,
+    entry: 'IsolateStreamEntry',
+  },
+  {
+    category: 'state',
+    id: 'status_management',
+    route: '/status-management',
+    status: 'recommended',
+    depends: ['flutter_study_learning', 'provider', 'flutter_riverpod', 'flutter_bloc', 'module_registry', 'go_router'],
+    title: '状态管理演进',
+    subtitle: '串联 setState、Provider、Riverpod、Bloc，对比不同方案',
+    difficulty: 'intermediate',
+    concepts: ['Provider', 'Riverpod', 'Bloc', '状态提升', 'FutureProvider'],
+    estimatedMinutes: 45,
+    entry: 'StatusManageEntry',
+    routes: 'StatusManagementRoutes',
+    subRoutesExpander: true,
+  },
+  {
+    category: 'state',
+    id: 'flutter_ioc',
+    route: '/flutter-ioc',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'flutter_ioc_core', 'provider', 'module_registry'],
+    title: 'Flutter IoC 容器',
+    subtitle: '自研 IoC 容器实现，支持单例/瞬态/作用域生命周期',
+    difficulty: 'advanced',
+    concepts: ['IoC', '依赖注入', '生命周期', '作用域'],
+    estimatedMinutes: 30,
+    entry: 'FlutterIocEntry',
+  },
+  {
+    category: 'ui',
+    id: 'gcode_visualizer',
+    route: '/gcode-visualizer',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'gcode_core', 'file_picker_bridge', 'module_registry'],
+    title: 'G-code 解析与轨迹动画',
+    subtitle: '解析 G-code 指令，绘制刀路轨迹并用动画展示执行过程',
+    difficulty: 'advanced',
+    concepts: ['G-code', 'Parser', 'CustomPaint', 'PathMetric', '动画控制'],
+    estimatedMinutes: 45,
+    entry: 'GcodeVisualizerEntry',
+  },
+  {
+    category: 'ui',
+    id: 'adsorption_line',
+    route: '/adsorption-line',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'provider', 'module_registry'],
+    title: '智能吸附线画板',
+    subtitle: '类似设计工具的对齐吸附功能，学习自定义绘制与手势',
+    difficulty: 'advanced',
+    concepts: ['CustomPaint', '手势检测', '吸附算法', '状态管理'],
+    estimatedMinutes: 40,
+    entry: 'AdsorptionLineEntry',
+  },
+  {
+    category: 'ui',
+    id: 'download_animation',
+    route: '/download-animation',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'module_registry', 'go_router'],
+    title: '下载飞入动效',
+    subtitle: '三种实现方式对比：Custom View / CustomPaint / Overlay',
+    difficulty: 'intermediate',
+    concepts: ['Tween 动画', 'CustomPaint', 'OverlayEntry', '动画配置'],
+    estimatedMinutes: 30,
+    entry: 'DownloadAnimationEntry',
+    routes: 'DownloadAnimationRoutes',
+  },
+  {
+    category: 'ui',
+    id: 'font_picker',
+    route: '/font-picker',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'file_picker_bridge', 'module_registry', 'go_router'],
+    title: '字体选择器',
+    subtitle: '命名列表中直观对比不同字体族与字重样式，并通过文件选择器加载本地字体',
+    difficulty: 'intermediate',
+    concepts: ['fontFamily', 'TextStyle', '字重', '字距', '字体 fallback', '平台字体', 'FontLoader', '中台复用'],
+    estimatedMinutes: 30,
+    entry: 'FontPickerEntry',
+    routes: 'FontPickerRoutes',
+  },
+  {
+    category: 'popup_table',
+    id: 'popup_widgets',
+    route: '/popup-widgets',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'module_registry'],
+    title: '弹窗合集',
+    subtitle: '全面展示 Flutter 中的对话框、底部抽屉、菜单等弹窗类型',
+    difficulty: 'beginner',
+    concepts: ['AlertDialog', 'BottomSheet', 'Overlay', 'ContextMenu'],
+    estimatedMinutes: 20,
+    entry: 'PopWidgetEntry',
+  },
+  {
+    category: 'popup_table',
+    id: 'popup_list_interaction',
+    route: '/popup-list-interaction',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'module_registry', 'go_router'],
+    title: '弹窗与列表交互',
+    subtitle: 'Flutter 弹窗组件与二维滚动表格的综合演示',
+    difficulty: 'beginner',
+    concepts: ['Dialog', 'BottomSheet', 'Overlay', 'TableView', '二维滚动'],
+    estimatedMinutes: 25,
+    entry: 'PopupListInteractionEntry',
+    routes: 'PopupListInteractionRoutes',
+  },
+  {
+    category: 'popup_table',
+    id: 'scroll_table',
+    route: '/scroll-table',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'two_dimensional_scrollables', 'module_registry'],
+    title: '二维滚动表格',
+    subtitle: '使用 two_dimensional_scrollables 实现固定表头的表格',
+    difficulty: 'beginner',
+    concepts: ['TableView', '固定表头', '二维滚动'],
+    estimatedMinutes: 15,
+    entry: 'ScrollTableEntry',
+  },
+  {
+    category: 'popup_table',
+    id: 'overlay_follow_compare',
+    route: '/overlay-compare',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'module_registry'],
+    title: 'Overlay 跟随方案对照组',
+    subtitle: '对比 CompositedTransformFollower 与 markNeedsBuild 两种浮层跟随方案',
+    difficulty: 'intermediate',
+    concepts: ['Overlay', 'LayerLink', 'CompositedTransformFollower', 'markNeedsBuild', 'ScrollController'],
+    estimatedMinutes: 30,
+    entry: 'OverlayFollowCompareEntry',
+  },
+  {
+    category: 'platform',
+    id: 'dio_interceptor',
+    route: '/dio-interceptor',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'dio', 'module_registry', 'go_router'],
+    title: 'Dio 拦截器链路',
+    subtitle: 'Auth/Error/Retry/Log 拦截器 + 本地 Mock Server 实战',
+    difficulty: 'intermediate',
+    concepts: ['Dio', '拦截器', 'Token 刷新', 'Mock Server', '重试机制'],
+    estimatedMinutes: 35,
+    entry: 'InterceptorTestEntry',
+    routes: 'InterceptorTestRoutes',
+  },
+  {
+    category: 'platform',
+    id: 'usb_detector',
+    route: '/usb-detector',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'usb_serial', 'device_info_plus', 'module_registry'],
+    title: 'USB 设备检测',
+    subtitle: '跨平台 USB 设备检测与状态监控',
+    difficulty: 'intermediate',
+    concepts: ['usb_serial', 'device_info_plus', 'Stream 广播', '设备扫描'],
+    estimatedMinutes: 25,
+    entry: 'UsbDetectorEntry',
+  },
+  {
+    category: 'platform',
+    id: 'file_picker',
+    route: '/file-picker',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'file_picker_bridge', 'module_registry'],
+    title: '文件选择器',
+    subtitle: '复用 file_picker_bridge 中台能力，演示扩展过滤、取消分支与平台差异',
+    difficulty: 'intermediate',
+    concepts: ['FilePickerService', 'MethodChannel', '平台桥接', '扩展名过滤', '取消分支'],
+    estimatedMinutes: 20,
+    entry: 'FilePickerEntry',
+  },
+  {
+    category: 'platform',
+    id: 'online_video_player',
+    route: '/online-video-player',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'video_player', 'module_registry'],
+    title: '在线视频播放',
+    subtitle: '使用 video_player 播放在线 HTTP 视频流并操控播放参数',
+    difficulty: 'intermediate',
+    concepts: ['video_player', '平台播放器', 'HTTP 流', '播放控制', '倍速', 'Controller 生命周期'],
+    estimatedMinutes: 35,
+    entry: 'OnlineVideoPlayerEntry',
+  },
+];
+
+const categoryComments = {
+  basic: '基础机制',
+  async: '异步并发',
+  state: '状态管理',
+  ui: 'UI 与动效',
+  popup_table: '弹窗与列表',
+  platform: '网络与平台',
+};
+
+const categoryEnumNames = {
+  basic: 'basic',
+  async: 'async',
+  state: 'state',
+  ui: 'ui',
+  popup_table: 'popupTable',
+  platform: 'platform',
+};
+
+const routeTableImportOrder = [
+  ['basic', 'debounce_throttle'],
+  ['basic', 'microtask'],
+  ['basic', 'microtask', 'routes'],
+  ['basic', 'tree_state'],
+  ['basic', 'tree_state', 'routes', 'gap'],
+  ['async', 'isolate_basic'],
+  ['async', 'isolate_basic', 'routes'],
+  ['async', 'isolate_task_manager'],
+  ['async', 'stream_subscription'],
+  ['async', 'stream_subscription', 'routes', 'gap'],
+  ['state', 'flutter_ioc'],
+  ['state', 'status_management', 'routes', 'gap'],
+  ['state', 'status_management'],
+  ['ui', 'adsorption_line'],
+  ['ui', 'download_animation'],
+  ['ui', 'download_animation', 'routes'],
+  ['ui', 'font_picker'],
+  ['ui', 'font_picker', 'routes'],
+  ['ui', 'gcode_visualizer'],
+  ['popup_table', 'popup_widgets'],
+  ['popup_table', 'popup_list_interaction'],
+  ['popup_table', 'popup_list_interaction', 'routes'],
+  ['popup_table', 'scroll_table'],
+  ['popup_table', 'overlay_follow_compare', 'entry', 'gap'],
+  ['platform', 'dio_interceptor'],
+  ['platform', 'dio_interceptor', 'routes'],
+  ['platform', 'file_picker'],
+  ['platform', 'online_video_player'],
+  ['platform', 'usb_detector'],
 ];
 
 const categoryMeta = {
@@ -367,16 +667,116 @@ function writeModuleIndex() {
     schema: 'flutter_forge.agent_docs.module_index.v1',
     registry: 'lib/app/router/app_route_table.dart',
     count: modules.length,
-    modules: modules.map(([category, module, route, status, depends]) => ({
-      id: module,
+    modules: modules.map(({ category, id, route, status, depends }) => ({
+      id,
       category,
-      path: `lib/modules/${category}/${module}`,
+      path: `lib/modules/${category}/${id}`,
       route,
       status,
       depends,
-      analysis: `lib/modules/${category}/${module}/AI_ANALYSIS.md`,
+      analysis: `lib/modules/${category}/${id}/AI_ANALYSIS.md`,
     })),
   });
+}
+
+function conceptsLiteral(concepts) {
+  const items = concepts.map((item) => `        '${item}',`).join('\n');
+  return `[\n${items}\n      ]`;
+}
+
+function writeRouteTable() {
+  const file = path.join(appRoot, 'lib/app/router/app_route_table.dart');
+  const lines = [];
+
+  lines.push('// GENERATED by tool/generate_agent_indexes.js - DO NOT EDIT');
+  lines.push('');
+  lines.push("import 'package:go_router/go_router.dart';");
+  lines.push('');
+  lines.push("import '../module_home_page.dart';");
+  lines.push("import '../../module_registry/module_category.dart';");
+  lines.push("import '../../module_registry/module_entry.dart';");
+
+  const emittedImports = new Set();
+  for (const [category, id, kind, gap] of routeTableImportOrder) {
+    if (!modules.some((m) => m.category === category && m.id === id)) continue;
+    const fileName = kind === 'routes' ? 'module_routes.dart' : 'module_entry.dart';
+    lines.push(`import '../../modules/${category}/${id}/${fileName}';`);
+    emittedImports.add(`${category}/${id}/${fileName}`);
+    if (gap === 'gap') lines.push('');
+  }
+  for (const m of modules) {
+    for (const fileName of ['module_entry.dart', m.routes ? 'module_routes.dart' : null].filter(Boolean)) {
+      if (emittedImports.has(`${m.category}/${m.id}/${fileName}`)) continue;
+      lines.push(`import '../../modules/${m.category}/${m.id}/${fileName}';`);
+    }
+  }
+
+  lines.push('');
+  if (modules.some((m) => m.subRoutesExpander)) {
+    lines.push('// ==================== 状态管理子路由（模块内部已定义映射） ====================');
+    lines.push('');
+    lines.push('List<GoRoute> _buildStatusManageRoutes() => StatusManagementRoutes');
+    lines.push('    .routes');
+    lines.push('    .entries');
+    lines.push('    .map(');
+    lines.push('      (entry) => GoRoute(');
+    lines.push("        path: entry.key.startsWith('/') ? entry.key.substring(1) : entry.key,");
+    lines.push('        builder: (context, state) => entry.value(context),');
+    lines.push('      ),');
+    lines.push('    )');
+    lines.push('    .toList();');
+    lines.push('');
+  }
+  lines.push('// ==================== 模块注册 ====================');
+  lines.push('');
+  lines.push('final List<ModuleEntry> _modules = [');
+  let previousCategory = null;
+  for (const m of modules) {
+    if (m.category !== previousCategory) {
+      if (previousCategory !== null) lines.push('');
+      lines.push(`  // ${categoryComments[m.category]}`);
+      previousCategory = m.category;
+    }
+    lines.push('  ModuleEntry(');
+    lines.push(`    title: '${m.title}',`);
+    lines.push(`    path: '${m.route}',`);
+    lines.push(`    subtitle: '${m.subtitle}',`);
+    lines.push(`    category: ModuleCategory.${categoryEnumNames[m.category]},`);
+    lines.push(`    difficulty: Difficulty.${m.difficulty},`);
+    lines.push(`    concepts: ${conceptsLiteral(m.concepts)},`);
+    lines.push(`    estimatedMinutes: ${m.estimatedMinutes},`);
+    lines.push(`    status: ModuleStatus.${m.status},`);
+    lines.push(`    builder: (context) => const ${m.entry}(),`);
+    if (m.subRoutesExpander) {
+      lines.push('    routes: _buildStatusManageRoutes(),');
+    } else if (m.routes) {
+      lines.push(`    routes: ${m.routes}.routes,`);
+    }
+    lines.push('  ),');
+  }
+  lines.push('];');
+  lines.push('');
+  lines.push('final List<GoRoute> _routes = [');
+  lines.push('  GoRoute(');
+  lines.push("    path: '/',");
+  lines.push('    builder: (context, state) => ModuleHomePage(modules: _modules),');
+  lines.push('  ),');
+  lines.push('  for (final module in _modules)');
+  lines.push('    GoRoute(');
+  lines.push('      path: module.path,');
+  lines.push('      builder: (context, state) => module.builder(context),');
+  lines.push('      routes: module.routes,');
+  lines.push('    ),');
+  lines.push('];');
+  lines.push('');
+  lines.push('class AppRouteTable {');
+  lines.push('  static List<GoRoute> get routes => _routes;');
+  lines.push('  static List<ModuleEntry> get modules => _modules;');
+  lines.push('}');
+  lines.push('');
+
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, lines.join('\n'));
 }
 
 function writeRootIndexes() {
@@ -493,7 +893,7 @@ function writeModuleIndexes() {
 }
 
 function writeModuleContracts() {
-  for (const [category, module, route, status, depends] of modules) {
+  for (const { category, id: module, route, status, depends } of modules) {
     const dir = path.join(appRoot, 'lib/modules', category, module);
     const entrypoints = [];
     for (const item of ['module_entry.dart', 'module_root.dart', 'module_routes.dart']) {
@@ -559,6 +959,7 @@ writeSchema();
 writeProjectContext();
 writeRefactorPlan();
 writeModuleIndex();
+writeRouteTable();
 writeRootIndexes();
 writeLayerIndexes();
 writeModuleIndexes();
