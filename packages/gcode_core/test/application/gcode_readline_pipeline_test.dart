@@ -51,12 +51,12 @@ G1 X10 Y10
     });
 
     test('normalizes copied file paths before opening', () async {
-      final file =
-          File('${Directory.systemTemp.path}/gcode readline copied path.nc');
+      final tempDirectory = Directory.systemTemp.createTempSync('ff_gcode_');
+      final file = File('${tempDirectory.path}/gcode readline copied path.nc');
       await file.writeAsString('G0 X0 Y0\nG1 X3 Y4\n');
       addTearDown(() {
-        if (file.existsSync()) {
-          file.deleteSync();
+        if (tempDirectory.existsSync()) {
+          tempDirectory.deleteSync(recursive: true);
         }
       });
 

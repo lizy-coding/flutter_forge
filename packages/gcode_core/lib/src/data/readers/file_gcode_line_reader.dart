@@ -33,12 +33,10 @@ class FileGcodeLineReader implements GcodeLineReader {
       normalized = '$home/${normalized.substring(2)}';
     }
 
-    if (!Platform.isWindows) {
-      normalized = normalized.replaceAllMapped(
-        RegExp(r'\\([ ()\[\]&;])'),
-        (match) => match.group(1)!,
-      );
-    }
+    normalized = normalized.replaceAllMapped(
+      RegExp(r'\\([ ()\[\]&;])'),
+      (match) => match.group(1)!,
+    );
 
     return normalized;
   }

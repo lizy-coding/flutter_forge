@@ -57,10 +57,21 @@ jobs:
         if: matrix.platform == 'windows'
         shell: pwsh
         run: Compress-Archive -Path apps/flutter_forge/build/windows/x64/runner/Release/* -DestinationPath ${{ matrix.artifact }} -Force
+      - name: Install Inno Setup
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: choco install innosetup -y
+      - name: Build Windows installer
+        if: matrix.platform == 'windows'
+        working-directory: apps/flutter_forge
+        shell: pwsh
+        run: iscc windows/installer/setup.iss
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: ${{ matrix.artifact }}
+          path: |
+            ${{ matrix.artifact }}
+            flutter_forge-setup-x64.exe
           retention-days: 14
 
   release:
@@ -69,11 +80,55 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
           path: release-assets
           merge-multiple: true
+      - name: Build release notes
+        shell: bash
+        run: |
+          TAG="${{ github.ref_name }}"
+          PREV_TAG="$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || true)"
+          RANGE="$TAG"
+          if [[ -n "$PREV_TAG" ]]; then
+            RANGE="$PREV_TAG..$TAG"
+          fi
+
+          write_group() {
+            local heading="$1"
+            local pattern="$2"
+            local commits
+            commits="$(git log "$RANGE" --pretty='- %s (%h)' --extended-regexp --grep="$pattern" || true)"
+            printf '## %s\n\n' "$heading" >> release-notes.md
+            if [[ -n "$commits" ]]; then
+              printf '%s\n\n' "$commits" >> release-notes.md
+            else
+              printf '%s\n\n' '- 无' >> release-notes.md
+            fi
+          }
+
+          cat > release-notes.md <<'EOF'
+          首个桌面安装器发布。macOS 构建和 Windows 安装器均未签名；首次运行时，macOS 请右键选择“打开”（或执行 `xattr -dr com.apple.quarantine`），Windows SmartScreen 请点击“更多信息（More info）”后选择“仍要运行（Run anyway）”。
+
+          EOF
+          write_group "Features" '^feat(\(.+\))?!?:'
+          write_group "Fixes" '^fix(\(.+\))?!?:'
+          write_group "Chores" '^(chore|build|ci|docs|refactor|perf|test|style)(\(.+\))?!?:'
+
+          cat >> release-notes.md <<'EOF'
+          ## Artifacts
+
+          | 文件 | 大小 | 签名状态 |
+          | --- | ---: | --- |
+          EOF
+          for asset in release-assets/*; do
+            size="$(du -h "$asset" | cut -f1)"
+            printf '| `%s` | %s | 未签名 |\n' "$(basename "$asset")" "$size" >> release-notes.md
+          done
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" release-assets/*.zip --title "Flutter Forge ${{ github.ref_name }}" --notes "首个桌面安装器发布。macOS 构建未签名，首次打开可能需要右键选择打开。"
+        run: gh release create "${{ github.ref_name }}" release-assets/* --title "Flutter Forge ${{ github.ref_name }}" --notes-file release-notes.md

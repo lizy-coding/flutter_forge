@@ -8,7 +8,9 @@
 PRODUCT_NAME = Flutter Forge
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.mainApp
+// TODO(identity): 发布前替换为真实 bundle id / 公司名 / 版权
+PRODUCT_BUNDLE_IDENTIFIER = com.flutterforge.preview
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.example. All rights reserved.
+// TODO(identity): 发布前替换为真实 bundle id / 公司名 / 版权
+PRODUCT_COPYRIGHT = Copyright © 2026 Flutter Forge Team
