@@ -69,9 +69,14 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: |
-            ${{ matrix.artifact }}
-            flutter_forge-setup-x64.exe
+          path: ${{ matrix.artifact }}
+          retention-days: 14
+      - name: Upload Windows installer
+        if: matrix.platform == 'windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter_forge-setup-x64.exe
+          path: flutter_forge-setup-x64.exe
           retention-days: 14
 
   release:
@@ -110,10 +115,8 @@ jobs:
             fi
           }
 
-          cat > release-notes.md <<'EOF'
-          首个桌面安装器发布。macOS 构建和 Windows 安装器均未签名；首次运行时，macOS 请右键选择“打开”（或执行 `xattr -dr com.apple.quarantine`），Windows SmartScreen 请点击“更多信息（More info）”后选择“仍要运行（Run anyway）”。
-
-          EOF
+          printf '%s\n' '首个桌面安装器发布。macOS 构建和 Windows 安装器均未签名；首次运行时，macOS 请右键选择“打开”（或执行 `xattr -dr com.apple.quarantine`），Windows SmartScreen 请点击“更多信息（More info）”后选择“仍要运行（Run anyway）”。' > release-notes.md
+          printf '\n' >> release-notes.md
           write_group "Features" '^feat(\(.+\))?!?:'
           write_group "Fixes" '^fix(\(.+\))?!?:'
           write_group "Chores" '^(chore|build|ci|docs|refactor|perf|test|style)(\(.+\))?!?:'
