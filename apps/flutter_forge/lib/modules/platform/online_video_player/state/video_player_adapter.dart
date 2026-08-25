@@ -31,7 +31,8 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     VideoPlayerController? controller,
     this.initializeTimeout = const Duration(seconds: 15),
     this.reachabilityProbe,
-  }) {
+    Dio? dio,
+  }) : _dio = dio ?? Dio() {
     if (controller != null) {
       _controller = controller;
       _controller!.addListener(_synchronizeState);
@@ -40,6 +41,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
 
   final Duration initializeTimeout;
   final Future<bool> Function(Uri url)? reachabilityProbe;
+  final Dio _dio;
 
   VideoPlayerController? _controller;
 
@@ -66,21 +68,25 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   int _openGeneration = 0;
   bool _disposed = false;
 
-  static final Dio _dio = Dio();
-
   Future<bool> _defaultReachabilityProbe(Uri url) async {
+    final cancelToken = CancelToken();
     try {
       final response = await _dio
-          .head(
+          .get<ResponseBody>(
             url.toString(),
             options: Options(
+              headers: const {'Range': 'bytes=0-0'},
+              responseType: ResponseType.stream,
               validateStatus: (status) => status != null && status < 400,
             ),
+            cancelToken: cancelToken,
           )
           .timeout(const Duration(seconds: 5));
       return response.statusCode != null && response.statusCode! < 400;
     } on Object {
       return false;
+    } finally {
+      cancelToken.cancel('reachability probe completed');
     }
   }
 

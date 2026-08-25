@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/modules/platform/online_video_player/state/video_player_adapter.dart';
@@ -32,6 +34,25 @@ void main() {
     expect(platform.disposedIds, isEmpty);
     adapter.dispose();
   });
+
+  test(
+    'default probe uses a ranged GET compatible with media servers',
+    () async {
+      final httpAdapter = _RecordingHttpClientAdapter();
+      final dio = Dio()..httpClientAdapter = httpAdapter;
+      final adapter = VideoPlayerPluginAdapter(
+        dio: dio,
+        initializeTimeout: const Duration(seconds: 1),
+      );
+
+      await adapter.openAndPlay();
+
+      expect(httpAdapter.method, 'GET');
+      expect(httpAdapter.range, 'bytes=0-0');
+      expect(adapter.uiState.value, PlayerUiState.playing);
+      adapter.dispose();
+    },
+  );
 
   test(
     'initialize failure releases the previous controller and errors',
@@ -123,6 +144,32 @@ void main() {
     expect(platform.disposedIds, isEmpty);
     adapter.dispose();
   });
+}
+
+class _RecordingHttpClientAdapter implements HttpClientAdapter {
+  String? method;
+  String? range;
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    method = options.method;
+    range = options.headers['Range'] as String?;
+    return ResponseBody.fromBytes(
+      const [0],
+      206,
+      headers: const {
+        Headers.contentTypeHeader: ['video/mp4'],
+        'content-range': ['bytes 0-0/1'],
+      },
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
 }
 
 /// A minimal [VideoPlayerPlatform] double that records lifecycle calls.

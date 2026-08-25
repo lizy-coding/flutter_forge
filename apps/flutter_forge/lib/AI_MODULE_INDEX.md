@@ -262,6 +262,7 @@
       "status": "ready",
       "depends": [
         "flutter_study_learning",
+        "dio",
         "video_player",
         "video_player_win",
         "module_registry"
