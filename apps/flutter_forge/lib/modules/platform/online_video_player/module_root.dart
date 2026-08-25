@@ -53,16 +53,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   valueListenable: _adapter.uiState,
                   builder: (context, state, child) {
                     if (state == PlayerUiState.error) {
-                      return const _VideoPlaceholder(
-                        key: Key('video-error-placeholder'),
+                      return _VideoPlaceholder(
+                        key: const Key('video-error-placeholder'),
                         icon: Icons.error_outline,
                         message: '视频加载失败，请检查网络后重试',
+                        onRetry: _adapter.openAndPlay,
                       );
                     }
-                    if (state == PlayerUiState.idle) {
+                    if (state == PlayerUiState.idle ||
+                        state == PlayerUiState.loading) {
                       return const _VideoPlaceholder(
                         icon: Icons.ondemand_video,
-                        message: '等待加载在线视频',
+                        message: '正在连接视频源…',
                       );
                     }
                     final controller = _adapter.videoController;
@@ -74,14 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                     return Stack(
                       fit: StackFit.expand,
-                      children: [
-                        VideoPlayer(controller),
-                        if (state == PlayerUiState.loading)
-                          const ColoredBox(
-                            color: Color(0x66000000),
-                            child: Center(child: CircularProgressIndicator()),
-                          ),
-                      ],
+                      children: [VideoPlayer(controller)],
                     );
                   },
                 ),
@@ -147,10 +142,12 @@ class _VideoPlaceholder extends StatelessWidget {
     super.key,
     required this.icon,
     required this.message,
+    this.onRetry,
   });
 
   final IconData icon;
   final String message;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +158,15 @@ class _VideoPlaceholder extends StatelessWidget {
           Icon(icon, color: Colors.white70, size: 52),
           const SizedBox(height: 12),
           Text(message, style: const TextStyle(color: Colors.white)),
+          if (onRetry != null) ...[
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              key: const Key('video-retry-button'),
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text('重试'),
+            ),
+          ],
         ],
       ),
     );

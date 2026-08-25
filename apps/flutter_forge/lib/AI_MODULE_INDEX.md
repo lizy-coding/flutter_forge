@@ -263,6 +263,7 @@
       "depends": [
         "flutter_study_learning",
         "video_player",
+        "video_player_win",
         "module_registry"
       ],
       "analysis": "lib/modules/platform/online_video_player/AI_ANALYSIS.md"

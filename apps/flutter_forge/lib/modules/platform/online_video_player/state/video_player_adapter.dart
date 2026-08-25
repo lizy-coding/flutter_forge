@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:video_player/video_player.dart';
 
@@ -26,15 +27,24 @@ abstract interface class VideoPlayerAdapter {
 }
 
 class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
-  VideoPlayerPluginAdapter({VideoPlayerController? controller})
-    : videoController =
-          controller ??
-          VideoPlayerController.networkUrl(Uri.parse(sampleStreamUrl)) {
-    videoController.addListener(_synchronizeState);
+  VideoPlayerPluginAdapter({
+    VideoPlayerController? controller,
+    this.initializeTimeout = const Duration(seconds: 15),
+    this.reachabilityProbe,
+  }) {
+    if (controller != null) {
+      _controller = controller;
+      _controller!.addListener(_synchronizeState);
+    }
   }
 
+  final Duration initializeTimeout;
+  final Future<bool> Function(Uri url)? reachabilityProbe;
+
+  VideoPlayerController? _controller;
+
   @override
-  final VideoPlayerController videoController;
+  VideoPlayerController? get videoController => _controller;
 
   @override
   final ValueNotifier<PlayerUiState> uiState = ValueNotifier(
@@ -53,46 +63,134 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   @override
   final ValueNotifier<double> rate = ValueNotifier(1);
 
+  int _openGeneration = 0;
+  bool _disposed = false;
+
+  static final Dio _dio = Dio();
+
+  Future<bool> _defaultReachabilityProbe(Uri url) async {
+    try {
+      final response = await _dio
+          .head(
+            url.toString(),
+            options: Options(
+              validateStatus: (status) => status != null && status < 400,
+            ),
+          )
+          .timeout(const Duration(seconds: 5));
+      return response.statusCode != null && response.statusCode! < 400;
+    } on Object {
+      return false;
+    }
+  }
+
+  Future<void> _disposeQuietly(VideoPlayerController? controller) async {
+    if (controller == null) return;
+    controller.removeListener(_synchronizeState);
+    try {
+      await controller.dispose().timeout(const Duration(seconds: 5));
+    } on Object catch (e) {
+      debugPrint('video_player dispose failed: $e');
+    }
+  }
+
+  Future<void> _releaseCurrent() async {
+    final current = _controller;
+    _controller = null;
+    await _disposeQuietly(current);
+  }
+
   @override
   Future<void> openAndPlay() async {
+    final generation = ++_openGeneration;
+    if (_disposed) return;
+
     uiState.value = PlayerUiState.loading;
     position.value = Duration.zero;
-    try {
-      await videoController.initialize();
-      await videoController.play();
-    } on Object {
+    duration.value = Duration.zero;
+
+    final url = Uri.parse(sampleStreamUrl);
+    final probe = reachabilityProbe ?? _defaultReachabilityProbe;
+    final reachable = await probe(url);
+    if (_disposed || generation != _openGeneration) return;
+    if (!reachable) {
       uiState.value = PlayerUiState.error;
+      return;
+    }
+
+    await _releaseCurrent();
+
+    final controller = VideoPlayerController.networkUrl(url);
+    controller.addListener(_synchronizeState);
+    _controller = controller;
+    try {
+      await controller.initialize().timeout(initializeTimeout);
+      if (_disposed || generation != _openGeneration) {
+        await _disposeQuietly(controller);
+        return;
+      }
+      await controller.play();
+    } on Object {
+      await _disposeQuietly(controller);
+      if (_controller == controller) {
+        _controller = null;
+      }
+      if (!_disposed && generation == _openGeneration) {
+        uiState.value = PlayerUiState.error;
+      }
     }
   }
 
   @override
-  Future<void> play() => videoController.play();
+  Future<void> play() {
+    final controller = _controller;
+    if (controller == null) return Future.value();
+    return controller.play();
+  }
 
   @override
-  Future<void> pause() => videoController.pause();
+  Future<void> pause() {
+    final controller = _controller;
+    if (controller == null) return Future.value();
+    return controller.pause();
+  }
 
   @override
-  Future<void> togglePlayPause() =>
-      videoController.value.isPlaying ? pause() : play();
+  Future<void> togglePlayPause() {
+    final controller = _controller;
+    if (controller == null) return Future.value();
+    return controller.value.isPlaying ? controller.pause() : controller.play();
+  }
 
   @override
-  Future<void> seek(Duration value) => videoController.seekTo(value);
+  Future<void> seek(Duration value) {
+    final controller = _controller;
+    if (controller == null) return Future.value();
+    return controller.seekTo(value);
+  }
 
   @override
   Future<void> setVolume(double value) async {
     final normalized = value.clamp(0.0, 1.0);
     volume.value = normalized;
-    await videoController.setVolume(normalized);
+    final controller = _controller;
+    if (controller == null) return;
+    await controller.setVolume(normalized);
   }
 
   @override
   Future<void> setRate(double value) async {
     rate.value = value;
-    await videoController.setPlaybackSpeed(value);
+    final controller = _controller;
+    if (controller == null) return;
+    await controller.setPlaybackSpeed(value);
   }
 
   void _synchronizeState() {
-    final value = videoController.value;
+    if (_disposed) return;
+    final controller = _controller;
+    if (controller == null) return;
+    final value = controller.value;
     if (value.hasError) {
       uiState.value = PlayerUiState.error;
       return;
@@ -110,8 +208,9 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
 
   @override
   void dispose() {
-    videoController.removeListener(_synchronizeState);
-    unawaited(videoController.dispose());
+    _disposed = true;
+    _openGeneration++;
+    unawaited(_releaseCurrent());
     uiState.dispose();
     position.dispose();
     duration.dispose();

@@ -277,7 +277,7 @@ const modules = [
     id: 'online_video_player',
     route: '/online-video-player',
     status: 'ready',
-    depends: ['flutter_study_learning', 'video_player', 'module_registry'],
+    depends: ['flutter_study_learning', 'video_player', 'video_player_win', 'module_registry'],
     title: '在线视频播放',
     subtitle: '使用 video_player 播放在线 HTTP 视频流并操控播放参数',
     difficulty: 'intermediate',
@@ -343,7 +343,7 @@ const categoryMeta = {
   state: [['status_management', 'flutter_ioc'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core']],
   ui: [['gcode_visualizer', 'adsorption_line', 'download_animation', 'font_picker'], ['ui_animation_custom_paint'], ['provider', 'gcode_core', 'file_picker_bridge', 'flutter_study_learning', 'module_registry']],
   popup_table: [['popup_widgets', 'popup_list_interaction', 'scroll_table', 'overlay_follow_compare'], ['popup_overlay_table'], ['module_registry', 'flutter_study_learning', 'two_dimensional_scrollables']],
-  platform: [['dio_interceptor', 'usb_detector', 'file_picker', 'online_video_player'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'video_player', 'flutter_study_learning', 'file_picker_bridge']],
+  platform: [['dio_interceptor', 'usb_detector', 'file_picker', 'online_video_player'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'video_player', 'video_player_win', 'flutter_study_learning', 'file_picker_bridge']],
 };
 
 const flutterGuardDependency = {
