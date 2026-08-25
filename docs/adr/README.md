@@ -8,7 +8,7 @@
 |------|------|------|
 | 0001 | 单仓布局 (Pub Workspace) | accepted |
 | 0002 | Agent 契约生成源 | accepted |
-| 0003 | 平台能力边界 | proposed |
+| 0003 | 平台模块可用性 | accepted |
 | 0004 | 质量门禁策略 | proposed |
 
 ## 状态定义
