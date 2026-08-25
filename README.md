@@ -1,6 +1,6 @@
 # Flutter 学习实验室
 
-本项目是面向 Flutter 初学者的学习项目集合，所有学习模块位于 `lib/modules/` 目录下，按主题分类，通过路由切换进入不同模块。项目同时维护 `app/` 应用壳、`module_registry/` 模块元数据和 `shared/` 共享能力，让示例既能独立学习，也能按真实工程方式演进。
+本项目是面向 Flutter 初学者的学习项目集合，所有学习模块位于 `apps/flutter_forge/lib/modules/` 目录下，按主题分类，通过路由切换进入不同模块。项目同时维护 `apps/flutter_forge/lib/app/` 应用壳、`apps/flutter_forge/lib/module_registry/` 模块元数据和 `apps/flutter_forge/lib/shared/` 共享能力，让示例既能独立学习，也能按真实工程方式演进。
 ![demo](https://raw.githubusercontent.com/lizy-coding/flutter_forge/master/assets/demo.gif)
 
 Full video: https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-624071b0e2ea
@@ -21,11 +21,14 @@ Full video: https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-6
 - Windows
 - 移动端（iOS / Android）
 
+平台相关模块通过注册表中的 `supportedPlatforms` 判定可用性。未支持当前平台的模块仍显示在目录中，但会标记为不可用且不会注册可进入的路由；未填写该字段的模块默认支持所有平台。
+
 ## 环境与快速开始
 
 - Flutter 3.x / Dart 3.x
-- 根目录执行：
+- 应用目录执行：
   ```bash
+  cd apps/flutter_forge
   flutter pub get
   flutter run [-d <device>]
   ```
@@ -43,7 +46,7 @@ Full video: https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-6
 ## 项目结构
 
 ```
-lib/
+apps/flutter_forge/lib/
 ├── main.dart                     # 入口
 ├── app/                          # 应用壳
 │   ├── app.dart                  # MaterialApp.router
@@ -64,10 +67,10 @@ lib/
 同级能力包：
 
 ```
-../gcode_core                         # 纯 Dart G-code 解析、读取、轨迹构建
-../flutter_study_learning             # 教学模板组件
-../file_picker_bridge                 # 文件选择 Dart API / MethodChannel client
-../flutter_ioc_core                   # 纯 Dart IoC 容器核心
+packages/gcode_core                   # 纯 Dart G-code 解析、读取、轨迹构建
+packages/flutter_study_learning       # 教学模板组件
+packages/file_picker_bridge            # 文件选择 Dart API / MethodChannel client
+packages/flutter_ioc_core              # 纯 Dart IoC 容器核心
 ```
 
 ## 维护文档
@@ -84,13 +87,13 @@ lib/
 
 新增或迁移能力时需要同步更新对应层级的 `AI_ANALYSIS.md`。例如本轮同级包迁移后，相关文档为：
 
-- `lib/shared/AI_ANALYSIS.md`
-- `lib/shared/platform/AI_ANALYSIS.md`
-- `../file_picker_bridge/AI_ANALYSIS.md`
-- `../gcode_core/AI_ANALYSIS.md`
-- `../flutter_study_learning/AI_ANALYSIS.md`
-- `../flutter_ioc_core/AI_ANALYSIS.md`
-- `lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md`
+- `apps/flutter_forge/lib/shared/AI_ANALYSIS.md`
+- `apps/flutter_forge/lib/shared/platform/AI_ANALYSIS.md`
+- `packages/file_picker_bridge/AI_ANALYSIS.md`
+- `packages/gcode_core/AI_ANALYSIS.md`
+- `packages/flutter_study_learning/AI_ANALYSIS.md`
+- `packages/flutter_ioc_core/AI_ANALYSIS.md`
+- `apps/flutter_forge/lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md`
 
 ## 贡献指南
 
@@ -148,9 +151,13 @@ chore(packages): update agent doc schema
 
 `package:flutter_study_learning` 提供统一教学页面骨架，模块可以用学习目标、概念标签、代码片段、常见坑和练习卡片组织内容。
 
+### 模块平台可用性
+
+平台限制只在模块注册表声明。非平台模块默认可用，平台模块通过 `supportedPlatforms` 显式列出支持平台；目录和路由层统一使用注册表判定结果。
+
 ### 平台文件选择
 
-`../file_picker_bridge` 提供业务无关的文件选择接口：
+`packages/file_picker_bridge` 提供业务无关的文件选择接口：
 
 - Dart 接口：`FilePickerService`
 - 默认实现：`MethodChannelFilePicker`
@@ -161,7 +168,7 @@ chore(packages): update agent doc schema
 
 ### G-code 核心
 
-`../gcode_core` 提供纯 Dart G-code 能力：
+`packages/gcode_core` 提供纯 Dart G-code 能力：
 
 - 逐行读取抽象
 - G0/G1 解析

@@ -20,9 +20,17 @@
 |--------|------|
 | `module_entry.dart` | 导出 `*Entry` Widget，作为模块入口 |
 | `AI_ANALYSIS.md` | 模块机器契约：route、category、status、entrypoints、owns、depends、analysis_parent、validation |
-| 路由注册 | 在 `lib/router/app_route_table.dart` 的 `_modules` 中注册 |
+| 路由注册 | 在 `apps/flutter_forge/lib/app/router/app_route_table.dart` 的 `_modules` 中注册 |
 | 模块元数据 | `ModuleEntry` 必须填写 `category`、`difficulty`、`concepts`、`estimatedMinutes`、`status`、`subtitle` |
 | 教学页面 | 至少 1 个页面使用外部 `flutter_study_learning` 包中的教学模板组件（`LearningScaffold` 等） |
+
+平台可用性规则：
+
+- `ModuleEntry.supportedPlatforms == null` 表示模块默认支持所有平台。
+- 平台相关模块必须显式填写 `supportedPlatforms`，并在字段旁保留语义清晰的注释。
+- 平台判定必须通过 `module_registry/module_catalog_utils.dart` 集中执行，模块页面不得自行调用 `Platform` API 决定目录可见性。
+- 不支持的模块保留在目录中，显示不可用状态；其模块路由不注册。
+- 平台可用性与 `ModuleStatus`（学习质量状态）分离，不能用 `pending/ready/recommended` 表达平台限制。
 
 ## 修改模块规则
 
@@ -67,7 +75,7 @@ bash tool/quality_gate.sh
 
 定期执行以下检查：
 
-1. 扫描 `lib/` 下所有模块目录，检查是否都在 `_modules` 中注册
+1. 扫描 `apps/flutter_forge/lib/modules/` 下所有模块目录，检查是否都在 `_modules` 中注册
 2. 检查每个模块是否有 `AI_ANALYSIS.md`
 3. 检查重点模块是否使用教学模板（`flutter_study_learning` 包）
 4. 检查 `ModuleEntry` 元数据是否完整（所有必填字段）

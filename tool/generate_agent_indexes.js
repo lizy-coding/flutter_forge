@@ -697,6 +697,8 @@ function writeModuleIndex() {
 }
 
 function conceptsLiteral(concepts) {
+  const literal = `[${concepts.map((item) => `'${item}'`).join(', ')}]`;
+  if (literal.length + 14 <= 80) return literal;
   const items = concepts.map((item) => `      '${item}',`).join('\n');
   return `[\n${items}\n    ]`;
 }
