@@ -1,22 +1,17 @@
 import Cocoa
 import FlutterMacOS
+import desktop_multi_window
 
 @main
 class AppDelegate: FlutterAppDelegate {
   override func applicationDidFinishLaunching(_ notification: Notification) {
+    FlutterMultiWindowPlugin.setOnWindowCreatedCallback { controller in
+      RegisterGeneratedPlugins(registry: controller)
+      self.registerFilePickerChannel(on: controller.engine.binaryMessenger)
+    }
+
     if let controller = mainFlutterWindow?.contentViewController as? FlutterViewController {
-      let channel = FlutterMethodChannel(
-        name: "file_picker_bridge/file_picker",
-        binaryMessenger: controller.engine.binaryMessenger
-      )
-      channel.setMethodCallHandler { call, result in
-        switch call.method {
-        case "pickFile":
-          result(self.pickFile(call.arguments))
-        default:
-          result(FlutterMethodNotImplemented)
-        }
-      }
+      registerFilePickerChannel(on: controller.engine.binaryMessenger)
     }
 
     super.applicationDidFinishLaunching(notification)
@@ -28,6 +23,21 @@ class AppDelegate: FlutterAppDelegate {
 
   override func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
     return true
+  }
+
+  private func registerFilePickerChannel(on messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(
+      name: "file_picker_bridge/file_picker",
+      binaryMessenger: messenger
+    )
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "pickFile":
+        result(self.pickFile(call.arguments))
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
   }
 
   private func pickFile(_ arguments: Any?) -> [String: String]? {
