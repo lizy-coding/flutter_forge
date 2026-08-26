@@ -32,6 +32,14 @@
 - 不支持的模块保留在目录中，显示不可用状态；其模块路由不注册。
 - 平台可用性与 `ModuleStatus`（学习质量状态）分离，不能用 `pending/ready/recommended` 表达平台限制。
 
+导航拓扑规则：
+
+- Android、iOS 和 Web 永远使用应用内导航，不创建业务多窗口。
+- 小于 `600dp` 的紧凑窗口使用应用内导航。
+- 只有支持多窗口的桌面平台且窗口宽度不小于 `600dp` 时，才允许创建分类窗口。
+- UI 必须通过 `NavigationPolicy` 获取导航模式，不能直接用 `Platform.isMacOS` 等条件决定业务导航。
+- `MultiWindowManager` 只负责桌面窗口生命周期，不负责移动端导航策略。
+
 ## 修改模块规则
 
 1. 修改前先读取该模块的 `AI_ANALYSIS.md`

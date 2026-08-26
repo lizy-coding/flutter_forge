@@ -10,6 +10,7 @@
 | 0002 | Agent 契约生成源 | accepted |
 | 0003 | 平台模块可用性 | accepted |
 | 0004 | 质量门禁策略 | proposed |
+| 0005 | 移动端单窗口与桌面响应式导航 | accepted |
 
 ## 状态定义
 

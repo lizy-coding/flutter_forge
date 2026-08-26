@@ -13,6 +13,7 @@
     "app_bootstrap.dart",
     "module_home_page.dart",
     "category_navigation.dart",
+    "navigation_policy.dart",
     "category_window_app.dart",
     "router/app_router.dart",
     "router/app_route_table.dart"
@@ -22,6 +23,7 @@
     "material_app_router",
     "router",
     "module_home",
+    "responsive_navigation_policy",
     "adaptive_category_navigation",
     "desktop_category_window_shell"
   ],

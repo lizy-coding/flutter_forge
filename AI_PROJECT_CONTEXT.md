@@ -153,6 +153,9 @@
     "router_platform_api": "forbidden",
     "module_host_navigation": "forbidden",
     "desktop_window_policy": "lib/app/category_navigation.dart",
+    "navigation_policy": "lib/app/navigation_policy.dart",
+    "compact_width_breakpoint_dp": 600,
+    "mobile_window_policy": "in_app_navigation_only",
     "platform_capability_contract": "business_neutral_interface"
   },
   "change_protocol": {

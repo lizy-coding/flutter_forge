@@ -573,6 +573,9 @@ function writeProjectContext() {
       router_platform_api: 'forbidden',
       module_host_navigation: 'forbidden',
       desktop_window_policy: 'lib/app/category_navigation.dart',
+      navigation_policy: 'lib/app/navigation_policy.dart',
+      compact_width_breakpoint_dp: 600,
+      mobile_window_policy: 'in_app_navigation_only',
       platform_capability_contract: 'business_neutral_interface',
     },
     change_protocol: {
@@ -843,8 +846,8 @@ function writeLayerIndexes() {
     rel: 'lib/app/AI_ANALYSIS.md',
     id: 'flutter_forge_app.app',
     kind: 'app_index',
-    entrypoints: ['app.dart', 'app_bootstrap.dart', 'module_home_page.dart', 'category_navigation.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
-    owns: ['host_bootstrap', 'material_app_router', 'router', 'module_home', 'adaptive_category_navigation', 'desktop_category_window_shell'],
+    entrypoints: ['app.dart', 'app_bootstrap.dart', 'module_home_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
+    owns: ['host_bootstrap', 'material_app_router', 'router', 'module_home', 'responsive_navigation_policy', 'adaptive_category_navigation', 'desktop_category_window_shell'],
     depends: ['go_router', 'module_registry', 'shared/multi_window', 'modules'],
     children: ['router/AI_ANALYSIS.md'],
   });

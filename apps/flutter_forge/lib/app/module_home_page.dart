@@ -6,6 +6,7 @@ import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import '../module_registry/module_catalog_utils.dart';
 import 'category_navigation.dart';
+import 'navigation_policy.dart';
 
 class ModuleHomePage extends StatelessWidget {
   const ModuleHomePage({super.key, required this.modules});
@@ -48,7 +49,8 @@ class ModuleHomePage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(
-                        CategoryNavigation.opensInNewWindow
+                        CategoryNavigation.modeFor(context) ==
+                                CategoryNavigationMode.separateWindow
                             ? Icons.open_in_new
                             : Icons.chevron_right,
                         size: 20,

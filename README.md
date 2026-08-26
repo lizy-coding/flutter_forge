@@ -23,6 +23,8 @@ Full video: https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-6
 
 平台相关模块通过注册表中的 `supportedPlatforms` 判定可用性。未支持当前平台的模块仍显示在目录中，但会标记为不可用且不会注册可进入的路由；未填写该字段的模块默认支持所有平台。
 
+分类导航采用响应式策略：Android、iOS 和 Web 使用应用内导航；小于 `600dp` 的紧凑窗口使用应用内导航；只有支持多窗口的桌面大窗口才创建独立分类窗口。
+
 ## 环境与快速开始
 
 - Flutter 3.x / Dart 3.x
