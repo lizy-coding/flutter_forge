@@ -28,7 +28,6 @@ dependencies:
   collection: ^1.18.0
   flutter_svg: ^2.0.10+1
   two_dimensional_scrollables: ^0.3.0
-  usb_serial: ^0.5.0
   device_info_plus: ^10.1.2
   desktop_multi_window: ^0.3.0
   video_player: ^2.10.0

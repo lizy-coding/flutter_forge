@@ -235,7 +235,6 @@
       "status": "ready",
       "depends": [
         "flutter_study_learning",
-        "usb_serial",
         "device_info_plus",
         "module_registry"
       ],

@@ -285,10 +285,16 @@ final List<ModuleEntry> _modules = [
     subtitle: '跨平台 USB 设备检测与状态监控',
     category: ModuleCategory.platform,
     difficulty: Difficulty.intermediate,
-    concepts: ['usb_serial', 'device_info_plus', 'Stream 广播', '设备扫描'],
+    concepts: [
+      'Android USB',
+      'UsbManager',
+      'MethodChannel',
+      'Stream 广播',
+      '设备扫描',
+    ],
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
-    supportedPlatforms: {TargetPlatform.windows},
+    supportedPlatforms: {TargetPlatform.android},
     builder: (context) => const UsbDetectorEntry(),
   ),
   ModuleEntry(

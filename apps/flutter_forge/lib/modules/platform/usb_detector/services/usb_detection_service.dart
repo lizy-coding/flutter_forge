@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:usb_serial/usb_serial.dart';
+import 'package:flutter/services.dart';
 
 import '../models/usb_device_info.dart';
 
@@ -10,6 +10,8 @@ class UsbDetectionService {
   static final UsbDetectionService _instance = UsbDetectionService._internal();
   factory UsbDetectionService() => _instance;
   UsbDetectionService._internal();
+
+  static const MethodChannel _channel = MethodChannel('usb_detector/usb');
 
   bool _isInitialized = false;
   List<UsbDeviceInfo> _connectedDevices = [];
@@ -32,7 +34,6 @@ class UsbDetectionService {
     try {
       _statusStreamController.add('正在初始化USB服务...');
 
-      // USB Serial 不需要显式初始化
       _isInitialized = true;
 
       if (_isInitialized) {
@@ -60,17 +61,21 @@ class UsbDetectionService {
     try {
       _statusStreamController.add('正在扫描USB设备...');
 
-      List<UsbDevice> devices = await UsbSerial.listDevices();
+      final rawDevices = await _channel.invokeMethod<List<dynamic>>(
+        'listDevices',
+      );
       List<UsbDeviceInfo> deviceInfoList = [];
 
-      for (UsbDevice device in devices) {
+      for (final rawDevice in rawDevices ?? const <dynamic>[]) {
+        Map<String, dynamic> device = const {};
         try {
+          device = Map<String, dynamic>.from(rawDevice as Map);
           UsbDeviceInfo deviceInfo = UsbDeviceInfo(
-            vendorId: device.vid ?? 0,
-            productId: device.pid ?? 0,
-            manufacturer: device.manufacturerName,
-            product: device.productName,
-            serialNumber: device.serial,
+            vendorId: (device['vendorId'] as num?)?.toInt() ?? 0,
+            productId: (device['productId'] as num?)?.toInt() ?? 0,
+            manufacturer: device['manufacturer'] as String?,
+            product: device['product'] as String?,
+            serialNumber: device['serialNumber'] as String?,
             status: UsbDeviceStatus.connected,
           );
 
@@ -82,8 +87,8 @@ class UsbDetectionService {
           );
 
           UsbDeviceInfo deviceInfo = UsbDeviceInfo(
-            vendorId: device.vid ?? 0,
-            productId: device.pid ?? 0,
+            vendorId: (device['vendorId'] as num?)?.toInt() ?? 0,
+            productId: (device['productId'] as num?)?.toInt() ?? 0,
             status: UsbDeviceStatus.error,
           );
           deviceInfoList.add(deviceInfo);
@@ -145,9 +150,11 @@ class UsbDetectionService {
 
   Future<String> getSystemInfo() async {
     try {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
-      return '系统：${windowsInfo.productName} ${windowsInfo.displayVersion}';
+      final info = await DeviceInfoPlugin().deviceInfo;
+      final data = info.data;
+      final model = data['model'] ?? data['product'] ?? data['name'] ?? '';
+      final version = data['version'] ?? data['version.release'] ?? '';
+      return '系统：$model $version'.trim();
     } catch (e) {
       developer.log(
         'Error getting system info: $e',

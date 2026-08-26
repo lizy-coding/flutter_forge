@@ -65,7 +65,7 @@
       "targets": [
         "desktop_multi_window",
         "file_picker_bridge",
-        "usb_serial",
+        "usb_android_method_channel",
         "device_info_plus"
       ],
       "acceptance": [
