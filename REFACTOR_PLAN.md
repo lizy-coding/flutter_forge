@@ -34,7 +34,7 @@
     {
       "id": "module_platform_contract",
       "priority": 1,
-      "status": "pending",
+      "status": "completed",
       "changes": [
         "ModuleEntry.platform_support",
         "ModuleHomePage.availability_state"
@@ -45,8 +45,22 @@
       ]
     },
     {
-      "id": "platform_plugin_audit",
+      "id": "responsive_navigation_policy",
       "priority": 2,
+      "status": "completed",
+      "changes": [
+        "NavigationPolicy",
+        "CategoryNavigation.mobile_in_app_mode"
+      ],
+      "acceptance": [
+        "android_ios_web_in_app_navigation",
+        "compact_width_in_app_navigation",
+        "desktop_large_window_policy_test"
+      ]
+    },
+    {
+      "id": "platform_plugin_audit",
+      "priority": 3,
       "status": "pending",
       "targets": [
         "desktop_multi_window",
@@ -61,7 +75,7 @@
     },
     {
       "id": "usb_platform_boundary",
-      "priority": 3,
+      "priority": 4,
       "status": "pending",
       "targets": [
         "lib/modules/platform/usb_detector"
@@ -74,7 +88,7 @@
     },
     {
       "id": "mobile_layout_baseline",
-      "priority": 4,
+      "priority": 5,
       "status": "pending",
       "viewport_width_dp": 360,
       "targets": [
@@ -92,7 +106,7 @@
     },
     {
       "id": "android_host",
-      "priority": 5,
+      "priority": 6,
       "status": "blocked_by_dependencies",
       "depends_on": [
         "module_platform_contract",
