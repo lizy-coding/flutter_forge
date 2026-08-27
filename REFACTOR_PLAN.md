@@ -60,7 +60,7 @@
     },
     {
       "id": "platform_plugin_audit",
-      "priority": 3,
+      "priority": 5,
       "status": "pending",
       "targets": [
         "desktop_multi_window",
@@ -75,7 +75,7 @@
     },
     {
       "id": "usb_platform_boundary",
-      "priority": 4,
+      "priority": 6,
       "status": "pending",
       "targets": [
         "lib/modules/platform/usb_detector"
@@ -88,7 +88,7 @@
     },
     {
       "id": "mobile_layout_baseline",
-      "priority": 5,
+      "priority": 7,
       "status": "pending",
       "viewport_width_dp": 360,
       "targets": [
@@ -106,7 +106,7 @@
     },
     {
       "id": "android_host",
-      "priority": 6,
+      "priority": 8,
       "status": "blocked_by_dependencies",
       "depends_on": [
         "module_platform_contract",
@@ -118,6 +118,36 @@
         "manifest_capabilities",
         "debug_apk",
         "emulator_smoke"
+      ]
+    },
+    {
+      "id": "pc_window_lifecycle_baseline",
+      "priority": 3,
+      "status": "pending",
+      "targets": [
+        "desktop_multi_window",
+        "lib/shared/multi_window",
+        "lib/app/category_navigation"
+      ],
+      "acceptance": [
+        "three_category_windows",
+        "close_reopen",
+        "no_black_surface",
+        "no_invalid_engine_handle"
+      ]
+    },
+    {
+      "id": "pc_build_matrix",
+      "priority": 4,
+      "status": "blocked_by_host",
+      "targets": [
+        "macos",
+        "windows"
+      ],
+      "acceptance": [
+        "macos_release_build",
+        "windows_release_build",
+        "pc_quality_gate"
       ]
     }
   ],

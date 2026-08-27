@@ -10,6 +10,8 @@
 3. `REFACTOR_PLAN.md` - 机器可解析任务队列
 4. 目标模块的 `AI_ANALYSIS.md` - 机器可解析模块契约
 
+涉及平台、导航拓扑或模块准入时，同时读取 `CONTEXT.md` 和相关 `docs/adr/`。
+
 以上 agent 文档均为 JSON，禁止加入 Markdown、自然语言段落或手工文件清单。
 
 ## 新增模块规则
@@ -39,6 +41,16 @@
 - 只有支持多窗口的桌面平台且窗口宽度不小于 `600dp` 时，才允许创建分类窗口。
 - UI 必须通过 `NavigationPolicy` 获取导航模式，不能直接用 `Platform.isMacOS` 等条件决定业务导航。
 - `MultiWindowManager` 只负责桌面窗口生命周期，不负责移动端导航策略。
+
+## 初版封板与业务准入
+
+- 当前封板目标是 PC 基线（macOS/Windows）；Android 是非阻塞兼容轨道，不得被描述为已完成的全平台封板。
+- 在 PC 封板完成前，禁止新增依赖多窗口、原生插件或复杂跨平台状态的新业务模块。
+- PC 封板至少需要三分类窗口创建、重复打开复用、关闭后重开、无黑屏、无 `Invalid engine handle`，以及 macOS/Windows 构建证据。
+- Windows 构建必须在 Windows CI 或 Windows 主机完成；macOS 主机上的拒绝结果不能作为 Windows 通过证据。
+- Android 业务必须保持单窗口；Android 平台能力未完成时，模块必须声明平台限制并提供明确不可用状态。
+- 新业务模块必须通过 Agent Hub 冻结任务、模块契约、Tier 1 测试；涉及状态、异步或平台能力时必须补充行为测试。
+- 模块脚手架属于封板后的效率建设，不作为当前封板前置条件。
 
 ## 修改模块规则
 

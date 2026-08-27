@@ -80,6 +80,7 @@ packages/flutter_ioc_core              # 纯 Dart IoC 容器核心
 修改代码前先读根目录的：
 
 - `AGENTS.md`：agent 维护契约（修改前必读）
+- `CONTEXT.md`：PC 封板、Android 兼容轨道和模块准入术语
 - `AI_PROJECT_CONTEXT.md`：项目整体上下文与目录约定
 - `REFACTOR_PLAN.md`：阶段性归拢重构计划
 - 目标模块或共享能力的 `AI_ANALYSIS.md`
