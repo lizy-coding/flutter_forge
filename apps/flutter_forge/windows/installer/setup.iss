@@ -2,7 +2,8 @@
 AppId={{48C090B8-E508-4D2C-929F-4FA25EFB255D}
 AppName=Flutter Forge
 AppVersion=1.2.0
-DefaultDirName={autopf}\Flutter Forge
+PrivilegesRequired=lowest
+DefaultDirName={userpf}\Flutter Forge
 DefaultGroupName=Flutter Forge
 DisableProgramGroupPage=yes
 SourceDir=..\..\build\windows\x64\runner\Release

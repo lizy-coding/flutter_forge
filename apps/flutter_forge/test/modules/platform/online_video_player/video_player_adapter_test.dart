@@ -54,6 +54,53 @@ void main() {
     },
   );
 
+  test('default probe rejects an unreadable response stream', () async {
+    final httpAdapter = _RecordingHttpClientAdapter(streamError: true);
+    final dio = Dio()..httpClientAdapter = httpAdapter;
+    final adapter = VideoPlayerPluginAdapter(dio: dio);
+
+    await adapter.openAndPlay();
+
+    expect(adapter.uiState.value, PlayerUiState.error);
+    expect(platform.createdIds, isEmpty);
+    adapter.dispose();
+  });
+
+  test(
+    'no-frame monitor disposes the controller and enters error state',
+    () async {
+      final adapter = VideoPlayerPluginAdapter(
+        reachabilityProbe: (_) async => true,
+        noFrameTimeout: const Duration(milliseconds: 40),
+        noFrameCheckInterval: const Duration(milliseconds: 10),
+      );
+
+      await adapter.openAndPlay();
+      await _waitUntil(
+        () => adapter.uiState.value == PlayerUiState.error,
+        timeout: const Duration(seconds: 1),
+      );
+
+      expect(adapter.videoController, isNull);
+      expect(platform.disposedIds, isNotEmpty);
+      adapter.dispose();
+    },
+  );
+
+  test('Windows uses the shorter default initialize timeout', () {
+    final windowsAdapter = VideoPlayerPluginAdapter(
+      targetPlatform: TargetPlatform.windows,
+    );
+    final otherAdapter = VideoPlayerPluginAdapter(
+      targetPlatform: TargetPlatform.macOS,
+    );
+
+    expect(windowsAdapter.initializeTimeout, const Duration(seconds: 12));
+    expect(otherAdapter.initializeTimeout, const Duration(seconds: 15));
+    windowsAdapter.dispose();
+    otherAdapter.dispose();
+  });
+
   test(
     'initialize failure releases the previous controller and errors',
     () async {
@@ -147,6 +194,9 @@ void main() {
 }
 
 class _RecordingHttpClientAdapter implements HttpClientAdapter {
+  _RecordingHttpClientAdapter({this.streamError = false});
+
+  final bool streamError;
   String? method;
   String? range;
 
@@ -158,6 +208,16 @@ class _RecordingHttpClientAdapter implements HttpClientAdapter {
   ) async {
     method = options.method;
     range = options.headers['Range'] as String?;
+    if (streamError) {
+      return ResponseBody(
+        Stream<Uint8List>.error(StateError('unreadable stream')),
+        206,
+        headers: const {
+          Headers.contentTypeHeader: ['video/mp4'],
+          'content-range': ['bytes 0-0/1'],
+        },
+      );
+    }
     return ResponseBody.fromBytes(
       const [0],
       206,

@@ -29,10 +29,19 @@ abstract interface class VideoPlayerAdapter {
 class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   VideoPlayerPluginAdapter({
     VideoPlayerController? controller,
-    this.initializeTimeout = const Duration(seconds: 15),
+    Duration? initializeTimeout,
     this.reachabilityProbe,
     Dio? dio,
-  }) : _dio = dio ?? Dio() {
+    TargetPlatform? targetPlatform,
+    this.noFrameTimeout = const Duration(seconds: 10),
+    this.noFrameCheckInterval = const Duration(seconds: 1),
+  }) : targetPlatform = targetPlatform ?? defaultTargetPlatform,
+       initializeTimeout =
+           initializeTimeout ??
+           ((targetPlatform ?? defaultTargetPlatform) == TargetPlatform.windows
+               ? const Duration(seconds: 12)
+               : const Duration(seconds: 15)),
+       _dio = dio ?? Dio() {
     if (controller != null) {
       _controller = controller;
       _controller!.addListener(_synchronizeState);
@@ -41,6 +50,9 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
 
   final Duration initializeTimeout;
   final Future<bool> Function(Uri url)? reachabilityProbe;
+  final TargetPlatform targetPlatform;
+  final Duration noFrameTimeout;
+  final Duration noFrameCheckInterval;
   final Dio _dio;
 
   VideoPlayerController? _controller;
@@ -67,6 +79,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
 
   int _openGeneration = 0;
   bool _disposed = false;
+  Timer? _noFrameTimer;
 
   Future<bool> _defaultReachabilityProbe(Uri url) async {
     final cancelToken = CancelToken();
@@ -82,7 +95,17 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
             cancelToken: cancelToken,
           )
           .timeout(const Duration(seconds: 5));
-      return response.statusCode != null && response.statusCode! < 400;
+      final responseBody = response.data;
+      if (response.statusCode == null ||
+          response.statusCode! >= 400 ||
+          responseBody == null) {
+        return false;
+      }
+      final bytesRead = await responseBody.stream
+          .take(4096)
+          .fold<int>(0, (count, chunk) => count + chunk.length)
+          .timeout(const Duration(seconds: 3));
+      return bytesRead > 0;
     } on Object {
       return false;
     } finally {
@@ -101,9 +124,64 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   }
 
   Future<void> _releaseCurrent() async {
+    _cancelNoFrameMonitor();
     final current = _controller;
     _controller = null;
     await _disposeQuietly(current);
+  }
+
+  void _cancelNoFrameMonitor() {
+    _noFrameTimer?.cancel();
+    _noFrameTimer = null;
+  }
+
+  void _startNoFrameMonitor(VideoPlayerController controller, int generation) {
+    _cancelNoFrameMonitor();
+    var elapsed = Duration.zero;
+    var lastPosition = controller.value.position;
+    _noFrameTimer = Timer.periodic(noFrameCheckInterval, (timer) {
+      if (_disposed ||
+          generation != _openGeneration ||
+          _controller != controller) {
+        timer.cancel();
+        return;
+      }
+      final value = controller.value;
+      if (value.hasError) {
+        timer.cancel();
+        unawaited(_failNoFrame(controller, generation));
+        return;
+      }
+      if (value.position > lastPosition) {
+        timer.cancel();
+        _noFrameTimer = null;
+        return;
+      }
+      lastPosition = value.position;
+      elapsed += noFrameCheckInterval;
+      if (elapsed >= noFrameTimeout) {
+        timer.cancel();
+        _noFrameTimer = null;
+        unawaited(_failNoFrame(controller, generation));
+      }
+    });
+  }
+
+  Future<void> _failNoFrame(
+    VideoPlayerController controller,
+    int generation,
+  ) async {
+    if (_disposed ||
+        generation != _openGeneration ||
+        _controller != controller) {
+      return;
+    }
+    final failureGeneration = ++_openGeneration;
+    _controller = null;
+    await _disposeQuietly(controller);
+    if (!_disposed && failureGeneration == _openGeneration) {
+      uiState.value = PlayerUiState.error;
+    }
   }
 
   @override
@@ -136,6 +214,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
         return;
       }
       await controller.play();
+      _startNoFrameMonitor(controller, generation);
     } on Object {
       await _disposeQuietly(controller);
       if (_controller == controller) {
@@ -216,6 +295,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   void dispose() {
     _disposed = true;
     _openGeneration++;
+    _cancelNoFrameMonitor();
     unawaited(_releaseCurrent());
     uiState.dispose();
     position.dispose();
