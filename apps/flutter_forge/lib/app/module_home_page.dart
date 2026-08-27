@@ -97,6 +97,7 @@ class ModuleListTile extends StatelessWidget {
     final textOpacity = isAvailable ? 1.0 : 0.55;
 
     return ListTile(
+      key: ValueKey('module:${module.path}'),
       title: Row(
         children: [
           Expanded(
