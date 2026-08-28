@@ -87,6 +87,26 @@ void main() {
     },
   );
 
+  test('global loading watchdog releases a stalled initialization', () async {
+    platform.haltInitializedEvents = true;
+    final adapter = VideoPlayerPluginAdapter(
+      reachabilityProbe: (_) async => true,
+      loadingTimeout: const Duration(milliseconds: 40),
+      initializeTimeout: const Duration(seconds: 1),
+    );
+
+    final opening = adapter.openAndPlay();
+    await _waitUntil(
+      () => adapter.uiState.value == PlayerUiState.error,
+      timeout: const Duration(seconds: 1),
+    );
+
+    expect(adapter.videoController, isNull);
+    expect(platform.disposedIds, isNotEmpty);
+    await opening.timeout(const Duration(seconds: 1));
+    adapter.dispose();
+  });
+
   test('Windows uses the shorter default initialize timeout', () {
     final windowsAdapter = VideoPlayerPluginAdapter(
       targetPlatform: TargetPlatform.windows,

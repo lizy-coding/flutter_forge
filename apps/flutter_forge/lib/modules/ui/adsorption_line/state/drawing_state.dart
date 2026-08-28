@@ -8,11 +8,16 @@ class DrawingState extends ChangeNotifier {
   bool _isDragging = false;
   Offset? _dragOffset;
   final List<String> _logs = [];
+  static const dragUpdateInterval = Duration(milliseconds: 16);
+  final Stopwatch _dragUpdateClock = Stopwatch();
+  bool _hasProcessedDragUpdate = false;
+  int _elementsVersion = 0;
 
   List<DrawingElement> get elements => List.unmodifiable(_elements);
   DrawingElement? get selectedElement => _selectedElement;
   bool get isDragging => _isDragging;
   List<String> get logs => List.unmodifiable(_logs);
+  int get elementsVersion => _elementsVersion;
 
   void _addLog(String message) {
     _logs.add(message);
@@ -21,6 +26,7 @@ class DrawingState extends ChangeNotifier {
 
   void addElement(DrawingElement element) {
     _elements.add(element);
+    _elementsVersion++;
     _addLog('添加了 ${element.type.name} 元素 (${_elements.length})');
   }
 
@@ -35,6 +41,7 @@ class DrawingState extends ChangeNotifier {
       ),
     );
     _elements.removeWhere((element) => element.id == elementId);
+    if (removed.id == elementId) _elementsVersion++;
     if (_selectedElement?.id == elementId) {
       _selectedElement = null;
     }
@@ -47,6 +54,7 @@ class DrawingState extends ChangeNotifier {
     );
     if (index != -1) {
       _elements[index] = updatedElement;
+      _elementsVersion++;
       if (_selectedElement?.id == updatedElement.id) {
         _selectedElement = updatedElement;
       }
@@ -73,11 +81,20 @@ class DrawingState extends ChangeNotifier {
   void startDrag(Offset position) {
     _isDragging = true;
     _dragOffset = position;
+    _dragUpdateClock
+      ..reset()
+      ..start();
+    _hasProcessedDragUpdate = false;
     notifyListeners();
   }
 
-  void updateDrag(Offset position) {
+  void updateDrag(Offset position, {bool force = false}) {
     if (_isDragging && _selectedElement != null && _dragOffset != null) {
+      if (!force &&
+          _hasProcessedDragUpdate &&
+          _dragUpdateClock.elapsed < dragUpdateInterval) {
+        return;
+      }
       final delta = position - _dragOffset!;
       final newPosition = _selectedElement!.position + delta;
 
@@ -85,12 +102,16 @@ class DrawingState extends ChangeNotifier {
       updateElement(updatedElement);
 
       _dragOffset = position;
+      _hasProcessedDragUpdate = true;
+      _dragUpdateClock.reset();
     }
   }
 
   void endDrag() {
     _isDragging = false;
     _dragOffset = null;
+    _dragUpdateClock.stop();
+    _hasProcessedDragUpdate = false;
     notifyListeners();
   }
 
@@ -105,6 +126,7 @@ class DrawingState extends ChangeNotifier {
 
   void clear() {
     _elements.clear();
+    _elementsVersion++;
     _selectedElement = null;
     _isDragging = false;
     _dragOffset = null;

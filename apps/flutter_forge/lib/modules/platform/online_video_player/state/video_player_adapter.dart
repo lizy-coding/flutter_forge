@@ -35,6 +35,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     TargetPlatform? targetPlatform,
     this.noFrameTimeout = const Duration(seconds: 10),
     this.noFrameCheckInterval = const Duration(seconds: 1),
+    this.loadingTimeout = const Duration(seconds: 25),
   }) : targetPlatform = targetPlatform ?? defaultTargetPlatform,
        initializeTimeout =
            initializeTimeout ??
@@ -53,6 +54,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   final TargetPlatform targetPlatform;
   final Duration noFrameTimeout;
   final Duration noFrameCheckInterval;
+  final Duration loadingTimeout;
   final Dio _dio;
 
   VideoPlayerController? _controller;
@@ -80,6 +82,38 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   int _openGeneration = 0;
   bool _disposed = false;
   Timer? _noFrameTimer;
+  Timer? _loadingWatchdog;
+
+  void _logDiagnostic(String stage, Stopwatch stopwatch, String result) {
+    debugPrint(
+      '[video-diag] $stage ${stopwatch.elapsedMilliseconds}ms $result',
+    );
+  }
+
+  void _cancelLoadingWatchdog() {
+    _loadingWatchdog?.cancel();
+    _loadingWatchdog = null;
+  }
+
+  void _startLoadingWatchdog(int generation) {
+    _cancelLoadingWatchdog();
+    _loadingWatchdog = Timer(loadingTimeout, () {
+      if (_disposed ||
+          generation != _openGeneration ||
+          uiState.value != PlayerUiState.loading) {
+        return;
+      }
+      debugPrint(
+        '[video-diag] loading-watchdog '
+        '${loadingTimeout.inMilliseconds}ms timeout',
+      );
+      final controller = _controller;
+      _controller = null;
+      _openGeneration++;
+      unawaited(_disposeQuietly(controller));
+      if (!_disposed) uiState.value = PlayerUiState.error;
+    });
+  }
 
   Future<bool> _defaultReachabilityProbe(Uri url) async {
     final cancelToken = CancelToken();
@@ -190,14 +224,25 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     if (_disposed) return;
 
     uiState.value = PlayerUiState.loading;
+    _startLoadingWatchdog(generation);
     position.value = Duration.zero;
     duration.value = Duration.zero;
 
     final url = Uri.parse(sampleStreamUrl);
     final probe = reachabilityProbe ?? _defaultReachabilityProbe;
-    final reachable = await probe(url);
+    final probeStopwatch = Stopwatch()..start();
+    debugPrint('[video-diag] probe-start 0ms started');
+    bool reachable;
+    try {
+      reachable = await probe(url);
+      _logDiagnostic('probe-complete', probeStopwatch, 'reachable=$reachable');
+    } on Object catch (error) {
+      _logDiagnostic('probe-complete', probeStopwatch, 'error=$error');
+      reachable = false;
+    }
     if (_disposed || generation != _openGeneration) return;
     if (!reachable) {
+      _cancelLoadingWatchdog();
       uiState.value = PlayerUiState.error;
       return;
     }
@@ -207,20 +252,44 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     final controller = VideoPlayerController.networkUrl(url);
     controller.addListener(_synchronizeState);
     _controller = controller;
+    final initializeStopwatch = Stopwatch()..start();
+    debugPrint('[video-diag] initialize-start 0ms started');
     try {
       await controller.initialize().timeout(initializeTimeout);
+      _logDiagnostic('initialize-complete', initializeStopwatch, 'success');
       if (_disposed || generation != _openGeneration) {
         await _disposeQuietly(controller);
         return;
       }
       await controller.play();
+      _cancelLoadingWatchdog();
       _startNoFrameMonitor(controller, generation);
-    } on Object {
+    } on TimeoutException catch (error) {
+      _logDiagnostic(
+        'initialize-complete',
+        initializeStopwatch,
+        'timeout=$error',
+      );
       await _disposeQuietly(controller);
       if (_controller == controller) {
         _controller = null;
       }
       if (!_disposed && generation == _openGeneration) {
+        _cancelLoadingWatchdog();
+        uiState.value = PlayerUiState.error;
+      }
+    } on Object catch (error) {
+      _logDiagnostic(
+        'initialize-complete',
+        initializeStopwatch,
+        'error=$error',
+      );
+      await _disposeQuietly(controller);
+      if (_controller == controller) {
+        _controller = null;
+      }
+      if (!_disposed && generation == _openGeneration) {
+        _cancelLoadingWatchdog();
         uiState.value = PlayerUiState.error;
       }
     }
@@ -277,6 +346,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     if (controller == null) return;
     final value = controller.value;
     if (value.hasError) {
+      _cancelLoadingWatchdog();
       uiState.value = PlayerUiState.error;
       return;
     }
@@ -296,6 +366,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     _disposed = true;
     _openGeneration++;
     _cancelNoFrameMonitor();
+    _cancelLoadingWatchdog();
     unawaited(_releaseCurrent());
     uiState.dispose();
     position.dispose();

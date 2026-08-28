@@ -6,6 +6,7 @@ import 'dart:math' as math;
 /// 画板画布组件
 class DrawingCanvas extends StatelessWidget {
   final List<DrawingElement> elements;
+  final int elementsVersion;
   final DrawingElement? selectedElement;
   final Function(Offset) onTap;
   final Function(Offset) onPanStart;
@@ -15,6 +16,7 @@ class DrawingCanvas extends StatelessWidget {
   const DrawingCanvas({
     super.key,
     required this.elements,
+    required this.elementsVersion,
     this.selectedElement,
     required this.onTap,
     required this.onPanStart,
@@ -32,6 +34,7 @@ class DrawingCanvas extends StatelessWidget {
       child: CustomPaint(
         painter: DrawingCanvasPainter(
           elements: elements,
+          elementsVersion: elementsVersion,
           selectedElement: selectedElement,
         ),
         size: Size.infinite,
@@ -43,25 +46,35 @@ class DrawingCanvas extends StatelessWidget {
 /// 画布绘制器
 class DrawingCanvasPainter extends CustomPainter {
   final List<DrawingElement> elements;
+  final int elementsVersion;
   final DrawingElement? selectedElement;
 
-  DrawingCanvasPainter({required this.elements, this.selectedElement});
+  DrawingCanvasPainter({
+    required this.elements,
+    required this.elementsVersion,
+    this.selectedElement,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    // 绘制所有元素
-    for (final element in elements) {
-      _drawElement(canvas, element);
-    }
+    canvas.save();
+    try {
+      // 绘制所有元素
+      for (final element in elements) {
+        _drawElement(canvas, element);
+      }
 
-    // 绘制选中元素的边框
-    if (selectedElement != null) {
-      _drawSelectionBorder(canvas, selectedElement!);
-    }
+      // 绘制选中元素的边框
+      if (selectedElement != null) {
+        _drawSelectionBorder(canvas, selectedElement!);
+      }
 
-    // 绘制吸附线
-    if (selectedElement != null) {
-      _drawSnapLines(canvas, size);
+      // 绘制吸附线
+      if (selectedElement != null) {
+        _drawSnapLines(canvas, size);
+      }
+    } finally {
+      canvas.restore();
     }
   }
 
@@ -192,6 +205,7 @@ class DrawingCanvasPainter extends CustomPainter {
     const dashSpace = 3.0;
 
     final distance = (end - start).distance;
+    if (!distance.isFinite || distance <= 0) return;
     final dashCount = (distance / (dashWidth + dashSpace)).floor();
 
     if (dashCount == 0) return;
@@ -232,7 +246,7 @@ class DrawingCanvasPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant DrawingCanvasPainter oldDelegate) {
-    return elements != oldDelegate.elements ||
+    return elementsVersion != oldDelegate.elementsVersion ||
         selectedElement != oldDelegate.selectedElement;
   }
 }
