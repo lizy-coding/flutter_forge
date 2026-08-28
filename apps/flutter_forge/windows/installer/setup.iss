@@ -1,7 +1,7 @@
 [Setup]
 AppId={{48C090B8-E508-4D2C-929F-4FA25EFB255D}
 AppName=Flutter Forge
-AppVersion=1.2.0
+AppVersion=1.2.2
 PrivilegesRequired=lowest
 DefaultDirName={userpf}\Flutter Forge
 DefaultGroupName=Flutter Forge
