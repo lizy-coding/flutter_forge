@@ -10,6 +10,10 @@
   },
   "route": "/online-video-player",
   "category": "platform",
+  "supported_platforms": [
+    "macOS",
+    "windows"
+  ],
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart",

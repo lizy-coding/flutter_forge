@@ -20,10 +20,12 @@
   ],
   "owns": [
     "file_picker_api",
-    "method_channel_client"
+    "method_channel_client",
+    "file_selector_client"
   ],
   "depends": [
-    "flutter_sdk"
+    "flutter_sdk",
+    "file_selector"
   ],
   "children": [],
   "contracts": {

@@ -17,10 +17,10 @@ typedef FontBytesReader = Future<Uint8List> Function(String path);
 class FontPickerPage extends StatefulWidget {
   const FontPickerPage({
     super.key,
-    this.filePicker = const MethodChannelFilePicker(),
+    FilePickerService? filePicker,
     this.loader = const FontLoaderFontService(),
     this.fileReader = _readFontFile,
-  });
+  }) : filePicker = filePicker ?? const _DefaultFilePickerService();
 
   final FilePickerService filePicker;
   final FontLoaderService loader;
@@ -31,6 +31,21 @@ class FontPickerPage extends StatefulWidget {
 
   @override
   State<FontPickerPage> createState() => _FontPickerPageState();
+}
+
+class _DefaultFilePickerService implements FilePickerService {
+  const _DefaultFilePickerService();
+
+  @override
+  Future<PickedFile?> pickFile({
+    List<String> allowedExtensions = const [],
+    String? title,
+    String? message,
+  }) => createFilePickerService().pickFile(
+    allowedExtensions: allowedExtensions,
+    title: title,
+    message: message,
+  );
 }
 
 class _FontPickerPageState extends State<FontPickerPage> {

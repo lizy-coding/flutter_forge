@@ -12,9 +12,8 @@ enum FilePickerState {
 }
 
 class FilePickerController extends ChangeNotifier {
-  FilePickerController({
-    FilePickerService filePicker = const MethodChannelFilePicker(),
-  }) : _filePicker = filePicker;
+  FilePickerController({FilePickerService? filePicker})
+    : _filePicker = filePicker ?? createFilePickerService();
 
   static const Map<String, List<String>> _extensionsByMode = {
     'gcode': ['.gcode', '.nc', '.tap'],

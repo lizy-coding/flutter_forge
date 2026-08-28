@@ -28,8 +28,8 @@ const _kGcodeFileExtensions = [
 class GcodePlayerController extends ChangeNotifier {
   GcodePlayerController({
     required TickerProvider vsync,
-    FilePickerService filePicker = const MethodChannelFilePicker(),
-  }) : _filePicker = filePicker {
+    FilePickerService? filePicker,
+  }) : _filePicker = filePicker ?? createFilePickerService() {
     _animationController =
         AnimationController(vsync: vsync, duration: const Duration(seconds: 5))
           ..addListener(_onAnimationTick)

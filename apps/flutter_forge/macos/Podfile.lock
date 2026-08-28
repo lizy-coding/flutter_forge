@@ -3,6 +3,8 @@ PODS:
     - FlutterMacOS
   - device_info_plus (0.0.1):
     - FlutterMacOS
+  - file_selector_macos (0.0.1):
+    - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - video_player_avfoundation (0.0.1):
     - Flutter
@@ -11,6 +13,7 @@ PODS:
 DEPENDENCIES:
   - desktop_multi_window (from `Flutter/ephemeral/.symlinks/plugins/desktop_multi_window/macos`)
   - device_info_plus (from `Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos`)
+  - file_selector_macos (from `Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - video_player_avfoundation (from `Flutter/ephemeral/.symlinks/plugins/video_player_avfoundation/darwin`)
 
@@ -19,6 +22,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/desktop_multi_window/macos
   device_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos
+  file_selector_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos
   FlutterMacOS:
     :path: Flutter/ephemeral
   video_player_avfoundation:
@@ -27,6 +32,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   desktop_multi_window: 93667594ccc4b88d91a97972fd3b1b89667fa80a
   device_info_plus: a56e6e74dbbd2bb92f2da12c64ddd4f67a749041
+  file_selector_macos: 9e9e068e90ebee155097d00e89ae91edb2374db7
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   video_player_avfoundation: 3453f792138786248960ca029747fcd9f318ef52
 

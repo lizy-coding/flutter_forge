@@ -5,12 +5,9 @@ import 'pages/file_picker_page.dart';
 import 'state/file_picker_controller.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-    this.filePicker = const MethodChannelFilePicker(),
-  });
+  const HomePage({super.key, this.filePicker});
 
-  final FilePickerService filePicker;
+  final FilePickerService? filePicker;
 
   @override
   State<HomePage> createState() => _HomePageState();

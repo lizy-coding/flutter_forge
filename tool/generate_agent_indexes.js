@@ -272,7 +272,7 @@ const modules = [
     concepts: ['FilePickerService', 'MethodChannel', '平台桥接', '扩展名过滤', '取消分支'],
     estimatedMinutes: 20,
     entry: 'FilePickerEntry',
-    supportedPlatforms: ['macOS'],
+    supportedPlatforms: ['macOS', 'windows'],
   },
   {
     category: 'platform',
@@ -384,8 +384,8 @@ const workspacePackages = [
     kind: 'flutter_bridge_package',
     path: 'packages/file_picker_bridge',
     entrypoints: ['lib/file_picker_bridge.dart'],
-    owns: ['file_picker_api', 'method_channel_client'],
-    depends: ['flutter_sdk'],
+    owns: ['file_picker_api', 'method_channel_client', 'file_selector_client'],
+    depends: ['flutter_sdk', 'file_selector'],
     validation: ['flutter pub get', 'flutter analyze', 'flutter test'],
     test_status: 'configured',
   },
@@ -941,7 +941,7 @@ function writeModuleIndexes() {
 }
 
 function writeModuleContracts() {
-  for (const { category, id: module, route, status, depends } of modules) {
+  for (const { category, id: module, route, status, depends, supportedPlatforms } of modules) {
     const dir = path.join(appRoot, 'lib/modules', category, module);
     const entrypoints = [];
     for (const item of ['module_entry.dart', 'module_root.dart', 'module_routes.dart']) {
@@ -962,6 +962,7 @@ function writeModuleContracts() {
       },
       route,
       category,
+      ...(supportedPlatforms ? { supported_platforms: supportedPlatforms } : {}),
       entrypoints: entrypoints.length ? entrypoints : ['module_entry.dart'],
       owns: ['module_entry', 'module_ui', 'module_docs'],
       depends,
