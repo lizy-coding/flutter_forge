@@ -19,6 +19,11 @@ set(USB_EPHEMERAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../..")
 if(NOT EXISTS "${USB_EPHEMERAL_DIR}/cpp_client_wrapper/include/flutter/plugin.h")
   message(WARNING "usb_detector: cpp_client_wrapper not found at ${USB_EPHEMERAL_DIR}; wrapper includes may fail")
 endif()
+# 显式继承 flutter_wrapper_plugin 的 include(传递在 symlink 插件上失效的兜底)
+get_target_property(USB_WRAPPER_INCLUDES flutter_wrapper_plugin INTERFACE_INCLUDE_DIRECTORIES)
+if(USB_WRAPPER_INCLUDES)
+  target_include_directories(${PLUGIN_NAME} PRIVATE ${USB_WRAPPER_INCLUDES})
+endif()
 target_include_directories(${PLUGIN_NAME} PRIVATE
   "${USB_EPHEMERAL_DIR}/include"
   "${USB_EPHEMERAL_DIR}/cpp_client_wrapper/include")
