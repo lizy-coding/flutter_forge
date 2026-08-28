@@ -13,9 +13,9 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES
 target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
-# 插件经 .plugin_symlinks 编译时, wrapper/引擎头须显式 include。
-# 真实路径: apps/flutter_forge/windows/usb_detector/windows -> ../../../flutter/ephemeral
-file(REAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../flutter/ephemeral" USB_EPHEMERAL_DIR)
+# 插件经 .plugin_symlinks 编译, CMAKE_CURRENT_SOURCE_DIR 为 symlink 形式:
+# .../flutter/ephemeral/.plugin_symlinks/<plugin>/windows -> 上溯 3 级 = ephemeral
+set(USB_EPHEMERAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../..")
 if(NOT EXISTS "${USB_EPHEMERAL_DIR}/cpp_client_wrapper/include/flutter/plugin.h")
   message(WARNING "usb_detector: cpp_client_wrapper not found at ${USB_EPHEMERAL_DIR}; wrapper includes may fail")
 endif()
