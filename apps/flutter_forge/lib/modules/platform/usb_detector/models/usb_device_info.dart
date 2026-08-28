@@ -4,6 +4,9 @@ class UsbDeviceInfo {
   final String? manufacturer;
   final String? product;
   final String? serialNumber;
+  final String? platformDeviceId;
+  final String? bus;
+  final String? port;
   final UsbDeviceStatus status;
   final DateTime lastSeen;
 
@@ -13,6 +16,9 @@ class UsbDeviceInfo {
     this.manufacturer,
     this.product,
     this.serialNumber,
+    this.platformDeviceId,
+    this.bus,
+    this.port,
     this.status = UsbDeviceStatus.connected,
     DateTime? lastSeen,
   }) : lastSeen = lastSeen ?? DateTime.now();
@@ -28,6 +34,7 @@ class UsbDeviceInfo {
   }
 
   String get deviceId =>
+      platformDeviceId ??
       '${vendorId.toRadixString(16).padLeft(4, '0')}:${productId.toRadixString(16).padLeft(4, '0')}'
           .toUpperCase();
 

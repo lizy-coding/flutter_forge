@@ -17,6 +17,8 @@ dependencies:
     path: ../../packages/file_picker_bridge
   flutter_ioc_core:
     path: ../../packages/flutter_ioc_core
+  usb_detector_windows:
+    path: windows/usb_detector
   flutter:
     sdk: flutter
   go_router: ^14.2.0

@@ -287,14 +287,15 @@ final List<ModuleEntry> _modules = [
     difficulty: Difficulty.intermediate,
     concepts: [
       'Android USB',
-      'UsbManager',
+      'Windows SetupAPI',
+      'WM_DEVICECHANGE',
       'MethodChannel',
       'Stream 广播',
       '设备扫描',
     ],
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
-    supportedPlatforms: {TargetPlatform.android},
+    supportedPlatforms: {TargetPlatform.android, TargetPlatform.windows},
     builder: (context) => const UsbDetectorEntry(),
   ),
   ModuleEntry(

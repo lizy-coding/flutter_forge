@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../models/usb_device_info.dart';
@@ -9,9 +10,24 @@ import '../models/usb_device_info.dart';
 class UsbDetectionService {
   static final UsbDetectionService _instance = UsbDetectionService._internal();
   factory UsbDetectionService() => _instance;
-  UsbDetectionService._internal();
-
   static const MethodChannel _channel = MethodChannel('usb_detector/usb');
+
+  UsbDetectionService._internal()
+    : _platformOverride = null,
+      _serviceChannel = _channel;
+
+  @visibleForTesting
+  UsbDetectionService.forTesting({
+    TargetPlatform? platform,
+    MethodChannel? channel,
+  }) : _platformOverride = platform,
+       _serviceChannel = channel ?? _channel;
+
+  final TargetPlatform? _platformOverride;
+  final MethodChannel _serviceChannel;
+
+  TargetPlatform get _platform => _platformOverride ?? defaultTargetPlatform;
+  bool get _isWindows => _platform == TargetPlatform.windows;
 
   bool _isInitialized = false;
   List<UsbDeviceInfo> _connectedDevices = [];
@@ -38,8 +54,13 @@ class UsbDetectionService {
 
       if (_isInitialized) {
         _statusStreamController.add('USB服务初始化成功');
-        await _refreshDeviceList();
-        _startPeriodicScanning();
+        if (_isWindows) {
+          _serviceChannel.setMethodCallHandler(_handleWindowsMethodCall);
+          await _refreshDeviceList(method: 'enumerate');
+        } else {
+          await _refreshDeviceList(method: 'listDevices');
+          _startPeriodicScanning();
+        }
       } else {
         _statusStreamController.add('USB服务初始化失败');
       }
@@ -55,14 +76,14 @@ class UsbDetectionService {
     }
   }
 
-  Future<void> _refreshDeviceList() async {
+  Future<void> _refreshDeviceList({String? method}) async {
     if (!_isInitialized) return;
 
     try {
       _statusStreamController.add('正在扫描USB设备...');
 
-      final rawDevices = await _channel.invokeMethod<List<dynamic>>(
-        'listDevices',
+      final rawDevices = await _serviceChannel.invokeMethod<List<dynamic>>(
+        method ?? (_isWindows ? 'enumerate' : 'listDevices'),
       );
       List<UsbDeviceInfo> deviceInfoList = [];
 
@@ -74,8 +95,11 @@ class UsbDetectionService {
             vendorId: (device['vendorId'] as num?)?.toInt() ?? 0,
             productId: (device['productId'] as num?)?.toInt() ?? 0,
             manufacturer: device['manufacturer'] as String?,
-            product: device['product'] as String?,
+            product: (device['product'] ?? device['name']) as String?,
             serialNumber: device['serialNumber'] as String?,
+            platformDeviceId: device['id'] as String?,
+            bus: device['bus'] as String?,
+            port: device['port'] as String?,
             status: UsbDeviceStatus.connected,
           );
 
@@ -106,6 +130,18 @@ class UsbDetectionService {
       );
       _statusStreamController.add('扫描错误: $e');
     }
+  }
+
+  Future<dynamic> _handleWindowsMethodCall(MethodCall call) async {
+    if (call.method == 'onDevicesChanged') {
+      await _refreshDeviceList(method: 'enumerate');
+    }
+    return null;
+  }
+
+  @visibleForTesting
+  Future<void> handleNativeMethodCall(MethodCall call) async {
+    await _handleWindowsMethodCall(call);
   }
 
   void _startPeriodicScanning() {
@@ -166,6 +202,9 @@ class UsbDetectionService {
 
   void dispose() {
     _periodicTimer?.cancel();
+    if (_isWindows) {
+      _serviceChannel.setMethodCallHandler(null);
+    }
     _deviceStreamController.close();
     _statusStreamController.close();
 

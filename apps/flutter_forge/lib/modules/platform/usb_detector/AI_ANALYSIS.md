@@ -11,7 +11,8 @@
   "route": "/usb-detector",
   "category": "platform",
   "supported_platforms": [
-    "android"
+    "android",
+    "windows"
   ],
   "entrypoints": [
     "module_entry.dart",
@@ -25,6 +26,7 @@
   "depends": [
     "flutter_study_learning",
     "device_info_plus",
+    "usb_detector_windows",
     "module_registry"
   ],
   "children": [],
