@@ -53,10 +53,6 @@ jobs:
         if: matrix.platform == 'windows'
         working-directory: apps/flutter_forge
         run: flutter build windows --release
-      - name: Package Windows
-        if: matrix.platform == 'windows'
-        shell: pwsh
-        run: Compress-Archive -Path apps/flutter_forge/build/windows/x64/runner/Release/* -DestinationPath ${{ matrix.artifact }} -Force
       - name: Install Inno Setup
         if: matrix.platform == 'windows'
         shell: pwsh
@@ -67,6 +63,7 @@ jobs:
         shell: pwsh
         run: iscc windows/installer/setup.iss
       - uses: actions/upload-artifact@v4
+        if: matrix.platform == 'macos'
         with:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.artifact }}
