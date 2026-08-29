@@ -236,7 +236,6 @@
       "depends": [
         "flutter_study_learning",
         "device_info_plus",
-        "usb_detector_windows",
         "module_registry"
       ],
       "analysis": "lib/modules/platform/usb_detector/AI_ANALYSIS.md"

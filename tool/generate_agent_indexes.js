@@ -251,14 +251,15 @@ const modules = [
     id: 'usb_detector',
     route: '/usb-detector',
     status: 'ready',
-    depends: ['flutter_study_learning', 'device_info_plus', 'usb_detector_windows', 'module_registry'],
+    depends: ['flutter_study_learning', 'device_info_plus', 'module_registry'],
     title: 'USB 设备检测',
-    subtitle: '跨平台 USB 设备检测与状态监控',
+    subtitle: 'Android USB 设备检测与状态监控',
     difficulty: 'intermediate',
-    concepts: ['Android USB', 'Windows SetupAPI', 'WM_DEVICECHANGE', 'MethodChannel', 'Stream 广播', '设备扫描'],
+    concepts: ['Android USB', 'MethodChannel', 'Stream 广播', '设备扫描'],
     estimatedMinutes: 25,
     entry: 'UsbDetectorEntry',
-    supportedPlatforms: ['android', 'windows'],
+    supportedPlatforms: ['android'],
+    supportedPlatformsComment: '// Android-only: Windows 原生插件已移除，目录显示不可用、路由不注册',
   },
   {
     category: 'platform',
@@ -792,6 +793,9 @@ function writeRouteTable() {
     lines.push(`    estimatedMinutes: ${m.estimatedMinutes},`);
     lines.push(`    status: ModuleStatus.${m.status},`);
     if (m.supportedPlatforms) {
+      if (m.supportedPlatformsComment) {
+        lines.push(`    ${m.supportedPlatformsComment}`);
+      }
       lines.push(`    supportedPlatforms: {${m.supportedPlatforms.map((platform) => `TargetPlatform.${platform}`).join(', ')}},`);
     }
     lines.push(`    builder: (context) => const ${m.entry}(),`);

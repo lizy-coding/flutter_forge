@@ -11,4 +11,3 @@ workspace:
   - packages/flutter_study_learning
   - packages/file_picker_bridge
   - packages/flutter_ioc_core
-  - apps/flutter_forge/windows/usb_detector

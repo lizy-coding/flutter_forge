@@ -282,20 +282,14 @@ final List<ModuleEntry> _modules = [
   ModuleEntry(
     title: 'USB 设备检测',
     path: '/usb-detector',
-    subtitle: '跨平台 USB 设备检测与状态监控',
+    subtitle: 'Android USB 设备检测与状态监控',
     category: ModuleCategory.platform,
     difficulty: Difficulty.intermediate,
-    concepts: [
-      'Android USB',
-      'Windows SetupAPI',
-      'WM_DEVICECHANGE',
-      'MethodChannel',
-      'Stream 广播',
-      '设备扫描',
-    ],
+    concepts: ['Android USB', 'MethodChannel', 'Stream 广播', '设备扫描'],
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
-    supportedPlatforms: {TargetPlatform.android, TargetPlatform.windows},
+    // Android-only: Windows 原生插件已移除，目录显示不可用、路由不注册
+    supportedPlatforms: {TargetPlatform.android},
     builder: (context) => const UsbDetectorEntry(),
   ),
   ModuleEntry(
