@@ -1,19 +1,21 @@
 # Windows 实机测试清单
 
-任务：REL-20260827-windows-testable-packaging（后续修订：USB 移除 + 发布形态切换）  
-基线提交：`8e15ad5`（USB 移除 14273f6 已推送；release.yml 去 zip 直发 exe）  
+任务：REL-20260827-windows-testable-packaging（后续修订：USB 移除 + 发布形态切换 + v1.2.2 发布）  
+基线提交：`v1.2.2`（= 200ad0c，2026-08-29 发布）  
 运行环境：Windows x64  
-状态：等待 Windows 实机签收
+状态：**已发布 v1.2.2**，等待 Windows 实机签收
 
 ## 产物记录
 
 | 项目 | 记录 |
 | --- | --- |
-| Release workflow run ID | 33226619709（dev=8e15ad5，2026-08-29，success） |
-| 安装包 | `flutter_forge-setup-x64.exe`（12,019,743 bytes） |
-| setup.exe SHA256 | `79ad43f048dab66c76e863904132e8b44924fa352070ccb81b5fe3e250463860` |
+| GitHub Release | [Flutter Forge v1.2.2](https://github.com/lizy-coding/flutter_forge/releases/tag/v1.2.2)（Latest，2026-08-29） |
+| Release workflow run ID | 33231849904（tag push 自动触发，200ad0c，success） |
+| 安装包 | `flutter_forge-setup-x64.exe`（12,020,767 bytes，仅此一个 Windows 产物，无 zip） |
+| setup.exe SHA256 | `7d3444037e18cffb0595c2e4ac5594ad55db78a82ae02f160a9039435dd0aa21` |
+| macOS 产物 | `flutter_forge-macos-x64.zip`（20,611,365 bytes，SHA256 `8a3bdc70189fc138a1e92c51f6461e9439e09885dfe3c056b588f0a5dac8f3d6`） |
 | 便携包 | 已取消（2026-08-29 起 Windows 仅发布 setup.exe，不再产 zip；macOS 保留 zip） |
-| 参考：USB 移除前成功基线 | run 33225421217（dev=14273f6，zip+exe 形态，2026-08-29） |
+| 历史版本 | v1.2.1（2026-08-23，含 zip 旧形态）保留；1.0.0 空 release 已删除 |
 
 ## 测试前置
 
