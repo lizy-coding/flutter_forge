@@ -126,6 +126,19 @@ const modules = [
     entry: 'FlutterIocEntry',
   },
   {
+    category: 'state',
+    id: 'local_persistence',
+    route: '/local-persistence',
+    status: 'ready',
+    depends: ['flutter_study_learning', 'shared_preferences', 'module_registry'],
+    title: '本地持久化',
+    subtitle: '使用 shared_preferences 持久化设置项与计数器，理解异步读取与状态恢复',
+    difficulty: 'intermediate',
+    concepts: ['shared_preferences', '键值存储', '异步读取', '状态恢复', '测试替身'],
+    estimatedMinutes: 25,
+    entry: 'LocalPersistenceEntry',
+  },
+  {
     category: 'ui',
     id: 'gcode_visualizer',
     route: '/gcode-visualizer',
@@ -344,7 +357,7 @@ const routeTableImportOrder = [
 const categoryMeta = {
   basic: [['tree_state', 'microtask', 'debounce_throttle'], ['basic_mechanisms'], ['module_registry', 'flutter_study_learning']],
   async: [['stream_subscription', 'isolate_basic', 'isolate_task_manager'], ['async_concurrency'], ['module_registry', 'flutter_study_learning']],
-  state: [['status_management', 'flutter_ioc'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core']],
+  state: [['status_management', 'flutter_ioc', 'local_persistence'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core', 'shared_preferences']],
   ui: [['gcode_visualizer', 'adsorption_line', 'download_animation', 'font_picker'], ['ui_animation_custom_paint'], ['provider', 'gcode_core', 'file_picker_bridge', 'flutter_study_learning', 'module_registry']],
   popup_table: [['popup_widgets', 'popup_list_interaction', 'scroll_table', 'overlay_follow_compare'], ['popup_overlay_table'], ['module_registry', 'flutter_study_learning', 'two_dimensional_scrollables']],
   platform: [['dio_interceptor', 'usb_detector', 'file_picker', 'online_video_player'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'video_player', 'video_player_win', 'flutter_study_learning', 'file_picker_bridge']],

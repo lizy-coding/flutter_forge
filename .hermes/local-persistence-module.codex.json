@@ -1,0 +1,179 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "FEAT-20260830-local-persistence",
+  "title": "新增本地持久化教学模块（shared_preferences）",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "add_local_persistence_module_using_shared_preferences",
+  "context": "封板后第一波新模块的第一个：state 分类新增 local_persistence 模块（官方插件 shared_preferences 2.5.5，pub-cache 已有缓存，全平台支持，无自写原生代码，不违反 AGENTS.md 封板约束——官方标准插件与既有 video_player/file_selector 同级）。Hermes 已完成 gap analysis：pubspec.yaml 现无 shared_preferences；LearningScaffold API = title/sections/interactiveDemo/floatingActionButton（packages/flutter_study_learning/lib/src/learning_scaffold.dart:260-300）；生成源模块条目格式见 tool/generate_agent_indexes.js modules 数组（category/id/route/status/depends/title/subtitle/difficulty/concepts/estimatedMinutes/entry）；categoryMeta state 行当前为 state: [['status_management', 'flutter_ioc'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core']]（line 347）。模块契约要求：module_entry.dart + AI_ANALYSIS.md（生成器产出）+ 路由注册（生成器产出）+ ModuleEntry 元数据齐全 + 至少 1 页使用 flutter_study_learning 教学模板。",
+  "agent_role": "code_executor；仅本地 commit，严禁 git push；不修改门禁脚本；不手改生成文档",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "host": "macos",
+    "baseline": "HEAD 应为 906a0ba（origin/dev 同）。工作区仅 2 个已知 untracked：.hermes/windows-ui-automation.codex.json 与 docs/WINDOWS_PHASE2_PLAN.md——不得触碰、不得 git add",
+    "verified_facts": [
+      "apps/flutter_forge/pubspec.yaml dependencies 无 shared_preferences；version 1.2.0（禁止改）",
+      "pub-cache 已有 shared_preferences-2.5.5（~/.pub-cache/hosted/pub.flutter-io.cn/），离线解析可用",
+      "LearningScaffold(title, sections, interactiveDemo, floatingActionButton) + LearningObjectives(objectives) + ConceptChips(concepts) + CodeSnippetCard(title, code, explanation) 均在 packages/flutter_study_learning/lib/src/learning_scaffold.dart",
+      "AI_MODULE_INDEX 权威计数当前 20（grep -c '\"id\":' lib/AI_MODULE_INDEX.md），新增后应为 21",
+      "测试布局唯一合法位置：test/modules/<category>/<module>/<module>_test.dart",
+      "生成物（app_route_table.dart / AI_MODULE_INDEX.md / 各 AI_ANALYSIS.md）只能通过 bash tool/generate_harness_ai_analysis.sh 从 tool/generate_agent_indexes.js 生成，禁止手改",
+      "消费模块先例：lib/modules/ui/font_picker/（module_entry.dart 极简 + module_root.dart HomePage + services/ 抽象注入）",
+      "shared_preferences 官方测试机制：SharedPreferences.setMockInitialValues({}) 后 SharedPreferences.getInstance() 即返回 mock，无需手写 fake 平台"
+    ]
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "preferences_service_abstraction",
+      "rationale": "沿用项目先例（gcode_player_controller 注入 FilePickerService、font_picker 注入 FontLoaderService）：抽 PreferencesService 抽象接口 + SharedPreferencesPreferencesService 实现（包装 SharedPreferences.getInstance()），controller/页面只依赖抽象，测试注入 mock 实例。教学点包含依赖注入与测试替身。",
+      "constraints": [
+        "接口方法：getInt/getBool/getString/setInt/setBool/setString/remove/clear",
+        "实现类内部持有 SharedPreferences 实例（getInstance() 异步获取，允许内部 Future 缓存）",
+        "测试用 SharedPreferences.setMockInitialValues({}) + 真实实现类（官方 mock 机制），不手写 fake platform",
+        "模块内任何文件不得直接 import shared_preferences 包（除 services/preferences_service.dart 实现文件）"
+      ],
+      "acceptance": [
+        "services/preferences_service.dart 存在抽象 + 实现",
+        "测试文件中 SharedPreferences.setMockInitialValues 至少出现 1 次",
+        "controller 通过构造注入 PreferencesService"
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "state_restore_with_loading",
+      "rationale": "持久化模块的核心教学点：异步读取后的状态恢复。controller 提供一次性 load()（initState 触发），加载完成前 UI 显示 loading 指示，禁止默认值先渲染再被持久化值覆盖（闪烁/覆盖竞态）。保存操作 await 完成后刷新 UI 状态。",
+      "constraints": [
+        "controller 用 ChangeNotifier + ListenableBuilder（Flutter 内置，零新依赖）",
+        "状态字段：int count、bool soundEnabled、String noteText（教学示例三件套：计数/开关/文本）",
+        "load() 完成前 isLoaded=false，UI 显示 CircularProgressIndicator 而非表单",
+        "save 类方法在 isLoaded=false 时安全拒绝或等待（不得抛异常）"
+      ],
+      "acceptance": [
+        "controller 有 load/save（或等价）方法且含 isLoaded 状态",
+        "UI 有加载态分支（测试断言 loading 存在）",
+        "默认值不覆盖持久化值的竞态在测试中覆盖（mock 预置值 → load → 断言恢复值）"
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "teaching_page_and_registration",
+      "rationale": "满足模块契约：教学页用 LearningScaffold 组装（LearningObjectives + ConceptChips + CodeSnippetCard + interactiveDemo 交互区：计数器 +1/-1/重置、开关、文本输入自动保存、清除全部按钮）；注册走生成源单点修改（modules 数组 + categoryMeta state 行），生成物自动产出，门禁文档漂移检查兜底。",
+      "constraints": [
+        "module_entry.dart：LocalPersistenceEntry（StatelessWidget → HomePage）",
+        "module_root.dart：HomePage 用 LearningScaffold，标题'本地持久化'",
+        "LearningObjectives / ConceptChips / CodeSnippetCard 三个教学组件至少各使用 1 次",
+        "tool/generate_agent_indexes.js 只改两处：modules 数组新增 local_persistence 条目（state 分类，flutter_ioc 之后）+ categoryMeta state 行（modules 列表加 'local_persistence'，depends 加 'shared_preferences'）",
+        "supportedPlatforms 不填（shared_preferences 官方全平台支持，null=全平台）",
+        "改完生成源立即跑 bash tool/generate_harness_ai_analysis.sh，禁止手改任何生成物"
+      ],
+      "acceptance": [
+        "教学页使用 LearningScaffold",
+        "AI_MODULE_INDEX 计数 20→21",
+        "app_route_table.dart 出现 /local-persistence 路由（生成产物）",
+        "generate_agent_indexes.js 的 diff 只含本模块相关行"
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight_baseline",
+      "detail": "cd /Users/forest/code/langGraph/flutter_forge；git status --short（应仅 2 个已知 untracked）、git log --oneline -1（预期 906a0ba）、git rev-parse origin/dev、flutter --version；任一与预期不符立即停止报告（并行 agent 可能已移动基线）",
+      "verify": "git rev-parse HEAD == 906a0ba"
+    },
+    {
+      "step": 2,
+      "action": "add_shared_preferences_dependency",
+      "detail": "cd apps/flutter_forge；优先 flutter pub add shared_preferences（期望解析 ^2.5.5，走本地 pub-cache）。若沙箱网络受限导致解析失败：手工在 pubspec.yaml dependencies 末尾加 'shared_preferences: ^2.5.5'（保持现有 2 空格缩进与顺序），再 flutter pub get --offline（缓存已有 2.5.5）。仅允许添加 shared_preferences 一个依赖",
+      "verify": "grep -n 'shared_preferences' apps/flutter_forge/pubspec.yaml；git diff apps/flutter_forge/pubspec.yaml 只含该依赖行"
+    },
+    {
+      "step": 3,
+      "action": "write_preferences_service",
+      "detail": "新建 apps/flutter_forge/lib/modules/state/local_persistence/services/preferences_service.dart 按 DD-1：抽象类 PreferencesService（getInt/getBool/getString/setInt/setBool/setString/remove/clear，均为 Future 返回）+ SharedPreferencesPreferencesService 实现（内部懒加载 SharedPreferences.getInstance()）。文件头注释注明教学用途",
+      "verify": "文件存在且抽象含全部 8 个方法"
+    },
+    {
+      "step": 4,
+      "action": "write_persistence_controller",
+      "detail": "新建 apps/flutter_forge/lib/modules/state/local_persistence/state/persistence_demo_controller.dart 按 DD-2：class PersistenceDemoController extends ChangeNotifier，构造注入 PreferencesService；字段 count/soundEnabled/noteText + isLoaded；load() 一次性恢复（key 前缀 'local_persistence.'）；increment/decrement/reset/clearAll/updateSoundEnabled/updateNoteText 保存后 notifyListeners；dispose 不额外资源清理（PreferencesService 无生命周期）",
+      "verify": "文件存在；构造参数含 PreferencesService"
+    },
+    {
+      "step": 5,
+      "action": "write_module_entry_and_teaching_page",
+      "detail": "新建 module_entry.dart（LocalPersistenceEntry → HomePage）与 module_root.dart 按 DD-3：HomePage 用 LearningScaffold(title: '本地持久化')，sections 含 LearningObjectives（学习目标列表）、ConceptChips（concepts 列表）、CodeSnippetCard（关键代码片段如 setMockInitialValues 测试法或 getInstance 用法）；interactiveDemo = 计数器区（显示 count + 三个按钮 +1/-1/重置）、开关（soundEnabled）、文本输入（noteText 防抖或 onChanged 直接保存——直接保存即可，简单优先）、'清除全部'按钮（clearAll + 确认 SnackBar）；加载态 CircularProgressIndicator；页面 StatefulWidget + ListenableBuilder 监听 controller，controller 在 initState 创建并 load()，dispose 释放",
+      "verify": "LearningScaffold / LearningObjectives / ConceptChips / CodeSnippetCard 各至少 1 次引用"
+    },
+    {
+      "step": 6,
+      "action": "register_in_generator_and_regenerate",
+      "detail": "修改 tool/generate_agent_indexes.js 仅两处：①modules 数组 state 分类（flutter_ioc 条目之后）新增 { category: 'state', id: 'local_persistence', route: '/local-persistence', status: 'ready', depends: ['flutter_study_learning', 'shared_preferences', 'module_registry'], title: '本地持久化', subtitle: '使用 shared_preferences 持久化设置项与计数器，理解异步读取与状态恢复', difficulty: 'intermediate', concepts: ['shared_preferences', '键值存储', '异步读取', '状态恢复', '测试替身'], estimatedMinutes: 25, entry: 'LocalPersistenceEntry' }；②categoryMeta 的 state 行改为 state: [['status_management', 'flutter_ioc', 'local_persistence'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core', 'shared_preferences']]。然后仓库根执行 bash tool/generate_harness_ai_analysis.sh（生成 app_route_table.dart / AI_MODULE_INDEX.md / 模块 AI_ANALYSIS.md）",
+      "verify": "bash tool/generate_harness_ai_analysis.sh 退出 0；grep -c '\"id\":' lib/AI_MODULE_INDEX.md == 21；grep -n '/local-persistence' apps/flutter_forge/lib/app/router/app_route_table.dart"
+    },
+    {
+      "step": 7,
+      "action": "write_tests",
+      "detail": "新建两个测试文件：①test/modules/state/local_persistence/preferences_service_test.dart——SharedPreferences.setMockInitialValues({}) 后注入真实 SharedPreferencesPreferencesService，覆盖 getInt/setInt/getBool/setBool/getString/setString/remove/clear 读写回读；②test/modules/state/local_persistence/persistence_demo_controller_test.dart——setMockInitialValues 预置 'local_persistence.count'=42 等 → load() 后断言恢复值（DD-2 恢复竞态覆盖）；increment 后断言写入；clearAll 后断言归零；isLoaded 初始 false、load 完成后 true。再跑 flutter test test/modules/state/local_persistence/ 全过",
+      "verify": "flutter test test/modules/state/local_persistence/ 退出 0，用例数 ≥ 8"
+    },
+    {
+      "step": 8,
+      "action": "commit_and_gate",
+      "detail": "git add 精确路径（严禁 git add . / -A）：apps/flutter_forge/lib/modules/state/local_persistence/、apps/flutter_forge/test/modules/state/local_persistence/、apps/flutter_forge/pubspec.yaml、apps/flutter_forge/pubspec.lock、tool/generate_agent_indexes.js、生成物（apps/flutter_forge/lib/app/router/app_route_table.dart、lib/AI_MODULE_INDEX.md、lib/modules/state/local_persistence/AI_ANALYSIS.md）、.hermes/local-persistence-module.codex.json；git commit -m 'feat(state): add local persistence module with shared_preferences'（仅本地）。若沙箱 .git 只读导致 commit 失败（Unable to create .git/index.lock），属预期：记录已完成的文件清单与验证结果，停止并等待 Hermes 收尾轮，不要重试绕过。commit 成功后 bash tool/quality_gate.sh 必须 6/6；失败则修复 + 追加 commit 重跑",
+      "verify": "git log --oneline -1 为新 commit（或按沙箱限制如实报告）；bash tool/quality_gate.sh 6/6"
+    },
+    {
+      "step": 9,
+      "action": "final_report",
+      "detail": "输出报告：变更文件清单、AI_MODULE_INDEX 20→21 证据、路由注册证据、测试结果（用例数与通过数）、quality_gate 结果、git log 确认未 push（git rev-parse origin/dev 仍 906a0ba）、沙箱受阻项（如有）",
+      "verify": "报告含 origin/dev 指针未变确认"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1：services/preferences_service.dart 含抽象 + SharedPreferences 实现；controller 构造注入",
+    "DD-2：controller 含 load/isLoaded/保存方法；UI 有加载态；mock 预置值恢复测试通过",
+    "DD-3：教学页用 LearningScaffold + 三个教学组件；generate_agent_indexes.js 仅两处改动；AI_MODULE_INDEX 20→21；/local-persistence 路由生成",
+    "apps/flutter_forge/pubspec.yaml 含 shared_preferences ^2.5.5（且仅此一个新依赖）",
+    "测试文件 ≥2 且 flutter test test/modules/state/local_persistence/ 全过",
+    "bash tool/quality_gate.sh 6/6（Hermes 将独立复跑）",
+    "git rev-parse origin/dev == 906a0ba（未 push）",
+    "未触碰其他 20 个模块、门禁脚本、.hermes/windows-ui-automation.codex.json、docs/WINDOWS_PHASE2_PLAN.md",
+    "ModuleEntry 元数据齐全（title/subtitle/category/difficulty/concepts/estimatedMinutes/status）"
+  ],
+  "forbidden_changes": [
+    "其他 20 个模块的任何文件",
+    "手改生成物（app_route_table.dart / AI_MODULE_INDEX.md / 任何 AI_ANALYSIS.md）——只能经生成器",
+    "tool/*.sh 与 .github/workflows/*（门禁脚本）",
+    "apps/flutter_forge/pubspec.yaml 的 version 字段",
+    "除 shared_preferences 外新增任何依赖",
+    "git add . / git add -A / 添加未列出的文件",
+    "git push / git remote 修改 / 任何远端操作",
+    "修改 .hermes/windows-ui-automation.codex.json 或 docs/WINDOWS_PHASE2_PLAN.md"
+  ],
+  "validation": [
+    "bash tool/generate_harness_ai_analysis.sh && git diff --exit-code（文档生成不漂移）",
+    "dart format . && git diff --exit-code -- '*.dart'",
+    "flutter analyze（bare，0 issue）",
+    "bash tool/test_all.sh",
+    "bash tool/verify_test_layout.sh",
+    "bash tool/quality_gate.sh 6/6",
+    "grep -c '\"id\":' lib/AI_MODULE_INDEX.md == 21"
+  ],
+  "out_of_scope": [
+    "下载队列模块（下一任务）",
+    "其他分类新模块",
+    "版本 bump / 发布 / 打包",
+    "多窗口与 Windows 实机验收"
+  ],
+  "notes": [
+    "沙箱网络受限属预期：依赖解析失败用 --offline 兜底（pub-cache 已有 shared_preferences-2.5.5）；仍失败记录 BLOCKED 由 Hermes 验收时补 pub get",
+    "路径与权限：仓库根 /Users/forest/code/langGraph/flutter_forge，仓库内一律用仓库根相对路径，禁止 .. 跳转出仓库；权限拒绝≠用户拒绝，换正确路径重试不得中止任务",
+    "依赖源码分析已由 Hermes 完成（gap analysis 与 API 均已在上文提供），禁止阅读 ~/.pub-cache 下源码；SharedPreferences.setMockInitialValues 是官方文档 API，可直接使用",
+    "先 commit 再跑 quality_gate（门禁的 git diff 检查假设工作区干净）",
+    "视觉验收（教学页渲染）由 Hermes/用户在 macOS 实机进行，本任务只需代码与测试证据"
+  ]
+}

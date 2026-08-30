@@ -32,6 +32,7 @@ dependencies:
   desktop_multi_window: ^0.3.0
   video_player: ^2.10.0
   video_player_win: ^3.2.2
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   integration_test:
