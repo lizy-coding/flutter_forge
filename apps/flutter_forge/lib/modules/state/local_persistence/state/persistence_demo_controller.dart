@@ -12,53 +12,61 @@ class PersistenceDemoController extends ChangeNotifier {
 
   final PreferencesService _preferences;
 
-  int count = 0;
-  bool soundEnabled = true;
-  String noteText = '';
-  bool isLoaded = false;
+  int _count = 0;
+  bool _soundEnabled = true;
+  String _noteText = '';
+  bool _isLoaded = false;
   bool _loadStarted = false;
+
+  int get count => _count;
+
+  bool get soundEnabled => _soundEnabled;
+
+  String get noteText => _noteText;
+
+  bool get isLoaded => _isLoaded;
 
   Future<void> load() async {
     if (_loadStarted) return;
     _loadStarted = true;
-    count = await _preferences.getInt(_countKey) ?? 0;
-    soundEnabled = await _preferences.getBool(_soundEnabledKey) ?? true;
-    noteText = await _preferences.getString(_noteTextKey) ?? '';
-    isLoaded = true;
+    _count = await _preferences.getInt(_countKey) ?? 0;
+    _soundEnabled = await _preferences.getBool(_soundEnabledKey) ?? true;
+    _noteText = await _preferences.getString(_noteTextKey) ?? '';
+    _isLoaded = true;
     notifyListeners();
   }
 
   Future<void> increment() async {
     if (!isLoaded) return;
-    count++;
-    await _preferences.setInt(_countKey, count);
+    _count++;
+    await _preferences.setInt(_countKey, _count);
     notifyListeners();
   }
 
   Future<void> decrement() async {
     if (!isLoaded) return;
-    count--;
-    await _preferences.setInt(_countKey, count);
+    _count--;
+    await _preferences.setInt(_countKey, _count);
     notifyListeners();
   }
 
   Future<void> reset() async {
     if (!isLoaded) return;
-    count = 0;
-    await _preferences.setInt(_countKey, count);
+    _count = 0;
+    await _preferences.setInt(_countKey, _count);
     notifyListeners();
   }
 
   Future<void> updateSoundEnabled(bool value) async {
     if (!isLoaded) return;
-    soundEnabled = value;
+    _soundEnabled = value;
     await _preferences.setBool(_soundEnabledKey, value);
     notifyListeners();
   }
 
   Future<void> updateNoteText(String value) async {
     if (!isLoaded) return;
-    noteText = value;
+    _noteText = value;
     await _preferences.setString(_noteTextKey, value);
     notifyListeners();
   }
@@ -68,9 +76,9 @@ class PersistenceDemoController extends ChangeNotifier {
     await _preferences.remove(_countKey);
     await _preferences.remove(_soundEnabledKey);
     await _preferences.remove(_noteTextKey);
-    count = 0;
-    soundEnabled = true;
-    noteText = '';
+    _count = 0;
+    _soundEnabled = true;
+    _noteText = '';
     notifyListeners();
   }
 }
