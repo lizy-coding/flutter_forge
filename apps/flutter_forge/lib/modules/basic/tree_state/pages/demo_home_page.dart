@@ -39,10 +39,11 @@ class DemoHomePage extends StatelessWidget {
       title: 'Flutter 三棵树 & 生命周期示例',
       interactiveDemo: SizedBox(
         height: 260,
-        child: Column(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
             const Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Text(
                 '观察 Widget / Element / RenderObject 的关系以及生命周期日志',
                 style: TextStyle(fontSize: 14),

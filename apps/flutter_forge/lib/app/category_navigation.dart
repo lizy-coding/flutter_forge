@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../module_registry/module_catalog_utils.dart';
@@ -5,6 +6,7 @@ import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import '../shared/multi_window/multi_window_manager.dart';
 import 'category_window_app.dart';
+import 'navigation_policy.dart';
 
 /// Selects the platform-appropriate way to open a module category.
 ///
@@ -13,14 +15,20 @@ import 'category_window_app.dart';
 class CategoryNavigation {
   const CategoryNavigation._();
 
-  static bool get opensInNewWindow => MultiWindowManager.isSupported;
+  static CategoryNavigationMode modeFor(BuildContext context) {
+    return NavigationPolicy.resolve(
+      platform: defaultTargetPlatform,
+      width: MediaQuery.sizeOf(context).width,
+      multiWindowSupported: MultiWindowManager.isSupported,
+    );
+  }
 
   static Future<void> open(
     BuildContext context, {
     required ModuleCategory category,
     required List<ModuleEntry> modules,
   }) async {
-    if (opensInNewWindow) {
+    if (modeFor(context) == CategoryNavigationMode.separateWindow) {
       await MultiWindowManager.instance.createCategoryWindow(category);
       return;
     }

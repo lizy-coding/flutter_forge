@@ -10,6 +10,10 @@
   },
   "route": "/file-picker",
   "category": "platform",
+  "supported_platforms": [
+    "macOS",
+    "windows"
+  ],
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart",

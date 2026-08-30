@@ -86,6 +86,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
               builder: (context, drawingState, child) {
                 return DrawingCanvas(
                   elements: drawingState.elements,
+                  elementsVersion: drawingState.elementsVersion,
                   selectedElement: drawingState.selectedElement,
                   onTap: _handleCanvasTap,
                   onPanStart: _handlePanStart,

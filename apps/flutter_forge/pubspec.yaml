@@ -1,7 +1,7 @@
 name: flutter_forge_app
 description: Flutter Forge app shell.
 publish_to: 'none'
-version: 1.1.0
+version: 1.2.0
 
 environment:
   sdk: ^3.11.5
@@ -28,15 +28,18 @@ dependencies:
   collection: ^1.18.0
   flutter_svg: ^2.0.10+1
   two_dimensional_scrollables: ^0.3.0
-  usb_serial: ^0.5.0
   device_info_plus: ^10.1.2
   desktop_multi_window: ^0.3.0
   video_player: ^2.10.0
+  video_player_win: ^3.2.2
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  video_player_platform_interface: ^6.2.1
   flutterguard_cli:
     git:
       url: https://github.com/lizy-coding/flutterguard.git

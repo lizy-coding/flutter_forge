@@ -10,6 +10,8 @@
 3. `REFACTOR_PLAN.md` - 机器可解析任务队列
 4. 目标模块的 `AI_ANALYSIS.md` - 机器可解析模块契约
 
+涉及平台、导航拓扑或模块准入时，同时读取 `CONTEXT.md` 和相关 `docs/adr/`。
+
 以上 agent 文档均为 JSON，禁止加入 Markdown、自然语言段落或手工文件清单。
 
 ## 新增模块规则
@@ -20,9 +22,35 @@
 |--------|------|
 | `module_entry.dart` | 导出 `*Entry` Widget，作为模块入口 |
 | `AI_ANALYSIS.md` | 模块机器契约：route、category、status、entrypoints、owns、depends、analysis_parent、validation |
-| 路由注册 | 在 `lib/router/app_route_table.dart` 的 `_modules` 中注册 |
+| 路由注册 | 在 `apps/flutter_forge/lib/app/router/app_route_table.dart` 的 `_modules` 中注册 |
 | 模块元数据 | `ModuleEntry` 必须填写 `category`、`difficulty`、`concepts`、`estimatedMinutes`、`status`、`subtitle` |
 | 教学页面 | 至少 1 个页面使用外部 `flutter_study_learning` 包中的教学模板组件（`LearningScaffold` 等） |
+
+平台可用性规则：
+
+- `ModuleEntry.supportedPlatforms == null` 表示模块默认支持所有平台。
+- 平台相关模块必须显式填写 `supportedPlatforms`，并在字段旁保留语义清晰的注释。
+- 平台判定必须通过 `module_registry/module_catalog_utils.dart` 集中执行，模块页面不得自行调用 `Platform` API 决定目录可见性。
+- 不支持的模块保留在目录中，显示不可用状态；其模块路由不注册。
+- 平台可用性与 `ModuleStatus`（学习质量状态）分离，不能用 `pending/ready/recommended` 表达平台限制。
+
+导航拓扑规则：
+
+- Android、iOS 和 Web 永远使用应用内导航，不创建业务多窗口。
+- 小于 `600dp` 的紧凑窗口使用应用内导航。
+- 只有支持多窗口的桌面平台且窗口宽度不小于 `600dp` 时，才允许创建分类窗口。
+- UI 必须通过 `NavigationPolicy` 获取导航模式，不能直接用 `Platform.isMacOS` 等条件决定业务导航。
+- `MultiWindowManager` 只负责桌面窗口生命周期，不负责移动端导航策略。
+
+## 初版封板与业务准入
+
+- 当前封板目标是 PC 基线（macOS/Windows）；Android 是非阻塞兼容轨道，不得被描述为已完成的全平台封板。
+- 在 PC 封板完成前，禁止新增依赖多窗口、原生插件或复杂跨平台状态的新业务模块。
+- PC 封板至少需要三分类窗口创建、重复打开复用、关闭后重开、无黑屏、无 `Invalid engine handle`，以及 macOS/Windows 构建证据。
+- Windows 构建必须在 Windows CI 或 Windows 主机完成；macOS 主机上的拒绝结果不能作为 Windows 通过证据。
+- Android 业务必须保持单窗口；Android 平台能力未完成时，模块必须声明平台限制并提供明确不可用状态。
+- 新业务模块必须通过 Agent Hub 冻结任务、模块契约、Tier 1 测试；涉及状态、异步或平台能力时必须补充行为测试。
+- 模块脚手架属于封板后的效率建设，不作为当前封板前置条件。
 
 ## 修改模块规则
 
@@ -41,13 +69,14 @@ bash tool/quality_gate.sh
 等效手动步骤（quality_gate.sh 内部执行顺序）:
 1. `bash tool/generate_harness_ai_analysis.sh` + `git diff --exit-code` (文档不漂移)
 2. `dart format .` + `git diff --exit-code -- '*.dart'` (格式不漂移)
-3. `flutter analyze` (无 error)
+3. `flutter analyze` (bare：info/warning 同样视为失败)
 4. `bash tool/test_all.sh` (全部测试通过)
 5. `bash tool/verify_test_layout.sh` (测试目录布局合规并输出模块测试覆盖报告)
-6. `dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题)
+6. `cd apps/flutter_forge && dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题，仅本地执行)
 
-- `flutter analyze` 必须通过，不允许有 error 级别问题
-- `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题
+- `flutter analyze` 必须通过（bare，不允许任何 issue，含 info）
+- `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题（仅本地；CI 不运行 flutterguard）
+- 远端打包门禁为 `.github/workflows/ci.yml`，同样使用 bare `flutter analyze`，是唯一权威的远端验收
 - 涉及逻辑代码时补充测试
 - 涉及 UI 教学页时进行人工验收或截图说明
 
@@ -60,12 +89,13 @@ bash tool/quality_gate.sh
 | 跳过分析文档 | 禁止修改模块后不更新 `AI_ANALYSIS.md` |
 | 绕过分析 | 禁止绕过 `flutter analyze` 直接提交 |
 | 破坏元数据 | 禁止注册 `ModuleEntry` 时省略 `subtitle`、`category`、`difficulty` 等字段 |
+| 修改打包门禁 | 禁止修改 `.github/workflows/ci.yml`、`tool/quality_gate.sh` 及其余 `tool/*.sh` 门禁脚本的语义，除非任务显式声明并经人工验收（agent-hub 侧同样受 `packaging_change` 保护路径守卫约束）。`.github/workflows/release.yml` 是首个安装器发布任务明确授权的打包工作流；后续修改仍需显式 `packaging_change` 任务和人工验收。 |
 
 ## Harless 巡检职责
 
 定期执行以下检查：
 
-1. 扫描 `lib/` 下所有模块目录，检查是否都在 `_modules` 中注册
+1. 扫描 `apps/flutter_forge/lib/modules/` 下所有模块目录，检查是否都在 `_modules` 中注册
 2. 检查每个模块是否有 `AI_ANALYSIS.md`
 3. 检查重点模块是否使用教学模板（`flutter_study_learning` 包）
 4. 检查 `ModuleEntry` 元数据是否完整（所有必填字段）

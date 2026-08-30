@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
+import '../module_registry/module_catalog_utils.dart';
 import 'category_navigation.dart';
+import 'navigation_policy.dart';
 
 class ModuleHomePage extends StatelessWidget {
   const ModuleHomePage({super.key, required this.modules});
@@ -46,7 +49,8 @@ class ModuleHomePage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(
-                        CategoryNavigation.opensInNewWindow
+                        CategoryNavigation.modeFor(context) ==
+                                CategoryNavigationMode.separateWindow
                             ? Icons.open_in_new
                             : Icons.chevron_right,
                         size: 20,
@@ -89,11 +93,16 @@ class ModuleListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final difficultyColor = _difficultyColor(module.difficulty);
+    final isAvailable = isModuleAvailable(module, defaultTargetPlatform);
+    final textOpacity = isAvailable ? 1.0 : 0.55;
 
     return ListTile(
+      key: ValueKey('module:${module.path}'),
       title: Row(
         children: [
-          Expanded(child: Text(module.title)),
+          Expanded(
+            child: Opacity(opacity: textOpacity, child: Text(module.title)),
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
@@ -114,7 +123,13 @@ class ModuleListTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(module.subtitle, style: const TextStyle(fontSize: 12)),
+          Text(
+            isAvailable ? module.subtitle : '当前平台暂不支持此模块',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.black.withValues(alpha: textOpacity),
+            ),
+          ),
           const SizedBox(height: 6),
           Wrap(
             spacing: 4,
@@ -138,12 +153,18 @@ class ModuleListTile extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             '预计 ${module.estimatedMinutes} 分钟 · ${module.status.label}',
-            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey.shade600.withValues(alpha: textOpacity),
+            ),
           ),
         ],
       ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => context.push(module.path),
+      trailing: Icon(
+        isAvailable ? Icons.chevron_right : Icons.block,
+        color: isAvailable ? null : Colors.grey,
+      ),
+      onTap: isAvailable ? () => context.push(module.path) : null,
     );
   }
 }

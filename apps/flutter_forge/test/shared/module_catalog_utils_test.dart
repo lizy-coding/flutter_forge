@@ -10,6 +10,7 @@ void main() {
     required String path,
     required ModuleCategory category,
     List<GoRoute> routes = const [],
+    Set<TargetPlatform>? supportedPlatforms,
   }) {
     return ModuleEntry(
       title: path,
@@ -22,6 +23,7 @@ void main() {
       status: ModuleStatus.ready,
       builder: (_) => const SizedBox.shrink(),
       routes: routes,
+      supportedPlatforms: supportedPlatforms,
     );
   }
 
@@ -55,5 +57,37 @@ void main() {
 
     expect(routes.single.path, 'basic-a');
     expect((routes.single.routes.single as GoRoute).path, 'details');
+  });
+
+  test('platform-neutral modules are available by default', () {
+    final module = createModule(
+      path: '/platform-neutral',
+      category: ModuleCategory.basic,
+    );
+
+    expect(isModuleAvailable(module, TargetPlatform.android), isTrue);
+    expect(isModuleAvailable(module, TargetPlatform.windows), isTrue);
+  });
+
+  test('platform-restricted modules only match declared platforms', () {
+    final module = createModule(
+      path: '/macos-only',
+      category: ModuleCategory.platform,
+      supportedPlatforms: {TargetPlatform.macOS},
+    );
+
+    expect(isModuleAvailable(module, TargetPlatform.macOS), isTrue);
+    expect(isModuleAvailable(module, TargetPlatform.windows), isFalse);
+    expect(availableModules([module], TargetPlatform.windows), isEmpty);
+  });
+
+  test('unavailable modules are excluded from category routes', () {
+    final module = createModule(
+      path: '/windows-only',
+      category: ModuleCategory.platform,
+      supportedPlatforms: {TargetPlatform.windows},
+    );
+
+    expect(buildCategoryRoutes([module]), isEmpty);
   });
 }

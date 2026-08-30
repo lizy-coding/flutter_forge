@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
 import 'module_category.dart';
@@ -10,9 +11,22 @@ List<ModuleEntry> filterModulesByCategory(
   return allModules.where((module) => module.category == category).toList();
 }
 
+bool isModuleAvailable(ModuleEntry module, [TargetPlatform? platform]) {
+  return module.isSupportedOn(platform ?? defaultTargetPlatform);
+}
+
+List<ModuleEntry> availableModules(
+  List<ModuleEntry> modules, [
+  TargetPlatform? platform,
+]) {
+  return modules
+      .where((module) => isModuleAvailable(module, platform))
+      .toList();
+}
+
 List<GoRoute> buildCategoryRoutes(List<ModuleEntry> modules) {
   return [
-    for (final module in modules)
+    for (final module in availableModules(modules))
       GoRoute(
         path: _stripLeadingSlash(module.path),
         builder: (context, state) => module.builder(context),

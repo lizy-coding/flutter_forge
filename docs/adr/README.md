@@ -8,8 +8,10 @@
 |------|------|------|
 | 0001 | 单仓布局 (Pub Workspace) | accepted |
 | 0002 | Agent 契约生成源 | accepted |
-| 0003 | 平台能力边界 | proposed |
+| 0003 | 平台模块可用性 | accepted |
 | 0004 | 质量门禁策略 | proposed |
+| 0005 | 移动端单窗口与桌面响应式导航 | accepted |
+| 0006 | PC 可维护性封板与 Android 兼容轨道 | accepted |
 
 ## 状态定义
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 
@@ -14,9 +15,21 @@ class MultiWindowManager {
       Platform.isMacOS || Platform.isWindows || Platform.isLinux;
 
   final Map<ModuleCategory, String> _categoryWindows = {};
+  StreamSubscription<void>? _windowCloseListener;
+
+  /// Starts window lifecycle observation and removes stale category entries.
+  Future<void> initialize() async {
+    if (!isSupported) return;
+    _windowCloseListener ??= onWindowsChanged.listen((_) {
+      unawaited(_calibrateCategoryWindows());
+    });
+    await _calibrateCategoryWindows();
+  }
 
   Future<String?> createCategoryWindow(ModuleCategory category) async {
     if (!isSupported) return null;
+
+    await _calibrateCategoryWindows();
 
     if (_categoryWindows.containsKey(category)) {
       final existingId = _categoryWindows[category]!;
@@ -35,10 +48,23 @@ class MultiWindowManager {
     final config = WindowConfiguration(hiddenAtLaunch: true, arguments: args);
 
     final controller = await WindowController.create(config);
-    await controller.show();
 
     _categoryWindows[category] = controller.windowId;
     return controller.windowId;
+  }
+
+  Future<void> _calibrateCategoryWindows() async {
+    final controllers = await WindowController.getAll();
+    final liveCategoryWindows = <ModuleCategory, String>{};
+    for (final controller in controllers) {
+      final arguments = parseArguments(controller.arguments);
+      if (arguments.type == WindowType.category && arguments.category != null) {
+        liveCategoryWindows[arguments.category!] = controller.windowId;
+      }
+    }
+    _categoryWindows
+      ..clear()
+      ..addAll(liveCategoryWindows);
   }
 
   bool isCategoryOpen(ModuleCategory category) =>

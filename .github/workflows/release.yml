@@ -1,0 +1,134 @@
+name: Release installers
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: "3.44.6"
+  NODE_VERSION: "20.20.2"
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }} installer
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: macos-latest
+            platform: macos
+            artifact: flutter_forge-macos-x64.zip
+          - os: windows-latest
+            platform: windows
+            artifact: flutter_forge-windows-x64.zip
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Bootstrap
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
+      - name: Tests
+        shell: bash
+        run: bash tool/test_all.sh
+      - name: Build macOS
+        if: matrix.platform == 'macos'
+        working-directory: apps/flutter_forge
+        run: flutter build macos --release
+      - name: Package macOS
+        if: matrix.platform == 'macos'
+        run: ditto -c -k --keepParent 'apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app' ${{ matrix.artifact }}
+      - name: Build Windows
+        if: matrix.platform == 'windows'
+        working-directory: apps/flutter_forge
+        run: flutter build windows --release
+      - name: Install Inno Setup
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: choco install innosetup -y
+      - name: Build Windows installer
+        if: matrix.platform == 'windows'
+        working-directory: apps/flutter_forge
+        shell: pwsh
+        run: iscc windows/installer/setup.iss
+      - uses: actions/upload-artifact@v4
+        if: matrix.platform == 'macos'
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
+          retention-days: 14
+      - name: Upload Windows installer
+        if: matrix.platform == 'windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter_forge-setup-x64.exe
+          path: flutter_forge-setup-x64.exe
+          retention-days: 14
+
+  release:
+    name: Create GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+      - name: Build release notes
+        shell: bash
+        run: |
+          TAG="${{ github.ref_name }}"
+          PREV_TAG="$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || true)"
+          RANGE="$TAG"
+          if [[ -n "$PREV_TAG" ]]; then
+            RANGE="$PREV_TAG..$TAG"
+          fi
+
+          write_group() {
+            local heading="$1"
+            local pattern="$2"
+            local commits
+            commits="$(git log "$RANGE" --pretty='- %s (%h)' --extended-regexp --grep="$pattern" || true)"
+            printf '## %s\n\n' "$heading" >> release-notes.md
+            if [[ -n "$commits" ]]; then
+              printf '%s\n\n' "$commits" >> release-notes.md
+            else
+              printf '%s\n\n' '- 无' >> release-notes.md
+            fi
+          }
+
+          printf '%s\n' '首个桌面安装器发布。macOS 构建和 Windows 安装器均未签名；首次运行时，macOS 请右键选择“打开”（或执行 `xattr -dr com.apple.quarantine`），Windows SmartScreen 请点击“更多信息（More info）”后选择“仍要运行（Run anyway）”。' > release-notes.md
+          printf '\n' >> release-notes.md
+          write_group "Features" '^feat(\(.+\))?!?:'
+          write_group "Fixes" '^fix(\(.+\))?!?:'
+          write_group "Chores" '^(chore|build|ci|docs|refactor|perf|test|style)(\(.+\))?!?:'
+
+          cat >> release-notes.md <<'EOF'
+          ## Artifacts
+
+          | 文件 | 大小 | 签名状态 |
+          | --- | ---: | --- |
+          EOF
+          for asset in release-assets/*; do
+            size="$(du -h "$asset" | cut -f1)"
+            printf '| `%s` | %s | 未签名 |\n' "$(basename "$asset")" "$size" >> release-notes.md
+          done
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" release-assets/* --title "Flutter Forge ${{ github.ref_name }}" --notes-file release-notes.md

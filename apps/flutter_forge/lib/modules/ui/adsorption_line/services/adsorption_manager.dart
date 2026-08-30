@@ -87,7 +87,7 @@ class AdsorptionManager {
     List<DrawingElement> elements,
     DrawingElement? currentElement,
   ) {
-    if (currentElement == null) return [];
+    if (currentElement == null || elements.isEmpty) return [];
 
     final snapLines = <SnapLine>[];
     final currentSnapPoints = currentElement.getSnapPoints();
@@ -98,7 +98,9 @@ class AdsorptionManager {
       final elementSnapPoints = element.getSnapPoints();
 
       for (final currentPoint in currentSnapPoints) {
+        if (!currentPoint.dx.isFinite || !currentPoint.dy.isFinite) continue;
         for (final elementPoint in elementSnapPoints) {
+          if (!elementPoint.dx.isFinite || !elementPoint.dy.isFinite) continue;
           if ((currentPoint.dx - elementPoint.dx).abs() < snapThreshold) {
             snapLines.add(
               SnapLine(
@@ -130,6 +132,7 @@ class AdsorptionManager {
     List<DrawingElement> elements,
     DrawingElement currentElement,
   ) {
+    if (!position.dx.isFinite || !position.dy.isFinite) return position;
     final snapLines = calculateSnapLines(elements, currentElement);
     double newX = position.dx;
     double newY = position.dy;

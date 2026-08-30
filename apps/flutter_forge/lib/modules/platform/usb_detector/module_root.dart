@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_study_learning/flutter_study_learning.dart';
 
@@ -16,6 +18,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final UsbDetectionService _usbService = UsbDetectionService();
+  final List<StreamSubscription<dynamic>> _subscriptions = [];
   List<UsbDeviceInfo> _devices = [];
   String _statusMessage = '正在初始化...';
   String _systemInfo = '';
@@ -29,6 +32,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
     _usbService.dispose();
     super.dispose();
   }
@@ -37,22 +43,28 @@ class _MyHomePageState extends State<MyHomePage> {
     bool initialized = await _usbService.initialize();
     String systemInfo = await _usbService.getSystemInfo();
 
+    if (!mounted) return;
+
     setState(() {
       _isInitialized = initialized;
       _systemInfo = systemInfo;
     });
 
-    _usbService.deviceStream.listen((devices) {
-      setState(() {
-        _devices = devices;
-      });
-    });
+    _subscriptions.add(
+      _usbService.deviceStream.listen((devices) {
+        setState(() {
+          _devices = devices;
+        });
+      }),
+    );
 
-    _usbService.statusStream.listen((status) {
-      setState(() {
-        _statusMessage = status;
-      });
-    });
+    _subscriptions.add(
+      _usbService.statusStream.listen((status) {
+        setState(() {
+          _statusMessage = status;
+        });
+      }),
+    );
   }
 
   Future<void> _refreshDevices() async {

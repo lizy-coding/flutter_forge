@@ -235,7 +235,6 @@
       "status": "ready",
       "depends": [
         "flutter_study_learning",
-        "usb_serial",
         "device_info_plus",
         "module_registry"
       ],
@@ -262,7 +261,9 @@
       "status": "ready",
       "depends": [
         "flutter_study_learning",
+        "dio",
         "video_player",
+        "video_player_win",
         "module_registry"
       ],
       "analysis": "lib/modules/platform/online_video_player/AI_ANALYSIS.md"

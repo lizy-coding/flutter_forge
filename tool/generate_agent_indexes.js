@@ -251,13 +251,15 @@ const modules = [
     id: 'usb_detector',
     route: '/usb-detector',
     status: 'ready',
-    depends: ['flutter_study_learning', 'usb_serial', 'device_info_plus', 'module_registry'],
+    depends: ['flutter_study_learning', 'device_info_plus', 'module_registry'],
     title: 'USB 设备检测',
-    subtitle: '跨平台 USB 设备检测与状态监控',
+    subtitle: 'Android USB 设备检测与状态监控',
     difficulty: 'intermediate',
-    concepts: ['usb_serial', 'device_info_plus', 'Stream 广播', '设备扫描'],
+    concepts: ['Android USB', 'MethodChannel', 'Stream 广播', '设备扫描'],
     estimatedMinutes: 25,
     entry: 'UsbDetectorEntry',
+    supportedPlatforms: ['android'],
+    supportedPlatformsComment: '// Android-only: Windows 原生插件已移除，目录显示不可用、路由不注册',
   },
   {
     category: 'platform',
@@ -271,19 +273,21 @@ const modules = [
     concepts: ['FilePickerService', 'MethodChannel', '平台桥接', '扩展名过滤', '取消分支'],
     estimatedMinutes: 20,
     entry: 'FilePickerEntry',
+    supportedPlatforms: ['macOS', 'windows'],
   },
   {
     category: 'platform',
     id: 'online_video_player',
     route: '/online-video-player',
     status: 'ready',
-    depends: ['flutter_study_learning', 'video_player', 'module_registry'],
+    depends: ['flutter_study_learning', 'dio', 'video_player', 'video_player_win', 'module_registry'],
     title: '在线视频播放',
     subtitle: '使用 video_player 播放在线 HTTP 视频流并操控播放参数',
     difficulty: 'intermediate',
     concepts: ['video_player', '平台播放器', 'HTTP 流', '播放控制', '倍速', 'Controller 生命周期'],
     estimatedMinutes: 35,
     entry: 'OnlineVideoPlayerEntry',
+    supportedPlatforms: ['macOS', 'windows'],
   },
 ];
 
@@ -343,7 +347,7 @@ const categoryMeta = {
   state: [['status_management', 'flutter_ioc'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core']],
   ui: [['gcode_visualizer', 'adsorption_line', 'download_animation', 'font_picker'], ['ui_animation_custom_paint'], ['provider', 'gcode_core', 'file_picker_bridge', 'flutter_study_learning', 'module_registry']],
   popup_table: [['popup_widgets', 'popup_list_interaction', 'scroll_table', 'overlay_follow_compare'], ['popup_overlay_table'], ['module_registry', 'flutter_study_learning', 'two_dimensional_scrollables']],
-  platform: [['dio_interceptor', 'usb_detector', 'file_picker', 'online_video_player'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'video_player', 'flutter_study_learning', 'file_picker_bridge']],
+  platform: [['dio_interceptor', 'usb_detector', 'file_picker', 'online_video_player'], ['network_platform'], ['dio', 'usb_serial', 'device_info_plus', 'video_player', 'video_player_win', 'flutter_study_learning', 'file_picker_bridge']],
 };
 
 const flutterGuardDependency = {
@@ -381,8 +385,8 @@ const workspacePackages = [
     kind: 'flutter_bridge_package',
     path: 'packages/file_picker_bridge',
     entrypoints: ['lib/file_picker_bridge.dart'],
-    owns: ['file_picker_api', 'method_channel_client'],
-    depends: ['flutter_sdk'],
+    owns: ['file_picker_api', 'method_channel_client', 'file_selector_client'],
+    depends: ['flutter_sdk', 'file_selector'],
     validation: ['flutter pub get', 'flutter analyze', 'flutter test'],
     test_status: 'configured',
   },
@@ -570,6 +574,9 @@ function writeProjectContext() {
       router_platform_api: 'forbidden',
       module_host_navigation: 'forbidden',
       desktop_window_policy: 'lib/app/category_navigation.dart',
+      navigation_policy: 'lib/app/navigation_policy.dart',
+      compact_width_breakpoint_dp: 600,
+      mobile_window_policy: 'in_app_navigation_only',
       platform_capability_contract: 'business_neutral_interface',
     },
     change_protocol: {
@@ -577,11 +584,25 @@ function writeProjectContext() {
       update_source: ['tool/generate_agent_indexes.js'],
       generate: 'bash tool/generate_harness_ai_analysis.sh',
       validate: [
-        'bash tool/generate_harness_ai_analysis.sh',
-        'dart format .',
-        'flutter analyze',
-        'dart run flutterguard_cli:flutterguard scan . --fail-on high',
+        'bash tool/generate_harness_ai_analysis.sh + git diff --exit-code',
+        'dart format . + git diff --exit-code -- *.dart',
+        'flutter analyze (bare)',
+        'bash tool/test_all.sh',
+        'bash tool/verify_test_layout.sh',
+        'dart run flutterguard_cli:flutterguard scan . --fail-on high (cd apps/flutter_forge)',
       ],
+      ci: {
+        authoritative_remote_packaging_gate: '.github/workflows/ci.yml',
+        analyze_standard: 'bare flutter analyze (info/warning treated as failure)',
+        steps: [
+          'flutter pub get',
+          'agent doc generation + drift check',
+          'dart format + drift check',
+          'flutter analyze (bare)',
+          'bash tool/test_all.sh',
+        ],
+        flutterguard: 'not run in CI (previously failed from repo root with empty match); enforced only by local quality_gate.sh stage 6',
+      },
     },
   });
 }
@@ -611,27 +632,34 @@ function writeRefactorPlan() {
       {
         id: 'module_platform_contract',
         priority: 1,
-        status: 'pending',
+        status: 'completed',
         changes: ['ModuleEntry.platform_support', 'ModuleHomePage.availability_state'],
         acceptance: ['catalog_platform_metadata_complete', 'unsupported_module_state_visible'],
       },
       {
-        id: 'platform_plugin_audit',
+        id: 'responsive_navigation_policy',
         priority: 2,
+        status: 'completed',
+        changes: ['NavigationPolicy', 'CategoryNavigation.mobile_in_app_mode'],
+        acceptance: ['android_ios_web_in_app_navigation', 'compact_width_in_app_navigation', 'desktop_large_window_policy_test'],
+      },
+      {
+        id: 'platform_plugin_audit',
+        priority: 5,
         status: 'pending',
-        targets: ['desktop_multi_window', 'file_picker_bridge', 'usb_serial', 'device_info_plus'],
+        targets: ['desktop_multi_window', 'file_picker_bridge', 'usb_android_method_channel', 'device_info_plus'],
         acceptance: ['android_support_matrix', 'unsupported_fallbacks'],
       },
       {
         id: 'usb_platform_boundary',
-        priority: 3,
+        priority: 6,
         status: 'pending',
         targets: ['lib/modules/platform/usb_detector'],
         acceptance: ['no_windows_hardcode', 'android_system_info', 'error_branch_test'],
       },
       {
         id: 'mobile_layout_baseline',
-        priority: 4,
+        priority: 7,
         status: 'pending',
         viewport_width_dp: 360,
         targets: ['module_home', 'category_home', 'ready_modules', 'recommended_modules'],
@@ -639,10 +667,24 @@ function writeRefactorPlan() {
       },
       {
         id: 'android_host',
-        priority: 5,
+        priority: 8,
         status: 'blocked_by_dependencies',
         depends_on: ['module_platform_contract', 'platform_plugin_audit', 'mobile_layout_baseline'],
         acceptance: ['android_directory', 'manifest_capabilities', 'debug_apk', 'emulator_smoke'],
+      },
+      {
+        id: 'pc_window_lifecycle_baseline',
+        priority: 3,
+        status: 'pending',
+        targets: ['desktop_multi_window', 'lib/shared/multi_window', 'lib/app/category_navigation'],
+        acceptance: ['three_category_windows', 'close_reopen', 'no_black_surface', 'no_invalid_engine_handle'],
+      },
+      {
+        id: 'pc_build_matrix',
+        priority: 4,
+        status: 'blocked_by_host',
+        targets: ['macos', 'windows'],
+        acceptance: ['macos_release_build', 'windows_release_build', 'pc_quality_gate'],
       },
     ],
     quality_gate: [
@@ -680,8 +722,10 @@ function writeModuleIndex() {
 }
 
 function conceptsLiteral(concepts) {
-  const items = concepts.map((item) => `        '${item}',`).join('\n');
-  return `[\n${items}\n      ]`;
+  const literal = `[${concepts.map((item) => `'${item}'`).join(', ')}]`;
+  if (literal.length + 14 <= 80) return literal;
+  const items = concepts.map((item) => `      '${item}',`).join('\n');
+  return `[\n${items}\n    ]`;
 }
 
 function writeRouteTable() {
@@ -690,10 +734,12 @@ function writeRouteTable() {
 
   lines.push('// GENERATED by tool/generate_agent_indexes.js - DO NOT EDIT');
   lines.push('');
+  lines.push("import 'package:flutter/foundation.dart';");
   lines.push("import 'package:go_router/go_router.dart';");
   lines.push('');
   lines.push("import '../module_home_page.dart';");
   lines.push("import '../../module_registry/module_category.dart';");
+  lines.push("import '../../module_registry/module_catalog_utils.dart';");
   lines.push("import '../../module_registry/module_entry.dart';");
 
   const emittedImports = new Set();
@@ -746,6 +792,12 @@ function writeRouteTable() {
     lines.push(`    concepts: ${conceptsLiteral(m.concepts)},`);
     lines.push(`    estimatedMinutes: ${m.estimatedMinutes},`);
     lines.push(`    status: ModuleStatus.${m.status},`);
+    if (m.supportedPlatforms) {
+      if (m.supportedPlatformsComment) {
+        lines.push(`    ${m.supportedPlatformsComment}`);
+      }
+      lines.push(`    supportedPlatforms: {${m.supportedPlatforms.map((platform) => `TargetPlatform.${platform}`).join(', ')}},`);
+    }
     lines.push(`    builder: (context) => const ${m.entry}(),`);
     if (m.subRoutesExpander) {
       lines.push('    routes: _buildStatusManageRoutes(),');
@@ -761,7 +813,7 @@ function writeRouteTable() {
   lines.push("    path: '/',");
   lines.push('    builder: (context, state) => ModuleHomePage(modules: _modules),');
   lines.push('  ),');
-  lines.push('  for (final module in _modules)');
+  lines.push('  for (final module in availableModules(_modules))');
   lines.push('    GoRoute(');
   lines.push('      path: module.path,');
   lines.push('      builder: (context, state) => module.builder(context),');
@@ -819,8 +871,8 @@ function writeLayerIndexes() {
     rel: 'lib/app/AI_ANALYSIS.md',
     id: 'flutter_forge_app.app',
     kind: 'app_index',
-    entrypoints: ['app.dart', 'app_bootstrap.dart', 'module_home_page.dart', 'category_navigation.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
-    owns: ['host_bootstrap', 'material_app_router', 'router', 'module_home', 'adaptive_category_navigation', 'desktop_category_window_shell'],
+    entrypoints: ['app.dart', 'app_bootstrap.dart', 'module_home_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
+    owns: ['host_bootstrap', 'material_app_router', 'router', 'module_home', 'responsive_navigation_policy', 'adaptive_category_navigation', 'desktop_category_window_shell'],
     depends: ['go_router', 'module_registry', 'shared/multi_window', 'modules'],
     children: ['router/AI_ANALYSIS.md'],
   });
@@ -893,7 +945,7 @@ function writeModuleIndexes() {
 }
 
 function writeModuleContracts() {
-  for (const { category, id: module, route, status, depends } of modules) {
+  for (const { category, id: module, route, status, depends, supportedPlatforms } of modules) {
     const dir = path.join(appRoot, 'lib/modules', category, module);
     const entrypoints = [];
     for (const item of ['module_entry.dart', 'module_root.dart', 'module_routes.dart']) {
@@ -914,6 +966,7 @@ function writeModuleContracts() {
       },
       route,
       category,
+      ...(supportedPlatforms ? { supported_platforms: supportedPlatforms } : {}),
       entrypoints: entrypoints.length ? entrypoints : ['module_entry.dart'],
       owns: ['module_entry', 'module_ui', 'module_docs'],
       depends,

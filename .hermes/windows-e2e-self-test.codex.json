@@ -1,0 +1,68 @@
+{
+  "task_id": "TEST-20260827-windows-e2e-self-test",
+  "title": "Windows 平台完整自测(任务清单式, 不阻塞)",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "在 Windows 机器上对 Release 构建产物(flutter_forge-windows-x64.zip / flutter_forge-setup-x64.exe, run 33070866738, dev=abe4b9e)执行完整自测, 输出逐项 PASS/FAIL/BLOCKED 结果与证据。设计原则: 前后逻辑完整(前置准备->主测试->后置汇总), 任何单项失败/环境缺失不得阻塞后续项(标记 BLOCKED 继续)。",
+  "context": "产物来源: GitHub Actions run 33070866738(release.yml, workflow_dispatch, ref=dev)。测试依据: docs/reports/WINDOWS_TEST_CHECKLIST-20260827.md。已知约束: 本机可能无 Flutter 环境(integration_test 项依赖它); 产物需从 Actions artifact 下载(网络可能慢); Windows 实机由用户在 Windows 机器执行。若执行 agent 运行在 Windows 机器上则直接执行; 若在 macOS, 则本提词作为用户手动执行的清单模板, 输出可粘贴的核对单。",
+  "agent_role": "执行 agent 或用户手动执行: 逐项测试并如实记录, 禁止虚构结果; 任一项环境缺失记录 BLOCKED 并继续; 不修改任何源码与产物。",
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "前置准备: 产物与工具就绪检查(失败不阻塞, 标记 BLOCKED)",
+      "detail": "①产物: 检查本地 artifacts 目录(如 .release/ 或用户指定路径)是否存在 flutter_forge-windows-x64.zip 与 flutter_forge-setup-x64.exe; 不存在则 gh run download 33070866738 -n flutter_forge-windows-x64.zip -n flutter_forge-setup-x64.exe(在 Windows 上需 gh auth); 下载失败则检查用户本地已有路径; 仍无则记录 BLOCKED 并继续后续仅可执行的项。②记录: 产物 SHA256(shasum/certutil -hashfile)、Windows 版本(winver)、CPU 架构、磁盘剩余空间。③工具: 检查 flutter --version(有则记录版本并启用 integration_test 项, 无则该项 BLOCKED)。",
+      "verify": "产物路径或 BLOCKED 记录; SHA256 与版本信息已记录"
+    },
+    {
+      "step": 2,
+      "action": "启动链路测试(2 项)",
+      "detail": "T1 便携包: 解压 flutter_forge-windows-x64.zip 至独立目录, 运行 flutter_forge.exe, 记录启动用时与首屏(主目录展示分类/模块卡片)。T2 安装包: 运行 flutter_forge-setup-x64.exe 完成安装(默认路径), 从开始菜单/桌面启动; 记录安装用时与卸载入口可用性(不实际卸载, 仅确认控制面板存在条目)。任一项失败记录 FAIL 与错误截图, 继续下一项。",
+      "verify": "T1/T2 各 PASS/FAIL 记录"
+    },
+    {
+      "step": 3,
+      "action": "在线视频模块专项(3 项, 核心回归)",
+      "detail": "T3 联网播放: 打开在线视频模块, 选择视频并播放, 等待 10 秒以上确认播放时间推进与页面不崩溃。T4 断网占位: 断开网络(或系统防火墙阻止)后重新打开视频模块, 应显示错误占位与重试按钮且不崩溃; 恢复网络。T5 重试风暴: 在 T4 断网状态下连续点击重试 10 次, 每次间隔约 2 秒, 全程无崩溃/无重复控制器/无异常窗口; 恢复网络后重试应可恢复播放。每项独立记录。",
+      "verify": "T3/T4/T5 各 PASS/FAIL(含日志证据)"
+    },
+    {
+      "step": 4,
+      "action": "多窗口专项(4 项, 回归 55a9a1b 修复)",
+      "detail": "T6 连续三窗: 从主目录连续打开 3 个分类窗口, 每个窗口应显示对应分类内容且无黑屏(截图每个窗口)。T7 引擎日志: 全程观察应用控制台/日志(运行 exe 时捕获 stderr 或查看 Windows 事件查看器), 断言无 'Invalid engine handle' 与 'Failed to send message to Flutter engine' 日志。T8 子窗口文件选择: 在子窗口打开文件选择器, 选择文件或取消, 确认可正常返回。T9 关闭复用: 依次关闭分类窗口, 再重新打开同一分类, 确认可复用/重建且主窗口不崩溃。",
+      "verify": "T6/T7/T8/T9 各 PASS/FAIL(截图与日志)"
+    },
+    {
+      "step": 5,
+      "action": "平台适配与导航回归(3 项)",
+      "detail": "T10 USB 平台态: 打开模块目录与 USB 模块, 按平台标注确认 Windows 显示可用态(当前标注 TargetPlatform.windows 应可用)或清晰不可用态。T11 路由回归: 进入'弹窗与列表交互', 分别点击'弹窗组件'与'列表交互', 应进入目标页面而非 Page Not Found(回归 abe4b9e 修复)。T12 布局检查: 主目录与三棵树页面在默认窗口与最大化窗口下无 RenderFlex overflow(黄色/黑色溢出条)。",
+      "verify": "T10/T11/T12 各 PASS/FAIL"
+    },
+    {
+      "step": 6,
+      "action": "集成测试(条件项, 环境缺失 BLOCKED 不阻塞)",
+      "detail": "T13 若步骤 1 检测到 Flutter 环境: 在解压目录或仓库 checkout 下执行 flutter test integration_test -d windows; 记录通过/失败明细。若无 Flutter 环境: 记录 BLOCKED(原因: 未安装 Flutter), 继续。T14 崩溃检查: 全程(启动/视频/多窗口)后检查 Windows 事件查看器 Application 日志中 flutter_forge 相关错误(0xc0000005 等), 记录是否存在。",
+      "verify": "T13 PASS/FAIL/BLOCKED; T14 事件日志结论"
+    },
+    {
+      "step": 7,
+      "action": "后置汇总与报告输出",
+      "detail": "汇总全部 T1-T14 状态: PASS/FAIL/BLOCKED 计数; 失败项附复现步骤、截图路径、日志摘录; 输出总体结论(全部 PASS 或已记录失败可修复项)。报告写 docs/reports/WINDOWS_E2E_RESULT-20260827.md(若在 Windows 无法写仓库则输出到当前工作目录同名文件, 标注路径)。不修改源码与产物, 不执行 commit/push。",
+      "verify": "结果报告生成, 含全部 T1-T14 判定"
+    }
+  ],
+  "acceptance_criteria": [
+    "T1-T14 每项均有 PASS/FAIL/BLOCKED 判定(共 14 项, 无遗漏)",
+    "视频专项 T3/T4/T5 与多窗口专项 T6-T9 有截图或日志证据",
+    "任一项环境缺失(网络/Flutter/gh)以 BLOCKED 记录且不影响其余项执行",
+    "报告含 SHA256、环境信息、失败项复现步骤与证据路径",
+    "未修改源码/产物/门禁脚本, 未 commit 未 push"
+  ],
+  "out_of_scope": [
+    "不修改任何源码或 Release 产物",
+    "不执行安装包卸载(仅确认入口)",
+    "不处理签名/公证问题",
+    "不执行 commit/push"
+  ],
+  "notes": "产物下载在 macOS 上已超时一次(网络慢), 下载放后台或由用户在 Windows 直接下载: https://github.com/lizy-coding/flutter_forge/actions/runs/33070866738(artifacts 保留 14 天)。若执行 agent 在 macOS 而非 Windows 运行, 本提词退化为清单模板, 输出核对单供用户在 Windows 手工执行。任何一步失败仅记录, 严禁虚构 PASS。"
+}

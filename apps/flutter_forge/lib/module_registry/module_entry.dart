@@ -15,6 +15,7 @@ class ModuleEntry {
     required this.status,
     required this.builder,
     this.routes = const [],
+    this.supportedPlatforms,
   });
 
   final String title;
@@ -27,4 +28,13 @@ class ModuleEntry {
   final ModuleStatus status;
   final WidgetBuilder builder;
   final List<GoRoute> routes;
+
+  /// Null means the module is platform-neutral and supported by default.
+  /// A non-null set restricts availability to the listed host platforms.
+  final Set<TargetPlatform>? supportedPlatforms;
+
+  bool isSupportedOn(TargetPlatform platform) {
+    final platforms = supportedPlatforms;
+    return platforms == null || platforms.contains(platform);
+  }
 }

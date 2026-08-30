@@ -22,6 +22,7 @@
     "usb_serial",
     "device_info_plus",
     "video_player",
+    "video_player_win",
     "flutter_study_learning",
     "file_picker_bridge"
   ],

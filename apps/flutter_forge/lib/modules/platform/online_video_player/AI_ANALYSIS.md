@@ -10,6 +10,10 @@
   },
   "route": "/online-video-player",
   "category": "platform",
+  "supported_platforms": [
+    "macOS",
+    "windows"
+  ],
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart",
@@ -23,7 +27,9 @@
   ],
   "depends": [
     "flutter_study_learning",
+    "dio",
     "video_player",
+    "video_player_win",
     "module_registry"
   ],
   "children": [],
