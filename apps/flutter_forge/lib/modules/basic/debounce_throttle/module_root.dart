@@ -342,19 +342,17 @@ class _ButtonSceneState extends State<ButtonScene>
 
                     if (isCompact) {
                       return SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: SizedBox(
-                          height: eventConstraints.maxHeight,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for (final visualization in visualizations) ...[
-                                SizedBox(width: 160, child: visualization),
-                                if (visualization != visualizations.last)
-                                  const SizedBox(width: 8),
-                              ],
+                        child: Column(
+                          children: [
+                            for (final visualization in visualizations) ...[
+                              SizedBox(
+                                height: eventConstraints.maxHeight,
+                                child: visualization,
+                              ),
+                              if (visualization != visualizations.last)
+                                const SizedBox(height: 8),
                             ],
-                          ),
+                          ],
                         ),
                       );
                     }

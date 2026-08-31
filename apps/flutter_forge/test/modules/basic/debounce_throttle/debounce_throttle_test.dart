@@ -24,6 +24,25 @@ void main() {
     expect(find.text('防抖'), findsOneWidget);
     expect(find.text('节流'), findsOneWidget);
 
+    const viewportRect = Rect.fromLTWH(0, 0, 360, 800);
+    for (final title in const ['普通', '防抖', '节流']) {
+      await tester.scrollUntilVisible(
+        find.text(title),
+        120,
+        scrollable: find.byType(Scrollable).last,
+      );
+      final titleRect = tester.getRect(find.text(title));
+      expect(
+        viewportRect.contains(titleRect.topLeft) &&
+            viewportRect.contains(titleRect.bottomRight),
+        isTrue,
+        reason: '$title 事件可视化区域应完整出现在 360dp 视口内',
+      );
+    }
+
+    await tester.ensureVisible(find.text('普通点击'));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text('普通点击'));
     await tester.tap(find.text('防抖点击'));
     await tester.tap(find.text('节流点击'));
