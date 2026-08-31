@@ -1,0 +1,28 @@
+{
+  "artifact": {
+    "head": "565766f9c7d63ae160289d87da43d8023509105d",
+    "configuration": "Release",
+    "build_result": "PASS",
+    "application": "apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app"
+  },
+  "session": {
+    "channel": "Codex Desktop Computer Use",
+    "interaction_available": true,
+    "date": "2026-09-01"
+  },
+  "checks": [
+    {"name": "debounce_throttle_360dp", "verdict": "PASS", "evidence": "screenshots/debounce-360.png"},
+    {"name": "debounce_throttle_600dp", "verdict": "PASS", "evidence": "screenshots/debounce-600.png"},
+    {"name": "debounce_throttle_1024dp", "verdict": "PASS", "evidence": "screenshots/debounce-1024.png"},
+    {"name": "same_category_window_reuse", "verdict": "PASS", "evidence": "screenshots/category-reuse.png"},
+    {"name": "category_window_close_reopen_round_1", "verdict": "PASS"},
+    {"name": "category_window_close_reopen_round_2", "verdict": "PASS"},
+    {"name": "category_window_close_reopen_round_3", "verdict": "PASS", "evidence": "screenshots/reopen-round-3.png"},
+    {"name": "child_window_file_picker_open", "verdict": "PASS", "evidence": "screenshots/file-picker-dialog.png"},
+    {"name": "child_window_file_picker_cancel", "verdict": "PASS"}
+  ],
+  "macos_ui_interaction": "PASS",
+  "macos_gate": "PASS",
+  "windows_ready": true,
+  "windows_self_test_started": false
+}

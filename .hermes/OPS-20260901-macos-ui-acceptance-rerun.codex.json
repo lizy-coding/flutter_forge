@@ -1,0 +1,143 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "OPS-20260901-macos-ui-acceptance-rerun",
+  "title": "macOS 最新产物界面化自测：主测通过后再进入 Windows",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "使用包含当前源码 HEAD 的 macOS Release 产物，先完成 macOS 主测与多窗口稳定性复验，再决定是否进入 Windows 验收；只读验收，不修改源码、产物、CI、门禁脚本，不 commit，不 push。",
+  "scope": "real_window_acceptance_only",
+  "agent_role": "Codex Desktop 界面验收执行者；必须驱动真实 macOS 窗口；逐项输出 PASS/FAIL/BLOCKED/NOT_IN_ARTIFACT；禁止虚构 PASS；环境或点击工具缺失时 BLOCKED 并继续；未经用户明确批准严禁 git push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "执行前重新读取 git status、git branch -vv、git log --format='%h %p %ci %s' -12、git rev-parse HEAD 和真实 upstream ref；不得假设任务创建时 HEAD 未变化。",
+    "current_state": {
+      "head": "ce814fbc249bd3c36ca5ab41151bb29fe70cc980",
+      "upstream": "origin/dev = dfdbc1dbf8db5e25b714309251fdd76a6efd4fc1",
+      "latest_responsive_change": "ce814fb feat(ui): make debounce throttle demo responsive",
+      "previous_macos_record": "macos_acceptance/evidence/2026-08-31/notes.md：旧 Release bundle 早于 ce814fb；启动日志出现 Invalid engine handle 与 Failed to send message to Flutter engine；Computer Use 点击未生效。",
+      "platform_order": "macOS 主测通过后，再进入 Windows；Windows 不得使用不包含最新代码的旧产物判定响应式结果。"
+    },
+    "artifact_rule": {
+      "required": "必须使用包含当前 HEAD 或明确包含 ce814fb 的 macOS Release 产物",
+      "stale_artifact": "bundle mtime 早于响应式提交时间，或源码 HEAD/产物来源无法对应时，R/H 项标记 NOT_IN_ARTIFACT，不得判 PASS",
+      "build_boundary": "Codex Desktop 只验收已有产物；不得在验收任务内修改源码或构建配置。缺少最新产物则记录 BLOCKED/NOT_IN_ARTIFACT。"
+    },
+    "known_issue_rule": {
+      "engine_errors": [
+        "Invalid engine handle",
+        "Failed to send message to Flutter engine"
+      ],
+      "interpretation": "无 crash report、进程存活或主窗口可见，均不能覆盖上述引擎错误；M13/M14 单独判定。"
+    }
+  },
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight_and_artifact_identity",
+      "detail": "记录 macOS 版本、机型、架构、Flutter 版本、应用版本、产物绝对路径、bundle mtime、主可执行文件 SHA256、源码 HEAD、响应式提交时间；确认产物包含当前 HEAD 或 ce814fb；创建 macos_acceptance/evidence/<date>/screenshots、logs、notes.md。",
+      "verify": "输出 PRECHECK：artifact_identity=PASS/BLOCKED/NOT_IN_ARTIFACT；时间和 SHA256 字段齐全；不修改仓库源码。"
+    },
+    {
+      "step": 2,
+      "action": "startup_and_log_baseline",
+      "detail": "启动最新 macOS Release 产物，保存首屏截图和完整 Console/终端日志；区分 merged UI/platform thread 实验性提示与 Invalid engine handle、Failed to send message to Flutter engine。重复启动一次，记录 PID。",
+      "verify": "输出 UI-01/UI-02；任何目标引擎错误均为 FAIL，不因进程存活改判 PASS。"
+    },
+    {
+      "step": 3,
+      "action": "macos_core_navigation",
+      "detail": "使用真实点击逐项执行主目录、基础机制、状态管理、网络与平台、弹窗与列表交互模块进入/返回；点击动作未生效时逐项 BLOCKED，并记录工具错误，不根据静态可见性推断通过。",
+      "verify": "输出 UI-03..UI-10，每项有截图或 BLOCKED 原因。"
+    },
+    {
+      "step": 4,
+      "action": "macos_multiwindow_gate",
+      "detail": "从主窗口依次打开三个不同分类窗口：基础机制、状态管理、网络与平台；确认首帧、内容、无黑屏；同分类重复打开确认复用；关闭一个、关闭全部、重开一个；执行至少 3 轮打开/关闭/重开；记录主窗口存活。",
+      "verify": "输出 UI-11..UI-20；三窗、复用、关闭、重开、主窗口存活分别判定。"
+    },
+    {
+      "step": 5,
+      "action": "macos_child_file_picker",
+      "detail": "在真实子窗口进入 file_picker，打开系统文件选择器，分别执行取消和在条件允许时选择文件返回；保存窗口截图与日志。",
+      "verify": "输出 UI-21..UI-23；子窗口插件通道失败不得降级为 PASS。"
+    },
+    {
+      "step": 6,
+      "action": "macos_engine_and_crash_evidence",
+      "detail": "收集全程 Console/终端日志，检查 Invalid engine handle、Failed to send message to Flutter engine；检查 ~/Library/Logs/DiagnosticReports/ 中 Flutter Forge 相关报告；记录 EXC_BAD_ACCESS、SIGABRT 及进程退出。",
+      "verify": "输出 UI-24..UI-26；日志证据路径和首次出现阶段明确。"
+    },
+    {
+      "step": 7,
+      "action": "macos_responsive_gate",
+      "detail": "仅在 artifact_identity=PASS 且真实点击可用时，调整窗口到约 360dp 等效宽度、600dp 临界宽度、1024dp/最大化；打开 debounce_throttle，验证按钮、计数、滚动场景、三组事件可视化和模块内滚动；保存每个视口截图。",
+      "verify": "输出 UI-27..UI-35；旧产物标 NOT_IN_ARTIFACT，点击工具不可用标 BLOCKED；不得把未落地模块当作已验收。"
+    },
+    {
+      "step": 8,
+      "action": "macos_gate_decision",
+      "detail": "按主测门槛汇总 macOS 结果：启动、核心导航、三分类多窗口、子窗口 file_picker、关闭重开、同类复用、引擎日志、当前响应式模块；只有无 FAIL 且关键项无 BLOCKED/NOT_IN_ARTIFACT，才输出 windows_ready=true。",
+      "verify": "输出 MACOS_GATE=PASS 或 MACOS_GATE=HOLD；若 HOLD，列出阻塞项和对应修复/补测条件。"
+    },
+    {
+      "step": 9,
+      "action": "report_only",
+      "detail": "写入 macos_acceptance/evidence/<date>/MACOS_UI_ACCEPTANCE_REPORT.json 和 notes.md；包含环境、产物身份、每项 verdict、证据路径、macOS_GATE、windows_ready；任务不修改源码、不 commit、不 push。",
+      "verify": "报告 JSON 可解析；所有 UI 项均有 verdict；git diff 仅包含本次验收报告文件；origin/dev 未变化。"
+    }
+  ],
+  "acceptance_criteria": [
+    "UI-01..UI-35 每项均有 PASS/FAIL/BLOCKED/NOT_IN_ARTIFACT，不遗漏",
+    "最新产物身份已用 bundle mtime、SHA256、HEAD/commit 时间核对",
+    "主测顺序为 macOS first；macOS_GATE 未 PASS 时不得开始 Windows 验收",
+    "三分类窗口必须是基础机制、状态管理、网络与平台，不得用同分类重复替代",
+    "Invalid engine handle 与 Failed to send message to Flutter engine 任一出现即对应项目 FAIL",
+    "无 crash report 不能覆盖引擎错误 FAIL",
+    "自动化点击未生效的项目标 BLOCKED，不虚构 PASS",
+    "旧 Release 不包含 ce814fb 时响应式项目标 NOT_IN_ARTIFACT",
+    "Windows USB、Android、无障碍第二阶段不纳入本次实现或验收放行条件",
+    "不修改源码、构建配置、Release 产物、CI、门禁脚本；不 commit；不执行 git push"
+  ],
+  "out_of_scope": [
+    "任何 Dart、Swift、Objective-C、原生插件或多窗口源码修复",
+    "响应式代码实现",
+    "Windows 验收执行；仅输出 windows_ready 决策",
+    "Windows USB、Android host、无障碍第二阶段",
+    "quality_gate、git commit、git push、tag、Release、CI 修改",
+    "将历史 notes.md 结果改写为当前结果"
+  ],
+  "evidence_requirements": {
+    "screenshots": "首屏、三分类窗口、子窗口文件选择器、关闭重开、响应式各视口",
+    "logs": "启动日志、三窗口阶段日志、file_picker 日志、崩溃报告查询",
+    "naming": "screenshots/UI-XX-<slug>.png；logs/<stage>.txt；报告 JSON 与 notes.md 位于同一日期目录",
+    "minimum": "每个 PASS 有操作记录；每个 FAIL 有复现步骤；每个 BLOCKED/NOT_IN_ARTIFACT 有原因"
+  },
+  "forbidden_changes": [
+    "不得修改 apps/flutter_forge/lib/**",
+    "不得修改 apps/flutter_forge/macos/**",
+    "不得修改 packages/**",
+    "不得修改 pubspec.yaml、pubspec.lock、CI、Release、tool/*.sh 或生成契约",
+    "不得删除或覆盖既有 macOS/Windows 验收记录",
+    "不得 git commit",
+    "不得 git push",
+    "不得创建 tag、Release 或远端 workflow"
+  ],
+  "validation": [
+    "python3 -m json.tool macos_acceptance/evidence/<date>/MACOS_UI_ACCEPTANCE_REPORT.json",
+    "git diff --check",
+    "git status --short --branch",
+    "git rev-parse HEAD",
+    "git rev-parse origin/dev",
+    "git diff --name-only"
+  ],
+  "risk": "medium",
+  "notes": [
+    "本文件是 Codex Desktop 真实窗口验收提词，不是源码实现提词。",
+    "如果 Codex Desktop 无法驱动 Flutter 窗口，必须按项目逐项 BLOCKED，并输出人工执行清单，不得使用静态截图推断交互结果。",
+    "如果当前最新 macOS Release 产物不存在，先输出 artifact BLOCKED/NOT_IN_ARTIFACT；不得在本任务中自行修改代码或构建配置。",
+    "macOS_GATE=PASS 是进入 Windows 验收的前置条件；未通过则只输出 HOLD。",
+    "未经用户另行明确批准，任何情况下不得执行 git push。"
+  ]
+}

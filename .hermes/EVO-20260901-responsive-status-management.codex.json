@@ -1,0 +1,141 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "EVO-20260901-responsive-status-management",
+  "title": "状态管理模块自适应布局改造",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "依据响应式筛选清单，仅改造 status_management 模块在 360dp、600dp 和桌面宽度下的分类卡、流程演示和关键子页布局，并补充视口回归测试。",
+  "scope": "single_module_responsive_layout",
+  "agent_role": "代码执行 agent；严格限制在 status_management 模块及其标准测试；先测试后实现；不得全局响应式改造；不得实施无障碍第二阶段；仅本地 commit，未经用户另行明确批准严禁 git push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "执行前重新核对 git status/log/upstream。当前 HEAD 包含已验收本地提交 ce814fb；origin/dev 仍为 dfdbc1d。既有 Windows 文档和 pending JSON 必须保留且不得纳入本任务提交。",
+    "verified_facts": [
+      "状态管理主页 _RouteCategoryCard 的头部 Row 同时包含 CircleAvatar、Expanded 标题描述和 Chip，窄屏有抢宽风险",
+      "StateFlowDemo 的流程节点已使用 Wrap，但操作按钮仍为 Row",
+      "Provider/Riverpod lifting 等子页存在按钮/控制 Row，需要以实际 360dp 测试筛选，不得机械全改",
+      "当前标准测试主要验证入口可构造，没有 360/600/1024 视口矩阵",
+      "LearningScaffold、App Shell、NavigationPolicy、多窗口、平台能力不在本任务范围"
+    ],
+    "allowed_paths": [
+      "apps/flutter_forge/lib/modules/state/status_management",
+      "apps/flutter_forge/test/modules/state/status_management/status_management_test.dart"
+    ]
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "module_local_card_and_flow_layout",
+      "rationale": "状态框架比较卡和刷新流程是模块专属结构，应在模块内部按父约束重排。",
+      "constraints": [
+        "360dp 下分类 badge 不得与标题描述争抢同一行导致不可读",
+        "流程节点顺序与 Provider/Riverpod/Bloc 对比语义保持不变",
+        "优先使用 LayoutBuilder、Wrap、Flexible 或局部 Column",
+        "只修改测试证明有风险的子页，不批量改造所有 Row"
+      ],
+      "acceptance": [
+        "主页分类卡在 360dp 无 overflow",
+        "操作按钮在窄屏可达",
+        "1024dp 仍保留清晰的框架比较布局"
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "preserve_state_behavior",
+      "rationale": "响应式改造不得改变 Provider、Riverpod、Bloc 状态语义和路由。",
+      "constraints": [
+        "不得修改状态类公开行为、Provider/Riverpod/Bloc 依赖或路由常量",
+        "不得隐藏框架、流程节点或教学内容",
+        "不得修复 FlutterGuard 既有 MEDIUM；这属于其他任务"
+      ],
+      "acceptance": [
+        "现有状态交互测试继续通过",
+        "路由与教学内容保持不变"
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "tdd_scope_and_no_push",
+      "rationale": "视口行为必须通过模块测试固定，并保持远端不变。",
+      "constraints": [
+        "先添加 360x800、600x900、1024x768 测试并真实运行",
+        "只提交本任务源文件和 status_management_test.dart",
+        "严禁 git push、tag、Release、merge 或重写历史"
+      ],
+      "acceptance": [
+        "定向测试、flutter analyze 和 quality_gate 通过",
+        "origin/dev 保持 dfdbc1d 或任务开始时的原值"
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight",
+      "detail": "读取状态、模块 AI_ANALYSIS、主页、StateFlowDemo、关键 Provider/Riverpod/Bloc 子页和标准测试；核对允许路径和既有未提交文件。",
+      "verify": "基线和允许路径明确；不清理其他文件。"
+    },
+    {
+      "step": 2,
+      "action": "red_tests",
+      "detail": "在 status_management_test.dart 增加 360x800、600x900、1024x768 主页测试，并覆盖 Provider、Riverpod、Bloc 至少各一个关键页面；断言核心内容存在且 tester.takeException() 为 null；先运行确认当前真实结果。",
+      "verify": "真实记录 RED 或 already-safe 结果，不杜撰失败。"
+    },
+    {
+      "step": 3,
+      "action": "targeted_layout_fix",
+      "detail": "根据测试证据局部调整 _RouteCategoryCard、StateFlowDemo 和确有风险的控制区；窄屏允许 badge 下移、按钮 Wrap 或局部 Column；桌面保持比较密度；不改状态逻辑和路由。",
+      "verify": "diff 仅包含布局和对应测试。"
+    },
+    {
+      "step": 4,
+      "action": "validation",
+      "detail": "运行模块定向测试、flutter analyze、git diff --check；随后运行完整 quality_gate。",
+      "verify": "定向测试通过、analyze 0 issue、quality_gate 6/6。"
+    },
+    {
+      "step": 5,
+      "action": "local_commit_only",
+      "detail": "仅提交 status_management 模块实际改动和标准测试，提交信息 feat(ui): make state management demos responsive；不得纳入既有 Windows 文档或 pending JSON；严禁 push。",
+      "verify": "git show --name-status HEAD 文件集合合规；origin/dev 未变化。"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1：360/600/1024 三档视口无布局异常；窄屏分类 badge、流程操作和关键子页可达",
+    "DD-2：Provider/Riverpod/Bloc 状态逻辑、路由、依赖和教学内容未改变",
+    "DD-3：定向测试、flutter analyze、quality_gate 通过；仅本地 commit；未 push",
+    "未修改 LearningScaffold、App Shell、NavigationPolicy、多窗口、平台目录、依赖、CI/release/tool 门禁",
+    "未处理无障碍第二阶段或 FlutterGuard 既有 MEDIUM"
+  ],
+  "forbidden_changes": [
+    "不得修改 packages/flutter_study_learning/**、apps/flutter_forge/lib/app/**、apps/flutter_forge/lib/shared/**",
+    "不得修改其他模块、pubspec、平台宿主、CI、release 或 tool/*.sh",
+    "不得修改状态逻辑、路由注册或第三方依赖",
+    "不得实施无障碍专项",
+    "不得 git push、tag、Release、merge 或重写历史"
+  ],
+  "validation": [
+    "flutter test test/modules/state/status_management/status_management_test.dart",
+    "flutter analyze",
+    "bash tool/quality_gate.sh",
+    "git show --name-status HEAD",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "medium",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "apps/flutter_forge/lib/modules/state/status_management/AI_ANALYSIS.md",
+    "apps/flutter_forge/lib/modules/state/status_management/pages/home_page.dart",
+    "apps/flutter_forge/lib/modules/state/status_management/widgets/state_flow_demo.dart",
+    "apps/flutter_forge/test/modules/state/status_management/status_management_test.dart"
+  ],
+  "notes": [
+    "这是第一阶段第二个垂直切片；不要复用 debounce_throttle 的具体布局实现。",
+    "当前工作区其他未提交/未跟踪文件必须原样保留，不得纳入提交。",
+    "仅允许本地 commit；未经用户另行明确批准，绝对禁止 git push。"
+  ]
+}

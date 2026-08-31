@@ -1,0 +1,243 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "EVO-20260901-modular-responsive-layout",
+  "title": "模块化响应式布局第一阶段与移动端必要性评估",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "完成现有应用与学习模块的模块化响应式布局改造；先逐模块评估移动端是否需要适配及采用何种布局形态；无障碍语义、读屏和对比度改造留到第二阶段。",
+  "scope": "module_scoped_responsive_layout_phase_1",
+  "agent_role": "代码执行 agent；严格按 design_decisions 和模块分类执行；不得把所有页面强制改成统一响应式布局；不得实施无障碍第二阶段；仅允许本地 commit，未经用户另行明确批准严禁 git push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "执行前必须重新读取 git status --short --branch、git log --format='%h %p %ci %s' -15、git branch -avv；本任务不得假设当前 HEAD 或工作区仍与提词创建时一致。",
+    "current_state": {
+      "module_count": 21,
+      "platform_priority": "macOS/Windows PC 主线；Android 暂不作为本阶段主方向",
+      "responsive_policy": "当前仅有全局 NavigationPolicy 的 600dp 导航断点，没有模块级响应式策略",
+      "accessibility": "明确延期到 Phase 2；本任务不得新增 Semantics、读屏、对比度或无障碍专项改造",
+      "multi_window": "macOS/Windows 多窗口稳定性专项仍 PENDING，不得修改 multi_window 或 category window 行为",
+      "windows_usb": "DEFERRED；usb_detector 保持 Android-only，不得恢复 Windows USB 原生插件",
+      "quality_baseline": "已知历史基线：quality_gate 6/6、flutter analyze 无 issue、FlutterGuard 0 HIGH；执行前需重新核对，不得直接引用历史结果",
+      "known_workspace_changes": [
+        "M docs/QUALITY_ACCEPTANCE.md",
+        "M docs/reports/ACCEPTANCE_REPORT-20260827.md",
+        "M docs/reports/WINDOWS_TEST_CHECKLIST-20260827.md",
+        "?? .hermes/test-20260901-multiwindow-stability.codex.json",
+        "?? .hermes/windows-ui-automation.codex.json",
+        "?? docs/WINDOWS_PHASE2_PLAN.md",
+        "?? .hermes/EVO-20260901-modular-responsive-layout.codex.json"
+      ]
+    },
+    "verified_facts": [
+      "apps/flutter_forge/lib/app/navigation_policy.dart 仅负责分类导航模式：移动端始终 inApp，桌面宽度 >= 600dp 且支持多窗口时允许 separateWindow",
+      "apps/flutter_forge/lib/app/module_home_page.dart 当前使用全局 ListView + ListTile 目录布局，模块卡片内容包含 title/subtitle/concepts/status",
+      "apps/flutter_forge/lib/app/category_window_app.dart 当前 CategoryHomePage 使用全局 ListView.builder，并同时承载桌面分类窗口与紧凑应用内分类页",
+      "packages/flutter_study_learning/lib/src/learning_scaffold.dart 的 LearningScaffold 当前统一使用 SingleChildScrollView + Column；本任务不得将其改成强制全局响应式容器",
+      "现有高风险固定/横向布局目标包含 basic/tree_state、basic/debounce_throttle、async/isolate_basic、state/status_management、state/flutter_ioc、popup_table/popup_widgets、popup_table/scroll_table、platform/online_video_player 等模块",
+      "现有模块已经分散使用 LayoutBuilder、MediaQuery、SafeArea、Wrap、SingleChildScrollView，但没有统一的模块级评估结果或适配策略文档",
+      "现有测试目录已经使用 test/modules/<category>/<module>/<module>_test.dart；新增或调整模块测试必须保留标准命名",
+      "项目约束禁止 modules 互相依赖；模块可直接依赖 packages，shared 只能提供业务中立能力",
+      "生成文档 AI_PROJECT_CONTEXT.md、REFACTOR_PLAN.md、lib/AI_MODULE_INDEX.md、各级 AI_ANALYSIS.md 不得手工编辑；若修改模块注册或契约，必须修改 tool/generate_agent_indexes.js 并运行生成器"
+    ]
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "module_scoped_responsive_policy",
+      "rationale": "响应式行为必须由模块自己的内容结构决定，不能通过 LearningScaffold、App Shell 或一个全局 breakpoint 强制所有模块采用同一布局；不同模块可能在移动端采用堆叠、滚动、分页、横向画布保持、或明确限制等不同策略。",
+      "constraints": [
+        "不得把 LearningScaffold 改造成全局响应式布局引擎",
+        "不得对全部模块统一替换 Row 为 Column 或统一套用 Expanded/Wrap",
+        "每个模块必须先归类 mobile_policy，再只改该模块必要的布局组合",
+        "模块页面不得直接使用 Platform.isXxx 决定目录可见性；平台可用性仍走 module_catalog_utils",
+        "不得修改 multi_window、NavigationPolicy 的业务语义或 600dp 导航边界"
+      ],
+      "acceptance": [
+        "形成模块级 mobile_policy 分类表并绑定到每个现有模块",
+        "全局 LearningScaffold 的行为与 API 不发生强制响应式改造",
+        "至少一个模块证明窄宽布局与宽宽布局采用不同模块内部组合，而不是全局包装器"
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "mobile_necessity_evaluation",
+      "rationale": "移动端是否需要响应式布局取决于模块交互的学习目标和设备能力，不应把 PC 画布、二维表格、窗口级交互机械压缩到手机；评估结果必须能解释支持、降级或暂不适配。",
+      "constraints": [
+        "为 21 个模块逐项评估 mobile_need、target_viewports、layout_strategy、unsupported_reason、verification_level",
+        "至少覆盖 360x640、600dp 边界和常规桌面宽度；模块有特殊比例时增加模块专属 viewport",
+        "mobile_need 只能使用 supported、degraded、not_target 三类，不得用 ModuleStatus 表达平台限制",
+        "not_target 模块仍保留目录入口和清晰的模块级说明，不得借响应式改造删除模块",
+        "评估文档必须说明 PC 学习目标是否在移动端仍成立，以及采用何种替代交互"
+      ],
+      "acceptance": [
+        "docs/reports/MODULE_RESPONSIVE_MATRIX-20260901.md 或等价报告存在",
+        "21/21 模块均有 mobile_need 与证据等级",
+        "每个 not_target/degraded 结论有具体交互或空间约束理由",
+        "报告明确区分应用壳层导航适配与模块内容布局适配"
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "responsive_patterns_by_module_type",
+      "rationale": "用有限的模块内布局模式处理重复问题，同时保留模块自主组合，避免在 21 个模块中产生 21 套随意断点。",
+      "constraints": [
+        "允许在模块内部抽取纯 Flutter 布局 helper，但不得引入新的响应式第三方依赖",
+        "优先使用 LayoutBuilder、ConstrainedBox、Flexible、Wrap、SingleChildScrollView、CustomScrollView、AspectRatio 等现有 Flutter 能力",
+        "文本、控件和演示面板必须在最小宽度下不溢出；必要时允许横向滚动，但必须与学习目标一致",
+        "二维表格、绘图画布、视频控制条等特殊内容不得简单压缩；应采用模块定义的滚动、缩放、堆叠或保留比例策略",
+        "固定高度只允许在有明确内部滚动/比例依据时保留；不得以任意增大高度掩盖窄屏问题"
+      ],
+      "acceptance": [
+        "高风险模块均有对应的模块内策略，而非统一全局包装",
+        "模块布局测试可在窄宽度触发并断言无 RenderFlex overflow",
+        "不存在新增外部依赖或跨模块 import",
+        "已有桌面宽布局和真实交互不被破坏"
+      ]
+    },
+    {
+      "id": "DD-4",
+      "title": "phase_boundary_accessibility_deferred",
+      "rationale": "本轮先解决空间约束、内容可达和交互布局；无障碍语义、读屏顺序、键盘可达性、对比度和辅助技术验收需要独立设计，混入本轮会扩大变更面并降低验收可归因性。",
+      "constraints": [
+        "本任务不得新增或系统性修改 Semantics、MergeSemantics、ExcludeSemantics、semanticLabel、textScaleFactor 或颜色对比度策略",
+        "本任务不得宣称无障碍完成",
+        "若响应式调整自然需要保留已有 tooltip、label 或 Focus 行为，只能保持既有语义，不得扩展为无障碍专项",
+        "报告必须单列 accessibility_phase_2 = deferred"
+      ],
+      "acceptance": [
+        "代码 diff 不包含无障碍专项批量改造",
+        "报告明确无障碍第二阶段的后续范围"
+      ]
+    },
+    {
+      "id": "DD-5",
+      "title": "preserve_desktop_and_platform_boundaries",
+      "rationale": "当前 PC 主线和平台可用性边界已形成发布基线，响应式改造只能处理内容在不同空间下的呈现，不能改变桌面窗口策略、模块平台准入或 Windows USB 延期决策。",
+      "constraints": [
+        "不得修改 desktop_multi_window 生命周期、category window 创建/复用/关闭行为",
+        "不得恢复 Windows USB 原生插件，不得修改 usb_detector 的 Android-only 结论",
+        "不得引入 Android host 或将 Android 变成本轮主线",
+        "不得修改 release.yml、ci.yml、tool/*.sh 或 FlutterGuard 门禁语义",
+        "不得修改已发布版本、tag、Release 产物或执行 git push"
+      ],
+      "acceptance": [
+        "git diff --name-only 不包含 multi_window 原生实现、USB 原生插件、Android host、release workflow 或门禁脚本",
+        "桌面导航仍遵守 NavigationPolicy，模块级内容布局改造与窗口生命周期无耦合"
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight_baseline",
+      "detail": "重新记录仓库 status/log/branch/upstream；逐项确认已知工作区变更；读取 AGENTS.md、AI_ANALYSIS_SCHEMA.json、AI_PROJECT_CONTEXT.md、REFACTOR_PLAN.md、目标模块 AI_ANALYSIS.md；确认本任务 JSON 自身属于预期新增文件；不得清理或覆盖其他 pending task。",
+      "verify": "基线快照完整；未执行 push；工作区既有变更未被覆盖。"
+    },
+    {
+      "step": 2,
+      "action": "inventory_existing_layouts",
+      "detail": "扫描 21 个模块的 module_root.dart、pages、widgets 和标准测试文件，记录 Row/Column/固定尺寸/嵌套滚动/画布/表格/视频控制等布局风险；同时读取 LearningScaffold 和 app/category 页面，明确哪些行为属于应用壳层、哪些属于模块内容。",
+      "verify": "生成初始风险清单；每个模块至少有风险项、现有布局证据和候选 viewport。"
+    },
+    {
+      "step": 3,
+      "action": "classify_mobile_need",
+      "detail": "为每个模块确定 supported、degraded 或 not_target；为每个结论填写学习目标、目标设备、360x640 行为、600dp 行为、桌面行为、特殊内容策略和验证方法；不得把 PC 视觉结构强行等比例搬到移动端。",
+      "verify": "输出模块级响应式矩阵，覆盖 21/21 模块；accessibility_phase_2 标为 deferred。"
+    },
+    {
+      "step": 4,
+      "action": "define_module_local_patterns",
+      "detail": "在不新增依赖、不改全局 LearningScaffold 的前提下，为高风险模块选择模块内布局模式：信息卡片使用堆叠/Wrap，横向控制区使用滚动或折叠，画布使用比例约束/可缩放或保留交互区域，二维表格保持横向滚动，视频控制区使用窄屏专属排列；低风险模块只做必要修正。",
+      "verify": "每个模式绑定至少一个真实模块和一个测试断言；无跨模块依赖。"
+    },
+    {
+      "step": 5,
+      "action": "implement_module_scoped_changes",
+      "detail": "按模块逐个实施响应式布局改动，优先处理已发现的固定横向布局与嵌套内容风险；不修改无关模块、不修改无障碍专项、不修改多窗口和平台边界。每个模块先补或调整窄屏行为测试，再实施对应最小代码变更，遵循 RED-GREEN-REFACTOR。",
+      "verify": "每个改动模块都有对应标准测试文件或现有测试新增窄屏断言；变更范围与矩阵逐项对应。"
+    },
+    {
+      "step": 6,
+      "action": "responsive_regression_tests",
+      "detail": "补充或调整模块级 Widget 测试：至少覆盖 360x640、600dp 边界和一个桌面宽度；对页面使用 tester.binding.setSurfaceSize；捕获 FlutterError 并断言无 RenderFlex overflow；对 not_target 模块只验证模块说明/降级结构，不伪造完整移动交互支持。",
+      "verify": "窄屏、边界、桌面三组测试均可运行；不存在由测试尺寸导致的误报。"
+    },
+    {
+      "step": 7,
+      "action": "visual_acceptance",
+      "detail": "在 macOS 可用真实窗口或 Flutter 测试截图中检查主目录、分类页和所有实际改动模块；至少覆盖窄窗口、600dp 附近和宽窗口；记录仍需 Windows/Android 真机确认的项目。截图只作为证据，不得把不可用环境写成 PASS。",
+      "verify": "每个改动模块有视觉证据或 BLOCKED 原因；明确 accessibility_phase_2 未验收。"
+    },
+    {
+      "step": 8,
+      "action": "generated_contract_sync_if_needed",
+      "detail": "仅当模块注册元数据或机器契约确实需要记录 mobile_policy 时，修改 tool/generate_agent_indexes.js 的生成源并运行 bash tool/generate_harness_ai_analysis.sh；禁止手工修改 AI_PROJECT_CONTEXT.md、REFACTOR_PLAN.md、AI_MODULE_INDEX.md 或 AI_ANALYSIS.md。若矩阵只作为报告，不新增生成字段。",
+      "verify": "生成文档无漂移；若未改生成源，则生成文档保持不变。"
+    },
+    {
+      "step": 9,
+      "action": "local_commit_only",
+      "detail": "完成结构复核、定向测试和完整质量门禁后，仅在用户允许的本地流程中 commit；提交前核对 staged 文件集；严禁 git push、tag、Release 或远端 workflow。若执行 agent 无法本地提交，则保留工作区并报告，不得自行改变远端。",
+      "verify": "git log 仅出现本任务允许的本地 commit（若执行）；origin/dev 指针保持不变。"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1：响应式布局按模块独立决定，LearningScaffold 和 App Shell 未被改成全局强制响应式引擎",
+    "DD-2：21/21 模块完成移动端必要性评估并形成矩阵；supported/degraded/not_target 分类有理由和证据等级",
+    "DD-3：高风险模块的窄屏行为采用模块内布局策略；360x640、600dp 和桌面宽度均有测试或明确 BLOCKED",
+    "DD-4：无障碍作为第二阶段延期；本轮不宣称完成无障碍，不进行批量 Semantics/读屏/对比度改造",
+    "DD-5：multi_window、NavigationPolicy 语义、Windows USB Android-only、Android deferred、CI/release/tool 门禁均未被越界修改",
+    "所有实际代码变更均有对应测试；标准测试命名保持 <module>_test.dart",
+    "flutter analyze 为 0 issue；相关测试通过；FlutterGuard 不新增 HIGH",
+    "若修改生成源，bash tool/generate_harness_ai_analysis.sh 通过且生成文档无漂移",
+    "quality_gate.sh 在提交后的干净状态执行并通过 6/6；若任务为纯报告/验收而不提交，则按报告明确边界，不伪造 gate 结果",
+    "仅本地 commit；origin/dev 未变化；未执行任何 git push"
+  ],
+  "forbidden_changes": [
+    "不得手工编辑 AI_PROJECT_CONTEXT.md、REFACTOR_PLAN.md、lib/AI_MODULE_INDEX.md 或任何生成的 AI_ANALYSIS.md",
+    "不得修改 packages/flutter_study_learning 的 LearningScaffold 以强制全局响应式",
+    "不得修改 multi_window、desktop_multi_window 原生生命周期或分类窗口行为",
+    "不得恢复 Windows USB 原生插件或修改 usb_detector 的 Android-only 延期决策",
+    "不得新增 Android host、Android 依赖主线或 Android 发布能力",
+    "不得新增无障碍第二阶段实现或宣称无障碍通过",
+    "不得新增第三方响应式布局依赖",
+    "不得修改 release.yml、ci.yml、tool/*.sh 的语义",
+    "不得修改非本次矩阵对应的业务逻辑或其他模块以外的模块实现",
+    "不得 git push、tag、Release、merge 或重写历史"
+  ],
+  "validation": [
+    "python3 /Users/forest/.hermes/skills/software-development/delegation-task-design/scripts/validate-task-json.py .hermes/EVO-20260901-modular-responsive-layout.codex.json",
+    "bash tool/generate_harness_ai_analysis.sh",
+    "dart format .",
+    "flutter analyze",
+    "bash tool/test_all.sh",
+    "bash tool/verify_test_layout.sh",
+    "cd apps/flutter_forge && dart run flutterguard_cli:flutterguard scan . --fail-on high",
+    "bash tool/quality_gate.sh",
+    "git status --short --branch",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "high",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_ANALYSIS_SCHEMA.json",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "packages/flutter_study_learning/lib/src/learning_scaffold.dart",
+    "apps/flutter_forge/lib/app/navigation_policy.dart",
+    "apps/flutter_forge/lib/app/module_home_page.dart",
+    "apps/flutter_forge/lib/app/category_window_app.dart",
+    "apps/flutter_forge/lib/modules/*/*/AI_ANALYSIS.md"
+  ],
+  "notes": [
+    "Hermes 用户边界：Hermes 不直接修改代码；本 JSON 是交给执行 agent 的实施提词。",
+    "本任务创建时工作区已有 Windows 文档与多窗口验收相关未提交/未跟踪文件；执行 agent 必须保留并在 preflight 中逐项识别，不得擅自清理。",
+    "本任务文件本身是新的未跟踪文件，必须计入执行 agent 的预期 baseline。",
+    "多窗口真实稳定性仍需独立验收；本任务不得借响应式改动替代多窗口验收，也不得修改多窗口实现。",
+    "移动端评估不是 Android 完成声明：本轮只评估模块内容是否需要适配及如何降级，Android host 与真机验收继续 deferred。",
+    "执行 agent 只允许本地 commit，严禁 git push；任何远端操作必须等待用户另行明确批准。"
+  ]
+}

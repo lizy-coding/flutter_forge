@@ -1,0 +1,68 @@
+{
+  "task_id": "TEST-20260827-windows-ui-automation",
+  "title": "Windows 界面自动化验收(真实窗口 UI 自动化, 任务清单式, 不阻塞)",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "在 Windows 真实窗口上对 Release 产物(flutter_forge-setup-x64.exe / flutter_forge-windows-x64.zip, run 33075552890, dev=c01e70b)执行界面自动化验收: 主目录渲染、模块导航、关键交互、平台禁用态、布局溢出、视频与多窗口专项, 输出逐项 PASS/FAIL/BLOCKED 报告(截图+日志证据)。",
+  "context": "产物: run 33075552890(release.yml, dev=c01e70b, 含非管理员安装与视频无帧监视修复), 下载: https://github.com/lizy-coding/flutter_forge/actions/runs/33075552890(artifacts 14 天) 或本机 .release/。UI 自动化工具: 优先 pywinauto(Windows UI Automation, pip install pywinauto)驱动真实窗口读控件树+截图; 若无 pywinauto 可用系统自带 UIA(如 Flutter DevTools/辅助功能检查器), 或配合人工操作记录证据。app 启动: 解压 zip 运行 flutter_forge.exe, 或安装 setup.exe 后启动。已确认功能: 主目录含分类/模块卡片/难度/状态/平台不可用态(USB 模块 Windows 应可用); 模块入口路由已修复(/popup /list); 视频含无流 10s 主动失败。",
+  "agent_role": "执行 agent(Windows 环境): 驱动真实窗口执行界面验收, 逐项记录证据, 禁止虚构 PASS; 工具缺失记录 BLOCKED 继续; 不修改源码/产物, 不 commit 不 push。",
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "前置准备: 产物与 UI 自动化工具就绪(缺失 BLOCKED 不阻塞)",
+      "detail": "①产物: 确认 flutter_forge-windows-x64.zip 或 setup.exe 可用(本地 .release/ 或 Actions 下载); 解压 zip 至独立目录(或安装); 记录 SHA256 与启动命令。②工具: 探测 UI 自动化能力——python3 -c \"import pywinauto\"(有则主用 pywinauto, 记录版本); 无则探测 Windows UI Automation 可用性(如 inspect.exe 或 Python uiautomation 包), 再无可记录 BLOCKED(UI 自动化)并改用人工配合模式(用户按步骤操作, agent 记录)。③应用启动: 运行 flutter_forge.exe, 等待主窗口出现(超时 30s), 记录主窗口标题与首次渲染(截图)。",
+      "verify": "产物路径/SHA256/工具状态/主窗口出现均有记录"
+    },
+    {
+      "step": 2,
+      "action": "UI-01 主目录渲染与结构断言",
+      "detail": "通过 UI 自动化读主窗口控件树/无障碍树: 断言分类区(基础/异步/状态/UI/弹窗列表/网络平台)、模块卡片列表、每卡片含标题/副标题/难度/预计时间/状态标签; 平台不可用模块(如有, macOS 专属如 file_picker 在 Windows 应显示'当前平台暂不支持此模块'或按标注可用)状态正确; 截图主目录。",
+      "verify": "断言结果+截图"
+    },
+    {
+      "step": 3,
+      "action": "UI-02/03 模块导航与关键交互(逐模块)",
+      "detail": "依次进入并交互(每项独立 PASS/FAIL): U2 三棵树页面(入口/子页'基础 Widget 重建'/点击'触发重建'计数 0->1/分层返回); U3 G-code 页面(示例文本/解析器/轨迹画布/播放控件可见; 播放按钮点击后记录页面状态); U4 吸附画板(工具栏/颜色线宽/清空/元素计数); U5 下载动画(按钮触发动画); U6 字体选择器(切换行预览更新; 系统字体对话框打开并取消返回); U7 Overlay 跟随(进入即可); U8 Dio 拦截器(错误态与重试按钮可见); U9 弹窗列表('/弹窗组件'与'/列表交互'路由进入目标页面, 无 Page Not Found); U10 IoC 页面(输入 demo 点击新增, 名称/计数变化)。每项附截图。",
+      "verify": "U2-U10 各 PASS/FAIL(截图)"
+    },
+    {
+      "step": 4,
+      "action": "UI-04 视频模块专项(核心回归, 3 项)",
+      "detail": "U11 联网播放: 打开在线视频模块, 播放并等待 10s+, 断言播放时间推进与页面不崩溃(截图+日志)。U12 无流/断网: 断网(或防火墙阻止)后重开视频模块, 等待 60s+, 断言 10s 无帧自动转错误占位+重试按钮且不崩溃(验证 c01e70b 无帧监视修复); 恢复网络。U13 重试风暴: 断网状态连续点重试 10 次(间隔 2s), 断言不崩溃/无重复控制器/无异常窗口; 恢复网络后重试可播放。",
+      "verify": "U11/U12/U13 各 PASS/FAIL(截图+stderr 日志)"
+    },
+    {
+      "step": 5,
+      "action": "UI-05 多窗口专项(4 项)",
+      "detail": "U14 连续三窗: 从主目录连续打开 3 个分类窗口, 断言各窗口显示对应内容且无黑屏(逐窗截图)。U15 引擎日志: 运行 exe 捕获 stderr/事件查看器, 断言无 'Invalid engine handle' / 'Failed to send message to Flutter engine'。U16 子窗口文件选择: 子窗口打开文件选择器, 选择/取消后正常返回。U17 关闭复用: 依次关闭分类窗口再重开同一分类, 断言可复用/重建且主窗口不崩溃。",
+      "verify": "U14-U17 各 PASS/FAIL(截图+日志)"
+    },
+    {
+      "step": 6,
+      "action": "UI-06 平台态与布局检查(2 项)",
+      "detail": "U18 平台禁用态: USB 模块在 Windows 按标注(TargetPlatform.windows)应显示可用态并可进入; file_picker 模块按标注(macOS only)应显示'当前平台暂不支持此模块'且不可点击。U19 布局溢出: 主目录/三棵树/弹窗页在默认窗口与最大化窗口下截图, 断言无黄色/黑色 RenderFlex overflow 条(BOTTOM OVERFLOWED)。",
+      "verify": "U18/U19 各 PASS/FAIL(截图)"
+    },
+    {
+      "step": 7,
+      "action": "后置汇总与报告",
+      "detail": "汇总 U1-U19(19 项): PASS/FAIL/BLOCKED 计数; 失败项附复现步骤/截图路径/日志摘录; 事件查看器 Application 日志中 flutter_forge 相关错误(0xc0000005 等)记录。报告写 docs/reports/WINDOWS_UI_ACCEPTANCE-20260827.md(Windows 无法写仓库则写工作目录并标注路径)。未修改源码/产物; 不 commit 不 push。",
+      "verify": "报告生成, U1-U19 全量判定+证据清单"
+    }
+  ],
+  "acceptance_criteria": [
+    "U1-U19 每项有 PASS/FAIL/BLOCKED 判定, 无遗漏",
+    "视频专项 U11-U13 与多窗口 U14-U17 有截图+日志证据",
+    "UI 自动化工具缺失以 BLOCKED 记录且不阻塞其余项",
+    "报告含 SHA256、环境信息、失败复现步骤与证据路径",
+    "未修改源码/产物/门禁脚本, 未 commit 未 push"
+  ],
+  "out_of_scope": [
+    "不修改任何源码或 Release 产物",
+    "不执行安装/卸载验证(功能自测清单 windows-e2e-self-test 覆盖)",
+    "不处理签名/公证",
+    "不 commit 不 push"
+  ],
+  "notes": "执行环境须为 Windows(用户机器或 Windows runner)。工具优先 pywinauto, 备用 UIA/人工配合。应用为最新构建(含非管理员安装与视频无帧监视修复)。任何一项失败仅记录, 严禁虚构 PASS。产物也可从 Actions run 33075552890 直接下载。"
+}

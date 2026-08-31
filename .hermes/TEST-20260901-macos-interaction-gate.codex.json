@@ -1,0 +1,138 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "OPS-20260901-macos-interaction-gate",
+  "title": "macOS 剩余真实交互验收与 Windows 自测放行判断",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "基于 b80e41f 最新 macOS Release 产物，补齐此前因 Computer Use 点击管道失败而阻塞的真实交互验收；仅当 macOS 全部放行条件满足时输出 windows_ready=true，并生成 Windows 下一阶段自测交接信息。",
+  "scope": "real_window_acceptance_and_windows_handoff",
+  "agent_role": "Codex Desktop/人工协同验收执行者；必须使用真实 macOS 窗口和已确认 provenance 的产物；逐项输出 PASS/FAIL/BLOCKED/NOT_IN_ARTIFACT；禁止虚构 PASS；本任务只写验收证据，不修改源码、产物、CI、门禁脚本，不 commit，不 push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "执行前读取 git status、git branch -vv、git log --format='%h %p %ci %s' -12、git rev-parse HEAD origin/dev；当前已知 HEAD=b80e41fb53aa01498b587d7fbe54bfb21b2f578e，origin/dev=dfdbc1dbf8db5e25b714309251fdd76a6efd4fc1，若漂移以实际值为准。",
+    "accepted_preconditions": {
+      "engine_startup_fix": "PASS：b80e41f 新 Release 连续启动两次，invalid_engine_handle=0，failed_send_message=0。证据：macos_acceptance/evidence/2026-09-01-startup-order-validation/。",
+      "targeted_tests": "PASS_3_OF_3",
+      "quality_gate": "PASS_6_OF_6",
+      "artifact_identity": "PASS：HEAD=b80e41f，executable SHA256=327597c619ec028a063f9c4ebfe437f9cc0bc627730f7c9b6a67a6b285dfc3db。",
+      "automation_blocker": "Computer Use click previously BLOCKED：Sky Computer Use native pipe closed before response；静态窗口读取和截图可用。"
+    },
+    "source_of_truth": [
+      "macos_acceptance/evidence/2026-09-01-startup-order-validation/MACOS_UI_ACCEPTANCE_REPORT.json",
+      "macos_acceptance/evidence/2026-09-01-startup-order-validation/notes.md",
+      "macos_acceptance/MACOS_SELF_TEST_CHECKLIST.md",
+      "windows_acceptance/WINDOWS_SELF_TEST_CHECKLIST.md"
+    ]
+  },
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight_artifact_and_tool_probe",
+      "detail": "确认真实 macOS Release 产物路径、HEAD/provenance/SHA256，确认窗口读取、截图、坐标点击或人工操作通道；若点击能力不可用，所有依赖点击的项目标 BLOCKED 并继续，不改源码。",
+      "verify": "输出 artifact_identity、automation_capability、source_baseline；不得把旧产物或静态截图当作当前交互证据。"
+    },
+    {
+      "step": 2,
+      "action": "core_navigation_real_interaction",
+      "detail": "使用真实点击或人工协同完成主目录、basic、state、platform、popup_table 进入/返回；验证模块标题、路由、返回链；每项保存截图或记录 BLOCKED 原因。",
+      "verify": "UI-04..UI-10 逐项 verdict；任何点击未生效只能 BLOCKED。"
+    },
+    {
+      "step": 3,
+      "action": "three_category_window_matrix",
+      "detail": "从主窗口依次打开 basic、state、platform 三个不同分类窗口；记录每个窗口 ID/时间/截图/首帧；确认无黑屏、内容分类正确、主窗口存活。",
+      "verify": "UI-11..UI-15 逐项 verdict；三窗不得用同分类重复替代。"
+    },
+    {
+      "step": 4,
+      "action": "reuse_close_reopen_cycles",
+      "detail": "重复打开同一分类验证复用；关闭一个窗口；关闭全部子窗口；重开一个分类；完成至少 3 轮打开/关闭/重开；记录窗口 ID 和原始日志。",
+      "verify": "UI-16..UI-20 逐项 verdict；无黑屏、主窗口不退出、无 stale registry。"
+    },
+    {
+      "step": 5,
+      "action": "child_file_picker",
+      "detail": "在真实子窗口进入 file_picker，打开系统文件选择器，执行取消；条件允许时再选择一个测试文件返回；记录截图、返回结果和日志。",
+      "verify": "UI-21..UI-23 逐项 verdict；插件失败为 FAIL，不得改写为 BLOCKED。"
+    },
+    {
+      "step": 6,
+      "action": "video_and_responsive_checks",
+      "detail": "在 macOS 最新产物中执行在线视频联网打开/播放、可执行的错误态检查；打开 debounce_throttle，在约 360dp、600dp、1024dp/最大化窗口验证按钮、计数、滚动场景、事件可视化和嵌套滚动。",
+      "verify": "V1..V6 与 UI-28..UI-35 逐项 verdict；网络条件单独记录 external_condition；无法点击/调整窗口则 BLOCKED。"
+    },
+    {
+      "step": 7,
+      "action": "raw_log_and_crash_review",
+      "detail": "汇总本轮 raw Console/终端日志，复核 Invalid engine handle、Failed to send message to Flutter engine、EXC_BAD_ACCESS、SIGABRT；检查 DiagnosticReports。",
+      "verify": "M13/M14/M15 有最新日志证据；任何新 Engine 错误即 FAIL。"
+    },
+    {
+      "step": 8,
+      "action": "macos_gate_and_windows_handoff",
+      "detail": "只有所有 MACOS_GATE_REQUIRED 项真实 PASS，才输出 MACOS_GATE=PASS、windows_ready=true，并生成 Windows 自测交接文件；存在 FAIL/BLOCKED 时输出 HOLD、windows_ready=false，但可列出 Windows preflight 任务。",
+      "verify": "macOS 报告明确 MACOS_GATE；Windows 只有 macOS PASS 才允许进入完整自测，不得跨平台替代证据。"
+    },
+    {
+      "step": 9,
+      "action": "report_only",
+      "detail": "写入 macos_acceptance/evidence/<date>/MACOS_UI_ACCEPTANCE_REPORT.json 与 notes.md；只写报告，不修改源码/产物/CI/门禁脚本，不 commit，不 push。",
+      "verify": "JSON 可解析；每项有 verdict；报告含 artifact、automation、evidence、macos_gate、windows_ready、hold_reasons。"
+    }
+  ],
+  "macos_gate_required": [
+    "artifact_identity=PASS",
+    "startup_clean_x2=PASS",
+    "invalid_engine_handle_absent=PASS",
+    "failed_engine_message_absent=PASS",
+    "basic_state_platform_three_windows=PASS",
+    "three_category_first_frame_no_black=PASS",
+    "same_category_reuse=PASS",
+    "close_reopen_three_cycles=PASS",
+    "child_file_picker_open_cancel_or_select=PASS",
+    "main_window_survives=PASS",
+    "responsive_debounce_throttle_360_600_1024=PASS",
+    "raw_logs_and_screenshots_complete=PASS"
+  ],
+  "acceptance_criteria": [
+    "UI-01..UI-35 与视频/多窗口清单项目均有真实 verdict 或明确 BLOCKED/NOT_IN_ARTIFACT 原因",
+    "b80e41f 产物 provenance、SHA256 和当前源码基线已记录",
+    "Engine 启动错误不得通过过滤日志或静态截图规避",
+    "Computer Use 点击不可用时，依赖点击的项目标 BLOCKED，不虚构 PASS",
+    "MACOS_GATE=PASS 仅在 macos_gate_required 全部 PASS 时允许",
+    "windows_ready=true 仅在 MACOS_GATE=PASS 时允许",
+    "Windows USB 继续 Android-only；Android 和无障碍第二阶段不纳入放行",
+    "不修改源码、依赖、构建配置、CI、门禁脚本、历史 evidence；不 commit，不 push"
+  ],
+  "out_of_scope": [
+    "任何源码修复、响应式布局实现、多窗口实现、插件升级",
+    "Windows 代码修改或 Windows 真实验收实现",
+    "Windows USB、Android host、无障碍第二阶段",
+    "quality_gate、git commit、git push、tag、Release、CI 修改",
+    "改写历史 macOS 报告或删除历史 evidence"
+  ],
+  "forbidden_changes": [
+    "不得修改 apps/flutter_forge/lib/**、apps/flutter_forge/macos/**、packages/**",
+    "不得修改 pubspec、CI、Release、tool/*.sh 或生成契约",
+    "不得过滤或删除 Engine 错误日志",
+    "不得将 BLOCKED/NOT_IN_ARTIFACT 改写为 PASS",
+    "不得 git commit",
+    "不得 git push"
+  ],
+  "validation": [
+    "python3 -m json.tool macos_acceptance/evidence/<date>/MACOS_UI_ACCEPTANCE_REPORT.json",
+    "git diff --check",
+    "git status --short --branch",
+    "git rev-parse HEAD origin/dev",
+    "git diff --name-only"
+  ],
+  "risk": "medium",
+  "notes": [
+    "此前 b80e41f 已将启动期两个 Engine 错误降为 0，但完整 macOS_GATE 仍因真实点击工具不可用而 HOLD。",
+    "本任务的首要价值是补齐真实交互证据，不是继续猜测式修改代码。",
+    "macOS 通过后才开始 Windows 完整自测；Windows preflight 可以单独准备，但不能作为 Windows PASS。",
+    "未经用户另行明确批准，绝对禁止 git push。"
+  ]
+}

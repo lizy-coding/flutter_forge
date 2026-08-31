@@ -1,0 +1,168 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "EVO-20260901-responsive-debounce-throttle",
+  "title": "防抖节流模块自适应布局改造",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "依据模块化响应式评估清单，仅改造 debounce_throttle 模块的窄屏、临界宽度和桌面布局，并补充可重复的视口回归测试。",
+  "scope": "single_module_responsive_layout",
+  "agent_role": "代码执行 agent；严格执行本任务允许路径；先测试后实现；不得全局响应式改造；不得修改无障碍；仅本地 commit，未经用户另行明确批准严禁 git push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "执行前重新读取 git status --short --branch、git log --format='%h %p %ci %s' -12、git rev-parse HEAD origin/dev；当前工作区存在其他 Windows 文档与验收相关未提交/未跟踪文件，必须保留，不得清理或纳入本任务提交。",
+    "module": {
+      "id": "debounce_throttle",
+      "category": "basic",
+      "source_paths": [
+        "apps/flutter_forge/lib/modules/basic/debounce_throttle/module_root.dart",
+        "apps/flutter_forge/lib/modules/basic/debounce_throttle/utils/debounce_throttle.dart"
+      ],
+      "test_path": "apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart"
+    },
+    "verified_facts": [
+      "module_root.dart 的交互演示区固定高度 500px",
+      "ButtonScene 有普通/防抖/节流三个按钮横向 Row",
+      "ButtonScene 有三组计数横向 Row",
+      "ButtonScene 有三列事件可视化横向 Row",
+      "ScrollScene 存在多处横向 Row",
+      "部分进度宽度使用 MediaQuery.of(context).size.width * 0.5，而不是父级约束",
+      "测试文件存在但当前没有 setSurfaceSize/360dp/600dp/1024dp 视口断言",
+      "LearningScaffold 位于 packages/flutter_study_learning，不在本任务允许路径内",
+      "NavigationPolicy、MultiWindowManager、Windows USB、Android host、release/CI、其他模块均不在本任务允许路径内"
+    ]
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "module_local_breakpoints",
+      "rationale": "防抖节流的三路对比是模块自己的教学结构，响应式分支必须由模块内部父级约束决定。",
+      "constraints": [
+        "不得修改 LearningScaffold、App Shell 或 NavigationPolicy",
+        "不得全局替换 Row/Column",
+        "优先使用 LayoutBuilder、Wrap、Flexible、SingleChildScrollView 等 Flutter 内置能力",
+        "宽屏保留普通/防抖/节流三路同时对比，窄屏允许模块内部纵向排列或受控滚动",
+        "尺寸计算必须优先使用模块父级 constraints，不使用全局 MediaQuery 代替局部约束"
+      ],
+      "acceptance": [
+        "360dp 下三种策略均可操作且不溢出",
+        "600dp 临界宽度布局稳定",
+        "1024dp 下保留并排对比教学价值"
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "behavior_preservation",
+      "rationale": "本任务只改变布局排列，不改变防抖/节流计数、事件记录、动画或滚动语义。",
+      "constraints": [
+        "普通、防抖、节流三组计数和事件记录不得删除",
+        "按钮点击、滚动场景、动画反馈和 dispose 行为保持现有语义",
+        "不得为了通过窄屏测试隐藏内容或降低交互覆盖",
+        "Overlay、平台能力和其他模块不得被触碰"
+      ],
+      "acceptance": [
+        "现有行为测试继续通过",
+        "新增视口测试验证三组内容仍存在",
+        "桌面宽度行为无回归"
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "tdd_and_no_push",
+      "rationale": "布局问题必须有可重复失败测试；执行结果只保留本地提交，不改变远端。",
+      "constraints": [
+        "先新增窄屏回归测试并确认其能捕获当前风险，再实施最小布局修改",
+        "测试不得启动真实长时任务或依赖网络",
+        "只允许修改本任务列出的源文件和测试文件",
+        "完成后仅本地 commit；严禁 git push、tag、Release、merge 或重写历史"
+      ],
+      "acceptance": [
+        "定向测试通过",
+        "flutter analyze 无新增 issue",
+        "origin/dev 指针未变化",
+        "提交内容不包含既有 Windows 文档、多窗口任务或其他无关文件"
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight",
+      "detail": "读取并确认当前 git status/log/upstream；读取本模块 AI_ANALYSIS.md、module_root.dart、utils、标准测试；确认既有工作区变更不属于本任务且不清理；确认允许路径仅为本任务列出的两个源路径和一个测试路径。",
+      "verify": "打印基线和允许路径；origin/dev 未变化。"
+    },
+    {
+      "step": 2,
+      "action": "red_test",
+      "detail": "在 debounce_throttle_test.dart 增加 360x800、600x900、1024x768 的模块级渲染/交互测试；捕获 FlutterError，断言无 RenderFlex overflow，并断言普通/防抖/节流按钮、计数和事件区域存在；先运行定向测试并记录预期失败或确认当前已安全。",
+      "verify": "定向测试结果真实记录；不得将测试未触发风险写成失败。"
+    },
+    {
+      "step": 3,
+      "action": "module_responsive_fix",
+      "detail": "仅在 module_root.dart 内实施最小布局改造：使用父级约束处理三按钮、三计数、三事件列和进度区域；窄屏使用 Wrap/Column/模块内部滚动，宽屏保留并排对比；修复 MediaQuery 全窗口宽度与 interactiveDemo 父约束不一致的问题；保持所有教学内容和状态逻辑。",
+      "verify": "源文件 diff 仅包含模块内部布局相关修改；无 LearningScaffold、NavigationPolicy、其他模块或平台目录变更。"
+    },
+    {
+      "step": 4,
+      "action": "green_test",
+      "detail": "运行 debounce_throttle 标准测试与新增视口测试；必要时逐个修复真实布局问题，不修改测试以规避失败；检查按钮点击、计数更新和滚动场景仍可用。",
+      "verify": "模块定向测试全部通过；无异常、无 overflow。"
+    },
+    {
+      "step": 5,
+      "action": "static_and_scope_review",
+      "detail": "运行 flutter analyze、检查 git diff --check 和变更路径；确认没有新增依赖、无障碍专项、全局响应式抽象、平台改动或其他模块变更。",
+      "verify": "analyze 0 issue；scope 文件集合严格匹配允许路径。"
+    },
+    {
+      "step": 6,
+      "action": "local_commit_only",
+      "detail": "将本任务源文件、测试文件和本任务 JSON 以外的既有工作区变更保持不动；仅提交本任务允许的代码与测试文件，提交信息使用 feat(ui): make debounce throttle demo responsive；严禁 git push。若完整 quality_gate 受既有未提交文档影响，记录真实阻塞，不得提交无关文档凑门禁。",
+      "verify": "git show --stat HEAD；逐文件核对提交集合；git rev-parse HEAD origin/dev 显示远端未变化。"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1：debounce_throttle 在 360x800、600x900、1024x768 下无 RenderFlex overflow；窄屏布局由模块内部约束决定，宽屏保留三路并排对比",
+    "DD-2：普通/防抖/节流按钮、计数、事件可视化、动画和滚动行为保留；没有通过隐藏内容规避溢出",
+    "DD-3：测试先于实现；定向测试和 flutter analyze 通过；仅本地 commit；origin/dev 未变化",
+    "没有修改 LearningScaffold、NavigationPolicy、MultiWindowManager、Windows USB、Android、CI、release 或其他模块",
+    "没有新增第三方依赖、无障碍第二阶段改动或跨模块 import",
+    "提交文件不包含既有 Windows 文档、多窗口验收任务或其他无关工作区文件"
+  ],
+  "forbidden_changes": [
+    "不得修改 packages/flutter_study_learning/**",
+    "不得修改 apps/flutter_forge/lib/app/**",
+    "不得修改 apps/flutter_forge/lib/shared/**",
+    "不得修改 apps/flutter_forge/lib/modules 之外的业务模块",
+    "不得修改 Windows USB、Android host、macOS/Windows 原生目录、CI、release 或 tool/*.sh",
+    "不得新增第三方依赖",
+    "不得实施 Semantics、读屏、对比度或键盘焦点专项",
+    "不得 git push、tag、Release、merge 或重写历史"
+  ],
+  "validation": [
+    "flutter test test/modules/basic/debounce_throttle/debounce_throttle_test.dart",
+    "flutter analyze",
+    "git diff --check",
+    "git show --stat HEAD",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "medium",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_ANALYSIS_SCHEMA.json",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "apps/flutter_forge/lib/modules/basic/debounce_throttle/AI_ANALYSIS.md",
+    "apps/flutter_forge/lib/modules/basic/debounce_throttle/module_root.dart",
+    "apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart"
+  ],
+  "notes": [
+    "本任务是第一阶段筛选清单中的第一个垂直切片，不代表其他模块可以使用相同布局方案。",
+    "Codex 可读取当前任务 JSON；如发现评估中的路径或符号与仓库不一致，先以仓库事实为准并报告，不得杜撰。",
+    "当前工作区存在既有 Windows 文档与多窗口验收变更；不得 reset、stash、删除、覆盖或纳入本任务提交。",
+    "完整 quality_gate 必须遵守 AGENTS.md，但其 diff 检查可能受既有未提交文档影响；真实失败必须记录，不能把无关文件加入提交规避。",
+    "仅允许本地 commit；未经用户另行明确批准，绝对禁止 git push。"
+  ]
+}
