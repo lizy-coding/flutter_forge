@@ -27,88 +27,94 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return LearningScaffold(
       title: widget.title,
-      interactiveDemo: SizedBox(
-        height: 500,
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _currentPageIndex == 0
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : null,
+      interactiveDemo: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCompact = constraints.maxWidth < 600;
+
+          return SizedBox(
+            height: isCompact ? 620 : 500,
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _currentPageIndex == 0
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : null,
+                          ),
+                          onPressed: () {
+                            setState(() => _currentPageIndex = 0);
+                            _pageController.animateToPage(
+                              0,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          child: const Text('按钮点击场景'),
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() => _currentPageIndex = 0);
-                        _pageController.animateToPage(
-                          0,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      },
-                      child: const Text('按钮点击场景'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _currentPageIndex == 1
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : null,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _currentPageIndex == 1
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : null,
+                          ),
+                          onPressed: () {
+                            setState(() => _currentPageIndex = 1);
+                            _pageController.animateToPage(
+                              1,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          child: const Text('滚动场景'),
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() => _currentPageIndex = 1);
-                        _pageController.animateToPage(
-                          1,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      },
-                      child: const Text('滚动场景'),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(16),
-              color: Colors.grey[100],
-              child: const Column(
-                children: [
-                  Text(
-                    '防抖(Debounce)：在一段时间内多次触发事件，只执行最后一次。',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  color: Colors.grey[100],
+                  child: const Column(
+                    children: [
+                      Text(
+                        '防抖(Debounce)：在一段时间内多次触发事件，只执行最后一次。',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        '节流(Throttle)：在一段时间内多次触发事件，只执行第一次。',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    '节流(Throttle)：在一段时间内多次触发事件，只执行第一次。',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
+                ),
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() => _currentPageIndex = index);
+                    },
+                    children: const [ButtonScene(), ScrollScene()],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() => _currentPageIndex = index);
-                },
-                children: const [ButtonScene(), ScrollScene()],
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
       sections: [
         LearningObjectives(
@@ -201,14 +207,17 @@ class _ButtonSceneState extends State<ButtonScene>
     _normalAnim = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
+      value: 1,
     );
     _debounceAnim = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
+      value: 1,
     );
     _throttleAnim = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
+      value: 1,
     );
   }
 
@@ -254,66 +263,116 @@ class _ButtonSceneState extends State<ButtonScene>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '连续快速点击按钮，对比不同处理方式:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 600;
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildAnimatedButton(
-                '普通点击',
-                Colors.grey,
-                _handleNormalClick,
-                _normalAnim,
+              const Text(
+                '连续快速点击按钮，对比不同处理方式:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              _buildAnimatedButton(
-                '防抖点击',
-                Colors.red,
-                _handleDebounceClick,
-                _debounceAnim,
+              const SizedBox(height: 20),
+              Wrap(
+                alignment: WrapAlignment.spaceEvenly,
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _buildAnimatedButton(
+                    '普通点击',
+                    Colors.grey,
+                    _handleNormalClick,
+                    _normalAnim,
+                  ),
+                  _buildAnimatedButton(
+                    '防抖点击',
+                    Colors.red,
+                    _handleDebounceClick,
+                    _debounceAnim,
+                  ),
+                  _buildAnimatedButton(
+                    '节流点击',
+                    Colors.blue,
+                    _handleThrottleClick,
+                    _throttleAnim,
+                  ),
+                ],
               ),
-              _buildAnimatedButton(
-                '节流点击',
-                Colors.blue,
-                _handleThrottleClick,
-                _throttleAnim,
+              const SizedBox(height: 20),
+              Wrap(
+                alignment: WrapAlignment.spaceEvenly,
+                spacing: 16,
+                runSpacing: 8,
+                children: [
+                  _buildCounter('普通:', _normalCount, Colors.grey),
+                  _buildCounter('防抖:', _debounceCount, Colors.red),
+                  _buildCounter('节流:', _throttleCount, Colors.blue),
+                ],
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                '事件触发可视化:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, eventConstraints) {
+                    final visualizations = [
+                      _buildEventVisualization(
+                        '普通',
+                        _normalEvents,
+                        Colors.grey,
+                      ),
+                      _buildEventVisualization(
+                        '防抖',
+                        _debounceEvents,
+                        Colors.red,
+                      ),
+                      _buildEventVisualization(
+                        '节流',
+                        _throttleEvents,
+                        Colors.blue,
+                      ),
+                    ];
+
+                    if (isCompact) {
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SizedBox(
+                          height: eventConstraints.maxHeight,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (final visualization in visualizations) ...[
+                                SizedBox(width: 160, child: visualization),
+                                if (visualization != visualizations.last)
+                                  const SizedBox(width: 8),
+                              ],
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final visualization in visualizations)
+                          Expanded(child: visualization),
+                      ],
+                    );
+                  },
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildCounter('普通:', _normalCount, Colors.grey),
-              _buildCounter('防抖:', _debounceCount, Colors.red),
-              _buildCounter('节流:', _throttleCount, Colors.blue),
-            ],
-          ),
-          const SizedBox(height: 30),
-          const Text(
-            '事件触发可视化:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildEventVisualization('普通', _normalEvents, Colors.grey),
-                _buildEventVisualization('防抖', _debounceEvents, Colors.red),
-                _buildEventVisualization('节流', _throttleEvents, Colors.blue),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -353,36 +412,34 @@ class _ButtonSceneState extends State<ButtonScene>
   }
 
   Widget _buildEventVisualization(String title, List<int> events, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border.all(color: color.withValues(alpha: 0.5)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: ListView.builder(
+              itemCount: events.length,
+              reverse: true,
+              itemBuilder: (context, index) {
+                return Text(
+                  DateTime.fromMillisecondsSinceEpoch(
+                    events[index],
+                  ).toString().substring(11, 19),
+                  style: TextStyle(color: color.withValues(alpha: 0.8)),
+                );
+              },
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: events.length,
-                reverse: true,
-                itemBuilder: (context, index) {
-                  return Text(
-                    DateTime.fromMillisecondsSinceEpoch(
-                      events[index],
-                    ).toString().substring(11, 19),
-                    style: TextStyle(color: color.withValues(alpha: 0.8)),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -442,88 +499,120 @@ class _ScrollSceneState extends State<ScrollScene>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          color: Colors.grey[200],
-          child: Column(
-            children: [
-              _buildPositionIndicator(
-                '实时位置',
-                _scrollPosition,
-                Colors.grey[800]!,
-              ),
-              const SizedBox(height: 10),
-              Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 600;
+
+        return Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              color: Colors.grey[200],
+              child: Column(
                 children: [
-                  Expanded(
-                    child: _buildAnimatedPositionIndicator(
+                  _buildPositionIndicator(
+                    '实时位置',
+                    _scrollPosition,
+                    Colors.grey[800]!,
+                  ),
+                  const SizedBox(height: 10),
+                  if (isCompact) ...[
+                    _buildAnimatedPositionIndicator(
                       '防抖位置',
                       _debouncePosition,
                       Colors.red,
                     ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: _buildAnimatedPositionIndicator(
+                    const SizedBox(height: 10),
+                    _buildAnimatedPositionIndicator(
                       '节流位置',
                       _throttlePosition,
                       Colors.blue,
                     ),
-                  ),
+                  ] else
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildAnimatedPositionIndicator(
+                            '防抖位置',
+                            _debouncePosition,
+                            Colors.red,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: _buildAnimatedPositionIndicator(
+                            '节流位置',
+                            _throttlePosition,
+                            Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            controller: _scrollController,
-            itemCount: 100,
-            itemBuilder: (context, index) {
-              final double itemPosition = index * 100.0;
-              final bool isNearReal =
-                  (_scrollPosition - itemPosition).abs() < 200;
-              final bool isNearDebounce =
-                  (_debouncePosition - itemPosition).abs() < 200;
-              final bool isNearThrottle =
-                  (_throttlePosition - itemPosition).abs() < 200;
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: 100,
+                itemBuilder: (context, index) {
+                  final double itemPosition = index * 100.0;
+                  final bool isNearReal =
+                      (_scrollPosition - itemPosition).abs() < 200;
+                  final bool isNearDebounce =
+                      (_debouncePosition - itemPosition).abs() < 200;
+                  final bool isNearThrottle =
+                      (_throttlePosition - itemPosition).abs() < 200;
 
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '列表项 #$index',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildPositionDot(
-                            '实时',
-                            isNearReal,
-                            Colors.grey[800]!,
+                          Text(
+                            '列表项 #$index',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                          _buildPositionDot('防抖', isNearDebounce, Colors.red),
-                          _buildPositionDot('节流', isNearThrottle, Colors.blue),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 16,
+                            runSpacing: 8,
+                            children: [
+                              _buildPositionDot(
+                                '实时',
+                                isNearReal,
+                                Colors.grey[800]!,
+                              ),
+                              _buildPositionDot(
+                                '防抖',
+                                isNearDebounce,
+                                Colors.red,
+                              ),
+                              _buildPositionDot(
+                                '节流',
+                                isNearThrottle,
+                                Colors.blue,
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -579,6 +668,13 @@ class _ScrollSceneState extends State<ScrollScene>
     double position,
     Color color,
   ) {
+    final widthFactor =
+        (position /
+                (_scrollController.hasClients
+                    ? _scrollController.position.maxScrollExtent
+                    : 1))
+            .clamp(0.0, 1.0);
+
     return Row(
       children: [
         SizedBox(
@@ -598,23 +694,21 @@ class _ScrollSceneState extends State<ScrollScene>
                   color: Colors.grey[300],
                 ),
               ),
-              FadeTransition(
-                opacity: CurvedAnimation(
-                  parent: _positionAnimController,
-                  curve: Curves.easeOut,
-                ),
-                child: Container(
-                  height: 12,
-                  width:
-                      (position /
-                          (_scrollController.hasClients
-                              ? _scrollController.position.maxScrollExtent
-                              : 1)) *
-                      MediaQuery.of(context).size.width *
-                      0.5,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: color,
+              Positioned.fill(
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: widthFactor,
+                  child: FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: _positionAnimController,
+                      curve: Curves.easeOut,
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: color,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -635,29 +729,27 @@ class _ScrollSceneState extends State<ScrollScene>
   }
 
   Widget _buildPositionDot(String label, bool isActive, Color color) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16.0),
-      child: Row(
-        children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isActive ? color : Colors.transparent,
-              border: Border.all(color: color),
-            ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isActive ? color : Colors.transparent,
+            border: Border.all(color: color),
           ),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-            ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
