@@ -1,0 +1,126 @@
+{
+  "schema": "flutter_forge.macos_engine_message_handoff.v1",
+  "task_id": "FIX-20260901-macos-engine-startup-broadcast",
+  "generated_at": "2026-09-01T00:00:00+08:00",
+  "scope": "macos_multiwindow_lifecycle_and_acceptance_assets",
+  "preflight": {
+    "branch": "dev",
+    "source_head": "ce814fbc249bd3c36ca5ab41151bb29fe70cc980",
+    "source_head_subject": "feat(ui): make debounce throttle demo responsive",
+    "upstream_ref": "origin/dev",
+    "upstream_head": "dfdbc1dbf8db5e25b714309251fdd76a6efd4fc1",
+    "upstream_mutated": false,
+    "existing_dirty_files_preserved": true
+  },
+  "native_reproduction": {
+    "verdict": "REPRODUCED_FROM_EXISTING_REAL_PROCESS_LOG",
+    "fresh_candidate_artifact_verdict": "BUILD_PASS_RUNTIME_BLOCKED_BY_SANDBOX",
+    "evidence": "../2026-08-31/logs/app-console.log",
+    "observations": [
+      "Invalid engine handle appeared on both recorded startups.",
+      "Failed to send message to Flutter engine appeared on both recorded startups.",
+      "Both failures named channel mixin.one/desktop_multi_window and occurred before any recorded category-window interaction.",
+      "The task environment cannot provide a fresh native runtime result, so the candidate fix remains unverified on a running macOS engine."
+    ]
+  },
+  "candidate_build": {
+    "command": "flutter --no-version-check build macos --release",
+    "verdict": "NOT_RUN_FOR_THIS_CANDIDATE",
+    "artifact": "apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app",
+    "runtime_smoke": "BLOCKED",
+    "runtime_blocker": "native_runtime_unavailable; no real-window interaction or fresh startup log was produced for the registration-order candidate.",
+    "interaction_claim": false
+  },
+  "root_cause_hypotheses": [
+    {
+      "rank": 1,
+      "id": "desktop_multi_window_initial_registration_broadcast",
+      "status": "SOURCE_CONFIRMED",
+      "supporting_evidence": [
+        "desktop_multi_window 0.3.0 macOS MultiWindowManager.AttachWindow registers the main-window channel and immediately calls notifyWindowsChanged.",
+        "notifyWindowsChanged invokes mixin.one/desktop_multi_window on every registered window.",
+        "The captured error occurs on the same channel during each startup without requiring a child window."
+      ],
+      "counterevidence": [
+        "A newly built candidate has not yet been launched and logged after this task's native registration-order change."
+      ],
+      "isolation": "The startup send originates inside the package macOS implementation when GeneratedPlugins registers desktop_multi_window. Flutter framework source shows the implicit engine launch normally occurs later in FlutterViewController.viewWillAppear. The application-side candidate explicitly starts the attached main engine immediately before the unchanged GeneratedPlugins registration in MainFlutterWindow.awakeFromNib. Real macOS startup logs are still required before this can be called fixed."
+    },
+    {
+      "rank": 2,
+      "id": "category_window_closes_between_calibration_and_show",
+      "status": "REGRESSION_TEST_REPRODUCED_AND_FIXED",
+      "supporting_evidence": [
+        "The red test produced Bad state: window closed before show from MultiWindowManager.createCategoryWindow.",
+        "The manager previously reused the controller returned by getAll without rechecking liveness after show failed."
+      ],
+      "counterevidence": [
+        "This race does not explain errors recorded before category-window interaction."
+      ],
+      "fix_invariant": "After show fails, re-query native windows; recreate only when the target id is absent, otherwise rethrow the platform error."
+    },
+    {
+      "rank": 3,
+      "id": "missing_main_or_child_plugin_registration",
+      "status": "NOT_SUPPORTED_BY_SOURCE",
+      "supporting_evidence": [],
+      "counterevidence": [
+        "MainFlutterWindow still calls RegisterGeneratedPlugins for the main FlutterViewController.",
+        "AppDelegate still calls RegisterGeneratedPlugins for each child FlutterViewController.",
+        "AppDelegate still registers file_picker_bridge on main and child engine messengers."
+      ]
+    }
+  ],
+  "dart_regression": {
+    "command": "flutter test test/shared/multi_window_manager_test.dart",
+    "red_verdict": "FAIL_AS_EXPECTED",
+    "red_failure": "Bad state: window closed before show",
+    "green_verdict": "BLOCKED_IN_CURRENT_ENVIRONMENT",
+    "current_environment_blocker": "Flutter attempted to update /Users/forest/development/flutter/bin/cache/engine.stamp.tmp and engine.realm, but the SDK is read-only in this task sandbox.",
+    "covered_invariants": [
+      "A live same-category controller is reused.",
+      "A controller confirmed closed after show failure is not reused.",
+      "Calibration removes a closed category entry and reopening creates a new controller."
+    ]
+  },
+  "native_registration_invariants": {
+    "main_generated_plugins": "PRESENT",
+    "main_registration_point": "MainFlutterWindow.awakeFromNib after an explicit successful FlutterEngine.run",
+    "child_generated_plugins": "PRESENT",
+    "child_registration_point": "FlutterMultiWindowPlugin onWindowCreatedCallback",
+    "main_file_picker_bridge": "PRESENT",
+    "child_file_picker_bridge": "PRESENT"
+  },
+  "next_stage_acceptance": {
+    "checklist": "macos_acceptance/MACOS_SELF_TEST_CHECKLIST.md",
+    "artifact_requirements": [
+      "Build a new macOS Release artifact from the local candidate commit.",
+      "Record candidate commit, bundle mtime, executable SHA256, version, build number, and bundle id.",
+      "Reject the 2026-08-27 Release bundle because it predates source head ce814fb."
+    ],
+    "required_results_before_macos_pass": [
+      "Two clean startups with raw logs and no Invalid engine handle.",
+      "Two clean startups with raw logs and no Failed to send message to Flutter engine.",
+      "Three distinct category windows render without black frames.",
+      "Same-category open reuses a live window.",
+      "Close and reopen succeeds for at least three cycles.",
+      "Child-window file picker opens and cancel or selection returns safely.",
+      "Responsive checks use the newly built candidate artifact at narrow, 600dp, and wide viewports."
+    ],
+    "windows_self_test_precondition": "MACOS_GATE must equal PASS with all required real-window and raw-log evidence present."
+  },
+  "macos_gate": "HOLD",
+  "windows_ready": false,
+  "hold_reasons": [
+    "A fresh candidate macOS artifact has not yet completed real-window acceptance.",
+    "The application-side registration-order candidate has not yet demonstrated two clean native startups.",
+    "The previous real-process logs contain both forbidden engine-message errors.",
+    "Real interaction evidence for three windows, reuse, close/reopen, child file picker, and responsive viewports is not yet available."
+  ],
+  "forbidden_claims": {
+    "native_issue_fixed_from_flutter_test": false,
+    "windows_pass": false,
+    "windows_ready": false,
+    "historical_evidence_rewritten": false
+  }
+}

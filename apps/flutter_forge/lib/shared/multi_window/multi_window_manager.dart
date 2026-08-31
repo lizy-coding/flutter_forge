@@ -3,11 +3,17 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../module_registry/module_category.dart';
 
 class MultiWindowManager {
-  MultiWindowManager._();
+  MultiWindowManager._({MultiWindowPlatform? platform})
+    : _platform = platform ?? const DesktopMultiWindowPlatform();
+
+  @visibleForTesting
+  MultiWindowManager.forTesting(MultiWindowPlatform platform)
+    : _platform = platform;
 
   static final MultiWindowManager instance = MultiWindowManager._();
 
@@ -15,6 +21,7 @@ class MultiWindowManager {
       Platform.isMacOS || Platform.isWindows || Platform.isLinux;
 
   final Map<ModuleCategory, String> _categoryWindows = {};
+  final MultiWindowPlatform _platform;
   StreamSubscription<void>? _windowCloseListener;
 
   /// Starts window lifecycle observation and removes stale category entries.
@@ -33,11 +40,20 @@ class MultiWindowManager {
 
     if (_categoryWindows.containsKey(category)) {
       final existingId = _categoryWindows[category]!;
-      final controllers = await WindowController.getAll();
+      final controllers = await _platform.getAllWindows();
       for (final c in controllers) {
         if (c.windowId == existingId) {
-          await c.show();
-          return existingId;
+          try {
+            await _platform.showWindow(c);
+            return existingId;
+          } catch (_) {
+            final liveWindowIds = (await _platform.getAllWindows())
+                .map((controller) => controller.windowId)
+                .toSet();
+            if (liveWindowIds.contains(existingId)) rethrow;
+            _categoryWindows.remove(category);
+            break;
+          }
         }
       }
       _categoryWindows.remove(category);
@@ -47,14 +63,14 @@ class MultiWindowManager {
 
     final config = WindowConfiguration(hiddenAtLaunch: true, arguments: args);
 
-    final controller = await WindowController.create(config);
+    final controller = await _platform.createWindow(config);
 
     _categoryWindows[category] = controller.windowId;
     return controller.windowId;
   }
 
   Future<void> _calibrateCategoryWindows() async {
-    final controllers = await WindowController.getAll();
+    final controllers = await _platform.getAllWindows();
     final liveCategoryWindows = <ModuleCategory, String>{};
     for (final controller in controllers) {
       final arguments = parseArguments(controller.arguments);
@@ -81,6 +97,58 @@ class MultiWindowManager {
       return const WindowArguments(type: WindowType.main);
     }
   }
+}
+
+abstract interface class MultiWindowPlatform {
+  Future<List<MultiWindowController>> getAllWindows();
+
+  Future<MultiWindowController> createWindow(WindowConfiguration configuration);
+
+  Future<void> showWindow(MultiWindowController controller);
+}
+
+class MultiWindowController {
+  const MultiWindowController({
+    required this.windowId,
+    required this.arguments,
+    required this.nativeController,
+  });
+
+  final String windowId;
+  final String arguments;
+  final WindowController? nativeController;
+}
+
+class DesktopMultiWindowPlatform implements MultiWindowPlatform {
+  const DesktopMultiWindowPlatform();
+
+  @override
+  Future<List<MultiWindowController>> getAllWindows() async =>
+      (await WindowController.getAll())
+          .map(
+            (controller) => MultiWindowController(
+              windowId: controller.windowId,
+              arguments: controller.arguments,
+              nativeController: controller,
+            ),
+          )
+          .toList();
+
+  @override
+  Future<MultiWindowController> createWindow(
+    WindowConfiguration configuration,
+  ) async {
+    final controller = await WindowController.create(configuration);
+    return MultiWindowController(
+      windowId: controller.windowId,
+      arguments: controller.arguments,
+      nativeController: controller,
+    );
+  }
+
+  @override
+  Future<void> showWindow(MultiWindowController controller) =>
+      controller.nativeController!.show();
 }
 
 enum WindowType { main, category }
