@@ -111,61 +111,65 @@ class _DrawingBoardState extends State<DrawingBoard> {
         color: Colors.grey[50],
         border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
       ),
-      child: Row(
-        children: [
-          // 工具选择
-          _buildToolButton(
-            icon: Icons.crop_square,
-            tool: ElementType.rectangle,
-            tooltip: '矩形',
-          ),
-          const SizedBox(width: 8),
-          _buildToolButton(
-            icon: Icons.circle_outlined,
-            tool: ElementType.circle,
-            tooltip: '圆形',
-          ),
-          const SizedBox(width: 8),
-          _buildToolButton(
-            icon: Icons.remove,
-            tool: ElementType.line,
-            tooltip: '直线',
-          ),
-          const SizedBox(width: 16),
-          // 分隔线
-          Container(width: 1, height: 30, color: Colors.grey[300]),
-          const SizedBox(width: 16),
-          // 颜色选择
-          const Text('颜色: '),
-          const SizedBox(width: 8),
-          _buildColorButton(Colors.blue),
-          const SizedBox(width: 4),
-          _buildColorButton(Colors.red),
-          const SizedBox(width: 4),
-          _buildColorButton(Colors.green),
-          const SizedBox(width: 4),
-          _buildColorButton(Colors.orange),
-          const SizedBox(width: 4),
-          _buildColorButton(Colors.purple),
-          const SizedBox(width: 16),
-          // 线宽选择
-          const Text('线宽: '),
-          SizedBox(
-            width: 100,
-            child: Slider(
-              value: _strokeWidth,
-              min: 1.0,
-              max: 10.0,
-              divisions: 9,
-              label: _strokeWidth.round().toString(),
-              onChanged: (value) {
-                setState(() {
-                  _strokeWidth = value;
-                });
-              },
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 工具选择
+            _buildToolButton(
+              icon: Icons.crop_square,
+              tool: ElementType.rectangle,
+              tooltip: '矩形',
             ),
-          ),
-        ],
+            const SizedBox(width: 8),
+            _buildToolButton(
+              icon: Icons.circle_outlined,
+              tool: ElementType.circle,
+              tooltip: '圆形',
+            ),
+            const SizedBox(width: 8),
+            _buildToolButton(
+              icon: Icons.remove,
+              tool: ElementType.line,
+              tooltip: '直线',
+            ),
+            const SizedBox(width: 16),
+            // 分隔线
+            Container(width: 1, height: 30, color: Colors.grey[300]),
+            const SizedBox(width: 16),
+            // 颜色选择
+            const Text('颜色: '),
+            const SizedBox(width: 8),
+            _buildColorButton(Colors.blue),
+            const SizedBox(width: 4),
+            _buildColorButton(Colors.red),
+            const SizedBox(width: 4),
+            _buildColorButton(Colors.green),
+            const SizedBox(width: 4),
+            _buildColorButton(Colors.orange),
+            const SizedBox(width: 4),
+            _buildColorButton(Colors.purple),
+            const SizedBox(width: 16),
+            // 线宽选择
+            const Text('线宽: '),
+            SizedBox(
+              width: 100,
+              child: Slider(
+                value: _strokeWidth,
+                min: 1.0,
+                max: 10.0,
+                divisions: 9,
+                label: _strokeWidth.round().toString(),
+                onChanged: (value) {
+                  setState(() {
+                    _strokeWidth = value;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
