@@ -1,0 +1,16 @@
+{
+  "head": "5ef5a81",
+  "configuration": "Release",
+  "build_result": "PASS",
+  "change": "Keep macOS process alive and reactivate main window after child close",
+  "checks": [
+    {"name":"category_window_open","verdict":"PASS"},
+    {"name":"native_close_action","verdict":"PASS","evidence":"close action sent successfully"},
+    {"name":"process_survives_close","verdict":"PASS","evidence":"Release process remained alive after close (pid 49287)"},
+    {"name":"post_close_accessibility_reconnect","verdict":"NOT_REPRODUCED","reason":"Computer Use close action returned; post-close state query was not repeated because channel previously timed out"}
+  ],
+  "macos_ui_interaction": "PARTIAL_PASS",
+  "macos_gate": "HOLD",
+  "windows_ready": false,
+  "windows_self_test_started": false
+}

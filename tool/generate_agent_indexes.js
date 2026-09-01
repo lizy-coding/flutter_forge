@@ -918,8 +918,8 @@ function writeLayerIndexes() {
     rel: 'lib/shared/multi_window/AI_ANALYSIS.md',
     id: 'flutter_forge_app.shared.multi_window',
     kind: 'shared_capability_index',
-    entrypoints: ['multi_window_manager.dart'],
-    owns: ['desktop_window_lifecycle', 'desktop_window_arguments'],
+    entrypoints: ['multi_window_manager.dart', 'mac_window.dart'],
+    owns: ['desktop_window_lifecycle', 'desktop_window_arguments', 'window_backend_protocol'],
     depends: ['desktop_multi_window', 'module_registry'],
   });
   writeIndex({

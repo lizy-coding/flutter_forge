@@ -1,0 +1,21 @@
+{
+  "head": "92bb625-plus-working-tree-window-timing-fix",
+  "configuration": "Release",
+  "automation_channel": "Codex Desktop Computer Use",
+  "checks": [
+    {"id":"startup_main_first_frame","verdict":"PASS"},
+    {"id":"async_category_window_first_frame","verdict":"PASS"},
+    {"id":"category_close_main_process_survival","verdict":"PASS"},
+    {"id":"category_close_main_window_reconnect","verdict":"PASS","evidence":"main window AX tree readable after Window-menu refocus"},
+    {"id":"category_close_reopen_round_1","verdict":"PASS"},
+    {"id":"category_close_reopen_round_2","verdict":"PASS"},
+    {"id":"category_close_reopen_round_3","verdict":"BLOCKED","reason":"Fixed-coordinate automation did not re-target the category entry after route state changed"},
+    {"id":"adsorption_line_desktop_layout","verdict":"PASS","evidence":"toolbar, canvas, status bar and controls rendered at desktop width"},
+    {"id":"adsorption_line_compact_360dp","verdict":"FAIL","reason":"Toolbar color controls and line-width controls are clipped at 360dp"},
+    {"id":"file_picker_native_flow","verdict":"NOT_COMPLETED"}
+  ],
+  "macos_ui_interaction":"FAIL",
+  "macos_gate":"HOLD",
+  "windows_ready":false,
+  "windows_self_test_started":false
+}

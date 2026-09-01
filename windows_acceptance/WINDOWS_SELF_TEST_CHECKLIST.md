@@ -159,10 +159,28 @@ windows_acceptance/
 | M13 | 检查应用控制台或日志 | 无 `Invalid engine handle` |  |  |
 | M14 | 检查应用控制台或日志 | 无 `Failed to send message to Flutter engine` |  |  |
 | M15 | 检查 Windows Event Viewer | 无 Flutter Forge 相关崩溃事件 |  |  |
+| M16 | 连续快速打开/关闭三个分类窗口 3 轮 | 子窗口首帧正常显示，无黑屏、无 `Invalid engine handle`、无 `Failed to send message to Flutter engine` |  |  |
+| M17 | 检查主窗口关闭行为 | 关闭最后一个子窗口后主窗口仍存活（`applicationShouldTerminateAfterLastWindowClosed=false` 语义在 Windows 等价行为） |  |  |
 
 ## 9. Windows 紧凑窗口响应式布局专项
 
 说明：此部分应使用包含响应式改造的最新 Windows Release 产物。若当前安装包仍为 v1.2.2、未包含本地响应式提交，则记录 `BLOCKED`，不要把旧产物结果当作响应式改造结果。
+
+本轮预期产物（2026-09-01 起）：由 `release.yml` workflow_dispatch 基于 dev 最新提交构建的 `flutter_forge-setup-x64.exe`。交付时须记录：
+
+```text
+run_id、head_sha（= dev 远端 HEAD）、setup.exe SHA256、构建时间
+```
+
+产物必须包含以下已提交源码才算有效基线：
+
+```text
+5ef5a81  fix(ui): repair compact layouts for issue 18
+92bb625  fix(multiwindow): add lifecycle diagnostics
+（本轮窗口时序修复提交：hiddenAtLaunch=false + mac_window.dart 后端协议）
+```
+
+用 `gh run view <run_id> --json headSha` 核对 headSha 与远端 HEAD 一致；SHA256 与 artifact 下载值一致。
 
 推荐视口：
 
@@ -184,6 +202,9 @@ windows_acceptance/
 | R8 | 最大化窗口 | 保持清晰的宽屏三路对比布局 |  |  |
 | R9 | 重复打开其他已改造模块 | 仅对已包含在当前产物中的模块进行验证；未包含模块标记 BLOCKED |  |  |
 | R10 | 检查整体应用导航 | 本轮模块内容布局变化未改变分类导航和窗口行为 |  |  |
+| R11 | 打开 `adsorption_line` 模块并将窗口调窄到 360dp | 工具栏按钮自动换行（Wrap），无水平溢出、无 RenderFlex overflow |  |  |
+| R12 | 打开 `microtask` / `isolate_basic` 模块并将窗口调窄到 360dp | 单列布局或模块内滚动可达，无 RenderFlex overflow |  |  |
+| R13 | 在 360dp 下打开 `debounce_throttle` 三个策略按钮 | 按钮可见、可操作或自然换行，无溢出 |  |  |
 
 ## 10. 崩溃与黑屏处置
 
@@ -219,8 +240,8 @@ Failed to send message to Flutter engine
 | 安装 W1-W6 |  |  |  |  |
 | 导航 N1-N8 |  |  |  |  |
 | 视频 V1-V6 |  |  |  |  |
-| 多窗口 M1-M15 |  |  |  |  |
-| 响应式 R1-R10 |  |  |  |  |
+| 多窗口 M1-M17 |  |  |  |  |
+| 响应式 R1-R13 |  |  |  |  |
 | 总计 |  |  |  |  |
 
 ### 结论规则

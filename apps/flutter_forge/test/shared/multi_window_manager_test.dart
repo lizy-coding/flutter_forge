@@ -1,9 +1,26 @@
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/shared/multi_window/multi_window_manager.dart';
+import 'package:flutter_forge_app/shared/multi_window/mac_window.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('mac window protocol carries category and lifecycle state', () {
+    const handle = MacWindowHandle(
+      id: 'window-1',
+      category: ModuleCategory.basic,
+    );
+    const event = MacWindowEvent(
+      handle: handle,
+      lifecycle: MacWindowLifecycle.firstFrameReady,
+      elapsed: Duration(milliseconds: 12),
+    );
+
+    expect(event.handle.category, ModuleCategory.basic);
+    expect(event.lifecycle, MacWindowLifecycle.firstFrameReady);
+    expect(event.elapsed.inMilliseconds, 12);
+  });
+
   test('reuses a live category window', () async {
     final diagnostics = <Map<String, Object>>[];
     final platform = _FakeMultiWindowPlatform()

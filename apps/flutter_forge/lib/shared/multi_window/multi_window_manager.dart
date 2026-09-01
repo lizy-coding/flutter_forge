@@ -83,7 +83,7 @@ class MultiWindowManager {
 
     final args = jsonEncode({'type': 'category', 'category': category.name});
 
-    final config = WindowConfiguration(hiddenAtLaunch: true, arguments: args);
+    final config = WindowConfiguration(hiddenAtLaunch: false, arguments: args);
 
     final controller = await _platform.createWindow(config);
 

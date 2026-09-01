@@ -105,17 +105,14 @@ class _DrawingBoardState extends State<DrawingBoard> {
   /// 构建工具栏
   Widget _buildToolbar() {
     return Container(
-      height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.grey[50],
         border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
       ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final children = [
             // 工具选择
             _buildToolButton(
               icon: Icons.crop_square,
@@ -168,8 +165,20 @@ class _DrawingBoardState extends State<DrawingBoard> {
                 },
               ),
             ),
-          ],
-        ),
+          ];
+          if (constraints.maxWidth < 600) {
+            return Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: children,
+            );
+          }
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(mainAxisSize: MainAxisSize.min, children: children),
+          );
+        },
       ),
     );
   }
