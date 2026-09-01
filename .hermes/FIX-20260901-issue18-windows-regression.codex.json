@@ -1,0 +1,247 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "FIX-20260901-issue18-windows-regression",
+  "title": "GitHub Issue #18 Windows ",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": " Issue #18  Windows  P0/P1  UI  integration/build ",
+  "scope": "repo_source_tests_and_windows_acceptance_diagnostics",
+  "agent_role": "Codex  TDD  source/test  Windows  commit git push ",
+  "context": "Issue #18 2026-09-01  Windows  Windows  3  actual=0M1-M4 failM8-M12  R9 360x860 RenderFlex overflow  Windows integration test 10  Windows Release build 10  widget tests 80  flutter analyze PASS.  Issue 18  Windows  macOS  ec668e5  macOS_GATE=PASS; Windows  Windows  .",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "HEAD=5ef5a81cee1ce63e0bdfe5356de3fcfb63f64c67origin/dev=ec668e534318911041b1ab277a646479b0f43b92; expected pre-existing AppDelegate.swift modification plus prompt/evidence untracked files; do not discard or include unrelated changes",
+    "issue_url": "https://github.com/lizy-coding/flutter_forge/issues/18#issue-5307389318",
+    "macos_gate": "PASS",
+    "target_windows_workspace": "D:/code/flutter_forge",
+    "verified_repo_paths": [
+      "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart",
+      "apps/flutter_forge/test/shared/multi_window_manager_test.dart",
+      "apps/flutter_forge/lib/app/app_bootstrap.dart",
+      "apps/flutter_forge/lib/app/category_window_app.dart",
+      "apps/flutter_forge/lib/modules/basic/microtask/pages/home_page.dart",
+      "apps/flutter_forge/test/modules/basic/microtask/microtask_test.dart",
+      "apps/flutter_forge/lib/modules/async/isolate_basic/module_root.dart",
+      "apps/flutter_forge/test/modules/async/isolate_basic/isolate_basic_test.dart",
+      "apps/flutter_forge/lib/modules/ui/adsorption_line/widgets/drawing_board.dart",
+      "apps/flutter_forge/test/modules/ui/adsorption_line/adsorption_line_test.dart",
+      "apps/flutter_forge/integration_test/app_test.dart"
+    ],
+    "not_present_in_current_checkout": [
+      "apps/flutter_forge/integration_test/windows_multiwindow_test.dart",
+      "apps/flutter_forge/integration_test/windows_acceptance_test.dart"
+    ],
+    "issue_18_claims_unverified_locally": [
+      "Windows M1-M4 actual=0 and M8-M12 not reached",
+      "Windows R9 microtask/isolate-basic/adsorption-line overflow at 360x860",
+      "Windows integration test timeout after about 10 minutes",
+      "Windows release build timeout after about 10 minutes while an artifact existed"
+    ],
+    "macos_evidence_boundary": "macOS 565766f evidence passes debounce_throttle 360/600/1024, category reuse, three close/reopen rounds, and child file picker; it is not Windows evidence"
+  },
+  "user_decisions": [
+    {
+      "id": "UD-20260901-issue18-local-fix",
+      "decision": "Issue #18 source/test fixes and diagnostics may be implemented locally; no remote push or issue mutation",
+      "detail": "Windows  P0/P1  Windows  Windows/CI  PASS  commit  push"
+    }
+  ],
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "module_local_responsive_repairs",
+      "rationale": "The reported R9 defects are in module-owned layouts and must not be hidden by changing the application shell.",
+      "constraints": [
+        "Use LayoutBuilder, Wrap, Flexible, or bounded scrolling only inside microtask, isolate-basic, and adsorption-line ownership boundaries.",
+        "Preserve 600dp and 1280dp behavior and existing semantics.",
+        "Do not modify LearningScaffold, NavigationPolicy, global routing, packages, pubspec, or platform directories.",
+        "Add or extend tests in the existing canonical module test paths."
+      ],
+      "acceptance": [
+        "360x860, 600x860, and 1280x860 targeted widget tests have no RenderFlex exception.",
+        "Critical controls remain findable and reachable at 360x860.",
+        "Existing module tests remain green."
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "multiwindow_diagnostics_without_windows_claims",
+      "rationale": "The Issue #18 Windows multiwindow test files are absent from this checkout, so local work must improve observability without fabricating Windows results.",
+      "constraints": [
+        "Preserve MultiWindowManager, app_bootstrap, and CategoryWindowApp contracts.",
+        "Any diagnostics must use safe structured fields: category, arguments type, controller/window id, operation, elapsed time, and error/stack trace.",
+        "Do not infer HWND, PID, title, or Windows first-frame behavior from macOS or widget tests.",
+        "Do not create or modify a Windows acceptance report to claim PASS."
+      ],
+      "acceptance": [
+        "Existing multi_window_manager_test.dart remains green.",
+        "Any new diagnostic behavior has deterministic unit coverage.",
+        "Windows runtime status remains BLOCKED or UNKNOWN until a Windows host or authoritative Windows CI run executes it."
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "bounded_test_execution",
+      "rationale": "The reported monolithic Windows test timeout obscures the last completed case and risks residual processes.",
+      "constraints": [
+        "Only modify an integration test when the exact file exists or create a clearly named maintained test with a complete entrypoint.",
+        "Use bounded waits and explicit timeout diagnostics; do not add unbounded pumpAndSettle.",
+        "Close child windows and cancel timers/subscriptions in teardown.",
+        "Never terminate processes by executable name; use only PIDs created and recorded by the test harness.",
+        "A timeout is FAIL or BLOCKED evidence, never PASS."
+      ],
+      "acceptance": [
+        "Every changed or new test has an exact runnable command.",
+        "Timeout output identifies the last completed case.",
+        "No existing test is deleted or weakened."
+      ]
+    },
+    {
+      "id": "DD-4",
+      "title": "windows_build_diagnosis",
+      "rationale": "An existing executable does not prove that flutter build windows --release completed successfully.",
+      "constraints": [
+        "Run only on Windows or authoritative Windows CI.",
+        "Capture build start time, exit code, active stage, process tree, artifact mtime, and required DLL inventory.",
+        "Do not accept a stale pre-existing Release artifact.",
+        "Keep release workflow and packaging changes out of scope."
+      ],
+      "acceptance": [
+        "Build exits 0 with fresh artifact provenance, or a precise external/toolchain blocker is recorded.",
+        "A clean launch smoke verifies the fresh executable."
+      ]
+    },
+    {
+      "id": "DD-5",
+      "title": "local_commit_no_push",
+      "rationale": "Local commits are allowed for the reviewed fix, but remote operations remain prohibited.",
+      "constraints": [
+        "Run targeted tests, flutter analyze, git diff --check, and bash tool/quality_gate.sh before committing.",
+        "Do not git push, tag, release, merge, rebase, force-push, amend prior commits, or update GitHub Issue #18.",
+        "Do not close Issue #18 until authoritative Windows evidence satisfies the final gate."
+      ],
+      "acceptance": [
+        "New commits are attributable to this task.",
+        "origin/dev remains unchanged.",
+        "No unreviewed source or platform files are included."
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight",
+      "detail": "Recheck git status/log, exact paths, current tests, and Issue #18. Treat Windows-only results as reported evidence until independently reproduced. The two existing untracked .hermes task JSON files are expected planning inputs; do not edit or commit them.",
+      "verify": "baseline SHA, working-tree state, and path inventory recorded; only the two named untracked .hermes task JSON files are present"
+    },
+    {
+      "step": 2,
+      "action": "red_responsive_tests",
+      "detail": "Add focused viewport assertions to the existing microtask, isolate-basic, and adsorption-line tests. Run before production edits and confirm expected layout failures or record that current code is already green.",
+      "verify": "RED is caused by the reported layout behavior, not test setup"
+    },
+    {
+      "step": 3,
+      "action": "fix_responsive_modules",
+      "detail": "Implement the smallest module-local fixes for the three compact-width overflow paths and verify 360x860, 600x860, and 1280x860.",
+      "verify": "targeted viewport tests pass and tester.takeException is null"
+    },
+    {
+      "step": 4,
+      "action": "inspect_multiwindow_seam",
+      "detail": "Compare the reported M1-M4 failure with current MultiWindowManager/app_bootstrap/CategoryWindowApp code. Add only concrete safe diagnostics or unit coverage; do not claim Windows runtime PASS.",
+      "verify": "multi_window_manager_test.dart passes and diagnostic fields are covered"
+    },
+    {
+      "step": 5,
+      "action": "review_bounded_windows_runner",
+      "detail": "Review integration_test/app_test.dart and any available Windows workspace test source. If a maintained Windows test is added, use exact entrypoint, bounded waits, per-case logging, and deterministic teardown.",
+      "verify": "exact command exists; no unbounded new waits; no name-based process termination"
+    },
+    {
+      "step": 6,
+      "action": "windows_build_handoff",
+      "detail": "On Windows or authoritative Windows CI, run the clean release build and launch smoke with provenance and WER/Event Viewer evidence. If unavailable, record BLOCKED without inference.",
+      "verify": "fresh build exit code and artifact evidence, or precise external blocker"
+    },
+    {
+      "step": 7,
+      "action": "local_validation",
+      "detail": "Run targeted tests, flutter analyze, git diff --check, and bash tool/quality_gate.sh. Review the complete diff and preserve macOS evidence as non-regression-only.",
+      "verify": "all local gates pass or exact failures are reported"
+    },
+    {
+      "step": 8,
+      "action": "local_commit_only",
+      "detail": "Commit focused source/test changes with a conventional message. Do not push, update Issue #18, or claim Windows acceptance.",
+      "verify": "git show --name-status HEAD; origin/dev unchanged; git status reviewed"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1: microtask, isolate-basic, and adsorption-line pass 360x860/600x860/1280x860 without RenderFlex overflow.",
+    "DD-2: multiwindow Dart seam remains covered; Windows M1-M4 is not marked PASS without Windows evidence.",
+    "DD-3: every changed Windows test is exact, bounded, and teardown-safe.",
+    "DD-4: Windows release build is PASS only with fresh exit-code and artifact provenance evidence; otherwise BLOCKED.",
+    "DD-5: local commit may be created, origin/dev remains unchanged, and no push or Issue #18 mutation occurs.",
+    "Existing tests, flutter analyze, and quality_gate remain green.",
+    "usb_detector remains Android-only/deferred and is not treated as a Windows failure.",
+    "macOS acceptance remains a separate non-regression gate and does not satisfy Windows PC baseline."
+  ],
+  "out_of_scope": [
+    "Windows USB/HID/Serial/WinUSB implementation",
+    "Android host work",
+    "Global LearningScaffold or NavigationPolicy redesign",
+    "Package dependency changes",
+    "Release workflow/version/tag/release changes",
+    "GitHub Issue #18 comments/labels/closure",
+    "git push, tag, release, merge, rebase, force-push"
+  ],
+  "forbidden_changes": [
+    "Do not modify .github/workflows/**, pubspec.yaml, pubspec.lock, packages/**, apps/flutter_forge/windows/**, or apps/flutter_forge/macos/**.",
+    "Do not globally modify LearningScaffold, app shell, or NavigationPolicy to hide module overflow.",
+    "Do not delete or weaken tests.",
+    "Do not fabricate Windows screenshots, WER logs, artifact identity, PASS verdicts, or Issue #18 results.",
+    "Do not kill processes by executable name.",
+    "Do not git push or mutate GitHub Issue #18."
+  ],
+  "validation": [
+    "flutter test test/modules/basic/microtask/microtask_test.dart",
+    "flutter test test/modules/async/isolate_basic/isolate_basic_test.dart",
+    "flutter test test/modules/ui/adsorption_line/adsorption_line_test.dart",
+    "flutter test test/shared/multi_window_manager_test.dart",
+    "flutter analyze",
+    "bash tool/quality_gate.sh",
+    "git diff --check",
+    "git show --name-status HEAD",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "high",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_ANALYSIS_SCHEMA.json",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "windows_acceptance/WINDOWS_SELF_TEST_CHECKLIST.md",
+    "windows_acceptance/evidence/2026-09-01/WINDOWS_UI_ACCEPTANCE_REPORT.json",
+    "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart",
+    "apps/flutter_forge/test/shared/multi_window_manager_test.dart",
+    "apps/flutter_forge/lib/app/app_bootstrap.dart",
+    "apps/flutter_forge/lib/app/category_window_app.dart",
+    "apps/flutter_forge/lib/modules/basic/microtask/pages/home_page.dart",
+    "apps/flutter_forge/test/modules/basic/microtask/microtask_test.dart",
+    "apps/flutter_forge/lib/modules/async/isolate_basic/module_root.dart",
+    "apps/flutter_forge/test/modules/async/isolate_basic/isolate_basic_test.dart",
+    "apps/flutter_forge/lib/modules/ui/adsorption_line/widgets/drawing_board.dart",
+    "apps/flutter_forge/test/modules/ui/adsorption_line/adsorption_line_test.dart",
+    "apps/flutter_forge/integration_test/app_test.dart"
+  ],
+  "notes": [
+    "Issue #18 was fetched via gh in the planning session; re-fetch before execution if network is available; preserve file_picker and online_video_player boundaries.",
+    " Windows raw logs 0xc0000005/0xc000041d  Invalid engine handle  Failed to send message to Flutter engine ",
+    "Current checkout is macOS; Windows runtime, installer, WER, and release build evidence cannot be produced locally.",
+    "The task JSON itself is expected to be an untracked prompt file during preflight.",
+    "Codex may create local commits only; no push, tag, release, merge, rebase, or Issue #18 update."
+  ]
+}

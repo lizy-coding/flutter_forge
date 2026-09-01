@@ -5,28 +5,47 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('reuses a live category window', () async {
+    final diagnostics = <Map<String, Object>>[];
     final platform = _FakeMultiWindowPlatform()
       ..windows.add(_categoryWindow('live', ModuleCategory.basic));
-    final manager = MultiWindowManager.forTesting(platform);
+    final manager = MultiWindowManager.forTesting(
+      platform,
+      diagnosticSink: diagnostics.add,
+    );
 
     final windowId = await manager.createCategoryWindow(ModuleCategory.basic);
 
     expect(windowId, 'live');
     expect(platform.shownWindowIds, ['live']);
     expect(platform.createdWindowIds, isEmpty);
+    expect(diagnostics.single, containsPair('operation', 'reuse_window'));
+    expect(diagnostics.single, containsPair('category', 'basic'));
+    expect(diagnostics.single, containsPair('argumentsType', 'String'));
+    expect(diagnostics.single, containsPair('controllerId', 'live'));
+    expect(diagnostics.single['elapsedMs'], isA<int>());
   });
 
   test('does not reuse a controller that closes before show', () async {
+    final diagnostics = <Map<String, Object>>[];
     final platform = _FakeMultiWindowPlatform()
       ..windows.add(_categoryWindow('stale', ModuleCategory.state))
       ..failShowWindowIds.add('stale');
-    final manager = MultiWindowManager.forTesting(platform);
+    final manager = MultiWindowManager.forTesting(
+      platform,
+      diagnosticSink: diagnostics.add,
+    );
 
     final windowId = await manager.createCategoryWindow(ModuleCategory.state);
 
     expect(windowId, 'created-1');
     expect(platform.createdWindowIds, ['created-1']);
     expect(manager.isCategoryOpen(ModuleCategory.state), isTrue);
+    expect(diagnostics.map((fields) => fields['operation']), [
+      'show_window_failed',
+      'create_window',
+    ]);
+    expect(diagnostics.first, contains('error'));
+    expect(diagnostics.first, contains('stackTrace'));
   });
 
   test(

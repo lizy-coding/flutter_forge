@@ -1,0 +1,250 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "FIX-20260901-windows-pc-baseline",
+  "title": " GitHub Issue #18 Windows PC ",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": " Issue #18  P0  P1   Windows integration/build  PC  Windows ",
+  "scope": "windows_multiwindow_responsive_layout_and_test_reliability",
+  "agent_role": "Codex  TDD  Windows  agentcommit git push",
+  "context": "GitHub Issue #18 comment 5307389318  Windows  D:/code/flutter_forge  overall_status=not_passpc_baseline_status=blockedM1-M4  3  actual=0microtask/isolate-basic/adsorption-line 360x860 RenderFlex overflowWindows acceptance integration 10 Windows Release build 10  widget tests 80 PASSflutter analyze PASS. macOS  commit ff8b724/ec668e5  PASSWindows Windows .",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "HEAD=ec668e534318911041b1ab277a646479b0f43b92origin/dev=ec668e534318911041b1ab277a646479b0f43b92clean",
+    "macos_gate": "PASS",
+    "issue": "https://github.com/lizy-coding/flutter_forge/issues/18#issue-5307389318",
+    "target_workspace": "D:/code/flutter_forge",
+    "verified_facts": [
+      "Issue #18: WIN-UI-001 P0 integration_test/windows_multiwindow_test.dart:1133actual 0M1-M4 failM8-M12 not reachedM5-M7 pass",
+      "Issue #18: WIN-UI-002 microtask 360x860 overflows right/bottomhome_page.dart:125/128",
+      "Issue #18: WIN-UI-003 isolate-basic 360x860 bottom overflowmodule_root.dart fixed interactiveDemo height=350",
+      "Issue #18: WIN-UI-004 adsorption-line 360x860 right overflowdrawing_board.dart:114 fixed toolbar Row + Slider width=100",
+      "Issue #18: WIN-TEST-001 windows_acceptance_test full entry timed out after ~10 minutes",
+      "Issue #18: WIN-BUILD-001 flutter build windows --release timed out after ~10 minutes although Release exe/DLLs existed",
+      "Current repo does not contain integration_test/windows_multiwindow_test.dart or integration_test/windows_acceptance_test.dart; only integration_test/app_test.dart is tracked. The executor must recover exact test sources from the Windows workspace / issue evidence or create bounded maintained replacements from the checklist; do not invent issue line numbers as current repo facts.",
+      "MultiWindowManager.createCategoryWindow creates hiddenAtLaunch=true controller and returns id without show; child app later shows itself in app_bootstrap post-frame",
+      "macOS Engine/multiwindow/reuse/close-reopen/file_picker/360-600-1024 acceptance PASS and must not regress",
+      "Windows usb_detector is Android-only and not a Windows failure"
+    ],
+    "evidence_paths": [
+      "windows_acceptance/WINDOWS_SELF_TEST_CHECKLIST.md",
+      "windows_acceptance/evidence/2026-09-01/WINDOWS_UI_ACCEPTANCE_REPORT.json",
+      "macos_acceptance/evidence/2026-09-01-565766f-desktop-session/MACOS_UI_ACCEPTANCE_REPORT.json",
+      "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart",
+      "apps/flutter_forge/lib/modules/basic/microtask/pages/home_page.dart",
+      "apps/flutter_forge/lib/modules/async/isolate_basic/module_root.dart",
+      "apps/flutter_forge/lib/modules/ui/adsorption_line/widgets/drawing_board.dart"
+    ]
+  },
+  "user_decisions": [
+    {
+      "id": "UD-20260901-windows-first",
+      "decision": "Windows  Issue #18 ",
+      "detail": "macOS_GATE=PASSWindows  P0  P1 PC  git push"
+    }
+  ],
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "windows_multiwindow_observability_and_lifecycle",
+      "rationale": "Issue #18 shows create/show/first-frame/window-enumeration is not observable enough to distinguish product failure from Win32 test discovery failure.",
+      "constraints": [
+        "Add structured diagnostics at create/show/bootstrap/close boundaries with category, controller/window id, arguments, elapsed time, and exception/stack trace.",
+        "Do not log secrets or file contents.",
+        "Preserve macOS behavior and existing MultiWindowPlatform test seam.",
+        "Test product lifecycle separately from Win32 title/PID enumeration.",
+        "Do not change global navigation policy or the 600dp desktop breakpoint."
+      ],
+      "acceptance": [
+        "A Windows smoke test proves create returns a controller and the child receives type=category/category arguments.",
+        "Three categories become observable with deterministic evidence or the report identifies the exact failing lifecycle boundary.",
+        "Reuse and three close/reopen cycles pass.",
+        "No Invalid engine handle or Failed to send message to Flutter engine errors."
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "module_local_360dp_layout_repairs",
+      "rationale": "The three R9 defects are module-local fixed-size/Row assumptions, not an app-shell defect.",
+      "constraints": [
+        "microtask owns its grid/card layout; use LayoutBuilder and compact composition under 600dp.",
+        "isolate-basic owns interactiveDemo sizing; remove the fixed-height bottom overflow without changing LearningScaffold globally.",
+        "adsorption-line owns toolbar composition; use LayoutBuilder/Wrap or compact rows and keep Slider usable.",
+        "Preserve 600dp and 1280dp desktop layouts and interactions.",
+        "No blanket Row-to-Column rewrite."
+      ],
+      "acceptance": [
+        "microtask 360x860 has zero RenderFlex overflow and all cards remain reachable.",
+        "isolate-basic 360x860 has zero RenderFlex overflow and both actions remain reachable.",
+        "adsorption-line 360x860 has zero horizontal overflow and tool/color/stroke controls remain reachable.",
+        "All three pass 600x860 and 1280x860 regression checks."
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "bounded_windows_test_runner",
+      "rationale": "The ten-minute monolithic acceptance run obscures the failing case and leaves residual processes.",
+      "constraints": [
+        "Split navigation, responsive, multiwindow, video, and file-picker groups into independently runnable tests.",
+        "Use bounded waits with explicit timeout messages; avoid unbounded pumpAndSettle.",
+        "Close child windows and cancel timers/subscriptions in tearDown/tearDownAll.",
+        "Print START/PASS/FAIL with elapsed_ms for every case.",
+        "Kill only test-owned residual flutter_forge.exe/dartvm.exe processes."
+      ],
+      "acceptance": [
+        "Each group completes within 30 minutes and reports the last completed case.",
+        "The full orchestrated run completes without residual test-owned processes.",
+        "Failure in one group does not erase completed evidence from other groups."
+      ]
+    },
+    {
+      "id": "DD-4",
+      "title": "release_build_diagnosis",
+      "rationale": "An existing executable does not prove flutter build windows --release exited successfully.",
+      "constraints": [
+        "Start from a clean Windows build directory and capture flutter -v/MSBuild/CMake stage logs.",
+        "Use a bounded timeout that records the active process tree and last build stage before termination.",
+        "Do not accept a stale pre-existing Release artifact.",
+        "CI/release workflow changes are out of scope unless a source fix cannot be verified otherwise and the user approves a packaging task."
+      ],
+      "acceptance": [
+        "flutter build windows --release exits 0 on Windows or a precise external/toolchain blocker is recorded.",
+        "Artifact mtime is later than build start and required DLLs are present.",
+        "A clean launch smoke verifies the built executable."
+      ]
+    },
+    {
+      "id": "DD-5",
+      "title": "local_commit_no_push",
+      "rationale": "The user allows local commits but remote push remains forbidden.",
+      "constraints": [
+        "Create focused conventional commits after validation.",
+        "Do not git push, tag, release, merge, rebase, force-push, or rewrite prior commits.",
+        "Do not close Issue #18 until Windows evidence satisfies the final gate."
+      ],
+      "acceptance": [
+        "Commit range is fully attributable to this task.",
+        "origin/dev remains unchanged.",
+        "Working tree is clean except explicitly documented Windows evidence that cannot be committed yet."
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight_and_issue_snapshot",
+      "detail": "Re-read Issue #18 and attached evidence; confirm Windows workspace commit matches ec668e5 or explicitly rebase/checkout without rewriting history; inventory missing integration test sources before editing.",
+      "verify": "git status --short --branch; git log --format='%h %p %ci %s' -8; gh issue view 18; exact test-file inventory"
+    },
+    {
+      "step": 2,
+      "action": "red_tests_responsive",
+      "detail": "Add targeted 360x860 tests for microtask, isolate-basic, and adsorption-line that assert tester.takeException is null and critical controls lie inside/reachable from the viewport. Run each and capture expected RED failures before production edits.",
+      "verify": "Three targeted tests fail for the Issue #18 overflow symptoms, not test setup errors."
+    },
+    {
+      "step": 3,
+      "action": "fix_responsive_modules",
+      "detail": "Implement DD-2 module-local compact layouts; run 360x860, 600x860, and 1280x860 tests after each vertical slice.",
+      "verify": "All targeted viewport tests pass; flutter analyze has no issues."
+    },
+    {
+      "step": 4,
+      "action": "windows_multiwindow_diagnostics_and_smoke",
+      "detail": "Implement DD-1 diagnostics and bounded smoke test. Separate plugin create/argument/bootstrap assertions from Win32 HWND/title/PID enumeration. Verify three categories, reuse, close/reopen, and main-window survival on Windows.",
+      "verify": "Windows multiwindow group exits with per-stage evidence; M1-M4 and M8-M12 pass or identify one exact failing boundary."
+    },
+    {
+      "step": 5,
+      "action": "windows_acceptance_runner_split",
+      "detail": "Implement DD-3 grouped tests and deterministic teardown. Preserve N1-N8, file picker, online/offline video, and responsive checks already reported passing.",
+      "verify": "Each test group completes under its bound; no test-owned residual processes; full runner reports all group verdicts."
+    },
+    {
+      "step": 6,
+      "action": "windows_release_clean_build",
+      "detail": "Run DD-4 clean Windows release build with stage timing and process-tree diagnostics. Verify fresh exe/DLL provenance and launch smoke.",
+      "verify": "Build exits 0 with fresh artifact, or report one precise external/toolchain blocker without claiming PASS."
+    },
+    {
+      "step": 7,
+      "action": "full_validation",
+      "detail": "Run targeted widget tests, flutter analyze, repository quality gate, Windows grouped integration tests, and clean Windows release build. Update Windows acceptance report and Issue #18 evidence with exact commands/log paths.",
+      "verify": "quality_gate 6/6; widget/analyze green; Windows results evidence-backed; git diff --check clean."
+    },
+    {
+      "step": 8,
+      "action": "local_commits_only",
+      "detail": "Commit focused product/test fixes and acceptance evidence with conventional messages. Do not push. Do not close Issue #18 unless all final gates pass.",
+      "verify": "git log --oneline -8; git show --name-status for each new commit; git rev-parse origin/dev unchanged; git status clean."
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1: Windows multiwindow creates and observes three category windows, then reuse and three close/reopen rounds pass with deterministic diagnostics.",
+    "DD-1: zero Invalid engine handle and zero Failed to send message to Flutter engine in Windows raw logs.",
+    "DD-2: microtask, isolate-basic, and adsorption-line pass 360x860/600x860/1280x860 without RenderFlex overflow.",
+    "DD-3: Windows acceptance groups complete within bounded time and leave no test-owned residual processes.",
+    "DD-4: clean Windows release build exits 0 with fresh provenance, or remains BLOCKED with a precise external/toolchain cause.",
+    "DD-5: local commits exist, origin/dev remains ec668e5, and no push/tag/release/merge occurs.",
+    "Existing N1-N8, M5-M7, V1-V5, file_picker, 80 widget tests, and flutter analyze PASS results do not regress.",
+    "usb_detector remains Android-only/DEFERRED and is not treated as a Windows failure.",
+    "macOS accepted multiwindow/Engine/responsive behavior does not regress.",
+    "Issue #18 is updated only with verified evidence; do not fabricate screenshots, counts, or PASS verdicts."
+  ],
+  "out_of_scope": [
+    "Windows USB/HID/Serial/WinUSB implementation",
+    "Android host work",
+    "global LearningScaffold or NavigationPolicy redesign",
+    "new release/tag/workflow publication",
+    "git push or issue closure before the Windows gate passes",
+    "unrelated module refactors"
+  ],
+  "forbidden_changes": [
+    "Do not change .github/workflows/**, release packaging, pubspec versions, or tool/*.sh in this task.",
+    "Do not globally change LearningScaffold, application shell, or NavigationPolicy 600dp behavior.",
+    "Do not mark USB as a Windows failure.",
+    "Do not convert BLOCKED/TIMEOUT/NOT_REACHED into PASS.",
+    "Do not delete failing tests to make the suite green.",
+    "Do not git push, tag, release, merge, rebase, force-push, or amend commits below the new task commits."
+  ],
+  "validation": [
+    "flutter test test/modules/basic/microtask/microtask_test.dart",
+    "flutter test test/modules/async/isolate_basic/isolate_basic_test.dart",
+    "flutter test test/modules/ui/adsorption_line/adsorption_line_test.dart",
+    "flutter test test/shared/multi_window_manager_test.dart",
+    "flutter analyze",
+    "bash tool/quality_gate.sh",
+    "Windows: flutter test integration_test/<windows-multiwindow-group>.dart -d windows --reporter expanded",
+    "Windows: run each split acceptance group -d windows --reporter expanded",
+    "Windows: flutter build windows --release from a clean build directory",
+    "git diff --check",
+    "git log --oneline -8",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "high",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "windows_acceptance/WINDOWS_SELF_TEST_CHECKLIST.md",
+    "windows_acceptance/evidence/2026-09-01/WINDOWS_UI_ACCEPTANCE_REPORT.json",
+    "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart",
+    "apps/flutter_forge/test/shared/multi_window_manager_test.dart",
+    "apps/flutter_forge/lib/app/app_bootstrap.dart",
+    "apps/flutter_forge/lib/app/category_window_app.dart",
+    "apps/flutter_forge/lib/modules/basic/microtask/pages/home_page.dart",
+    "apps/flutter_forge/lib/modules/async/isolate_basic/module_root.dart",
+    "apps/flutter_forge/lib/modules/ui/adsorption_line/widgets/drawing_board.dart",
+    "apps/flutter_forge/integration_test/app_test.dart"
+  ],
+  "notes": [
+    " Windows ",
+    "Windows raw logs 0xc0000005/0xc000041d  Invalid engine handle  Failed to send message to Flutter engine  online_video_player ",
+    "Issue #18  JSON ",
+    "Codex  agent  commit",
+    " git push",
+    " Windows  Windows  BLOCKED "
+  ]
+}

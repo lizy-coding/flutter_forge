@@ -9,11 +9,15 @@ import '../../module_registry/module_category.dart';
 
 class MultiWindowManager {
   MultiWindowManager._({MultiWindowPlatform? platform})
-    : _platform = platform ?? const DesktopMultiWindowPlatform();
+    : _platform = platform ?? const DesktopMultiWindowPlatform(),
+      _diagnosticSink = _printDiagnostic;
 
   @visibleForTesting
-  MultiWindowManager.forTesting(MultiWindowPlatform platform)
-    : _platform = platform;
+  MultiWindowManager.forTesting(
+    MultiWindowPlatform platform, {
+    MultiWindowDiagnosticSink? diagnosticSink,
+  }) : _platform = platform,
+       _diagnosticSink = diagnosticSink ?? _printDiagnostic;
 
   static final MultiWindowManager instance = MultiWindowManager._();
 
@@ -22,6 +26,7 @@ class MultiWindowManager {
 
   final Map<ModuleCategory, String> _categoryWindows = {};
   final MultiWindowPlatform _platform;
+  final MultiWindowDiagnosticSink _diagnosticSink;
   StreamSubscription<void>? _windowCloseListener;
 
   /// Starts window lifecycle observation and removes stale category entries.
@@ -36,6 +41,7 @@ class MultiWindowManager {
   Future<String?> createCategoryWindow(ModuleCategory category) async {
     if (!isSupported) return null;
 
+    final stopwatch = Stopwatch()..start();
     await _calibrateCategoryWindows();
 
     if (_categoryWindows.containsKey(category)) {
@@ -45,8 +51,24 @@ class MultiWindowManager {
         if (c.windowId == existingId) {
           try {
             await _platform.showWindow(c);
+            _recordDiagnostic(
+              category: category,
+              arguments: c.arguments,
+              controllerId: existingId,
+              operation: 'reuse_window',
+              stopwatch: stopwatch,
+            );
             return existingId;
-          } catch (_) {
+          } catch (error, stackTrace) {
+            _recordDiagnostic(
+              category: category,
+              arguments: c.arguments,
+              controllerId: existingId,
+              operation: 'show_window_failed',
+              stopwatch: stopwatch,
+              error: error,
+              stackTrace: stackTrace,
+            );
             final liveWindowIds = (await _platform.getAllWindows())
                 .map((controller) => controller.windowId)
                 .toSet();
@@ -66,6 +88,13 @@ class MultiWindowManager {
     final controller = await _platform.createWindow(config);
 
     _categoryWindows[category] = controller.windowId;
+    _recordDiagnostic(
+      category: category,
+      arguments: controller.arguments,
+      controllerId: controller.windowId,
+      operation: 'create_window',
+      stopwatch: stopwatch,
+    );
     return controller.windowId;
   }
 
@@ -83,6 +112,26 @@ class MultiWindowManager {
       ..addAll(liveCategoryWindows);
   }
 
+  void _recordDiagnostic({
+    required ModuleCategory category,
+    required Object? arguments,
+    required String controllerId,
+    required String operation,
+    required Stopwatch stopwatch,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    _diagnosticSink({
+      'category': category.name,
+      'argumentsType': arguments.runtimeType.toString(),
+      'controllerId': controllerId,
+      'operation': operation,
+      'elapsedMs': stopwatch.elapsedMilliseconds,
+      if (error != null) 'error': error.toString(),
+      if (stackTrace != null) 'stackTrace': stackTrace.toString(),
+    });
+  }
+
   bool isCategoryOpen(ModuleCategory category) =>
       _categoryWindows.containsKey(category);
 
@@ -97,6 +146,12 @@ class MultiWindowManager {
       return const WindowArguments(type: WindowType.main);
     }
   }
+}
+
+typedef MultiWindowDiagnosticSink = void Function(Map<String, Object> fields);
+
+void _printDiagnostic(Map<String, Object> fields) {
+  debugPrint('[multi-window] ${jsonEncode(fields)}');
 }
 
 abstract interface class MultiWindowPlatform {

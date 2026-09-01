@@ -1,0 +1,15 @@
+{
+  "head": "5ef5a81",
+  "configuration": "Release",
+  "build_result": "PASS",
+  "change_under_test": "AppDelegate.applicationShouldTerminateAfterLastWindowClosed=false",
+  "checks": [
+    {"name":"category_window_first_frame","verdict":"PASS","evidence":"Isolate category rendered with interactive demo and controls"},
+    {"name":"process_survives_category_close","verdict":"PARTIAL_PASS","evidence":"Flutter Forge process remained alive after close (pid 43719 observed)"},
+    {"name":"main_window_reconnect_after_close","verdict":"BLOCKED","reason":"Computer Use get_app_state timed out after close despite process remaining alive"}
+  ],
+  "macos_ui_interaction": "BLOCKED",
+  "macos_gate": "HOLD",
+  "windows_ready": false,
+  "windows_self_test_started": false
+}
