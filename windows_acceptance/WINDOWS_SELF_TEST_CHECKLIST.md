@@ -166,10 +166,21 @@ windows_acceptance/
 
 说明：此部分应使用包含响应式改造的最新 Windows Release 产物。若当前安装包仍为 v1.2.2、未包含本地响应式提交，则记录 `BLOCKED`，不要把旧产物结果当作响应式改造结果。
 
-本轮预期产物（2026-09-01 起）：由 `release.yml` workflow_dispatch 基于 dev 最新提交构建的 `flutter_forge-setup-x64.exe`。交付时须记录：
+本轮预期产物（2026-09-01 起）：由 `release.yml` tag 触发构建的 `flutter_forge-setup-x64.exe`。交付时须记录：
 
 ```text
 run_id、head_sha（= dev 远端 HEAD）、setup.exe SHA256、构建时间
+```
+
+v1.2.3 已发布基线（2026-09-01，tag v1.2.3 触发）：
+
+```text
+run_id:       33511073139（macos/windows/release 三 job 均 success）
+head_sha:     0dd8f676388cb55b453844c4935ce58b9790b2b3
+release:      https://github.com/lizy-coding/flutter_forge/releases/tag/v1.2.3
+setup.exe:    flutter_forge-setup-x64.exe
+SHA256:       fd5de214dd5f5db83c685553368a0d98878fb3c131d9d8ea32250dcef9f9d67f
+大小:         12,045,069 bytes（PE32 Intel 80386）
 ```
 
 产物必须包含以下已提交源码才算有效基线：
@@ -177,10 +188,11 @@ run_id、head_sha（= dev 远端 HEAD）、setup.exe SHA256、构建时间
 ```text
 5ef5a81  fix(ui): repair compact layouts for issue 18
 92bb625  fix(multiwindow): add lifecycle diagnostics
-（本轮窗口时序修复提交：hiddenAtLaunch=false + mac_window.dart 后端协议）
+cb48fd0  fix(multiwindow): remove child-window hide timing; add mac window backend
+0dd8f67  release: bump to v1.2.3 for windows verification build
 ```
 
-用 `gh run view <run_id> --json headSha` 核对 headSha 与远端 HEAD 一致；SHA256 与 artifact 下载值一致。
+用 `gh run view <run_id> --json headSha` 核对 headSha 与远端 HEAD 一致；SHA256 与 release 资产下载值一致。
 
 推荐视口：
 
