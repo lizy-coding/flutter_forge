@@ -19,59 +19,61 @@ class ModuleHomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Flutter 学习实验室')),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          final categoryModules = modules
-              .where((module) => module.category == category)
-              .toList();
+      body: SafeArea(
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            final category = categories[index];
+            final categoryModules = modules
+                .where((module) => module.category == category)
+                .toList();
 
-          if (categoryModules.isEmpty) return const SizedBox.shrink();
+            if (categoryModules.isEmpty) return const SizedBox.shrink();
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        category.label,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          category.label,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        CategoryNavigation.modeFor(context) ==
-                                CategoryNavigationMode.separateWindow
-                            ? Icons.open_in_new
-                            : Icons.chevron_right,
-                        size: 20,
+                      IconButton(
+                        icon: Icon(
+                          CategoryNavigation.modeFor(context) ==
+                                  CategoryNavigationMode.separateWindow
+                              ? Icons.open_in_new
+                              : Icons.chevron_right,
+                          size: 20,
+                        ),
+                        tooltip: '打开分类',
+                        onPressed: () => CategoryNavigation.open(
+                          context,
+                          category: category,
+                          modules: modules,
+                        ),
                       ),
-                      tooltip: '打开分类',
-                      onPressed: () => CategoryNavigation.open(
-                        context,
-                        category: category,
-                        modules: modules,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              ...categoryModules.map(
-                (module) => ModuleListTile(module: module),
-              ),
-              const Divider(height: 1),
-            ],
-          );
-        },
+                ...categoryModules.map(
+                  (module) => ModuleListTile(module: module),
+                ),
+                const Divider(height: 1),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
