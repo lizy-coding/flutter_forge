@@ -80,12 +80,12 @@ class UsbDetectionService {
           UsbDeviceInfo deviceInfo = UsbDeviceInfo(
             vendorId: (device['vendorId'] as num?)?.toInt() ?? 0,
             productId: (device['productId'] as num?)?.toInt() ?? 0,
-            manufacturer: device['manufacturer'] as String?,
-            product: (device['product'] ?? device['name']) as String?,
-            serialNumber: device['serialNumber'] as String?,
-            platformDeviceId: device['id'] as String?,
-            bus: device['bus'] as String?,
-            port: device['port'] as String?,
+            manufacturer: device['manufacturer']?.toString(),
+            product: (device['product'] ?? device['name'])?.toString(),
+            serialNumber: device['serialNumber']?.toString(),
+            platformDeviceId: device['id']?.toString(),
+            bus: device['bus']?.toString(),
+            port: device['port']?.toString(),
             status: UsbDeviceStatus.connected,
           );
 

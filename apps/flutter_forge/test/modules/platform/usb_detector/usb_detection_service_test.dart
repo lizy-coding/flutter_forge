@@ -28,4 +28,26 @@ void main() {
     expect(invokedMethod, equals('listDevices'));
     expect(service.connectedDevices.single.displayName, equals('Test Device'));
   });
+
+  test(
+    'keeps enumerated devices when optional fields are unavailable',
+    () async {
+      const channel = MethodChannel('usb_detector/usb-test-fallback');
+      final service = UsbDetectionService.forTesting(channel: channel);
+      addTearDown(service.dispose);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            channel,
+            (call) async => [
+              {'vendorId': 1, 'productId': 2, 'name': 'permission-required'},
+            ],
+          );
+
+      expect(await service.initialize(), isTrue);
+      expect(
+        service.connectedDevices.single.displayName,
+        'permission-required',
+      );
+    },
+  );
 }
