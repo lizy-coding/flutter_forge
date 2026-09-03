@@ -13,6 +13,7 @@ import 'src/method_channel_file_picker.dart';
 FilePickerService createFilePickerService({TargetPlatform? platform}) {
   final targetPlatform = platform ?? defaultTargetPlatform;
   return switch (targetPlatform) {
+    TargetPlatform.android => const FileSelectorFilePicker(),
     TargetPlatform.windows ||
     TargetPlatform.linux =>
       const FileSelectorFilePicker(),

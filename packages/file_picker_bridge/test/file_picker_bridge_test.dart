@@ -11,6 +11,13 @@ void main() {
       );
     });
 
+    test('selects the file selector implementation on Android', () {
+      expect(
+        createFilePickerService(platform: TargetPlatform.android),
+        isA<FileSelectorFilePicker>(),
+      );
+    });
+
     test('keeps the MethodChannel implementation on macOS', () {
       expect(
         createFilePickerService(platform: TargetPlatform.macOS),
