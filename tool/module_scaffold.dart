@@ -122,6 +122,8 @@ Map<String, String> _files(Map<String, String> spec) {
       .map((item) => "'$item'")
       .join(', ');
   final root = 'lib/modules/${spec['category']}/${spec['name']}';
+  final testRoot = 'test/modules/${spec['category']}/${spec['name']}';
+  final className = _className(spec['name']!);
   return {
     '$root/module_entry.dart':
         '''import 'package:flutter/material.dart';
@@ -166,6 +168,22 @@ class _InteractiveDemo extends StatelessWidget {
       );
 }
 ''',
+    '$testRoot/${spec['name']}_test.dart':
+        '''import 'package:flutter/material.dart';
+import 'package:flutter_forge_app/modules/${spec['category']}/${spec['name']}/module_entry.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  testWidgets('${spec['title']} renders in a compact viewport', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(320, 640));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(const MaterialApp(home: ${className}Entry()));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+  });
+}
+''',
     '$root/AI_ANALYSIS.md': jsonEncode({
       'schema': 'vibecoding.harness.ai_analysis.v2',
       'mode': 'module_contract',
@@ -173,7 +191,7 @@ class _InteractiveDemo extends StatelessWidget {
         'id': 'flutter_forge_app.modules.${spec['category']}.${spec['name']}',
         'kind': 'learning_module',
         'package': 'flutter_forge_app',
-        'path': root.replaceFirst('lib/', ''),
+        'path': root,
         'status': 'pending',
       },
       'route': '/${spec['name']!.replaceAll('_', '-')}',
@@ -194,7 +212,17 @@ class _InteractiveDemo extends StatelessWidget {
       },
       'validation': ['flutter analyze', 'flutter test'],
     }),
-    'module_spec.json': jsonEncode({...spec, 'supportedPlatforms': platforms}),
+    'module_spec.json': jsonEncode({
+      'category': spec['category'],
+      'name': spec['name'],
+      'title': spec['title'],
+      'subtitle': spec['subtitle'],
+      'difficulty': spec['difficulty'],
+      'estimatedMinutes': int.parse(spec['minutes']!),
+      'concepts': jsonDecode(spec['concepts']!),
+      'supportedPlatforms': platforms,
+      'routeRegistration': 'explicit_review_required',
+    }),
   };
 }
 

@@ -36,6 +36,7 @@ Future<void> main() async {
       'lib/modules/async/cancellation_timeout/module_entry.dart',
       'lib/modules/async/cancellation_timeout/module_root.dart',
       'lib/modules/async/cancellation_timeout/AI_ANALYSIS.md',
+      'test/modules/async/cancellation_timeout/cancellation_timeout_test.dart',
       'module_spec.json',
     ];
     for (final relative in files) {
@@ -59,6 +60,15 @@ Future<void> main() async {
       ).readAsStringSync().contains('LearningScaffold'),
       'teaching scaffold missing',
     );
+    final generatedTest = File(
+      '${output.path}/test/modules/async/cancellation_timeout/cancellation_timeout_test.dart',
+    ).readAsStringSync();
+    _check(generatedTest.contains('setSurfaceSize'), 'compact test missing');
+    final spec =
+        jsonDecode(File('${output.path}/module_spec.json').readAsStringSync())
+            as Map<String, dynamic>;
+    _check(spec['estimatedMinutes'] == 15, 'minutes must be numeric');
+    _check(spec['concepts'] is List, 'concepts must be an array');
 
     final previewOutput = Directory('${temp.path}/preview');
     final previewArgs = args

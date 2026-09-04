@@ -744,7 +744,7 @@ function writeRefactorPlan() {
       {
         id: 'module_scaffold_generation',
         priority: 11,
-        status: 'pending',
+        status: 'completed',
         targets: ['tool/module_scaffold.dart', 'tool/module_scaffold_test.dart'],
         acceptance: [
           'preview_does_not_write_formal_module',
@@ -752,6 +752,11 @@ function writeRefactorPlan() {
           'generated_analysis_contract_is_valid',
           'invalid_module_arguments_fail_with_usage_code',
           'route_registration_remains_explicit',
+        ],
+        evidence: [
+          'module_scaffold_test passes preview/apply and contract assertions',
+          'dart analyze passes for scaffold CLI and acceptance test',
+          'route registration remains outside scaffold automatic writes',
         ],
       },
       {
