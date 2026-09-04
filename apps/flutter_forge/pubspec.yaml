@@ -31,8 +31,7 @@ dependencies:
   desktop_multi_window:
     path: ../../packages/desktop_multi_window
   video_player: ^2.10.0
-  video_player_win:
-    path: ../../packages/video_player_win
+  video_player_win: ^3.2.2
   shared_preferences: ^2.5.5
 
 dev_dependencies:

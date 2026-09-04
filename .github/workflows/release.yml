@@ -156,4 +156,11 @@ jobs:
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" release-assets/* --title "Flutter Forge ${{ github.ref_name }}" --notes-file release-notes.md
+        shell: bash
+        run: |
+          if gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
+            gh release upload "${{ github.ref_name }}" release-assets/* --clobber
+            gh release edit "${{ github.ref_name }}" --title "Flutter Forge ${{ github.ref_name }}" --notes-file release-notes.md
+          else
+            gh release create "${{ github.ref_name }}" release-assets/* --title "Flutter Forge ${{ github.ref_name }}" --notes-file release-notes.md
+          fi

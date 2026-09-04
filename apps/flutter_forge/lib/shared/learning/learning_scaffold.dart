@@ -48,8 +48,10 @@ class ConceptChips extends StatelessWidget {
         children: concepts
             .map(
               (c) => Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(16),
@@ -124,8 +126,11 @@ class CodeSnippetCard extends StatelessWidget {
               ),
               if (explanation != null)
                 Expanded(
-                    child: Text(explanation!,
-                        style: const TextStyle(fontSize: 12))),
+                  child: Text(
+                    explanation!,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
             ],
           ),
         ],
@@ -186,8 +191,11 @@ class CommonPitfalls extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.warning_amber,
-                        size: 18, color: Colors.orange),
+                    const Icon(
+                      Icons.warning_amber,
+                      size: 18,
+                      color: Colors.orange,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(child: Text(p)),
                   ],
@@ -244,9 +252,9 @@ class _Section extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           child,
@@ -285,8 +293,9 @@ class LearningScaffold extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Card(
                   child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: interactiveDemo),
+                    padding: const EdgeInsets.all(16),
+                    child: interactiveDemo,
+                  ),
                 ),
               ),
               const Divider(),
