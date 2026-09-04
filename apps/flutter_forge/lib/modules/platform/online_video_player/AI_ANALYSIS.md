@@ -26,7 +26,7 @@
     "module_docs"
   ],
   "depends": [
-    "flutter_study_learning",
+    "shared_learning",
     "dio",
     "video_player",
     "video_player_win",

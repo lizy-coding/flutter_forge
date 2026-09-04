@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 void main() {
   group('LearningObjectives', () {
@@ -9,9 +9,7 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: LearningObjectives(
-                objectives: ['目标一', '目标二', '目标三'],
-              ),
+              child: LearningObjectives(objectives: ['目标一', '目标二', '目标三']),
             ),
           ),
         ),
@@ -47,10 +45,7 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: CodeSnippetCard(
-                title: '示例代码',
-                code: 'print("hello");',
-              ),
+              child: CodeSnippetCard(title: '示例代码', code: 'print("hello");'),
             ),
           ),
         ),
@@ -119,9 +114,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: SingleChildScrollView(
-              child: ExerciseCard(task: '完成一个练习任务'),
-            ),
+            body: SingleChildScrollView(child: ExerciseCard(task: '完成一个练习任务')),
           ),
         ),
       );
@@ -134,10 +127,7 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: ExerciseCard(
-                task: '完成一个任务',
-                hint: '使用Future.delayed',
-              ),
+              child: ExerciseCard(task: '完成一个任务', hint: '使用Future.delayed'),
             ),
           ),
         ),
@@ -150,13 +140,10 @@ void main() {
   group('LearningScaffold', () {
     testWidgets('renders title and sections', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: LearningScaffold(
             title: '测试页面',
-            sections: [
-              const Text('区块一'),
-              const Text('区块二'),
-            ],
+            sections: [Text('区块一'), Text('区块二')],
           ),
         ),
       );
@@ -168,11 +155,11 @@ void main() {
 
     testWidgets('renders interactive demo when provided', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: LearningScaffold(
             title: '测试',
-            sections: const [],
-            interactiveDemo: const Text('交互演示区域'),
+            sections: [],
+            interactiveDemo: Text('交互演示区域'),
           ),
         ),
       );

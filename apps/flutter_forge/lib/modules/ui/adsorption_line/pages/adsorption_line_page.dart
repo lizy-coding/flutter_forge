@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 import '../state/drawing_state.dart';
 import '../widgets/drawing_board.dart';

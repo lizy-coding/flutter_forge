@@ -20,7 +20,7 @@
     "module_docs"
   ],
   "depends": [
-    "flutter_study_learning",
+    "shared_learning",
     "flutter_ioc_core",
     "provider",
     "module_registry"

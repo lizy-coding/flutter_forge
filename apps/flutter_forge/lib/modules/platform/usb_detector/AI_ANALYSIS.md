@@ -23,7 +23,7 @@
     "module_docs"
   ],
   "depends": [
-    "flutter_study_learning",
+    "shared_learning",
     "device_info_plus",
     "module_registry"
   ],

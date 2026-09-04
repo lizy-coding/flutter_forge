@@ -18,7 +18,7 @@
   ],
   "depends": [
     "module_registry",
-    "flutter_study_learning"
+    "shared_learning"
   ],
   "children": [
     "tree_state/AI_ANALYSIS.md",

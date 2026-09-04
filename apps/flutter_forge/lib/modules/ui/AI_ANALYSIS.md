@@ -21,7 +21,7 @@
     "provider",
     "gcode_core",
     "file_picker_bridge",
-    "flutter_study_learning",
+    "shared_learning",
     "module_registry"
   ],
   "children": [

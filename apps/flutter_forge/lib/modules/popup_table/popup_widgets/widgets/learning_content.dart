@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 List<Widget> buildPopupLearningSections() {
   return const [

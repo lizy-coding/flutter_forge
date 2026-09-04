@@ -17,7 +17,6 @@
     "layout": "pub_workspace",
     "internal_packages": [
       "packages/gcode_core",
-      "packages/flutter_study_learning",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core"
     ],

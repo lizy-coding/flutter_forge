@@ -21,7 +21,7 @@
     "module_docs"
   ],
   "depends": [
-    "flutter_study_learning",
+    "shared_learning",
     "two_dimensional_scrollables",
     "module_registry"
   ],

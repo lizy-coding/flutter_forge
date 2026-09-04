@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 import 'models/usb_device_info.dart';
 import 'services/usb_detection_service.dart';

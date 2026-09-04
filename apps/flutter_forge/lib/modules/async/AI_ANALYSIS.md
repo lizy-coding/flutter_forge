@@ -18,7 +18,7 @@
   ],
   "depends": [
     "module_registry",
-    "flutter_study_learning"
+    "shared_learning"
   ],
   "children": [
     "stream_subscription/AI_ANALYSIS.md",

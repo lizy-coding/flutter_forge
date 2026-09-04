@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 import 'services/preferences_service.dart';
 import 'state/persistence_demo_controller.dart';

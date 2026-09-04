@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 /// CustomPainter 的布局/重绘示例，日志标记了 build、shouldRepaint、paint 调用。
 class PainterDemoPage extends StatefulWidget {

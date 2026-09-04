@@ -54,7 +54,7 @@ run_test "validator detects unregistered module" bash -c '
 
 echo ""
 echo "--- Workspace Packages ---"
-for pkg in gcode_core flutter_study_learning file_picker_bridge flutter_ioc_core; do
+for pkg in gcode_core file_picker_bridge flutter_ioc_core; do
   run_test "${pkg} contract valid" node -e "JSON.parse(require('fs').readFileSync('packages/${pkg}/AI_ANALYSIS.md','utf8'))"
   run_test "${pkg} manifest has workspace resolution" grep -q 'resolution: workspace' "packages/${pkg}/pubspec.yaml"
 done

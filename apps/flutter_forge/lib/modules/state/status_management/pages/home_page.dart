@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
 const String _statusManageBaseRoute = '/status-management';

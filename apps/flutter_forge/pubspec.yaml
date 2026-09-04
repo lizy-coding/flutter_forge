@@ -11,8 +11,6 @@ resolution: workspace
 dependencies:
   gcode_core:
     path: ../../packages/gcode_core
-  flutter_study_learning:
-    path: ../../packages/flutter_study_learning
   file_picker_bridge:
     path: ../../packages/file_picker_bridge
   flutter_ioc_core:

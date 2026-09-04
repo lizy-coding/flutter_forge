@@ -34,7 +34,6 @@
     "workspace_root": ".",
     "members": [
       "packages/gcode_core",
-      "packages/flutter_study_learning",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core"
     ],
@@ -47,12 +46,6 @@
       "type": "flutter_package",
       "path": "packages/gcode_core",
       "entrypoint": "lib/gcode_core.dart"
-    },
-    {
-      "name": "flutter_study_learning",
-      "type": "flutter_package",
-      "path": "packages/flutter_study_learning",
-      "entrypoint": "lib/flutter_study_learning.dart"
     },
     {
       "name": "file_picker_bridge",
@@ -145,7 +138,7 @@
       "status",
       "subtitle"
     ],
-    "required_learning_dependency": "flutter_study_learning",
+    "required_learning_dependency": "shared_learning",
     "route_path_style": "kebab_case",
     "directory_style": "snake_case"
   },

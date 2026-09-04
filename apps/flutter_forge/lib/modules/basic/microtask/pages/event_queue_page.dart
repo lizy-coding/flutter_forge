@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import '../models/event_log.dart';
 import '../widgets/event_log_view.dart';
 import '../widgets/code_snippet_view.dart';

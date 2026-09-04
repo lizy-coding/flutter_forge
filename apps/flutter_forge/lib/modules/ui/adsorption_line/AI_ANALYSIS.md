@@ -22,7 +22,7 @@
     "module_docs"
   ],
   "depends": [
-    "flutter_study_learning",
+    "shared_learning",
     "provider",
     "module_registry"
   ],

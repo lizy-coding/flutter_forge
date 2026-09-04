@@ -139,7 +139,7 @@ class ${_className(spec['name']!)}Entry extends StatelessWidget {
 ''',
     '$root/module_root.dart':
         '''import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 class ${_className(spec['name']!)}Page extends StatelessWidget {
   const ${_className(spec['name']!)}Page({super.key});
@@ -198,7 +198,7 @@ void main() {
       'category': spec['category'],
       'entrypoints': ['module_entry.dart', 'module_root.dart'],
       'owns': ['module_entry', 'module_ui', 'module_docs'],
-      'depends': ['flutter_study_learning', 'module_registry'],
+      'depends': ['shared_learning', 'module_registry'],
       'children': [],
       'analysis_parent': 'lib/modules/AI_ANALYSIS.md',
       'contracts': {

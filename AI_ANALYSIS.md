@@ -23,7 +23,7 @@
   ],
   "depends": [
     "packages/gcode_core",
-    "packages/flutter_study_learning",
+    "packages/shared_learning",
     "packages/file_picker_bridge",
     "packages/flutter_ioc_core",
     "git:https://github.com/lizy-coding/flutterguard.git#9f9be84a73dc4b99a956a8529b8c334849566b03"
@@ -35,7 +35,6 @@
     "lib/shared/AI_ANALYSIS.md",
     "lib/modules/AI_ANALYSIS.md",
     "packages/gcode_core/AI_ANALYSIS.md",
-    "packages/flutter_study_learning/AI_ANALYSIS.md",
     "packages/file_picker_bridge/AI_ANALYSIS.md",
     "packages/flutter_ioc_core/AI_ANALYSIS.md"
   ],

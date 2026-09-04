@@ -21,7 +21,6 @@ GENERATED_FILES=(
   "REFACTOR_PLAN.md"
   "lib/AI_MODULE_INDEX.md"
   "packages/gcode_core/AI_ANALYSIS.md"
-  "packages/flutter_study_learning/AI_ANALYSIS.md"
   "packages/file_picker_bridge/AI_ANALYSIS.md"
   "packages/flutter_ioc_core/AI_ANALYSIS.md"
 )

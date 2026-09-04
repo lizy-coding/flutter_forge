@@ -22,7 +22,7 @@
     "module_docs"
   ],
   "depends": [
-    "flutter_study_learning",
+    "shared_learning",
     "gcode_core",
     "file_picker_bridge",
     "module_registry"

@@ -22,7 +22,7 @@
   ],
   "depends": [
     "module_registry",
-    "flutter_study_learning"
+    "shared_learning"
   ],
   "children": [
     "basic/AI_ANALYSIS.md",
