@@ -30,12 +30,8 @@
   "analysis_parent": "lib/modules/popup_table/AI_ANALYSIS.md",
   "contracts": {
     "no_natural_language": true,
-    "index_only": true,
-    "max_index_depth": 2,
     "doc_consumer": "coding_agent",
-    "doc_mode": "machine_contract",
-    "update_required_on_file_change": true,
-    "import_direction_enforced": true
+    "doc_mode": "machine_contract"
   },
   "validation": [
     "flutter analyze"
