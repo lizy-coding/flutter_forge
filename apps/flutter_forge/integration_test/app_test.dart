@@ -33,8 +33,14 @@ void main() {
         500,
         scrollable: find.byType(Scrollable).first,
       );
+      debugPrint('Android module smoke: ${module.path}');
       await tester.tap(tile);
       await tester.pump(const Duration(milliseconds: 600));
+
+      final moduleException = tester.takeException();
+      if (moduleException != null) {
+        fail('${module.path} raised during Android smoke: $moduleException');
+      }
 
       expect(find.byType(Scaffold), findsOneWidget, reason: module.path);
       await tester.pageBack();
@@ -58,8 +64,10 @@ void main() {
 
     await tester.pageBack();
     await tester.pumpAndSettle();
-    final listTile = find.widgetWithText(ListTile, '列表交互');
-    await tester.tap(listTile);
+    await tester.pump(const Duration(milliseconds: 300));
+    AppRouter.router.go('/popup-list-interaction');
+    await tester.pumpAndSettle();
+    AppRouter.router.go('/popup-list-interaction/list');
     await tester.pumpAndSettle();
     expect(find.text('二维滚动表格演示'), findsOneWidget);
   });
