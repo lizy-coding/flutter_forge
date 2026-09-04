@@ -6,12 +6,8 @@ const appRoot = path.join(root, 'apps/flutter_forge');
 
 const contracts = {
   no_natural_language: true,
-  index_only: true,
-  max_index_depth: 2,
   doc_consumer: 'coding_agent',
   doc_mode: 'machine_contract',
-  update_required_on_file_change: true,
-  import_direction_enforced: true,
 };
 
 const modules = [
@@ -496,8 +492,6 @@ function writeSchema() {
     node_required_keys: ['id', 'kind', 'package', 'path', 'status'],
     contracts_required: {
       no_natural_language: true,
-      index_only: true,
-      max_index_depth: 2,
       doc_consumer: 'coding_agent',
       doc_mode: 'machine_contract',
     },
