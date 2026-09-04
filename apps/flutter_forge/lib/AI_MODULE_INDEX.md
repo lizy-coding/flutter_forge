@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/app/router/app_route_table.dart",
-  "count": 20,
+  "count": 21,
   "modules": [
     {
       "id": "tree_state",
@@ -108,6 +108,19 @@
         "module_registry"
       ],
       "analysis": "lib/modules/state/flutter_ioc/AI_ANALYSIS.md"
+    },
+    {
+      "id": "local_persistence",
+      "category": "state",
+      "path": "lib/modules/state/local_persistence",
+      "route": "/local-persistence",
+      "status": "ready",
+      "depends": [
+        "flutter_study_learning",
+        "shared_preferences",
+        "module_registry"
+      ],
+      "analysis": "lib/modules/state/local_persistence/AI_ANALYSIS.md"
     },
     {
       "id": "gcode_visualizer",

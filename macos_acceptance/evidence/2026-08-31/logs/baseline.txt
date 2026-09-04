@@ -1,0 +1,17 @@
+2026-08-31 13:47:08 CST
+ProductName:		macOS
+ProductVersion:		26.5
+BuildVersion:		25F71
+arm64
+Apple M5
+25769803776
+/dev/disk3s5   926Gi   627Gi   277Gi    70%    2.2M  2.9G    0%   /System/Volumes/Data
+Flutter 3.44.6 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision ee80f08bbf (8 weeks ago) • 2026-07-08 15:02:06 -0700
+Engine • hash d3a3293399556a85388faf8c6f0723a7a5597aa8 (revision 83675ed276) (1 months ago) • 2026-06-30 16:59:03.000Z
+Tools • Dart 3.12.2 • DevTools 2.57.0
+35022d7fa3d01811a00747c987dd3a1cb3068a1995bc2bdddb950399414db80d  apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app/Contents/MacOS/Flutter Forge
+1.2.0
+1.2.0
+com.flutterforge.preview
+PID=29048

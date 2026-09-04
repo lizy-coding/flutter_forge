@@ -1,0 +1,60 @@
+{
+  "schema": "flutter_forge.windows_ui_acceptance_report.v1",
+  "task": "windows_desktop_acceptance",
+  "source": {
+    "head": "ff8b724c555f2bb87a226509f242c9cb8be1dd41",
+    "upstream_head": "565766f9c7d63ae160289d87da43d8023509105d",
+    "macos_gate": "PASS",
+    "macos_evidence": "macos_acceptance/evidence/2026-09-01-565766f-desktop-session/MACOS_UI_ACCEPTANCE_REPORT.json"
+  },
+  "artifact": {
+    "expected_release": "v1.2.2",
+    "expected_application": "flutter_forge-setup-x64.exe",
+    "expected_sha256": "7d3444037e18cffb0595c2e4ac5594ad55db78a82ae02f160a9039435dd0aa21",
+    "artifact_identity": "NOT_VERIFIED_IN_CURRENT_ENVIRONMENT"
+  },
+  "environment": {
+    "host": "macOS",
+    "windows_desktop_session": "NOT_AVAILABLE",
+    "windows_ci_run": "NOT_STARTED",
+    "computer_use_windows": "NOT_AVAILABLE"
+  },
+  "checks": {
+    "windows_preflight": "BLOCKED",
+    "installer_startup": "NOT_IN_ARTIFACT",
+    "module_navigation": "NOT_IN_ARTIFACT",
+    "multiwindow_stability": "NOT_IN_ARTIFACT",
+    "windows_file_picker": "NOT_IN_ARTIFACT",
+    "online_video_player": "NOT_IN_ARTIFACT",
+    "responsive_360_600_1024": "NOT_IN_ARTIFACT",
+    "windows_usb_detector": "DEFERRED_ANDROID_ONLY"
+  },
+  "summary": {
+    "PASS": 0,
+    "FAIL": 0,
+    "BLOCKED": 1,
+    "DEFERRED": 1,
+    "NOT_IN_ARTIFACT": 7
+  },
+  "windows_ready": false,
+  "windows_final_acceptance": "HOLD",
+  "blockers": [
+    {
+      "id": "W-B001",
+      "severity": "high",
+      "type": "missing_windows_execution_environment",
+      "reason": "The current session is macOS and has no Windows desktop or Windows CI execution evidence.",
+      "blocked_action": "Run the v1.2.2 setup.exe or a matching Windows CI artifact on Windows and capture screenshots, logs, PID, and Event Viewer/WER evidence."
+    }
+  ],
+  "platform_boundary": {
+    "usb_detector": "DEFERRED_ANDROID_ONLY",
+    "reason": "usb_detector is Android-only and must not be counted as a Windows failure."
+  },
+  "mutations": {
+    "source_changes": false,
+    "commit": false,
+    "push": false,
+    "release_or_workflow_changes": false
+  }
+}

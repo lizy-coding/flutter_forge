@@ -25,6 +25,27 @@ void main() {
     expect(find.text('⚠️ 常见误区'), findsOneWidget);
   });
 
+  testWidgets('adsorption board fits supported viewports', (tester) async {
+    for (final size in [
+      const Size(360, 860),
+      const Size(600, 860),
+      const Size(1280, 860),
+    ]) {
+      await tester.binding.setSurfaceSize(size);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChangeNotifierProvider(
+            create: (_) => DrawingState(),
+            child: const AdsorptionLinePage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull, reason: 'viewport $size');
+    }
+    await tester.binding.setSurfaceSize(null);
+  });
+
   test('drawing state throttles drag updates within one frame', () {
     final state = DrawingState();
     state.addElement(

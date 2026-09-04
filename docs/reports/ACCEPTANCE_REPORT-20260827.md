@@ -1,5 +1,7 @@
 # Flutter Forge 自动化界面测试验收报告
 
+> 状态修订（2026-08-31）：Windows v1.2.2 核心真机验证已由用户确认通过；Windows USB 维持 Android-only 延期；macOS/Windows 多窗口稳定性专项仍待下一轮真实窗口验证。本文以下历史记录保留原始验收时点，不将历史 PENDING 结论改写为当时已通过。
+
 - 执行日期：2026-08-27（Asia/Shanghai）
 - 执行者：Codex
 - flutter_forge HEAD：`7c262c35e5c4c0ed7232e9ae36bc22423c65c735`（`dev`，本地领先 `origin/dev` 12 个提交）

@@ -1,0 +1,181 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "FIX-20260901-debounce-responsive-360-clipping",
+  "title": "修复 debounce_throttle 360dp 真实界面裁剪并补齐 macOS 门禁",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "基于 b80e41f macOS Desktop UI 验收报告，修复 debounce_throttle 在 360dp 真实窗口中右侧事件可视化卡片被裁剪的问题，并更新响应式测试与 macOS 自测证据规则；不提前启动 Windows 完整验收。",
+  "scope": "single_module_responsive_layout_and_macos_acceptance",
+  "agent_role": "Codex 代码执行 agent；先复现真实问题再最小修复；只修改允许路径；仅本地 commit；未经用户明确批准严禁 git push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "执行前重新核对 git status、git branch -vv、git log --format='%h %p %ci %s' -8、git rev-parse HEAD origin/dev；当前已知 HEAD=b80e41fb53aa01498b587d7fbe54bfb21b2f578e，origin/dev=dfdbc1dbf8db5e25b714309251fdd76a6efd4fc1。",
+    "evidence": {
+      "report": "macos_acceptance/evidence/2026-09-01-b80e41f-desktop-session/MACOS_UI_ACCEPTANCE_REPORT.json",
+      "notes": "macos_acceptance/evidence/2026-09-01-b80e41f-desktop-session/notes.md",
+      "observed_issue": "debounce_throttle_360dp = FAIL；真实截图说明事件可视化区域在窄窗口未完整可达/被裁剪；1024dp 与 600dp = PASS。",
+      "important_reconciliation": "视觉分析指出无水平 overflow，但底部事件可视化卡片不完整；以真实用户验收 FAIL 为准，需把可达性/裁剪转为可执行测试。",
+      "engine_status": "b80e41f 后两次启动 invalid_engine_handle=0、failed_send_message=0；不要重新修改 Engine 启动顺序。"
+    },
+    "current_code_facts": [
+      "apps/flutter_forge/lib/modules/basic/debounce_throttle/module_root.dart 使用 LayoutBuilder；compact event visualization 当前为横向 SingleChildScrollView + 固定 160 宽卡片。",
+      "apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart 已覆盖 360x800、600x900、1024x768，但主要断言文本/异常，未断言每张可视化卡片的几何可达性。",
+      "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart 已有 stale/live/close-reopen seam 和 3 个测试，不得回退。",
+      "macOS 自测报告中的响应式问题来自真实桌面截图，不是旧产物问题。"
+    ]
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "reproduce_real_360_clipping",
+      "rationale": "先将真实截图中的窄屏裁剪/不可达问题转化为可重复的 widget 断言，再决定布局策略。",
+      "constraints": [
+        "测试必须使用 360x800 和当前 DebounceThrottleEntry。",
+        "不能只用 tester.takeException() 作为通过条件。",
+        "应断言三个事件可视化区域均存在且其 RenderBox 在可滚动容器内可访问，或断言明确的模块内横向滚动行为。",
+        "保留 600x900 与 1024x768 回归。"
+      ],
+      "acceptance": [
+        "测试能区分完整可达、水平滚动可达和被裁剪/不可达。",
+        "测试不依赖截图像素或脆弱的 widget 私有类型。"
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "module_local_strategy",
+      "rationale": "debounce_throttle 是三路对比教学，窄屏应保留三组内容并提供明确可达交互，不强行压缩为不可读布局。",
+      "constraints": [
+        "只在 debounce_throttle 模块内调整布局。",
+        "可选择纵向堆叠、稳定横向滚动或其他模块内策略，但必须与测试和真实验收一致。",
+        "不得删除普通/防抖/节流任何数据或事件可视化。",
+        "不得修改 LearningScaffold、App Shell、NavigationPolicy、其他模块或无障碍实现。"
+      ],
+      "acceptance": [
+        "360dp 下三路事件内容真实可达且不产生不可解释裁剪。",
+        "宽屏仍保留三列对比教学价值。",
+        "已有按钮、计数、滚动场景行为不变。"
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "macos_gate_remains_until_real_evidence",
+      "rationale": "响应式修复后仍需重新构建和真实 macOS 界面复验，不能用 widget test 自动提升 MACOS_GATE。",
+      "constraints": [
+        "更新 macOS 自测清单，明确 360dp 事件区域逐卡片可达证据。",
+        "保留 b80e41f Engine 启动 PASS 证据和历史报告，不改写历史。",
+        "修复后 macOS 新产物必须包含当前修复提交。",
+        "Computer Use 点击不可用时，交互项目标 BLOCKED，不推断 PASS。"
+      ],
+      "acceptance": [
+        "新增自测规则覆盖 360dp 事件可视化逐项截图/滚动证据。",
+        "MACOS_GATE 仍由真实窗口、Engine 日志和响应式证据共同决定。"
+      ]
+    },
+    {
+      "id": "DD-4",
+      "title": "local_commit_no_push",
+      "rationale": "用户明确要求未经允许不得推送远端。",
+      "constraints": [
+        "只允许本地 commit。",
+        "严禁 git push、tag、Release、merge、force-push 或重写历史。",
+        "不得将无关文档、pending JSON、旧 evidence、build 产物纳入本任务提交。"
+      ],
+      "acceptance": [
+        "origin/dev 不变。",
+        "提交文件仅限模块源、模块测试和 macOS 自测清单/本任务证据。"
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight",
+      "detail": "读取完整当前状态、目标模块 AI_ANALYSIS、module_root.dart、模块测试、macOS 报告、截图和自测清单；确认 b80e41f/ce814fb 基线与允许路径。",
+      "verify": "记录 baseline；不得 reset/stash/删除其他改动。"
+    },
+    {
+      "step": 2,
+      "action": "red_test",
+      "detail": "先运行现有 debounce_throttle 测试；新增几何/可达性断言，真实区分 360dp 右侧/底部事件可视化内容是否被裁剪；保留 600/1024 回归。",
+      "verify": "记录真实测试结果；若现有实现被判 already_safe，仍需解释与真实截图 FAIL 的差异。"
+    },
+    {
+      "step": 3,
+      "action": "minimal_responsive_fix",
+      "detail": "只在 debounce_throttle 内调整窄屏事件可视化布局，使三张卡片在模块内策略下完整可达；宽屏保持三列；不改教学状态逻辑。",
+      "verify": "360/600/1024 测试通过；tester.takeException() 为 null。"
+    },
+    {
+      "step": 4,
+      "action": "update_macos_self_test",
+      "detail": "更新 macos_acceptance/MACOS_SELF_TEST_CHECKLIST.md：R2-R6 增加 360dp 三个可视化区域逐项可达、滚动后内容完整、右侧卡片无裁剪、截图证据和旧产物/工具 BLOCKED 规则。必要时新增本轮 evidence handoff，不覆盖历史报告。",
+      "verify": "清单明确 PASS/FAIL/BLOCKED/NOT_IN_ARTIFACT；macOS_GATE 不由自动化测试单独提升。"
+    },
+    {
+      "step": 5,
+      "action": "validation",
+      "detail": "运行模块定向测试、flutter analyze、git diff --check、bash tool/quality_gate.sh；如质量门禁受工作树状态影响，先按现有门禁规则正确暂存/提交后独立复跑。",
+      "verify": "目标测试通过、analyze 无 issue、quality_gate 6/6；报告真实记录。"
+    },
+    {
+      "step": 6,
+      "action": "local_commit_only",
+      "detail": "仅提交本任务允许的模块源、模块测试和清单文件；提交信息使用 feat(ui): fix debounce throttle compact visualization；不得 push。",
+      "verify": "git show --name-status HEAD 文件集合合规；git rev-parse HEAD origin/dev 显示远端未变化。"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1：360x800 测试能验证三张事件可视化内容完整可达，不仅断言无异常",
+    "DD-2：debounce_throttle 窄屏修复为模块内策略，保留三路教学内容；600/1024 回归通过",
+    "DD-3：macOS 自测清单已更新，真实新产物复验仍是 MACOS_GATE 前置；历史报告未被改写",
+    "DD-4：仅本地 commit；origin/dev 未变化；无 git push/tag/Release/merge/history rewrite",
+    "未修改多窗口 Engine 代码、Windows USB、Android、NavigationPolicy、LearningScaffold、CI、tool/*.sh 或其他模块"
+  ],
+  "out_of_scope": [
+    "macOS 多窗口 Engine 启动修复",
+    "Windows 完整自测",
+    "无障碍第二阶段",
+    "其他响应式模块",
+    "新增第三方依赖",
+    "CI/Release/门禁脚本修改",
+    "远端推送"
+  ],
+  "forbidden_changes": [
+    "不得修改 apps/flutter_forge/lib/shared/multi_window/**",
+    "不得修改 apps/flutter_forge/macos/**",
+    "不得修改 packages/**、pubspec、CI、Release 或 tool/*.sh",
+    "不得修改 Windows USB、Android、NavigationPolicy、LearningScaffold 或其他模块",
+    "不得改写/删除历史 macOS evidence",
+    "不得 git push、tag、Release、merge、force-push 或重写历史"
+  ],
+  "validation": [
+    "flutter test test/modules/basic/debounce_throttle/debounce_throttle_test.dart",
+    "flutter analyze",
+    "git diff --check",
+    "bash tool/quality_gate.sh",
+    "git show --name-status HEAD",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "medium",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_ANALYSIS_SCHEMA.json",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "apps/flutter_forge/lib/modules/basic/debounce_throttle/AI_ANALYSIS.md",
+    "apps/flutter_forge/lib/modules/basic/debounce_throttle/module_root.dart",
+    "apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart",
+    "macos_acceptance/evidence/2026-09-01-b80e41f-desktop-session/MACOS_UI_ACCEPTANCE_REPORT.json",
+    "macos_acceptance/evidence/2026-09-01-b80e41f-desktop-session/notes.md",
+    "macos_acceptance/evidence/2026-09-01-b80e41f-desktop-session/screenshots/UI-debounce-360-fail.png",
+    "macos_acceptance/MACOS_SELF_TEST_CHECKLIST.md"
+  ],
+  "notes": [
+    "真实截图报告将 360dp 标为 FAIL；视觉复核可能看不到水平 overflow，但底部内容可达性仍需以交互验收和几何断言确认。",
+    "当前 b80e41f 已修复启动阶段 Engine 错误，不得在本任务中回退或重复修改该修复。",
+    "当前工作树包含既有暂存/未提交变更与多个 pending JSON；必须原样保留并严格隔离提交。",
+    "未经用户另行明确批准，绝对禁止 git push。"
+  ]
+}

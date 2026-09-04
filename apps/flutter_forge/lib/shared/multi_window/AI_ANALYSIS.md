@@ -9,11 +9,13 @@
     "status": "active"
   },
   "entrypoints": [
-    "multi_window_manager.dart"
+    "multi_window_manager.dart",
+    "mac_window.dart"
   ],
   "owns": [
     "desktop_window_lifecycle",
-    "desktop_window_arguments"
+    "desktop_window_arguments",
+    "window_backend_protocol"
   ],
   "depends": [
     "desktop_multi_window",

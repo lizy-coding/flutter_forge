@@ -1,0 +1,149 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "OPS-20260901-windows-desktop-e2e",
+  "title": "Windows  macOS_GATE=PASS",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": " macOS_GATE=PASS  Windows v1.2.2  setup.exe  Windows  UI/",
+  "scope": "windows_release_artifact_and_real_desktop_acceptance",
+  "agent_role": "Codex Desktop/ Windows  preflight  UI/  PASS/FAIL/BLOCKED/DEFERRED  evidence  commit push",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "HEAD=565766f9c7d63ae160289d87da43d8023509105dorigin/dev=565766f9c7d63ae160289d87da43d8023509105d",
+    "macos_gate": "PASS",
+    "macos_evidence": "macos_acceptance/evidence/2026-09-01-565766f-desktop-session/MACOS_UI_ACCEPTANCE_REPORT.json",
+    "windows_release_baseline": {
+      "version": "v1.2.2",
+      "artifact": "flutter_forge-setup-x64.exe",
+      "artifact_sha256": "7d3444037e18cffb0595c2e4ac5594ad55db78a82ae02f160a9039435dd0aa21",
+      "release_workflow": "33231849904",
+      "usb_detector": "Android-only; do not mark Windows failure"
+    },
+    "source_of_truth": [
+      "windows_acceptance/WINDOWS_SELF_TEST_CHECKLIST.md",
+      "docs/reports/WINDOWS_TEST_CHECKLIST-20260827.md",
+      "docs/WINDOWS_PHASE2_PLAN.md",
+      "macos_acceptance/evidence/2026-09-01-565766f-desktop-session/MACOS_UI_ACCEPTANCE_REPORT.json"
+    ]
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "artifact_provenance_first",
+      "rationale": "Windows UI results must identify the exact setup.exe or CI artifact under test.",
+      "constraints": ["record path/version/size/SHA256/HEAD", "do not infer artifact identity"],
+      "acceptance": ["artifact_identity=PASS or BLOCKED with reason"]
+    },
+    {
+      "id": "DD-2",
+      "title": "real_windows_interaction",
+      "rationale": "Widget tests do not replace real Windows installer and desktop evidence.",
+      "constraints": ["use Windows desktop session or Windows CI runner", "capture screenshots and raw logs", "classify unavailable automation as BLOCKED"],
+      "acceptance": ["W1-W19 each has PASS/FAIL/BLOCKED/DEFERRED and evidence"]
+    },
+    {
+      "id": "DD-3",
+      "title": "platform_boundary",
+      "rationale": "usb_detector is Android-only and is not a Windows acceptance failure.",
+      "constraints": ["mark USB as DEFERRED/NOT_IN_ARTIFACT", "file_picker must be tested on Windows through file_selector implementation", "online_video_player must record Windows runtime result"],
+      "acceptance": ["no false Windows failure for Android-only USB capability"]
+    },
+    {
+      "id": "DD-4",
+      "title": "local_report_only",
+      "rationale": "Acceptance evidence must be reviewable before any repository mutation or remote operation.",
+      "constraints": ["no source changes", "no commit", "no push", "no release/tag/workflow mutation"],
+      "acceptance": ["windows_acceptance/evidence/<date>/WINDOWS_UI_ACCEPTANCE_REPORT.json and notes.md"]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "windows_preflight",
+      "detail": " Windows  Windows x64/  setup.exe  SHA256  Windows Event Viewer/",
+      "verify": " P1-P8  PASS/FAIL/BLOCKED"
+    },
+    {
+      "step": 2,
+      "action": "installer_and_startup",
+      "detail": "setup.exe  Flutter Forge  2  stderr/ crash/ WER 0xc0000005/0xc000041d",
+      "verify": "W1-W6  verdict + PID + raw logs"
+    },
+    {
+      "step": 3,
+      "action": "module_navigation_matrix",
+      "detail": "basic/state/ui/popup_table/platform  / /  /  Page Not Found",
+      "verify": "N1-N8  PASS/FAIL/BLOCKED/DEFERRED"
+    },
+    {
+      "step": 4,
+      "action": "multiwindow_stability",
+      "detail": "basic/state/platform  3  / 3  //  main  ",
+      "verify": "M1-M15  Invalid engine handle  Failed to send message to Flutter engine  WER/"
+    },
+    {
+      "step": 5,
+      "action": "platform_capability_checks",
+      "detail": "Windows file_picker/file_selector  online_video_player  USB  Android-only DEFERRED",
+      "verify": "V1-V6  +  +  +  raw log"
+    },
+    {
+      "step": 6,
+      "action": "responsive_checks",
+      "detail": "debounce_throttle 360dp600dp1024dp  / / ",
+      "verify": "R1-R10  360dp/600dp/1024dp  verdict"
+    },
+    {
+      "step": 7,
+      "action": "evidence_report",
+      "detail": "windows_acceptance/evidence/<date>/  screenshots/logs/notes.md  JSON  PASS/FAIL/BLOCKED/DEFERRED/NOT_IN_ARTIFACT",
+      "verify": "report  artifact identity  W1-W19  hold reasons  next action"
+    }
+  ],
+  "acceptance_criteria": [
+    "macOS_GATE=PASS  Windows  ",
+    " Windows artifact  SHA256  ",
+    "W1-W19  verdict  evidence",
+    "0xc0000005/0xc000041d/Invalid engine handle/Failed to send message  raw log ",
+    "file_picker  Windows ",
+    "online_video_player  Windows  ",
+    "usb_detector  Android-onlyDEFERRED  Windows ",
+    "360dp/600dp/1024dp  /",
+    "Windows UI  BLOCKED  reason + blocked_action  PASS ",
+    "no source change/commit/push/tag/release/workflow mutation"
+  ],
+  "out_of_scope": [
+    "macOS  Engine  ",
+    "Windows USB  Android host",
+    " Windows C++ USB/WinUSB/HID  ",
+    " Windows  source fix",
+    "git commitgit pushtagReleaseworkflow"
+  ],
+  "forbidden_changes": [
+    "apps/flutter_forge/lib/**",
+    "apps/flutter_forge/windows/**",
+    "apps/flutter_forge/macos/**",
+    "packages/**",
+    "pubspec.yaml pubspec.lock .github/workflows/** tool/*.sh",
+    " MACOS_UI_ACCEPTANCE_REPORT  PASS/FAIL/BLOCKED/DEFERRED",
+    "git commit",
+    "git push"
+  ],
+  "validation": [
+    "python3 -m json.tool windows_acceptance/evidence/<date>/WINDOWS_UI_ACCEPTANCE_REPORT.json",
+    "git diff --check",
+    "git status --short --branch",
+    "git rev-parse HEAD origin/dev",
+    "git diff --name-only"
+  ],
+  "risk": "high",
+  "notes": [
+    "macOS_GATE=PASS  565766f  360/600/1024dp  Engine  file_picker  /  3  PASS",
+    " Windows self-test  ",
+    " Windows  Windows  ",
+    " USB  Android-only DEFERRED",
+    " Windows  evidence  Windows  PASS/FAIL/BLOCKED"
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "flutter_forge.windows_ui_acceptance_report.v1",
+  "task": "windows_desktop_acceptance",
+  "source": {
+    "head": "0dd8f676388cb55b453844c4935ce58b9790b2b3",
+    "upstream_head": "0dd8f676388cb55b453844c4935ce58b9790b2b3",
+    "macos_gate": "PASS",
+    "macos_evidence": "macos_acceptance/evidence/2026-09-01-current-window-timing-rerun/MACOS_UI_ACCEPTANCE_REPORT.json"
+  },
+  "artifact": {
+    "release": "v1.2.3",
+    "release_url": "https://github.com/lizy-coding/flutter_forge/releases/tag/v1.2.3",
+    "run_id": "33511073139",
+    "jobs": {
+      "macos_installer": "success",
+      "windows_installer": "success",
+      "create_release": "success"
+    },
+    "application": "flutter_forge-setup-x64.exe",
+    "size_bytes": 12045069,
+    "sha256": "fd5de214dd5f5db83c685553368a0d98878fb3c131d9d8ea32250dcef9f9d67f",
+    "file_type": "PE32 executable (GUI) Intel 80386, for MS Windows",
+    "artifact_identity": "VERIFIED_AGAINST_RELEASE_ASSET",
+    "baseline_commits": [
+      "5ef5a81 fix(ui): repair compact layouts for issue 18",
+      "92bb625 fix(multiwindow): add lifecycle diagnostics",
+      "cb48fd0 fix(multiwindow): remove child-window hide timing; add mac window backend",
+      "0dd8f67 release: bump to v1.2.3 for windows verification build"
+    ]
+  },
+  "environment": {
+    "host": "macOS",
+    "windows_desktop_session": "NOT_AVAILABLE",
+    "windows_ci_run": "COMPLETED_SUCCESS_33511073139",
+    "computer_use_windows": "NOT_AVAILABLE"
+  },
+  "checks": {
+    "windows_preflight": "PASS",
+    "installer_startup": "PENDING_REAL_MACHINE",
+    "module_navigation": "PENDING_REAL_MACHINE",
+    "multiwindow_stability": "PENDING_REAL_MACHINE",
+    "windows_file_picker": "PENDING_REAL_MACHINE",
+    "online_video_player": "PENDING_REAL_MACHINE",
+    "responsive_360_600_1024": "PENDING_REAL_MACHINE",
+    "windows_usb_detector": "DEFERRED_ANDROID_ONLY"
+  },
+  "summary": {
+    "PASS": 1,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "DEFERRED": 1,
+    "PENDING_REAL_MACHINE": 6,
+    "NOT_IN_ARTIFACT": 0
+  },
+  "windows_ready": false,
+  "windows_final_acceptance": "HOLD",
+  "next_action": "Download flutter_forge-setup-x64.exe (SHA256 fd5de214...) on a Windows x64 machine and execute windows_acceptance/WINDOWS_SELF_TEST_CHECKLIST.md (P1-P8, W1-W6, N1-N8, V1-V6, M1-M17, R1-R13).",
+  "platform_boundary": {
+    "usb_detector": "DEFERRED_ANDROID_ONLY",
+    "reason": "usb_detector is Android-only and must not be counted as a Windows failure."
+  },
+  "mutations": {
+    "source_changes": false,
+    "commit": false,
+    "push": false,
+    "release_or_workflow_changes": false
+  }
+}

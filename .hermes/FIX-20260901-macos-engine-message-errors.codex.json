@@ -1,0 +1,190 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "FIX-20260901-macos-engine-message-errors",
+  "title": "修复 macOS 多窗口 Engine 消息错误并准备跨平台界面验收",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "修复或隔离 macOS 启动及多窗口生命周期中的 Invalid engine handle / Failed to send message to Flutter engine 错误，并为下一阶段 macOS→Windows 真实界面验收补齐可验证测试与报告资产。",
+  "scope": "macos_multiwindow_lifecycle_and_acceptance_assets",
+  "agent_role": "Codex 代码执行 agent；严格先复现/测试再修复；只修改允许路径；仅本地 commit；未经用户明确批准严禁 git push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "执行前重新读取 git status、git branch -vv、git log --format='%h %p %ci %s' -12、真实 upstream ref；当前已知 HEAD=ce814fbc249bd3c36ca5ab41151bb29fe70cc980，origin/dev=dfdbc1dbf8db5e25b714309251fdd76a6efd4fc1，但若漂移以执行时实测为准。",
+    "evidence": {
+      "report": "macos_acceptance/evidence/2026-08-31-ops-rerun/MACOS_UI_ACCEPTANCE_REPORT.json",
+      "log": "macos_acceptance/evidence/2026-08-31/logs/app-console.log",
+      "observed_errors": [
+        "Invalid engine handle appeared on both startups",
+        "Failed to send message to Flutter engine appeared on both startups",
+        "channel=mixin.one/desktop_multi_window"
+      ],
+      "automation": "Codex Computer Use window_read=PASS, screenshot=PASS, accessibility_click=BLOCKED, coordinate_click=BLOCKED; do not treat static window evidence as interaction evidence.",
+      "artifact": "Existing Release bundle mtime 2026-08-27 predates current responsive HEAD ce814fb; old artifact is NOT_IN_ARTIFACT for responsive acceptance."
+    },
+    "source_facts": [
+      "AppDelegate.swift registers GeneratedPlugins and file_picker_bridge on main/child engines.",
+      "MainFlutterWindow.swift registers GeneratedPlugins on the main FlutterViewController.",
+      "MultiWindowManager.initialize subscribes to onWindowsChanged and calibrates category windows via WindowController.getAll().",
+      "app_bootstrap initializes MultiWindowManager only on main window path and shows child windows after a frame.",
+      "Current test search found navigation_policy_test.dart but no dedicated MultiWindowManager lifecycle test covering stale windows and engine-message safety.",
+      "AGENTS.md requires quality_gate after code changes and forbids unapproved git push.",
+      "Accessibility remains phase 2 and is out of scope."
+    ]
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "reproduce_before_fix",
+      "rationale": "The existing failure is a native/Flutter Engine boundary symptom; do not apply another timing workaround without a red-capable loop.",
+      "constraints": [
+        "Read the exact current source and desktop_multi_window API before editing.",
+        "Create or extend a deterministic Dart seam for stale-window calibration, lifecycle ordering, or message broadcast safety where possible.",
+        "If the exact native error cannot be reproduced on the local host, state that explicitly and use source-level/test evidence; do not claim the native issue is fixed solely from flutter test."
+      ],
+      "acceptance": [
+        "A regression test or explicit source-level invariant covers the selected root cause.",
+        "The report distinguishes reproduced, not reproduced, and platform-only observations."
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "engine_lifecycle_safety",
+      "rationale": "Prevent messages or lifecycle callbacks from targeting stale/destroyed child engines while preserving three-category windows, same-category reuse, close/reopen, and child file picker registration.",
+      "constraints": [
+        "Keep main and child GeneratedPlugin registration intact.",
+        "Keep file_picker_bridge channel registration for every relevant engine.",
+        "Do not replace desktop_multi_window with another package.",
+        "Do not change NavigationPolicy 600dp semantics or mobile in-app navigation.",
+        "Do not weaken the error check by filtering or suppressing target log strings."
+      ],
+      "acceptance": [
+        "No stale category entry remains after calibration/close notification in the testable seam.",
+        "Same-category open reuses a live controller.",
+        "A closed/dead controller is not used as a live category window.",
+        "Native registration code remains present for main and child engines."
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "acceptance_handoff_macOS_first",
+      "rationale": "macOS is the gating platform; Windows testing must start only after macOS evidence is sufficient.",
+      "constraints": [
+        "Add or update only local acceptance assets under macos_acceptance/ if needed.",
+        "Do not modify existing historical notes.md or rewrite prior PASS/FAIL evidence.",
+        "Responsive UI acceptance requires a newly built artifact containing the current commit and is not satisfied by a stale Release bundle.",
+        "Do not implement accessibility phase 2."
+      ],
+      "acceptance": [
+        "A machine-readable next-stage report/checklist states MACOS_GATE=PASS or HOLD with explicit reasons.",
+        "The report contains the exact conditions required before Windows self-test.",
+        "No Windows-ready claim is emitted while macOS gate is HOLD."
+      ]
+    },
+    {
+      "id": "DD-4",
+      "title": "local_commit_no_push",
+      "rationale": "The user explicitly requires no remote push without separate approval.",
+      "constraints": [
+        "Only local commit is allowed.",
+        "git push, tag, Release, merge, force-push, and history rewrite are forbidden.",
+        "Do not include unrelated Windows/macOS documentation or pending task JSONs in the feature commit."
+      ],
+      "acceptance": [
+        "Expected local commit exists.",
+        "origin/dev remains unchanged from task preflight.",
+        "Commit file list contains only allowed source/test/acceptance assets."
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight_and_scope",
+      "detail": "核对实际 git 基线、upstream、工作区；读取目标模块 AI_ANALYSIS、AppDelegate.swift、MainFlutterWindow.swift、app_bootstrap.dart、multi_window_manager.dart、category_navigation.dart、相关测试和 notes/report；保留既有脏文件。",
+      "verify": "记录 preflight baseline；若 HEAD/upstream 与 background 不同，以实测值更新执行报告；不得 reset/stash/删除无关文件。"
+    },
+    {
+      "step": 2,
+      "action": "reproduce_and_trace",
+      "detail": "建立最小可运行复现/诊断：主窗口启动、一个/三个分类窗口、同类复用、关闭、重开、子窗口 file_picker；追踪 desktop_multi_window 的 onWindowsChanged、WindowController.getAll、窗口注册表和插件通道边界。若本地无法真实创建窗口，补充可执行的单元 seam 并明确 native reproduction unavailable。",
+      "verify": "输出根因假设排序、支持证据、反证和可复现步骤；禁止先改代码。"
+    },
+    {
+      "step": 3,
+      "action": "red_regression_test",
+      "detail": "先增加/完善 MultiWindowManager 或等价边界测试，覆盖 stale controller 清理、同分类 live controller 复用、关闭后重开、无效窗口不复用；必要时为依赖建立最小可注入 seam，但不得改变业务 API 语义。",
+      "verify": "测试真实运行；若当前实现已经通过，记录 already_safe 并说明测试覆盖的新增边界；若失败，保留失败输出。"
+    },
+    {
+      "step": 4,
+      "action": "minimal_root_cause_fix",
+      "detail": "仅针对已证实根因实施最小修复；确保主/子 Engine GeneratedPlugins 和 file_picker_bridge 注册不丢失；不通过过滤日志、延迟任意消息或修改验收预期来伪造修复。",
+      "verify": "定向回归测试通过；Swift/Dart diff 与 DD-2 一致。"
+    },
+    {
+      "step": 5,
+      "action": "acceptance_assets",
+      "detail": "更新/新增下一阶段 macOS 界面验收机器可读报告模板，包含 artifact provenance、启动日志、三分类窗口、子窗口 file_picker、同类复用、关闭重开、Engine 错误、响应式视口及 MACOS_GATE；Windows 仅作为 macOS PASS 后的下一阶段，不在本任务执行。",
+      "verify": "报告字段完整；旧历史报告不被改写；无 Windows PASS 或 windows_ready=true 的虚假结论。"
+    },
+    {
+      "step": 6,
+      "action": "quality_validation_and_local_commit",
+      "detail": "执行目标测试、flutter analyze、必要的 macOS debug/release build smoke（若宿主能力允许），再执行 bash tool/quality_gate.sh；将完整 gate 输出和本地 commit 文件清单记录；仅本地 commit，严禁 git push。",
+      "verify": "quality_gate 6/6；git show --name-status HEAD 仅允许文件；HEAD 更新而 origin/dev 不变；失败如实报告。"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1：已完成根因调查；有红色回归测试或明确的 source-level invariant；native reproduction boundary 明确",
+    "DD-2：多窗口 stale/live controller 规则有测试覆盖；主/子 Engine 插件注册和 file picker 通道未丢失；未屏蔽错误日志",
+    "DD-3：macOS 下一阶段验收资产完整；MACOS_GATE 只有在真实证据满足时才可 PASS；Windows 不提前放行",
+    "DD-4：仅本地 commit；origin/dev 未变化；无 git push/tag/Release/merge/history rewrite",
+    "未修改 Windows USB、Android host、无障碍第二阶段、NavigationPolicy 600dp 语义、CI、tool/*.sh、响应式模块代码"
+  ],
+  "out_of_scope": [
+    "Windows 真实界面验收执行",
+    "响应式布局实现",
+    "无障碍 Semantics/VoiceOver/读屏/对比度/键盘焦点",
+    "Windows USB/HID/Serial/WinUSB",
+    "CI、Release workflow、安装包、版本号、tag、远端推送",
+    "改写或删除历史 macOS 验收记录"
+  ],
+  "forbidden_changes": [
+    "不得修改 apps/flutter_forge/lib/modules/**",
+    "不得修改 NavigationPolicy 或 CategoryNavigation 的 600dp 语义",
+    "不得修改 Windows USB、Android、CI、tool/*.sh、pubspec 或 Release 配置",
+    "不得过滤/删除 Invalid engine handle 或 Failed to send message to Flutter engine 日志以制造 PASS",
+    "不得删除历史验收 evidence",
+    "不得 git push、tag、Release、merge、force-push 或重写历史"
+  ],
+  "validation": [
+    "flutter test test/shared/multi_window_manager_test.dart",
+    "flutter analyze",
+    "bash tool/quality_gate.sh",
+    "git diff --check",
+    "git show --name-status HEAD",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "high",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_ANALYSIS_SCHEMA.json",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "apps/flutter_forge/lib/shared/multi_window/AI_ANALYSIS.md",
+    "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart",
+    "apps/flutter_forge/lib/app/app_bootstrap.dart",
+    "apps/flutter_forge/lib/app/category_navigation.dart",
+    "apps/flutter_forge/macos/Runner/AppDelegate.swift",
+    "apps/flutter_forge/macos/Runner/MainFlutterWindow.swift",
+    "macos_acceptance/evidence/2026-08-31-ops-rerun/MACOS_UI_ACCEPTANCE_REPORT.json"
+  ],
+  "notes": [
+    "用户要求：未经允许不得推送代码到远端；本任务不允许 git push。",
+    "当前仓库存在既有未提交文档和多个 pending JSON；不得覆盖、删除、reset、stash 或纳入本任务提交。",
+    "如果本地无法启动真实多窗口，必须把 native verification 标记 BLOCKED，而不是宣称修复完成；仍需完成可执行的 Dart/source-level verification。",
+    "Codex Desktop 下一阶段使用 macos_acceptance/MACOS_SELF_TEST_CHECKLIST.md，并以 MACOS_GATE=PASS 作为 Windows 自测前置。"
+  ]
+}

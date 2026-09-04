@@ -40,6 +40,7 @@ import '../../modules/platform/dio_interceptor/module_routes.dart';
 import '../../modules/platform/file_picker/module_entry.dart';
 import '../../modules/platform/online_video_player/module_entry.dart';
 import '../../modules/platform/usb_detector/module_entry.dart';
+import '../../modules/state/local_persistence/module_entry.dart';
 
 // ==================== 状态管理子路由（模块内部已定义映射） ====================
 
@@ -154,6 +155,17 @@ final List<ModuleEntry> _modules = [
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
     builder: (context) => const FlutterIocEntry(),
+  ),
+  ModuleEntry(
+    title: '本地持久化',
+    path: '/local-persistence',
+    subtitle: '使用 shared_preferences 持久化设置项与计数器，理解异步读取与状态恢复',
+    category: ModuleCategory.state,
+    difficulty: Difficulty.intermediate,
+    concepts: ['shared_preferences', '键值存储', '异步读取', '状态恢复', '测试替身'],
+    estimatedMinutes: 25,
+    status: ModuleStatus.ready,
+    builder: (context) => const LocalPersistenceEntry(),
   ),
 
   // UI 与动效

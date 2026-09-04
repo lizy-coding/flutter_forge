@@ -1,0 +1,106 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "OPS-20260901-multiwindow-stability-acceptance",
+  "title": "macOS 与 Windows 多窗口稳定性专项验收",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "验证 Flutter Forge 在 macOS 与 Windows Release 产物上的多窗口生命周期、子窗口插件通道、关闭重开与错误日志行为；不修改源码、产物、门禁脚本，不提交，不推送。",
+  "scope": "real_window_acceptance_only",
+  "agent_role": "验收执行者；必须使用真实桌面窗口和指定 Release 产物；逐项输出 PASS/FAIL/BLOCKED；禁止虚构 PASS；未获得明确推送批准前严禁执行任何 git push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "验收开始前重新读取 git status、git log、git branch -avv；不得假设本文件创建时的 HEAD 仍未变化。",
+    "current_state": {
+      "windows_core_acceptance": "用户已确认 Windows 真机核心功能通过",
+      "windows_usb": "DEFERRED；usb_detector 保持 Android-only，Windows 显示不可用态",
+      "android": "DEFERRED；不属于本轮主方向",
+      "multi_window": "PENDING；macOS 与 Windows 的完整稳定性证据尚未闭环",
+      "release": "v1.2.2；Windows setup.exe 与 macOS zip 已发布"
+    },
+    "verified_facts": [
+      "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart 负责分类窗口创建、复用、生命周期观察和 stale 校准",
+      "apps/flutter_forge/lib/app/category_navigation.dart 通过 NavigationPolicy 决定桌面独立窗口或应用内导航",
+      "apps/flutter_forge/macos/Runner/AppDelegate.swift 为主 Engine 与子 Engine 注册生成插件及 file_picker_bridge 通道",
+      "同一分类重复打开属于复用行为；三窗口场景必须使用三个不同分类",
+      "Windows USB 不在本轮适配范围，不得重新引入已移除的 Windows 原生 USB 插件",
+      "纯验收任务不执行 quality_gate，不修改源码、产物、门禁脚本或生成契约"
+    ]
+  },
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight",
+      "detail": "在目标机器记录 OS 版本、架构、应用产物路径、产物 SHA256、应用版本、测试时间；重新记录仓库 git status/log/branch；确认执行者没有推送权限或明确遵守仅本地验收规则。缺少目标平台或自动化工具时标记对应项目 BLOCKED，继续可执行项目。",
+      "verify": "前置记录包含环境、产物 SHA256、仓库基线和工具状态；无源码修改。"
+    },
+    {
+      "step": 2,
+      "action": "macos_three_category_windows",
+      "detail": "使用 macOS Release 产物，从主窗口依次打开三个不同分类窗口：basic、state、platform。逐窗确认窗口出现、首帧渲染、分类内容正确、无黑屏；截图保存每个窗口。",
+      "verify": "macOS 三个不同分类窗口均有独立 PASS/FAIL/BLOCKED、截图和操作顺序。"
+    },
+    {
+      "step": 3,
+      "action": "macos_child_plugin_and_lifecycle",
+      "detail": "在 macOS 子窗口进入文件选择器模块并执行打开/取消或选择返回；关闭一个窗口、关闭剩余窗口；重新打开已关闭分类；重复点击同一分类确认复用而非创建重复窗口；观察主窗口始终存活。",
+      "verify": "子窗口文件选择、关闭、重开、同类复用、主窗口存活均有独立判定和证据。"
+    },
+    {
+      "step": 4,
+      "action": "macos_error_log_check",
+      "detail": "收集应用控制台或终端日志，检查 Invalid engine handle、Failed to send message to Flutter engine、黑屏相关错误；如出现崩溃，记录故障模块、异常代码、复现步骤，不得将未观察到的结果判为 PASS。",
+      "verify": "macOS 日志检查有明确 PASS/FAIL/BLOCKED 和日志证据路径。"
+    },
+    {
+      "step": 5,
+      "action": "windows_three_category_windows",
+      "detail": "使用 Windows v1.2.2 setup.exe 安装后的 Release 应用，从主窗口依次打开三个不同分类窗口：basic、state、platform。逐窗确认窗口出现、首帧渲染、分类内容正确、无黑屏；截图保存每个窗口。",
+      "verify": "Windows 三个不同分类窗口均有独立 PASS/FAIL/BLOCKED、截图和操作顺序。"
+    },
+    {
+      "step": 6,
+      "action": "windows_child_plugin_and_lifecycle",
+      "detail": "在 Windows 子窗口执行文件选择器打开/取消或选择返回；关闭一个窗口、关闭剩余窗口；重新打开已关闭分类；重复点击同一分类确认复用而非创建重复窗口；确认主窗口存活；USB 仅确认目录显示 Android-only 不可用态，不执行 USB Windows 适配。",
+      "verify": "子窗口文件选择、关闭、重开、同类复用、主窗口存活和 USB 延期边界均有独立判定。"
+    },
+    {
+      "step": 7,
+      "action": "windows_error_log_check",
+      "detail": "检查应用控制台、Windows Event Viewer Application 日志和可用崩溃记录，重点搜索 Invalid engine handle、Failed to send message to Flutter engine、0xc0000005、0xc000041d；如发现崩溃，记录故障模块、异常代码、偏移、WER bucket 和复现步骤。",
+      "verify": "Windows 日志检查有明确 PASS/FAIL/BLOCKED 和日志证据路径。"
+    },
+    {
+      "step": 8,
+      "action": "report",
+      "detail": "输出 docs/reports/MULTIWINDOW_ACCEPTANCE-20260901.md；汇总 macOS/Windows 各项 PASS/FAIL/BLOCKED，分别给出三窗、子窗口文件选择、关闭重开、同类复用、日志检查结论；明确 Windows USB 与 Android 为延期项；记录所有截图和日志路径。验收任务不修改源码、产物、门禁脚本，不 commit，不 push。",
+      "verify": "报告文件存在，所有验收项均有判定，无虚构证据，git diff 仅包含报告或既有文档变更。"
+    }
+  ],
+  "acceptance_criteria": [
+    "macOS 三个不同分类窗口首帧正常且无黑屏",
+    "Windows 三个不同分类窗口首帧正常且无黑屏；若目标环境不可用则逐项 BLOCKED 并说明原因",
+    "macOS 与 Windows 子窗口文件选择器均完成打开/取消或选择返回验证，或有明确 BLOCKED 原因",
+    "macOS 与 Windows 均完成关闭、重开、同分类复用验证，或有明确 BLOCKED 原因",
+    "macOS 与 Windows 日志均检查 Invalid engine handle、Failed to send message to Flutter engine 及平台相关崩溃信号",
+    "Windows USB 维持 Android-only 延期边界，不新增 Windows USB 实现",
+    "Android 不纳入本轮实现或验收主线",
+    "报告包含环境、产物 SHA256、截图/日志路径和逐项 PASS/FAIL/BLOCKED",
+    "未修改源码、pubspec、生成文档、门禁脚本、CI 工作流或 Release 产物",
+    "仅本地验收；未获得后续明确批准前严禁 git push"
+  ],
+  "out_of_scope": [
+    "Windows USB 原生插件、HID、Serial、WinUSB 或设备通信实现",
+    "Android host、Android 真机/模拟器验收",
+    "视频播放器、文件选择器或多窗口源码修复",
+    "quality_gate、源码提交、远端推送、tag、Release 或 CI 修改",
+    "删除仍未执行的 pending task JSON"
+  ],
+  "notes": [
+    "本任务是 TEST 验收任务，不是代码实现任务；工具缺失或目标平台不可用时必须 BLOCKED 继续，不得根据历史报告补写 PASS。",
+    "当前工作区已有未跟踪 Windows 验收任务 JSON 与 docs/WINDOWS_PHASE2_PLAN.md；执行前按 git status 区分本任务文件和既有文件，不覆盖或删除未授权文件。",
+    "如果验收发现缺陷，只输出可复现证据；另行创建 FIX JSON，不在本任务内修改代码。",
+    "任何推送动作都必须等待用户另行明确批准；本任务即使验收成功也不得推送。"
+  ]
+}

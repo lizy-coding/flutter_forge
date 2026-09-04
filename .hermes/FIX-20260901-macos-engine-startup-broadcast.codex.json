@@ -1,0 +1,193 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "FIX-20260901-macos-engine-startup-broadcast",
+  "title": "针对性修复 macOS desktop_multi_window 启动广播错误并更新自测用例",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "针对最新 macOS Release 中每次启动均出现 Invalid engine handle 与 Failed to send message to Flutter engine 的问题，完成依赖源码级根因确认、最小可验证修复或明确阻塞边界，并更新 macOS 界面自测用例。",
+  "scope": "macos_desktop_multiwindow_startup_broadcast",
+  "agent_role": "Codex 代码执行 agent；遵循先复现/追踪/测试后修复；仅修改允许路径；保留既有暂存改动；仅本地 commit；未经用户明确批准严禁 git push。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "执行前重新读取 git status、git diff --cached --name-status、git diff --name-status、git branch -vv、git log --format='%h %p %ci %s' -12；当前已知已有暂存 multi_window_manager.dart、multi_window_manager_test.dart、MACOS_ENGINE_MESSAGE_HANDOFF.json，必须保留并在其上工作。",
+    "evidence": {
+      "report": "macos_acceptance/evidence/2026-09-01-repack-validation/MACOS_UI_ACCEPTANCE_REPORT.json",
+      "notes": "macos_acceptance/evidence/2026-09-01-repack-validation/notes.md",
+      "error_log": "macos_acceptance/evidence/2026-08-31/logs/app-console.log",
+      "fresh_candidate": "2026-08-31 14:34 candidate built from HEAD ce814fb plus staged multi-window fix; two startups still produced both engine-message errors.",
+      "error_tokens": [
+        "Invalid engine handle",
+        "Failed to send message to Flutter engine",
+        "mixin.one/desktop_multi_window"
+      ],
+      "automation_boundary": "Computer Use window read and screenshot PASS; click pipe unavailable; do not infer real interaction PASS.",
+      "native_source_hypothesis": "desktop_multi_window 0.3.0 macOS startup registration/notifyWindowsChanged may send on the channel before the target Engine is ready; hypothesis must be verified against dependency source."
+    },
+    "current_code_facts": [
+      "AppDelegate.swift sets FlutterMultiWindowPlugin.setOnWindowCreatedCallback, registers GeneratedPlugins for child engines, and registers file_picker_bridge on child messengers.",
+      "MainFlutterWindow.swift registers GeneratedPlugins for the main FlutterViewController.",
+      "app_bootstrap.dart initializes MultiWindowManager only on main-window path and delays showing child windows until after a frame.",
+      "MultiWindowManager already has injected MultiWindowPlatform, stale-window calibration, live-controller reuse, and show-failure liveness tests in the current staged change.",
+      "There is no permission to replace desktop_multi_window or add a new plugin dependency."
+    ]
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "dependency_source_first",
+      "rationale": "The failure reproduces before category interaction and names the desktop_multi_window channel; source-level dependency inspection is required before another timing workaround.",
+      "constraints": [
+        "Inspect the exact installed desktop_multi_window 0.3.0 macOS implementation and registration order.",
+        "Inspect current AppDelegate/MainFlutterWindow/bootstrap order and compare with the package contract.",
+        "Do not call the issue fixed based only on Dart unit tests or process survival.",
+        "If dependency internals cannot be read, record the exact access limitation and do not guess."
+      ],
+      "acceptance": [
+        "Root cause is source-confirmed, disproved, or explicitly unresolved with evidence.",
+        "The report separates startup-before-child interaction from close/show race."
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "minimal_fix_preserve_plugin_registration",
+      "rationale": "Any fix must preserve main/child GeneratedPlugin registration, child file-picker channel, category reuse, close/reopen, and mobile navigation semantics.",
+      "constraints": [
+        "Allowed source paths: apps/flutter_forge/macos/Runner/AppDelegate.swift, apps/flutter_forge/macos/Runner/MainFlutterWindow.swift, apps/flutter_forge/lib/app/app_bootstrap.dart, apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart.",
+        "Allowed tests: apps/flutter_forge/test/shared/multi_window_manager_test.dart and a new/updated test under apps/flutter_forge/test/shared only if the test layout contract permits it.",
+        "Do not replace desktop_multi_window, modify pubspec, add dependencies, filter error logs, or disable multi-window.",
+        "Do not alter NavigationPolicy 600dp semantics, Windows USB, Android boundaries, or responsive module code."
+      ],
+      "acceptance": [
+        "Main and child plugin registration remains present.",
+        "Dart regression tests cover the changed lifecycle invariant.",
+        "No new analyzer issue or FlutterGuard HIGH is introduced."
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "macos_acceptance_update",
+      "rationale": "The next real-machine run must distinguish code failures, stale artifacts, and automation-tool limitations.",
+      "constraints": [
+        "Update only macos_acceptance/MACOS_SELF_TEST_CHECKLIST.md and/or a new dated evidence handoff under macos_acceptance/evidence/2026-09-01-engine-message-fix/.",
+        "Preserve historical 2026-08-31 reports unchanged.",
+        "Add explicit startup-only log capture, stage-by-stage three-window evidence, and MACOS_GATE/windows_ready rules.",
+        "Do not create a Windows PASS or windows_ready=true while macOS remains unresolved."
+      ],
+      "acceptance": [
+        "Self-test includes startup x2, first/second/third category window, close/reopen, child file_picker, and raw-log checkpoints.",
+        "Each item has PASS/FAIL/BLOCKED/NOT_IN_ARTIFACT semantics and evidence requirements."
+      ]
+    },
+    {
+      "id": "DD-4",
+      "title": "local_only_no_push",
+      "rationale": "The user explicitly prohibits remote push without separate approval.",
+      "constraints": [
+        "Only local commit is allowed if repository permissions permit.",
+        "Do not push, tag, create Release, merge, force-push, amend prior commits, or rewrite history.",
+        "Do not include unrelated docs, pending JSON files, screenshots, build output, or old evidence in the commit."
+      ],
+      "acceptance": [
+        "origin/dev remains unchanged.",
+        "Commit or staged diff file list is limited to the allowed source/test/acceptance files.",
+        "If .git write permission blocks commit, leave the staged set intact and report the exact error."
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "preflight",
+      "detail": "记录 git 状态、暂存集合、HEAD、真实 upstream；确认既有三文件暂存改动保留；读取目标 Swift/Dart、报告、清单和依赖版本。",
+      "verify": "输出 baseline 与 allowed_paths；不 reset、stash、删除或覆盖无关改动。"
+    },
+    {
+      "step": 2,
+      "action": "source_trace",
+      "detail": "检查安装的 desktop_multi_window 0.3.0 macOS 源码，定位 AttachWindow/register/notifyWindowsChanged/channel messenger 调用链；对照 AppDelegate、MainFlutterWindow、bootstrap 的实际顺序。",
+      "verify": "形成 ranked hypotheses；明确启动期错误是否来自依赖初始广播，以及应用侧可控边界。"
+    },
+    {
+      "step": 3,
+      "action": "red_regression",
+      "detail": "在允许测试范围内补充最小可执行回归：覆盖初始化/注册顺序或应用侧可控的 engine lifecycle invariant；保留并运行当前 stale/live/close-reopen 测试。若 native 错误无法在 Flutter test 复现，必须在报告中标 native_runtime_unavailable。",
+      "verify": "先运行测试并记录真实 RED 或 already_safe；禁止以普通 Dart 测试替代原生运行证据。"
+    },
+    {
+      "step": 4,
+      "action": "minimal_fix",
+      "detail": "仅对已证实且应用侧可控的根因实施最小修复；不得过滤日志、禁用多窗口、替换依赖或靠无依据延迟掩盖错误。若根因只在依赖内部且应用侧无安全修复，保留当前正确 Dart fix，输出 BLOCKED 及下一步依赖升级/fork 决策，不杜撰代码已修复。",
+      "verify": "定向测试通过；Swift/Dart 注册结构完整；git diff 无越界。"
+    },
+    {
+      "step": 5,
+      "action": "update_macos_self_test",
+      "detail": "更新 macOS 自测清单或新增 dated handoff：启动 x2、三分类窗口、同类复用、关闭/重开三轮、子窗口 file_picker、原始日志分阶段采集、Engine 错误 FAIL 规则、自动化点击 BLOCKED 规则、artifact provenance、MACOS_GATE 和 windows_ready 门槛。",
+      "verify": "历史报告不变；新清单每项可独立 PASS/FAIL/BLOCKED/NOT_IN_ARTIFACT。"
+    },
+    {
+      "step": 6,
+      "action": "validate_and_local_commit",
+      "detail": "运行目标测试、flutter analyze、git diff --check、bash tool/quality_gate.sh；如 git 可写，仅本地提交允许文件；否则保留暂存集合并记录权限错误。绝对禁止 git push。",
+      "verify": "输出测试/门禁结果、git show --name-status HEAD（若有新 commit）、git rev-parse HEAD origin/dev；远端指针不变。"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1：依赖源码调用链已核对，根因结论有证据，native runtime boundary 明确",
+    "DD-2：已证实的应用侧根因得到最小修复；主/子 Engine GeneratedPlugin 与 file_picker 注册未丢失；现有 stale/live/close-reopen 测试继续通过",
+    "DD-3：macOS 自测清单/hand-off 已更新，明确真实交互证据、Engine 日志、产物身份和 Windows 前置条件",
+    "DD-4：仅本地变更；origin/dev 未变化；无 push/tag/Release/merge/history rewrite",
+    "MACOS_GATE 未被代码测试或静态首屏擅自改为 PASS；若 native runtime 仍有错误，保持 HOLD"
+  ],
+  "out_of_scope": [
+    "Windows 真实验收和 Windows PASS",
+    "响应式布局实现和无障碍第二阶段",
+    "Windows USB、Android host、NavigationPolicy 语义调整",
+    "替换或升级 desktop_multi_window 依赖",
+    "修改 CI、Release、tool/*.sh、pubspec、历史验收报告",
+    "删除或覆盖既有验收 evidence"
+  ],
+  "forbidden_changes": [
+    "不得 git push、tag、Release、merge、force-push 或重写历史",
+    "不得过滤 Invalid engine handle 或 Failed to send message to Flutter engine 日志",
+    "不得禁用 desktop_multi_window 或删除多窗口功能",
+    "不得修改 Windows USB、Android、响应式模块或无障碍代码",
+    "不得修改 pubspec 或新增依赖",
+    "不得覆盖历史 macOS 报告或删除既有 evidence",
+    "不得将旧产物或静态截图作为新代码交互通过证据"
+  ],
+  "validation": [
+    "flutter test test/shared/multi_window_manager_test.dart",
+    "flutter analyze",
+    "git diff --check",
+    "bash tool/quality_gate.sh",
+    "git status --short --branch",
+    "git diff --cached --name-status",
+    "git show --name-status HEAD",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "high",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_ANALYSIS_SCHEMA.json",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "apps/flutter_forge/lib/shared/multi_window/AI_ANALYSIS.md",
+    "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart",
+    "apps/flutter_forge/lib/app/app_bootstrap.dart",
+    "apps/flutter_forge/macos/Runner/AppDelegate.swift",
+    "apps/flutter_forge/macos/Runner/MainFlutterWindow.swift",
+    "apps/flutter_forge/test/shared/multi_window_manager_test.dart",
+    "macos_acceptance/evidence/2026-09-01-repack-validation/MACOS_UI_ACCEPTANCE_REPORT.json",
+    "macos_acceptance/evidence/2026-09-01-repack-validation/notes.md"
+  ],
+  "notes": [
+    "本任务是针对性修复，不是响应式布局任务；不要扩大到其他模块。",
+    "现有 staged 三文件必须保留；如果任务新增文件，应明确分离并逐文件核对。",
+    "本机 macOS 可构建不等于真实多窗口运行已通过；若受限环境无法运行，输出 BLOCKED/native_runtime_unavailable。",
+    "远端 upstream ref 必须从 git branch -vv 实测，不得猜测。",
+    "未经用户另行明确批准，绝对禁止 git push。"
+  ]
+}

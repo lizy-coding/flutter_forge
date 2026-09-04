@@ -4,6 +4,8 @@ import desktop_multi_window
 
 @main
 class AppDelegate: FlutterAppDelegate {
+  private var childWindowCloseObserver: NSObjectProtocol?
+
   override func applicationDidFinishLaunching(_ notification: Notification) {
     FlutterMultiWindowPlugin.setOnWindowCreatedCallback { controller in
       RegisterGeneratedPlugins(registry: controller)
@@ -14,11 +16,43 @@ class AppDelegate: FlutterAppDelegate {
       registerFilePickerChannel(on: controller.engine.binaryMessenger)
     }
 
+    childWindowCloseObserver = NotificationCenter.default.addObserver(
+      forName: NSWindow.willCloseNotification,
+      object: nil,
+      queue: .main
+    ) { [weak self] notification in
+      guard let self,
+            let closingWindow = notification.object as? NSWindow,
+            closingWindow !== self.mainFlutterWindow else {
+        return
+      }
+      guard let mainWindow = self.mainFlutterWindow else { return }
+      DispatchQueue.main.async {
+        NSApp.activate(ignoringOtherApps: true)
+        mainWindow.makeKeyAndOrderFront(nil)
+      }
+    }
+
     super.applicationDidFinishLaunching(notification)
   }
 
+  deinit {
+    if let childWindowCloseObserver {
+      NotificationCenter.default.removeObserver(childWindowCloseObserver)
+    }
+  }
+
   override func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-    return true
+    return false
+  }
+
+  override func applicationDidBecomeActive(_ notification: Notification) {
+    super.applicationDidBecomeActive(notification)
+    guard let mainWindow = mainFlutterWindow,
+          !mainWindow.isVisible || NSApp.keyWindow == nil else {
+      return
+    }
+    mainWindow.makeKeyAndOrderFront(nil)
   }
 
   override func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {

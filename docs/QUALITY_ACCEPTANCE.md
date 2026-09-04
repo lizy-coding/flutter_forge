@@ -5,6 +5,13 @@
 
 ## 一、分层验收标准（L0-L6）
 
+### 当前发布基线（2026-08-31）
+
+- Windows v1.2.2 核心真机验证：PASS。
+- Windows USB：DEFERRED；`usb_detector` 保持 Android-only，Windows 显示不可用态。
+- macOS/Windows 多窗口稳定性：PENDING，等待三分类窗口、子窗口文件选择、关闭重开和引擎日志专项证据。
+- Android host 与 Android 真机/模拟器：DEFERRED，不阻塞当前 PC 阶段。
+
 | 层 | 名称 | 命令/机制 | 执行者 | 通过标准 |
 |----|------|-----------|--------|----------|
 | L0 | 环境自检 | `flutter doctor`; agent-hub `workspace_bootstrap` graph | Hermes/执行 agent | 无 blocking issue; graph START->check->END 成功 |
@@ -13,7 +20,7 @@
 | L3 | 静态分析 | `flutter analyze`(bare); `dart run flutterguard_cli:flutterguard scan . --fail-on high` | Hermes/执行 agent | 零 issue(含 info); 无 HIGH; MEDIUM 可入 deferred 队列 |
 | L4 | 测试层 | `bash tool/test_all.sh`; `bash tool/verify_test_layout.sh` | Hermes 独立复跑 | 全量通过; 模块测试布局合规并输出覆盖报告; 逻辑变更必须伴随定向测试 |
 | L5 | 架构层(LangGraph) | agent-hub `shadow_benchmark` 套件 + `score_reviewed_architecture` golden 评分; `context_analysis`/`capability_analysis` graph | agent-hub runtime (Hermes 编排) | shadow suite 全部 case passed; golden ownership_accuracy>=0.75 且 extraction_accuracy>=0.75; 架构分歧计数为 0; context 分析无 blockers |
-| L6 | 发布层 | release.yml 构建; Windows 实机验证清单 | GitHub Actions + 用户在 Windows 执行 | 安装包构建成功(Windows exe + macOS zip); 实机清单全过: 断网打开视频模块不崩溃/停留不崩溃/重试10次不崩溃/联网正常播放 |
+| L6 | 发布层 | release.yml 构建; Windows 实机验证清单; 多窗口专项 | GitHub Actions + 用户在 Windows/macOS 执行 | v1.2.2 安装包与 Windows 核心功能已通过；多窗口稳定性仍需三分类窗口/子窗口文件选择/关闭重开/引擎日志证据；Windows USB 与 Android 为延期项 |
 
 ### 验收执行流程
 
@@ -53,7 +60,7 @@
 | S3 | L3 | 已含于 S2（bare analyze + flutterguard --fail-on high） | 同上 | 零 issue; 无 HIGH | S2 输出 |
 | S4 | L2 | `gh run list --limit 3` 查 dev 最新 push CI | flutter_forge 根 | 最新 CI run = success | CI 状态 |
 | S5 | L5 | `.venv/bin/python` 调 ShadowBenchmarkRunner: run_shadow_suite + score_reviewed_architecture | agent-hub | 6/6 passed; ownership/extraction>=0.75; disagreement=0 | 套件输出 |
-| S6 | L6 | 标记 PENDING（安装包构建 + Windows 实机清单, 发布时执行） | - | - | 待办项 |
+| S6 | L6 | 发布包与 Windows 核心功能已通过；多窗口专项待执行 | - | - | `docs/reports/MULTIWINDOW_ACCEPTANCE-20260901.md` |
 
 ### 报告格式（写 ACCEPTANCE_REPORT-<YYYYMMDD>.md）
 

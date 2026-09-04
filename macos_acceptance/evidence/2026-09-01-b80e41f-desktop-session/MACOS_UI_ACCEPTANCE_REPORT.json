@@ -1,0 +1,29 @@
+{
+  "artifact": {
+    "head": "b80e41fb53aa01498b587d7fbe54bfb21b2f578e",
+    "configuration": "Release",
+    "application": "apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app"
+  },
+  "session": {
+    "channel": "Codex Desktop Computer Use",
+    "interaction_available": true,
+    "date": "2026-09-01"
+  },
+  "checks": [
+    {"name": "basic_category_window_first_frame", "verdict": "PASS", "evidence": "screenshots/UI-basic-window.png"},
+    {"name": "state_category_window_first_frame", "verdict": "PASS", "evidence": "screenshots/UI-state-window.png"},
+    {"name": "platform_category_window_first_frame", "verdict": "PASS", "evidence": "screenshots/UI-platform-window.png"},
+    {"name": "three_category_windows_no_black_screen", "verdict": "PASS"},
+    {"name": "same_category_reuse", "verdict": "NOT_COMPLETED"},
+    {"name": "close_and_reopen_three_rounds", "verdict": "NOT_COMPLETED"},
+    {"name": "child_window_file_picker_open", "verdict": "PASS", "evidence": "screenshots/UI-file-picker-dialog.png"},
+    {"name": "child_window_file_picker_cancel", "verdict": "PASS"},
+    {"name": "debounce_throttle_1024dp", "verdict": "PASS", "evidence": "screenshots/UI-debounce-1024.png"},
+    {"name": "debounce_throttle_600dp", "verdict": "PASS", "evidence": "screenshots/UI-debounce-600.png"},
+    {"name": "debounce_throttle_360dp", "verdict": "FAIL", "reason": "The right visualization card is horizontally clipped at the compact width.", "evidence": "screenshots/UI-debounce-360-fail.png"}
+  ],
+  "macos_ui_interaction": "FAIL",
+  "macos_gate": "HOLD",
+  "windows_ready": false,
+  "windows_self_test_started": false
+}

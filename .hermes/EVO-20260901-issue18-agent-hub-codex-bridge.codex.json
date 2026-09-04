@@ -1,0 +1,178 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "EVO-20260901-issue18-agent-hub-codex-bridge",
+  "title": "Agent Hub LangGraph  Issue #18 Codex ",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "Agent Hub LangGraph  Issue #18  Windows  Codex  Windows  ",
+  "scope": "agent_hub_readonly_analysis_and_codex_task_handoff",
+  "agent_role": "Agent Hub/LangGraph  ",
+  "background": {
+    "agent_hub": "/Users/forest/code/agent-hub",
+    "flutter_repo": "/Users/forest/code/langGraph/flutter_forge",
+    "host": "macos",
+    "issue_url": "https://github.com/lizy-coding/flutter_forge/issues/18#issue-5307389318",
+    "flutter_baseline": "HEAD=5ef5a81cee1ce63e0bdfe5356de3fcfb63f64c67; origin/dev=ec668e534318911041b1ab277a646479b0f43b92; tracked source fixes committed locally; two pending .hermes task JSON inputs untracked",
+    "macos_gate": "PASS 565766f  desktop acceptance; non-regression only",
+    "windows_gate": "BLOCKED current host is macOS; Windows runtime/build/installer/WER cannot be claimed",
+    "agent_hub_bootstrap": "PASS via /Users/forest/code/agent-hub/.venv/bin/python -m agent_hub.gateway.cli --config /Users/forest/code/agent-hub/workspace/config.json; repository_count=1; all checks true",
+    "langgraph_server": "NOT_RUNNING; http://127.0.0.1:2024/ok returned connection refused; start only when executing the server-backed analysis steps",
+    "registered_graphs": ["workspace_bootstrap", "context_analysis", "capability_analysis", "shadow_benchmark", "migration_planning", "migration_execution", "development", "decomposition"],
+    "task_inputs": [
+      ".hermes/FIX-20260901-issue18-windows-regression.codex.json",
+      ".hermes/FIX-20260901-windows-pc-baseline.codex.json"
+    ],
+    "issue18_evidence_boundary": "Issue 18 Windows observations remain external reported evidence until a Windows host or authoritative Windows CI run reproduces them; preserve FAIL/TIMEOUT/BLOCKED/NOT_REACHED labels"
+  },
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "readonly_context_analysis_first",
+      "rationale": "Agent Hub LangGraph should bound the evidence package before Codex implementation work and must not mutate the Flutter repository during analysis.",
+      "constraints": [
+        "Use Agent Hub's configured /Users/forest/code/agent-hub/.venv/bin/python and workspace/config.json.",
+        "Start the LangGraph dev server only for the run; probe /ok and /assistants/search before submission.",
+        "Use context_analysis for repository/rule/path evidence; capability_analysis is supplementary only.",
+        "Stop the server after analysis and verify Flutter git status, HEAD, and origin/dev unchanged.",
+        "No source edits, no issue mutation, no commit, no push."
+      ],
+      "acceptance": [
+        "Bootstrap returns ok=true, repository_count=1, registry/path/workspace checks true.",
+        "Context analysis response identifies flutter_forge and relevant Issue #18 paths/rules or records an exact server/API blocker.",
+        "Target Flutter repository remains unchanged by Agent Hub analysis."
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "codex_direct_fix_vehicle",
+      "rationale": "Issue #18 source/test repair is a deterministic single-repository change; Codex direct execution is the implementation vehicle, while Agent Hub supplies bounded context.",
+      "constraints": [
+        "Execute .hermes/FIX-20260901-issue18-windows-regression.codex.json only after its validation and context handoff are complete.",
+        "Do not dispatch the duplicate .hermes/FIX-20260901-windows-pc-baseline.codex.json concurrently.",
+        "Codex may modify only task-allowed module source/tests and may create a local commit only when authorized by that task.",
+        "No git push, tag, release, rebase, force-push, issue update, or synthetic Windows evidence.",
+        "On macOS host, Windows runtime/build/installer/WER remain BLOCKED/UNKNOWN."
+      ],
+      "acceptance": [
+        "Codex execution is evidenced by changed files, validation output, and an attributable commit if created.",
+        "Any Windows-only acceptance is explicitly marked BLOCKED/UNKNOWN.",
+        "Targeted local tests and flutter analyze are independently rerun after Codex."
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "agent_hub_scope_guard",
+      "rationale": "The Agent Hub development/decomposition graphs can execute workers and integration commits; this task is read-only analysis plus a direct Codex handoff and must not enter those mutation paths.",
+      "constraints": [
+        "Do not invoke development --execute, decomposition --execute, worker, integration, or refactor-run commands.",
+        "Do not use Agent Hub to commit or push the Flutter repository.",
+        "Record graph selection and why context_analysis is sufficient for this handoff.",
+        "Any future orchestrated execution requires a separate explicit EVO/FEAT task and approval."
+      ],
+      "acceptance": [
+        "No Agent Hub .integration/.decomposition mutation is produced.",
+        "No external repository changes occur."
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "bootstrap_preflight",
+      "detail": "Run Agent Hub bootstrap with the configured venv and config; snapshot Flutter git status/HEAD/upstream and both pending task inputs.",
+      "verify": "bootstrap JSON ok=true; Flutter HEAD/upstream match baseline; only expected task JSON inputs are untracked"
+    },
+    {
+      "step": 2,
+      "action": "start_langgraph_probe",
+      "detail": "From /Users/forest/code/agent-hub start langgraph dev on port 2024 with no browser/reload; probe /ok and /assistants/search. If unavailable, record the exact blocker and continue only with bootstrap/direct Codex path.",
+      "verify": "HTTP status/body for /ok and assistant graph inventory recorded"
+    },
+    {
+      "step": 3,
+      "action": "context_analysis_readonly",
+      "detail": "Submit a bounded context_analysis request for flutter_forge and Issue #18 Windows regression, requesting exact source/test paths, rules, relevant symbols, known evidence boundaries, and unknowns. Do not request execution.",
+      "verify": "context package captured or exact API blocker recorded; no Flutter repository mutation"
+    },
+    {
+      "step": 4,
+      "action": "codex_handoff",
+      "detail": "Pass the bounded context plus .hermes/FIX-20260901-issue18-windows-regression.codex.json to Codex direct execution. Use stdin and the installed CLI flags; do not dispatch the duplicate baseline task.",
+      "verify": "Codex output, changed-file set, commit state, and Windows boundary recorded"
+    },
+    {
+      "step": 5,
+      "action": "independent_verification",
+      "detail": "After Codex exits, inspect git log/diff and rerun targeted Flutter tests, flutter analyze, git diff --check, and the repository quality gate. Do not trust Codex exit code or summary alone.",
+      "verify": "targeted results and quality-gate result are real command outputs; full commit range attributable"
+    },
+    {
+      "step": 6,
+      "action": "stop_server_and_report",
+      "detail": "Stop LangGraph server if started; verify Agent Hub and Flutter repository states; produce a report that separates local PASS, macOS non-regression PASS, and Windows BLOCKED/UNKNOWN.",
+      "verify": "server stopped; Flutter HEAD/upstream and Agent Hub git status recorded; no issue mutation/push"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1: Agent Hub bootstrap is PASS and context_analysis is read-only or reports an exact server/API blocker.",
+    "DD-2: Codex direct task execution is attributable and independently verified; duplicate task is not dispatched.",
+    "DD-3: Agent Hub execution/integration mutation paths are not invoked.",
+    "Issue #18 Windows runtime/build/installer/WER/UI acceptance is not marked PASS on macOS.",
+    "No git push, tag, release, GitHub Issue mutation, or fabricated evidence occurs."
+  ],
+  "out_of_scope": [
+    "Windows-host execution unavailable on current macOS machine",
+    "Windows installer/release workflow changes",
+    "Windows USB/HID/Serial/WinUSB implementation",
+    "Agent Hub graph code changes",
+    "Agent Hub development/decomposition worker execution",
+    "GitHub Issue #18 comments or closure",
+    "git push/tag/release/merge/rebase"
+  ],
+  "forbidden_changes": [
+    "Do not edit Agent Hub source, config, registry, or graphs in this task.",
+    "Do not edit Flutter platform directories, pubspec files, workflow files, or global shell/navigation files.",
+    "Do not create a synthetic Windows PASS report.",
+    "Do not kill processes by executable name.",
+    "Do not dispatch both pending .hermes task JSON files for the same Issue #18 work."
+  ],
+  "validation": [
+    "/Users/forest/code/agent-hub/.venv/bin/python -m agent_hub.gateway.cli --config /Users/forest/code/agent-hub/workspace/config.json",
+    "HTTP probe http://127.0.0.1:2024/ok",
+    "HTTP probe POST http://127.0.0.1:2024/assistants/search",
+    "flutter test test/modules/basic/microtask/microtask_test.dart",
+    "flutter test test/modules/async/isolate_basic/isolate_basic_test.dart",
+    "flutter test test/modules/ui/adsorption_line/adsorption_line_test.dart",
+    "flutter test test/shared/multi_window_manager_test.dart",
+    "flutter analyze",
+    "bash tool/quality_gate.sh",
+    "git diff --check",
+    "git status --short --branch",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "high",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_ANALYSIS_SCHEMA.json",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "docs/QUALITY_ACCEPTANCE.md",
+    "windows_acceptance/WINDOWS_SELF_TEST_CHECKLIST.md",
+    "windows_acceptance/evidence/2026-09-01/WINDOWS_UI_ACCEPTANCE_REPORT.json",
+    "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart",
+    "apps/flutter_forge/test/shared/multi_window_manager_test.dart",
+    "apps/flutter_forge/lib/app/app_bootstrap.dart",
+    "apps/flutter_forge/lib/app/category_window_app.dart",
+    "apps/flutter_forge/integration_test/app_test.dart",
+    "agent-hub/README.md",
+    "agent-hub/workspace/config.json",
+    "agent-hub/langgraph.json"
+  ],
+  "notes": [
+    "Agent Hub bootstrap was verified PASS; LangGraph HTTP server was not running at the last probe.",
+    "Windows-only results require a real Windows host or authoritative Windows CI; macOS evidence is non-regression only.",
+    "Codex task JSON files are planning inputs; no push or GitHub issue mutation is authorized.",
+    "If context_analysis is unavailable, do not substitute capability/decomposition execution; report the blocker and use only the direct Codex path if explicitly continued."
+  ]
+}

@@ -10,7 +10,8 @@
   },
   "entrypoints": [
     "status_management",
-    "flutter_ioc"
+    "flutter_ioc",
+    "local_persistence"
   ],
   "owns": [
     "state_management"
@@ -19,11 +20,13 @@
     "provider",
     "flutter_riverpod",
     "flutter_bloc",
-    "flutter_ioc_core"
+    "flutter_ioc_core",
+    "shared_preferences"
   ],
   "children": [
     "status_management/AI_ANALYSIS.md",
-    "flutter_ioc/AI_ANALYSIS.md"
+    "flutter_ioc/AI_ANALYSIS.md",
+    "local_persistence/AI_ANALYSIS.md"
   ],
   "contracts": {
     "no_natural_language": true,
