@@ -41,8 +41,10 @@ jobs:
       - name: Bootstrap
         run: flutter pub get
       - name: Analyze
+        if: matrix.platform == 'android'
         run: flutter analyze
       - name: Tests
+        if: matrix.platform == 'android'
         shell: bash
         run: bash tool/test_all.sh
       - name: Build macOS
