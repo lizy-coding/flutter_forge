@@ -68,9 +68,9 @@ jobs:
         if: matrix.platform == 'android'
         shell: bash
         run: |
-          mkdir -p release-assets
-          cp build/app/outputs/bundle/release/app-release.aab release-assets/flutter_forge-android-arm64.aab
-          cp build/app/outputs/apk/release/app-arm64-v8a-release.apk release-assets/flutter_forge-android-arm64.apk
+          mkdir -p "$GITHUB_WORKSPACE/apps/flutter_forge/release-assets"
+          cp "$GITHUB_WORKSPACE/apps/flutter_forge/build/app/outputs/bundle/release/app-release.aab" "$GITHUB_WORKSPACE/apps/flutter_forge/release-assets/flutter_forge-android-arm64.aab"
+          cp "$GITHUB_WORKSPACE/apps/flutter_forge/build/app/outputs/apk/release/app-arm64-v8a-release.apk" "$GITHUB_WORKSPACE/apps/flutter_forge/release-assets/flutter_forge-android-arm64.apk"
       - name: Install Inno Setup
         if: matrix.platform == 'windows'
         shell: pwsh

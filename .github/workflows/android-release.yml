@@ -1,0 +1,53 @@
+name: Android ARM64 release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag to update
+        required: true
+        default: v1.2.5
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: "3.44.6"
+
+jobs:
+  android:
+    name: Build Android ARM64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - name: Bootstrap
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
+      - name: Tests
+        shell: bash
+        run: bash tool/test_all.sh
+      - name: Build AAB
+        working-directory: apps/flutter_forge
+        run: flutter build appbundle --release
+      - name: Build ARM64 APK
+        working-directory: apps/flutter_forge
+        run: flutter build apk --release --target-platform android-arm64 --split-per-abi
+      - name: Stage artifacts
+        shell: bash
+        run: |
+          mkdir -p release-assets
+          cp "$GITHUB_WORKSPACE/apps/flutter_forge/build/app/outputs/bundle/release/app-release.aab" release-assets/flutter_forge-android-arm64.aab
+          cp "$GITHUB_WORKSPACE/apps/flutter_forge/build/app/outputs/apk/release/app-arm64-v8a-release.apk" release-assets/flutter_forge-android-arm64.apk
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.release_tag }}
+          name: Flutter Forge ${{ inputs.release_tag }} Android ARM64
+          prerelease: true
+          files: release-assets/*
