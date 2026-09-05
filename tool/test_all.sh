@@ -43,8 +43,6 @@ echo ""
 run_tests "apps/flutter_forge" "flutter_forge_app" "flutter test"
 
 # Workspace packages
-run_tests "packages/gcode_core" "gcode_core" "flutter test"
-run_tests "packages/flutter_study_learning" "flutter_study_learning" "flutter test"
 run_tests "packages/file_picker_bridge" "file_picker_bridge" "flutter test"
 run_tests "packages/flutter_ioc_core" "flutter_ioc_core" "flutter test"
 

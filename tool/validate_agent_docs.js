@@ -8,8 +8,6 @@ const documents = new Map();
 
 const VALID_CATEGORIES = ['basic', 'async', 'state', 'ui', 'popup_table', 'platform'];
 const workspacePackages = [
-  ['gcode_core', 'packages/gcode_core'],
-  ['flutter_study_learning', 'packages/flutter_study_learning'],
   ['file_picker_bridge', 'packages/file_picker_bridge'],
   ['flutter_ioc_core', 'packages/flutter_ioc_core'],
 ];
@@ -205,7 +203,7 @@ if (moduleIndex) {
       failures.push(`${mod.path}:missing_module_entry`);
     }
 
-    // Check at least one .dart file in the module imports flutter_study_learning
+    // Check at least one .dart file in the module imports the shared learning UI.
     const modDir = resolveProjectPath(mod.path);
     if (fs.existsSync(modDir)) {
       let hasTeachingDep = false;
@@ -217,7 +215,7 @@ if (moduleIndex) {
             walk(abs);
           } else if (entry.name.endsWith('.dart')) {
             const content = fs.readFileSync(abs, 'utf8');
-            if (/flutter_study_learning/.test(content)) {
+            if (/shared\/learning\/learning_scaffold/.test(content)) {
               hasTeachingDep = true;
             }
           }
@@ -225,7 +223,7 @@ if (moduleIndex) {
       }
       walk(modDir);
       if (!hasTeachingDep) {
-        failures.push(`${mod.path}:missing_teaching_dependency — no file imports flutter_study_learning`);
+        failures.push(`${mod.path}:missing_teaching_dependency — no file imports shared learning UI`);
       }
     }
   }

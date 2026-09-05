@@ -1,0 +1,17 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - windows/**
+    - macos/**
+    - linux/**
+  language:
+    strict-raw-types: true
+  strong-mode:
+    implicit-casts: false
+
+linter:
+  rules:
+    - prefer_relative_imports
+    - prefer_single_quotes

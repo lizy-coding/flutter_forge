@@ -10,7 +10,7 @@
       "route": "/tree-state",
       "status": "recommended",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry",
         "go_router"
       ],
@@ -23,7 +23,7 @@
       "route": "/microtask",
       "status": "recommended",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry",
         "go_router"
       ],
@@ -36,7 +36,7 @@
       "route": "/debounce-throttle",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry"
       ],
       "analysis": "lib/modules/basic/debounce_throttle/AI_ANALYSIS.md"
@@ -48,7 +48,7 @@
       "route": "/stream-subscription",
       "status": "recommended",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry",
         "go_router"
       ],
@@ -61,7 +61,7 @@
       "route": "/isolate-basic",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry",
         "go_router"
       ],
@@ -74,7 +74,7 @@
       "route": "/isolate-stream",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry"
       ],
       "analysis": "lib/modules/async/isolate_task_manager/AI_ANALYSIS.md"
@@ -86,7 +86,7 @@
       "route": "/status-management",
       "status": "recommended",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "provider",
         "flutter_riverpod",
         "flutter_bloc",
@@ -102,7 +102,7 @@
       "route": "/flutter-ioc",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "flutter_ioc_core",
         "provider",
         "module_registry"
@@ -116,7 +116,7 @@
       "route": "/local-persistence",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "shared_preferences",
         "module_registry"
       ],
@@ -129,7 +129,7 @@
       "route": "/gcode-visualizer",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "gcode_core",
         "file_picker_bridge",
         "module_registry"
@@ -143,7 +143,7 @@
       "route": "/adsorption-line",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "provider",
         "module_registry"
       ],
@@ -156,7 +156,7 @@
       "route": "/download-animation",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry",
         "go_router"
       ],
@@ -169,7 +169,7 @@
       "route": "/font-picker",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "file_picker_bridge",
         "module_registry",
         "go_router"
@@ -183,7 +183,7 @@
       "route": "/popup-widgets",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry"
       ],
       "analysis": "lib/modules/popup_table/popup_widgets/AI_ANALYSIS.md"
@@ -195,7 +195,7 @@
       "route": "/popup-list-interaction",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry",
         "go_router"
       ],
@@ -208,7 +208,7 @@
       "route": "/scroll-table",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "two_dimensional_scrollables",
         "module_registry"
       ],
@@ -221,7 +221,7 @@
       "route": "/overlay-compare",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "module_registry"
       ],
       "analysis": "lib/modules/popup_table/overlay_follow_compare/AI_ANALYSIS.md"
@@ -233,7 +233,7 @@
       "route": "/dio-interceptor",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "dio",
         "module_registry",
         "go_router"
@@ -247,7 +247,7 @@
       "route": "/usb-detector",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "device_info_plus",
         "module_registry"
       ],
@@ -260,7 +260,7 @@
       "route": "/file-picker",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "file_picker_bridge",
         "module_registry"
       ],
@@ -273,7 +273,7 @@
       "route": "/online-video-player",
       "status": "ready",
       "depends": [
-        "flutter_study_learning",
+        "shared_learning",
         "dio",
         "video_player",
         "video_player_win",

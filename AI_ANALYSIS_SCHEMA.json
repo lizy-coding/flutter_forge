@@ -15,8 +15,6 @@
       "AI_ANALYSIS.md"
     ],
     "package_contract": [
-      "packages/gcode_core/AI_ANALYSIS.md",
-      "packages/flutter_study_learning/AI_ANALYSIS.md",
       "packages/file_picker_bridge/AI_ANALYSIS.md",
       "packages/flutter_ioc_core/AI_ANALYSIS.md"
     ],
@@ -62,8 +60,6 @@
   ],
   "contracts_required": {
     "no_natural_language": true,
-    "index_only": true,
-    "max_index_depth": 2,
     "doc_consumer": "coding_agent",
     "doc_mode": "machine_contract"
   },

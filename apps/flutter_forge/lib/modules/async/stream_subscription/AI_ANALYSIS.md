@@ -21,7 +21,7 @@
     "module_docs"
   ],
   "depends": [
-    "flutter_study_learning",
+    "shared_learning",
     "module_registry",
     "go_router"
   ],
@@ -29,12 +29,8 @@
   "analysis_parent": "lib/modules/async/AI_ANALYSIS.md",
   "contracts": {
     "no_natural_language": true,
-    "index_only": true,
-    "max_index_depth": 2,
     "doc_consumer": "coding_agent",
-    "doc_mode": "machine_contract",
-    "update_required_on_file_change": true,
-    "import_direction_enforced": true
+    "doc_mode": "machine_contract"
   },
   "validation": [
     "flutter analyze"

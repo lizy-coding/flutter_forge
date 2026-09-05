@@ -84,3 +84,5 @@ test-results/
 
 # Local build artifacts / downloads
 .release/
+**/android/*.jks
+**/android/key.properties

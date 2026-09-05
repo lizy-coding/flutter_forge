@@ -1,0 +1,184 @@
+{
+  "schema": "flutter_forge.agent_task.v1",
+  "task_id": "OPS-20260902-issue18-windows-build-gate",
+  "title": "Issue #18 Windows  CMake/MSBuild ",
+  "status": "pending",
+  "manual_review": true,
+  "packaging_change": false,
+  "objective": "Issue #18 Windows  CMake CompilerIdCXX  Windows  Windows  ",
+  "scope": "windows_host_toolchain_diagnosis_then_targeted_acceptance",
+  "agent_role": "Windows  Codex ；；Windows  PASS； git push ；",
+  "context": "GitHub Issue #18 5503531625  Windows 10 x64 22H2、Visual Studio Community 2026 18.1.1、MSVC 14.50.35717、Windows SDK 10.0.26100.0。v1.2.3  Release 33511073139  Windows  job success， Windows  CMake/MSBuild CompilerIdCXX  ； M1-M17/R1-R13  Windows  integration ；  Windows  。",
+  "background": {
+    "repo": "/Users/forest/code/langGraph/flutter_forge",
+    "branch": "dev",
+    "baseline": "HEAD=9cf1ad16a0499492cf8f5e1e9b50f0643c495cf0; origin/dev=9cf1ad16a0499492cf8f5e1e9b50f0643c495cf0; clean",
+    "issue_url": "https://github.com/lizy-coding/flutter_forge/issues/18#issue-5307389318",
+    "issue_comment_url": "https://github.com/lizy-coding/flutter_forge/issues/comment/5503531625",
+    "release_baseline": {
+      "tag": "v1.2.3",
+      "run_id": "33511073139",
+      "release_head": "0dd8f676388cb55b453844c4935ce58b9790b2b3",
+      "setup_sha256": "fd5de214dd5f5db83c685553368a0d98878fb3c131d9d8ea32250dcef9f9d67f"
+    },
+    "reported_windows_environment": {
+      "os": "Windows 10 x64 22H2",
+      "visual_studio": "Community 2026 18.1.1",
+      "msvc": "14.50.35717",
+      "windows_sdk": "10.0.26100.0",
+      "local_flutter": "3.44.1",
+      "release_ci_flutter": "3.44.6"
+    },
+    "reported_failure": "Windows flutter build/test  CMake/MSBuild CompilerIdCXX ； Windows ； M1-M4/R9  ",
+    "macos_boundary": "macOS  565766f  Engine/ ； Windows  Windows ； macOS UI  Windows  Windows  "
+  },
+  "user_decisions": [
+    {
+      "id": "UD-20260902-windows-issue18-next-stage",
+      "decision": " Windows  CMake/MSBuild ； Windows  CMake  ；",
+      "detail": "Windows  Windows ；  Windows  ；  Windows  Windows  ，  "
+    }
+  ],
+  "design_decisions": [
+    {
+      "id": "DD-1",
+      "title": "toolchain_gate_before_product_changes",
+      "rationale": "Failure occurs before Flutter application compilation at CMake CompilerIdCXX detection; source changes must not be invented until the toolchain blocker is isolated.",
+      "constraints": [
+        "First batch is Windows-host diagnostics only.",
+        "Record exact command, elapsed time, exit code, CMake generator, cl.exe path, cmake version, ninja/MSBuild version, and process state.",
+        "Do not modify Flutter source, pubspec, Windows CMake, release workflow, or acceptance verdicts in the diagnostic batch.",
+        "Do not kill processes by executable name; use only a PID created by the diagnostic harness.",
+        "If Visual Studio 2026 or MSVC 14.50 compatibility is the blocker, record it as an environment blocker rather than changing application code."
+      ],
+      "acceptance": [
+        "CompilerIdCXX failure is reproduced or explicitly not reproduced on the reported Windows environment.",
+        "The diagnostic report identifies the first failing command and a bounded remediation candidate.",
+        "No synthetic Windows PASS is produced."
+      ]
+    },
+    {
+      "id": "DD-2",
+      "title": "version_and_environment_alignment",
+      "rationale": "The report uses local Flutter 3.44.1 while the release used CI Flutter 3.44.6; the Windows test must distinguish application defects from toolchain/version drift.",
+      "constraints": [
+        "Capture flutter --version, dart --version, cmake --version, msbuild version, Visual Studio workloads, Windows SDK, and PATH resolution.",
+        "Compare against release.yml FLUTTER_VERSION=3.44.6.",
+        "Do not downgrade or upgrade Visual Studio/Flutter automatically.",
+        "Do not change lockfiles or dependencies during diagnosis."
+      ],
+      "acceptance": [
+        "Version drift is explicitly classified as matched, tolerated, or blocker.",
+        "A clean rebuild is attempted only after the environment snapshot is captured."
+      ]
+    },
+    {
+      "id": "DD-3",
+      "title": "acceptance_after_build_gate",
+      "rationale": "Real UI evidence is meaningful only from a fresh Windows artifact whose build identity and installer provenance are established.",
+      "constraints": [
+        "Do not execute M1-M17/R1-R13 against v1.2.3 if the tested binary is not proven to match the current target commit.",
+        "After a successful build or verified release artifact, execute the existing Windows checklist item-by-item without aborting on individual failures.",
+        "Every FAIL includes exact reproduction, last successful operation, screenshot/log path, and Event Viewer/WER fields when applicable.",
+        "usb_detector remains Android-only/deferred and is not counted as a Windows failure."
+      ],
+      "acceptance": [
+        "P1-P8, W1-W6, N1-N8, V1-V6, M1-M17, and R1-R13 each have a verdict.",
+        "windows_ready is true only when required Windows criteria pass with evidence; otherwise HOLD."
+      ]
+    }
+  ],
+  "implementation_steps": [
+    {
+      "step": 1,
+      "action": "windows_preflight_snapshot",
+      "detail": "On the reported Windows machine, capture OS/architecture, Visual Studio/MSVC/SDK, Flutter/Dart/CMake/MSBuild versions, PATH tool locations, repository HEAD, and installed artifact identity.",
+      "verify": "Preflight JSON/log contains all versions and HEAD/SHA256 fields"
+    },
+    {
+      "step": 2,
+      "action": "reproduce_compiler_probe_bounded",
+      "detail": "Run a bounded clean Windows build with timestamps and per-stage logging; isolate CMake CompilerIdCXX/CTest/MSBuild probe output and record process/PID state without name-based termination.",
+      "verify": "First failing command, exit/timeout, elapsed time, generator, compiler path, and raw log path recorded"
+    },
+    {
+      "step": 3,
+      "action": "toolchain_remediation_decision",
+      "detail": "Based only on captured evidence, choose one bounded remediation: align Flutter to 3.44.6, repair Visual Studio C++ workload/environment, or record an external toolchain blocker. Do not modify product source unless application compilation proves a source defect.",
+      "verify": "Decision cites evidence and leaves an auditable before/after environment snapshot"
+    },
+    {
+      "step": 4,
+      "action": "fresh_build_gate",
+      "detail": "After remediation, run flutter build windows --release or verify the v1.2.3 release artifact; record build exit code, artifact mtime, artifact SHA256, and required DLL inventory.",
+      "verify": "Fresh build/artifact provenance is complete; otherwise mark BUILD_BLOCKED"
+    },
+    {
+      "step": 5,
+      "action": "windows_acceptance_run",
+      "detail": "Only with a valid fresh artifact, execute WINDOWS_SELF_TEST_CHECKLIST.md P1-P8, W1-W6, N1-N8, V1-V6, M1-M17, and R1-R13. Continue after individual failures and collect screenshots/logs/Event Viewer evidence.",
+      "verify": "All checklist rows have PASS/FAIL/BLOCKED/DEFERRED and evidence references"
+    },
+    {
+      "step": 6,
+      "action": "report_and_handoff",
+      "detail": "Write Windows UI acceptance report and notes; distinguish toolchain failure, product failure, external conditions, and deferred Android-only capability. Do not modify source or push from the acceptance run.",
+      "verify": "Report contains windows_ready, final acceptance, blocker list, artifact identity, and complete verdict counts"
+    }
+  ],
+  "acceptance_criteria": [
+    "DD-1: CompilerIdCXX timeout is reproduced or bounded as not reproduced with raw evidence; no speculative source fix is accepted.",
+    "DD-2: Flutter 3.44.1 vs release CI 3.44.6 and the complete Windows toolchain are compared explicitly.",
+    "DD-3: Full Windows checklist runs only against a verified fresh artifact and every item receives a truthful verdict.",
+    "The final report does not promote HOLD/BLOCKED/TIMEOUT to PASS.",
+    "No GitHub Issue mutation, tag/release mutation, or git push occurs in the acceptance task."
+  ],
+  "out_of_scope": [
+    "Windows USB/HID/Serial/WinUSB implementation",
+    "Visual Studio automatic installation or system-wide configuration changes",
+    "Release workflow/version/tag changes",
+    "Flutter source changes before toolchain diagnosis",
+    "GitHub Issue comments/labels/closure",
+    "git push, tag, release, merge, rebase, force-push"
+  ],
+  "forbidden_changes": [
+    "Do not fabricate Windows screenshots, WER logs, build results, or PASS verdicts.",
+    "Do not modify apps/flutter_forge/lib, apps/flutter_forge/windows, pubspec files, .github/workflows, or tool gate scripts in steps 1-3.",
+    "Do not kill processes by executable name.",
+    "Do not change usb_detector platform semantics.",
+    "Do not push or mutate GitHub Issue #18."
+  ],
+  "validation": [
+    "Windows: flutter --version",
+    "Windows: dart --version",
+    "Windows: cmake --version",
+    "Windows: msbuild -version",
+    "Windows: flutter build windows --release",
+    "Windows: flutter test integration_test -d windows",
+    "Windows: Get-FileHash .\\flutter_forge-setup-x64.exe -Algorithm SHA256",
+    "Windows: Event Viewer/WER export",
+    "git diff --check",
+    "git status --short --branch",
+    "git rev-parse HEAD origin/dev"
+  ],
+  "risk": "high",
+  "pre_read": [
+    "AGENTS.md",
+    "AI_ANALYSIS_SCHEMA.json",
+    "AI_PROJECT_CONTEXT.md",
+    "REFACTOR_PLAN.md",
+    "windows_acceptance/WINDOWS_SELF_TEST_CHECKLIST.md",
+    "windows_acceptance/evidence/2026-09-01-v1.2.3/WINDOWS_UI_ACCEPTANCE_REPORT.json",
+    "apps/flutter_forge/integration_test/app_test.dart",
+    "apps/flutter_forge/lib/shared/multi_window/multi_window_manager.dart",
+    "apps/flutter_forge/lib/app/app_bootstrap.dart",
+    "apps/flutter_forge/lib/app/category_window_app.dart",
+    ".github/workflows/release.yml"
+  ],
+  "notes": [
+    "Issue comment 5503531625 is the source for the Windows host/toolchain report; re-fetch before execution if network is available.",
+    "v1.2.3 release workflow success proves the CI Windows job built an installer, but does not prove the reported Windows 10 local CMake environment or UI behavior.",
+    "The current repository is macOS; Windows-only build, installer launch, Event Viewer/WER, HWND/PID, and real UI results must be executed on Windows or authoritative Windows CI.",
+    "Only a local commit may be created after explicit approval; this task forbids commit and push during acceptance."
+  ]
+}

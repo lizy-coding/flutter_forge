@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 class RiverpodLiftingRoute extends ConsumerWidget {
   const RiverpodLiftingRoute({super.key});
@@ -68,15 +68,16 @@ class _LControls extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final n = ref.read(_liftProvider.notifier);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 12,
+      runSpacing: 8,
       children: [
         FilledButton.icon(
           onPressed: n.inc,
           icon: const Icon(Icons.exposure_plus_1),
           label: const Text('加 1'),
         ),
-        const SizedBox(width: 12),
         OutlinedButton.icon(
           onPressed: n.reset,
           icon: const Icon(Icons.restart_alt),

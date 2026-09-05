@@ -19,9 +19,7 @@ echo "--- 2/3 检测漂移 ---"
 GENERATED_FILES=(
   "AI_PROJECT_CONTEXT.md"
   "REFACTOR_PLAN.md"
-  "lib/AI_MODULE_INDEX.md"
-  "packages/gcode_core/AI_ANALYSIS.md"
-  "packages/flutter_study_learning/AI_ANALYSIS.md"
+  "apps/flutter_forge/lib/AI_MODULE_INDEX.md"
   "packages/file_picker_bridge/AI_ANALYSIS.md"
   "packages/flutter_ioc_core/AI_ANALYSIS.md"
 )

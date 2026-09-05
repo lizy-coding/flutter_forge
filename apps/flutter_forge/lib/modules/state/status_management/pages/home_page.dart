@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
 const String _statusManageBaseRoute = '/status-management';
@@ -184,35 +184,59 @@ class _RouteCategoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final heading = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(category.title, style: theme.textTheme.titleLarge),
+                    const SizedBox(height: 6),
+                    Text(
+                      category.description,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                );
+                final badge = Chip(
+                  avatar: const Icon(Icons.filter_alt_outlined, size: 16),
+                  label: Text(category.badge),
+                );
+                final avatar = CircleAvatar(
                   radius: 26,
                   backgroundColor: theme.colorScheme.primaryContainer,
                   child: Icon(category.icon, color: theme.colorScheme.primary),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
+                );
+
+                if (constraints.maxWidth < 420) {
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(category.title, style: theme.textTheme.titleLarge),
-                      const SizedBox(height: 6),
-                      Text(
-                        category.description,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.black54,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          avatar,
+                          const SizedBox(width: 12),
+                          Expanded(child: heading),
+                        ],
                       ),
+                      const SizedBox(height: 8),
+                      badge,
                     ],
-                  ),
-                ),
-                Chip(
-                  avatar: const Icon(Icons.filter_alt_outlined, size: 16),
-                  label: Text(category.badge),
-                ),
-              ],
+                  );
+                }
+
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    avatar,
+                    const SizedBox(width: 16),
+                    Expanded(child: heading),
+                    badge,
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 12),
             Column(
@@ -238,27 +262,45 @@ class _RouteListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ListTile(
-      onTap: () => context.push('$_statusManageBaseRoute${data.routeName}'),
-      contentPadding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      leading: CircleAvatar(
-        radius: 22,
-        backgroundColor: theme.colorScheme.secondaryContainer,
-        child: Icon(data.icon, color: theme.colorScheme.secondary),
-      ),
-      title: Text(data.title, style: theme.textTheme.titleMedium),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 4),
-        child: Text(
-          '刷新链路：${data.flow}',
-          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.black54),
-        ),
-      ),
-      trailing: Chip(
-        avatar: const Icon(Icons.visibility, size: 16),
-        label: Text(data.chipLabel),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final chip = Chip(
+          avatar: const Icon(Icons.visibility, size: 16),
+          label: Text(data.chipLabel),
+        );
+        final compact = constraints.maxWidth < 360;
+        final subtitle = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '刷新链路：${data.flow}',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.black54,
+              ),
+            ),
+            if (compact) chip,
+          ],
+        );
+
+        return ListTile(
+          onTap: () => context.push('$_statusManageBaseRoute${data.routeName}'),
+          contentPadding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          leading: CircleAvatar(
+            radius: 22,
+            backgroundColor: theme.colorScheme.secondaryContainer,
+            child: Icon(data.icon, color: theme.colorScheme.secondary),
+          ),
+          title: Text(data.title, style: theme.textTheme.titleMedium),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: subtitle,
+          ),
+          trailing: compact ? null : chip,
+        );
+      },
     );
   }
 }

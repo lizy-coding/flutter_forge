@@ -9,7 +9,10 @@ void main() {
   testWidgets('module home fits a 360dp viewport', (tester) async {
     await tester.pumpWidget(
       MediaQuery(
-        data: const MediaQueryData(size: Size(360, 800)),
+        data: const MediaQueryData(
+          size: Size(360, 800),
+          padding: EdgeInsets.only(top: 24, bottom: 24),
+        ),
         child: MaterialApp(
           home: ModuleHomePage(modules: AppRouteTable.modules),
         ),
@@ -23,7 +26,10 @@ void main() {
   testWidgets('category home fits a 360dp viewport', (tester) async {
     await tester.pumpWidget(
       MediaQuery(
-        data: const MediaQueryData(size: Size(360, 800)),
+        data: const MediaQueryData(
+          size: Size(360, 800),
+          padding: EdgeInsets.only(top: 24, bottom: 24),
+        ),
         child: MaterialApp(
           home: CategoryHomePage(
             category: ModuleCategory.basic,

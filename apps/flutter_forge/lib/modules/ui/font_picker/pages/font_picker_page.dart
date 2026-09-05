@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_picker_bridge/file_picker_bridge.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
 import '../data/font_catalog.dart';

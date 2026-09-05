@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_study_learning/flutter_study_learning.dart';
+import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 import 'models/usb_device_info.dart';
 import 'services/usb_detection_service.dart';
@@ -91,7 +91,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Icon(
                           _isInitialized
@@ -99,7 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               : Icons.error_outline,
                           color: _isInitialized ? Colors.green : Colors.red,
                         ),
-                        const SizedBox(width: 8),
                         Text(
                           'USB驱动状态',
                           style: Theme.of(context).textTheme.headlineSmall,

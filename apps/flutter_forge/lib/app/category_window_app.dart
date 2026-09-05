@@ -68,10 +68,13 @@ class CategoryHomePage extends StatelessWidget {
           },
         ),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: modules.length,
-        itemBuilder: (context, index) => ModuleListTile(module: modules[index]),
+      body: SafeArea(
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemCount: modules.length,
+          itemBuilder: (context, index) =>
+              ModuleListTile(module: modules[index]),
+        ),
       ),
     );
   }

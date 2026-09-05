@@ -22,8 +22,8 @@
     "host_integrations"
   ],
   "depends": [
-    "packages/gcode_core",
-    "packages/flutter_study_learning",
+    "git:https://github.com/lizy-coding/gcode_core.git#7a5228126d6e43b0cb9175b035cd2e1701950779",
+    "packages/shared_learning",
     "packages/file_picker_bridge",
     "packages/flutter_ioc_core",
     "git:https://github.com/lizy-coding/flutterguard.git#9f9be84a73dc4b99a956a8529b8c334849566b03"
@@ -34,19 +34,13 @@
     "lib/module_registry/AI_ANALYSIS.md",
     "lib/shared/AI_ANALYSIS.md",
     "lib/modules/AI_ANALYSIS.md",
-    "packages/gcode_core/AI_ANALYSIS.md",
-    "packages/flutter_study_learning/AI_ANALYSIS.md",
     "packages/file_picker_bridge/AI_ANALYSIS.md",
     "packages/flutter_ioc_core/AI_ANALYSIS.md"
   ],
   "contracts": {
     "no_natural_language": true,
-    "index_only": true,
-    "max_index_depth": 2,
     "doc_consumer": "coding_agent",
-    "doc_mode": "machine_contract",
-    "update_required_on_file_change": true,
-    "import_direction_enforced": true
+    "doc_mode": "machine_contract"
   },
   "validation": [
     "bash tool/generate_harness_ai_analysis.sh",
