@@ -10,7 +10,9 @@ resolution: workspace
 
 dependencies:
   gcode_core:
-    path: ../../packages/gcode_core
+    git:
+      url: https://github.com/lizy-coding/gcode_core.git
+      ref: 7a5228126d6e43b0cb9175b035cd2e1701950779
   file_picker_bridge:
     path: ../../packages/file_picker_bridge
   flutter_ioc_core:

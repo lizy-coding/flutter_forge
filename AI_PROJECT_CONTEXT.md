@@ -33,7 +33,6 @@
     "layout": "pub_workspace",
     "workspace_root": ".",
     "members": [
-      "packages/gcode_core",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core"
     ],
@@ -41,12 +40,6 @@
     "resolution_blocker": "none"
   },
   "internal_packages": [
-    {
-      "name": "gcode_core",
-      "type": "flutter_package",
-      "path": "packages/gcode_core",
-      "entrypoint": "lib/gcode_core.dart"
-    },
     {
       "name": "file_picker_bridge",
       "type": "flutter_bridge_package",
@@ -58,6 +51,15 @@
       "type": "dart_package",
       "path": "packages/flutter_ioc_core",
       "entrypoint": "lib/flutter_ioc_core.dart"
+    }
+  ],
+  "external_packages": [
+    {
+      "name": "gcode_core",
+      "source": "git",
+      "url": "https://github.com/lizy-coding/gcode_core.git",
+      "ref": "7a5228126d6e43b0cb9175b035cd2e1701950779",
+      "entrypoint": "lib/gcode_core.dart"
     }
   ],
   "external_tools": [

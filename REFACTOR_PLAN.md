@@ -16,7 +16,6 @@
   "dependency_migration": {
     "layout": "pub_workspace",
     "internal_packages": [
-      "packages/gcode_core",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core"
     ],

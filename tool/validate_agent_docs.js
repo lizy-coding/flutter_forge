@@ -8,7 +8,6 @@ const documents = new Map();
 
 const VALID_CATEGORIES = ['basic', 'async', 'state', 'ui', 'popup_table', 'platform'];
 const workspacePackages = [
-  ['gcode_core', 'packages/gcode_core'],
   ['file_picker_bridge', 'packages/file_picker_bridge'],
   ['flutter_ioc_core', 'packages/flutter_ioc_core'],
 ];

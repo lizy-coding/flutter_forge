@@ -370,16 +370,6 @@ const flutterGuardDependency = {
 
 const workspacePackages = [
   {
-    name: 'gcode_core',
-    kind: 'flutter_package',
-    path: 'packages/gcode_core',
-    entrypoints: ['lib/gcode_core.dart'],
-    owns: ['gcode_parsing', 'line_reading', 'toolpath_building', 'flutter_visualization_widgets'],
-    depends: ['flutter_sdk'],
-    validation: ['flutter pub get', 'flutter analyze', 'flutter test'],
-    test_status: 'configured',
-  },
-  {
     name: 'file_picker_bridge',
     kind: 'flutter_bridge_package',
     path: 'packages/file_picker_bridge',
@@ -532,6 +522,7 @@ function writeProjectContext() {
       path: packagePath,
       entrypoint: entrypoints[0],
     })),
+    external_packages: [{ name: 'gcode_core', source: 'git', url: 'https://github.com/lizy-coding/gcode_core.git', ref: '7a5228126d6e43b0cb9175b035cd2e1701950779', entrypoint: 'lib/gcode_core.dart' }],
     external_tools: [flutterGuardDependency],
     layers: [
       {
@@ -910,7 +901,7 @@ function writeRootIndexes() {
     entrypoints: ['lib/main.dart', 'lib/app/app_bootstrap.dart', 'lib/app/app.dart', 'lib/app/router/app_route_table.dart'],
     owns: ['app_shell', 'module_registry', 'shared_capabilities', 'learning_modules', 'host_integrations'],
     depends: [
-      'packages/gcode_core',
+      'git:https://github.com/lizy-coding/gcode_core.git#7a5228126d6e43b0cb9175b035cd2e1701950779',
       'packages/shared_learning',
       'packages/file_picker_bridge',
       'packages/flutter_ioc_core',

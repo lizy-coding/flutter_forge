@@ -69,8 +69,7 @@ apps/flutter_forge/lib/
 同级能力包：
 
 ```
-packages/gcode_core                   # 纯 Dart G-code 解析、读取、轨迹构建
-packages/flutter_study_learning       # 教学模板组件
+apps/flutter_forge/lib/shared/learning # 应用内教学模板组件
 packages/file_picker_bridge            # 文件选择 Dart API / MethodChannel client
 packages/flutter_ioc_core              # 纯 Dart IoC 容器核心
 ```
@@ -93,8 +92,6 @@ packages/flutter_ioc_core              # 纯 Dart IoC 容器核心
 - `apps/flutter_forge/lib/shared/AI_ANALYSIS.md`
 - `apps/flutter_forge/lib/shared/platform/AI_ANALYSIS.md`
 - `packages/file_picker_bridge/AI_ANALYSIS.md`
-- `packages/gcode_core/AI_ANALYSIS.md`
-- `packages/flutter_study_learning/AI_ANALYSIS.md`
 - `packages/flutter_ioc_core/AI_ANALYSIS.md`
 - `apps/flutter_forge/lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md`
 
@@ -152,7 +149,7 @@ chore(packages): update agent doc schema
 
 ### 教学模板
 
-`package:flutter_study_learning` 提供统一教学页面骨架，模块可以用学习目标、概念标签、代码片段、常见坑和练习卡片组织内容。
+`apps/flutter_forge/lib/shared/learning` 提供统一教学页面骨架，模块可以用学习目标、概念标签、代码片段、常见坑和练习卡片组织内容。
 
 ### 模块平台可用性
 
@@ -171,14 +168,14 @@ chore(packages): update agent doc schema
 
 ### G-code 核心
 
-`packages/gcode_core` 提供纯 Dart G-code 能力：
+[`gcode_core`](https://github.com/lizy-coding/gcode_core) 在独立仓库维护，应用通过 Git 依赖固定完整 commit，锁文件记录解析版本。升级时同步生成器中的外部依赖契约并执行完整质量门禁。该 Flutter 包提供：
 
 - 逐行读取抽象
 - G0/G1 解析
 - 错误收集
 - 轨迹段构建
 
-Flutter UI、播放动画和 Canvas 绘制保留在 `modules/ui/gcode_visualizer`。
+Canvas、时间线和播放控件由该包提供；教学页面、文件选择编排及播放状态保留在 `modules/ui/gcode_visualizer`。当前 macOS 最低支持版本为 12.0。
 
 ## 示例索引（按主题）
 

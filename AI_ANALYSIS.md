@@ -22,7 +22,7 @@
     "host_integrations"
   ],
   "depends": [
-    "packages/gcode_core",
+    "git:https://github.com/lizy-coding/gcode_core.git#7a5228126d6e43b0cb9175b035cd2e1701950779",
     "packages/shared_learning",
     "packages/file_picker_bridge",
     "packages/flutter_ioc_core",
@@ -34,7 +34,6 @@
     "lib/module_registry/AI_ANALYSIS.md",
     "lib/shared/AI_ANALYSIS.md",
     "lib/modules/AI_ANALYSIS.md",
-    "packages/gcode_core/AI_ANALYSIS.md",
     "packages/file_picker_bridge/AI_ANALYSIS.md",
     "packages/flutter_ioc_core/AI_ANALYSIS.md"
   ],
