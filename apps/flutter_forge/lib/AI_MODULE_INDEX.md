@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/app/router/app_route_table.dart",
-  "count": 22,
+  "count": 23,
   "modules": [
     {
       "id": "tree_state",
@@ -180,6 +180,23 @@
         "go_router"
       ],
       "analysis": "lib/modules/ui/font_picker/AI_ANALYSIS.md"
+    },
+    {
+      "id": "flutter_scene_3d",
+      "category": "ui",
+      "path": "lib/modules/ui/flutter_scene_3d",
+      "route": "/flutter-scene-3d",
+      "status": "pending",
+      "depends": [
+        "shared_learning",
+        "flutter_scene",
+        "vector_math",
+        "module_registry"
+      ],
+      "supported_platforms": [
+        "macOS"
+      ],
+      "analysis": "lib/modules/ui/flutter_scene_3d/AI_ANALYSIS.md"
     },
     {
       "id": "popup_widgets",

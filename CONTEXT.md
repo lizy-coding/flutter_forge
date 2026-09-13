@@ -43,3 +43,11 @@ _Avoid_: Flutter 页面加载动画、无限 Loading
 **浏览器交付矩阵**:
 Safari 与 Chrome 为 Web 必测浏览器，Edge 执行冒烟验证，Firefox 当前不阻塞交付。
 _Avoid_: 单浏览器通过、全浏览器已支持
+
+**3D 场景学习**:
+以单个可交互长方体讲解 Scene、Node、Mesh、Camera 与 Flutter GPU 的最小实践；首期不包含模型加载、物理、定制着色器、后处理、场景编辑和高级材质。
+_Avoid_: 3D 编辑器、完整渲染框架
+
+**GPU 平台准入**:
+主机已配置 Flutter GPU 仅表示具备运行前提，不等于模块已获得平台证据；Flutter Scene 3D 首期只准入 macOS，Windows、移动端与 Web 必须保持目录可见但不可用，直至各自主机验收完成。
+_Avoid_: 配置即支持、包声明即支持
