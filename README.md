@@ -1,6 +1,9 @@
 # Flutter 学习实验室
 
 本项目是面向 Flutter 初学者的学习项目集合，所有学习模块位于 `apps/flutter_forge/lib/modules/` 目录下，按主题分类，通过路由切换进入不同模块。项目同时维护 `apps/flutter_forge/lib/app/` 应用壳、`apps/flutter_forge/lib/module_registry/` 模块元数据和 `apps/flutter_forge/lib/shared/` 共享能力，让示例既能独立学习，也能按真实工程方式演进。
+
+在线体验：[Flutter Forge Web](https://lizy-coding.github.io/flutter_forge/)
+
 ![demo](https://raw.githubusercontent.com/lizy-coding/flutter_forge/master/assets/demo.gif)
 
 Full video: https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-624071b0e2ea

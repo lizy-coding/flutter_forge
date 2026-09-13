@@ -1,0 +1,73 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.47.2"
+
+jobs:
+  build:
+    name: Build Flutter Web
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build verified Web release
+        working-directory: apps/flutter_forge
+        run: >-
+          flutter build web
+          --release
+          --base-href "/flutter_forge/"
+          --no-web-resources-cdn
+          --pwa-strategy=none
+
+      - name: Verify Web artifact
+        shell: bash
+        run: |
+          test -f apps/flutter_forge/build/web/main.dart.js
+          test -f apps/flutter_forge/build/web/media/flutter-forge-sample.mp4
+          grep -q '"useLocalCanvasKit":true' apps/flutter_forge/build/web/flutter_bootstrap.js
+          grep -q 'flutter-forge-loading' apps/flutter_forge/build/web/index.html
+          grep -q '<base href="/flutter_forge/">' apps/flutter_forge/build/web/index.html
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: apps/flutter_forge/build/web
+
+  deploy:
+    name: Deploy GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
