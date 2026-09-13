@@ -6,7 +6,7 @@
     "kind": "learning_module",
     "package": "flutter_forge_app",
     "path": "lib/modules/ui/flutter_scene_3d",
-    "status": "pending"
+    "status": "ready"
   },
   "route": "/flutter-scene-3d",
   "category": "ui",

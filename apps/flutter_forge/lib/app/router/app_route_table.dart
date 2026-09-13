@@ -240,7 +240,7 @@ final List<ModuleEntry> _modules = [
     difficulty: Difficulty.intermediate,
     concepts: ['Flutter GPU', 'Scene', 'Node', 'Mesh', 'PerspectiveCamera'],
     estimatedMinutes: 25,
-    status: ModuleStatus.pending,
+    status: ModuleStatus.ready,
     // Evidence boundary: only macOS is admitted; other hosts remain catalog-visible but unavailable.
     supportedPlatforms: {TargetPlatform.macOS},
     builder: (context) => const FlutterScene3dEntry(),

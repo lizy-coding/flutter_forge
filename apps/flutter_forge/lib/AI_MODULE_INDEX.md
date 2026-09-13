@@ -186,7 +186,7 @@
       "category": "ui",
       "path": "lib/modules/ui/flutter_scene_3d",
       "route": "/flutter-scene-3d",
-      "status": "pending",
+      "status": "ready",
       "depends": [
         "shared_learning",
         "flutter_scene",

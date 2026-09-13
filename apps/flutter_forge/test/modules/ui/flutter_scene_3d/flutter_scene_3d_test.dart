@@ -54,12 +54,12 @@ void main() {
     expect(find.textContaining('Flutter GPU 已启用'), findsOneWidget);
   });
 
-  test('catalog registers pending macOS-only module and route', () {
+  test('catalog registers ready macOS-only module and route', () {
     final module = AppRouteTable.modules.singleWhere(
       (item) => item.path == '/flutter-scene-3d',
     );
 
-    expect(module.status, ModuleStatus.pending);
+    expect(module.status, ModuleStatus.ready);
     expect(module.supportedPlatforms, {TargetPlatform.macOS});
     expect(isModuleAvailable(module, TargetPlatform.macOS), isTrue);
     for (final platform in [

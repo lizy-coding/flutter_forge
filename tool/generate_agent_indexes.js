@@ -198,7 +198,7 @@ const modules = [
     category: 'ui',
     id: 'flutter_scene_3d',
     route: '/flutter-scene-3d',
-    status: 'pending',
+    status: 'ready',
     depends: ['shared_learning', 'flutter_scene', 'vector_math', 'module_registry'],
     title: 'Flutter Scene 3D 入门',
     subtitle: '用一个可交互长方体理解场景、网格与相机控制',
@@ -681,6 +681,7 @@ function writeRefactorPlan() {
       'agent_takeover_ready',
       'pc_window_lifecycle_baseline',
       'pc_build_matrix',
+      'flutter_scene_3d_macos_baseline',
     ],
     dependency_migration: {
       layout: 'pub_workspace',
@@ -837,6 +838,27 @@ function writeRefactorPlan() {
         targets: ['macos', 'windows'],
         acceptance: ['macos_release_build', 'windows_release_build', 'pc_quality_gate'],
       },
+      {
+        id: 'flutter_scene_3d_macos_baseline',
+        priority: 13,
+        status: 'completed',
+        targets: [
+          'apps/flutter_forge/lib/modules/ui/flutter_scene_3d',
+          'apps/flutter_forge/macos/Runner/Info.plist',
+        ],
+        acceptance: [
+          'interactive_cuboid_first_frame',
+          'orbit_zoom_pause_reset',
+          'macos_catalog_admission',
+          'quality_gate',
+        ],
+        evidence: [
+          'macOS debug host rendered the cuboid with the Impeller Metal backend',
+          'manual acceptance confirmed the rendered scene and camera controls',
+          'quality gate passed all six stages on 2026-09-13',
+          'Windows, mobile and Web remain unavailable pending separate evidence',
+        ],
+      },
     ],
     quality_gate: [
       'node tool/validate_agent_docs.js',
@@ -851,6 +873,10 @@ function writeRefactorPlan() {
       'widget_test_coverage',
       'flutterguard_med_reduction',
       'recommended_module_visual_evidence',
+      'flutter_scene_3d_model_loading',
+      'flutter_scene_3d_material_lighting',
+      'flutter_scene_3d_scene_picking',
+      'flutter_scene_3d_windows_admission',
     ],
   });
 }

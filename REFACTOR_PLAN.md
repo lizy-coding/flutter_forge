@@ -11,7 +11,8 @@
     "workspace_package_import",
     "agent_takeover_ready",
     "pc_window_lifecycle_baseline",
-    "pc_build_matrix"
+    "pc_build_matrix",
+    "flutter_scene_3d_macos_baseline"
   ],
   "dependency_migration": {
     "layout": "pub_workspace",
@@ -263,6 +264,27 @@
         "windows_release_build",
         "pc_quality_gate"
       ]
+    },
+    {
+      "id": "flutter_scene_3d_macos_baseline",
+      "priority": 13,
+      "status": "completed",
+      "targets": [
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/macos/Runner/Info.plist"
+      ],
+      "acceptance": [
+        "interactive_cuboid_first_frame",
+        "orbit_zoom_pause_reset",
+        "macos_catalog_admission",
+        "quality_gate"
+      ],
+      "evidence": [
+        "macOS debug host rendered the cuboid with the Impeller Metal backend",
+        "manual acceptance confirmed the rendered scene and camera controls",
+        "quality gate passed all six stages on 2026-09-13",
+        "Windows, mobile and Web remain unavailable pending separate evidence"
+      ]
     }
   ],
   "quality_gate": [
@@ -277,6 +299,10 @@
     "popup_widgets_decomposition",
     "widget_test_coverage",
     "flutterguard_med_reduction",
-    "recommended_module_visual_evidence"
+    "recommended_module_visual_evidence",
+    "flutter_scene_3d_model_loading",
+    "flutter_scene_3d_material_lighting",
+    "flutter_scene_3d_scene_picking",
+    "flutter_scene_3d_windows_admission"
   ]
 }
