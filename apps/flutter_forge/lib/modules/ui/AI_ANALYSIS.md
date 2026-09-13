@@ -12,15 +12,18 @@
     "gcode_visualizer",
     "adsorption_line",
     "download_animation",
-    "font_picker"
+    "font_picker",
+    "flutter_scene_3d"
   ],
   "owns": [
-    "ui_animation_custom_paint"
+    "ui_animation_custom_paint_3d_scene"
   ],
   "depends": [
     "provider",
     "gcode_core",
     "file_picker_bridge",
+    "flutter_scene",
+    "vector_math",
     "shared_learning",
     "module_registry"
   ],
@@ -28,7 +31,8 @@
     "gcode_visualizer/AI_ANALYSIS.md",
     "adsorption_line/AI_ANALYSIS.md",
     "download_animation/AI_ANALYSIS.md",
-    "font_picker/AI_ANALYSIS.md"
+    "font_picker/AI_ANALYSIS.md",
+    "flutter_scene_3d/AI_ANALYSIS.md"
   ],
   "contracts": {
     "no_natural_language": true,

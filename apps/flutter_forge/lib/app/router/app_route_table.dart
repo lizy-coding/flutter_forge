@@ -28,6 +28,7 @@ import '../../modules/ui/download_animation/module_entry.dart';
 import '../../modules/ui/download_animation/module_routes.dart';
 import '../../modules/ui/font_picker/module_entry.dart';
 import '../../modules/ui/font_picker/module_routes.dart';
+import '../../modules/ui/flutter_scene_3d/module_entry.dart';
 import '../../modules/ui/gcode_visualizer/module_entry.dart';
 import '../../modules/popup_table/popup_widgets/module_entry.dart';
 import '../../modules/popup_table/popup_list_interaction/module_entry.dart';
@@ -230,6 +231,19 @@ final List<ModuleEntry> _modules = [
     status: ModuleStatus.ready,
     builder: (context) => const FontPickerEntry(),
     routes: FontPickerRoutes.routes,
+  ),
+  ModuleEntry(
+    title: 'Flutter Scene 3D 入门',
+    path: '/flutter-scene-3d',
+    subtitle: '用一个可交互长方体理解场景、网格与相机控制',
+    category: ModuleCategory.ui,
+    difficulty: Difficulty.intermediate,
+    concepts: ['Flutter GPU', 'Scene', 'Node', 'Mesh', 'PerspectiveCamera'],
+    estimatedMinutes: 25,
+    status: ModuleStatus.ready,
+    // Evidence boundary: only macOS is admitted; other hosts remain catalog-visible but unavailable.
+    supportedPlatforms: {TargetPlatform.macOS},
+    builder: (context) => const FlutterScene3dEntry(),
   ),
 
   // 弹窗与列表

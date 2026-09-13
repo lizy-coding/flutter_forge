@@ -182,7 +182,8 @@
       "stable_branch_force_push": "forbidden",
       "stable_branch_delete": "forbidden",
       "required_status_check": "quality-gate",
-      "required_approvals": 1,
+      "required_approvals": 0,
+      "required_approvals_reason": "single_maintainer_self_review_deadlock",
       "sync_after_merge": "merge_master_topology_back_into_dev"
     },
     "pre_read": [

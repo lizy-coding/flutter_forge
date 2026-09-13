@@ -97,7 +97,7 @@ bash tool/quality_gate.sh
 
 - `dev` 是持续开发与日常推送分支，所有功能、修复、文档和发版准备改动先进入 `dev`。
 - `master` 是受保护的稳定分支，禁止直接推送、强制推送或删除，只能通过从 `dev` 发起的 Pull Request 合入。
-- 合入 `master` 前必须通过仓库 CI 的 `quality-gate`，并至少获得 1 次批准；新提交会使旧批准失效，所有 review thread 必须解决。
+- 合入 `master` 前必须通过仓库 CI 的 `quality-gate`，所有 review thread 必须解决。当前仓库只有单一管理员，强制批准数为 0，避免 PR 作者无法自审形成死锁；新增具备 write 权限的维护者后再恢复至少 1 次批准。
 - `master` 合入后，应将其合并拓扑同步回 `dev`，避免 GitHub 因 PR merge commit 显示 `master` 虚假领先；不得通过重写 `dev` 历史处理该差异。
 - Agent 不得使用管理员绕过权限直接更新 `master`。标签与 Release 仍遵循 Agent Hub `release_hosting` 规则。
 
