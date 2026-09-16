@@ -285,6 +285,50 @@
         "quality gate passed all six stages on 2026-09-13",
         "Windows, mobile and Web remain unavailable pending separate evidence"
       ]
+    },
+    {
+      "id": "flutter_scene_3d_camera_motion",
+      "priority": 14,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d"
+      ],
+      "acceptance": [
+        "bounded_two_axis_orbit",
+        "direct_manipulation_takeover",
+        "bounded_inertial_coasting",
+        "keyboard_and_reduced_motion",
+        "macos_motion_visual_acceptance"
+      ],
+      "evidence": [
+        "controller and widget automation pass for takeover, bounds, inertia, mode comparison and reduced motion",
+        "expanded zoom bounds and the single-scene orientation thumbnail have controller and widget coverage",
+        "macOS Debug build passes and the real window renders the updated 3D first frame",
+        "macOS pointer, keyboard and motion-feel acceptance remains required for completion"
+      ]
+    },
+    {
+      "id": "flutter_scene_3d_scene_picking",
+      "priority": 15,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d"
+      ],
+      "acceptance": [
+        "nearest_visible_part_selection",
+        "drag_does_not_select",
+        "selection_highlight_and_details",
+        "focus_selected_part",
+        "clear_selection",
+        "macos_retina_pointer_acceptance"
+      ],
+      "evidence": [
+        "selection state and widget focus flow have automated coverage",
+        "runtime uses screenPointToRay and Scene.raycast without physics",
+        "macOS Retina pointer and rendered highlight acceptance remains required"
+      ]
     }
   ],
   "quality_gate": [
@@ -302,7 +346,6 @@
     "recommended_module_visual_evidence",
     "flutter_scene_3d_model_loading",
     "flutter_scene_3d_material_lighting",
-    "flutter_scene_3d_scene_picking",
     "flutter_scene_3d_windows_admission"
   ]
 }
