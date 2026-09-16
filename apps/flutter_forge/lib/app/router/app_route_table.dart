@@ -233,13 +233,13 @@ final List<ModuleEntry> _modules = [
     routes: FontPickerRoutes.routes,
   ),
   ModuleEntry(
-    title: 'Flutter Scene 3D 入门',
+    title: '教学型 3D 查看器',
     path: '/flutter-scene-3d',
-    subtitle: '用一个可交互长方体理解场景、网格与相机控制',
+    subtitle: '用轨道相机、部件选取与聚焦反馈理解 3D 查看器交互',
     category: ModuleCategory.ui,
     difficulty: Difficulty.intermediate,
-    concepts: ['Flutter GPU', 'Scene', 'Node', 'Mesh', 'PerspectiveCamera'],
-    estimatedMinutes: 25,
+    concepts: ['轨道相机', 'Scene Raycast', '部件聚焦', 'Reduced Motion'],
+    estimatedMinutes: 35,
     status: ModuleStatus.ready,
     // Evidence boundary: only macOS is admitted; other hosts remain catalog-visible but unavailable.
     supportedPlatforms: {TargetPlatform.macOS},
