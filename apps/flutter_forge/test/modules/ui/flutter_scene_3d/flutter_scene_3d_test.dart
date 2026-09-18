@@ -10,6 +10,7 @@ import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/module_root.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_camera_controller.dart';
+import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_interaction_mode.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_runtime.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_selection_controller.dart';
 
@@ -75,6 +76,29 @@ void main() {
     expect(runtime.camera.reducedMotion, isTrue);
     expect(runtime.camera.motionState, SceneMotionState.paused);
     expect(find.byKey(const Key('reduced-motion-status')), findsOneWidget);
+  });
+
+  testWidgets('Android view-only mode renders scene without controls', (
+    tester,
+  ) async {
+    final runtime = FakeSceneRuntime();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: FlutterScene3dPage(
+          runtime: runtime,
+          interactionMode: SceneInteractionMode.viewOnly,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const Key('scene-interaction-surface')), findsOneWidget);
+    expect(find.byKey(const Key('android-view-only-notice')), findsOneWidget);
+    expect(find.byKey(const Key('basic-mode')), findsNothing);
+    expect(find.byKey(const Key('enhanced-mode')), findsNothing);
+    expect(find.byKey(const Key('scene-orientation-thumbnail')), findsNothing);
+    expect(find.byTooltip('暂停环绕'), findsNothing);
+    expect(find.textContaining('点击部件'), findsNothing);
   });
 
   testWidgets('basic mode blocks wheel zoom', (tester) async {
@@ -219,7 +243,7 @@ void main() {
     expect(find.textContaining('Flutter GPU 已启用'), findsOneWidget);
   });
 
-  test('catalog registers ready macOS and Windows module and route', () {
+  test('catalog registers Android, macOS, and Windows module and route', () {
     final module = AppRouteTable.modules.singleWhere(
       (item) => item.path == '/flutter-scene-3d',
     );
@@ -228,11 +252,12 @@ void main() {
     expect(module.supportedPlatforms, {
       TargetPlatform.macOS,
       TargetPlatform.windows,
+      TargetPlatform.android,
     });
     expect(isModuleAvailable(module, TargetPlatform.macOS), isTrue);
     expect(isModuleAvailable(module, TargetPlatform.windows), isTrue);
+    expect(isModuleAvailable(module, TargetPlatform.android), isTrue);
     for (final platform in [
-      TargetPlatform.android,
       TargetPlatform.iOS,
       TargetPlatform.linux,
       TargetPlatform.fuchsia,
@@ -242,6 +267,7 @@ void main() {
     expect(
       AppRouteTable.routes.where((route) => route.path == module.path),
       {
+            TargetPlatform.android,
             TargetPlatform.macOS,
             TargetPlatform.windows,
           }.contains(defaultTargetPlatform)
