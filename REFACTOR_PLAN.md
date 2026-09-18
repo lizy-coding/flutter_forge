@@ -292,7 +292,8 @@
       "status": "pending",
       "targets": [
         "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
-        "apps/flutter_forge/test/modules/ui/flutter_scene_3d"
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart"
       ],
       "acceptance": [
         "bounded_two_axis_orbit",
@@ -329,6 +330,32 @@
         "runtime uses screenPointToRay and Scene.raycast without physics",
         "macOS Retina pointer and rendered highlight acceptance remains required"
       ]
+    },
+    {
+      "id": "flutter_scene_3d_windows_admission",
+      "priority": 16,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/windows/runner/main.cpp",
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart"
+      ],
+      "acceptance": [
+        "windows_catalog_and_route_admission",
+        "desktop_3d_viewer_automated_ui_flow",
+        "windows_debug_and_release_build",
+        "impeller_flutter_gpu_first_frame",
+        "windows_pointer_keyboard_and_dpi",
+        "selection_highlight_and_focus",
+        "windows_installer_launch"
+      ],
+      "evidence": [
+        "Windows runner enables Flutter GPU through DartProject",
+        "catalog and route contract admits macOS and Windows",
+        "desktop integration flow covers navigation, camera input, selection, focus, clear and return",
+        "Windows host build, GPU, DPI, interaction, and installer evidence remains required"
+      ]
     }
   ],
   "quality_gate": [
@@ -345,7 +372,6 @@
     "flutterguard_med_reduction",
     "recommended_module_visual_evidence",
     "flutter_scene_3d_model_loading",
-    "flutter_scene_3d_material_lighting",
-    "flutter_scene_3d_windows_admission"
+    "flutter_scene_3d_material_lighting"
   ]
 }
