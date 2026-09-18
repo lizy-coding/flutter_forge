@@ -194,7 +194,8 @@
         "module_registry"
       ],
       "supported_platforms": [
-        "macOS"
+        "macOS",
+        "windows"
       ],
       "analysis": "lib/modules/ui/flutter_scene_3d/AI_ANALYSIS.md"
     },

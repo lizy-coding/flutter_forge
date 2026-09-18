@@ -219,16 +219,19 @@ void main() {
     expect(find.textContaining('Flutter GPU 已启用'), findsOneWidget);
   });
 
-  test('catalog registers ready macOS-only module and route', () {
+  test('catalog registers ready macOS and Windows module and route', () {
     final module = AppRouteTable.modules.singleWhere(
       (item) => item.path == '/flutter-scene-3d',
     );
 
     expect(module.status, ModuleStatus.ready);
-    expect(module.supportedPlatforms, {TargetPlatform.macOS});
-    expect(isModuleAvailable(module, TargetPlatform.macOS), isTrue);
-    for (final platform in [
+    expect(module.supportedPlatforms, {
+      TargetPlatform.macOS,
       TargetPlatform.windows,
+    });
+    expect(isModuleAvailable(module, TargetPlatform.macOS), isTrue);
+    expect(isModuleAvailable(module, TargetPlatform.windows), isTrue);
+    for (final platform in [
       TargetPlatform.android,
       TargetPlatform.iOS,
       TargetPlatform.linux,
@@ -238,7 +241,12 @@ void main() {
     }
     expect(
       AppRouteTable.routes.where((route) => route.path == module.path),
-      defaultTargetPlatform == TargetPlatform.macOS ? isNotEmpty : isEmpty,
+      {
+            TargetPlatform.macOS,
+            TargetPlatform.windows,
+          }.contains(defaultTargetPlatform)
+          ? isNotEmpty
+          : isEmpty,
     );
   });
 }

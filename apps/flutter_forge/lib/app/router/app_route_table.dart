@@ -241,8 +241,8 @@ final List<ModuleEntry> _modules = [
     concepts: ['轨道相机', 'Scene Raycast', '部件聚焦', 'Reduced Motion'],
     estimatedMinutes: 35,
     status: ModuleStatus.ready,
-    // Evidence boundary: only macOS is admitted; other hosts remain catalog-visible but unavailable.
-    supportedPlatforms: {TargetPlatform.macOS},
+    // Windows is logically admitted; host GPU, DPI, and installer evidence remains pending.
+    supportedPlatforms: {TargetPlatform.macOS, TargetPlatform.windows},
     builder: (context) => const FlutterScene3dEntry(),
   ),
 

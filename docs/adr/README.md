@@ -13,6 +13,8 @@
 | 0005 | 移动端单窗口与桌面响应式导航 | accepted |
 | 0006 | PC 可维护性封板与 Android 兼容轨道 | accepted |
 | 0007 | Web 运行能力与启动体验基线 | accepted |
+| 0008 | Flutter Scene 依赖与平台证据边界 | accepted；Windows 部分被 0009 取代 |
+| 0009 | Flutter Scene Windows 逻辑准入 | accepted |
 
 ## 状态定义
 

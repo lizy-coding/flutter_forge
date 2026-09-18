@@ -65,5 +65,5 @@ _Avoid_: 禁用全部交互、仅隐藏动画控件
 _Avoid_: 场景编辑、物理碰撞查询、拖拽即选择
 
 **GPU 平台准入**:
-主机已配置 Flutter GPU 仅表示具备运行前提，不等于模块已获得平台证据；Flutter Scene 3D 首期只准入 macOS，Windows、移动端与 Web 必须保持目录可见但不可用，直至各自主机验收完成。
+主机已配置 Flutter GPU 仅表示具备运行前提，不等于模块已获得平台证据；Flutter Scene 3D 已逻辑准入 macOS 与 Windows，其中 Windows 仍需真实主机完成构建、首帧、DPI 输入和安装器验收，移动端与 Web 保持目录可见但不可用。
 _Avoid_: 配置即支持、包声明即支持
