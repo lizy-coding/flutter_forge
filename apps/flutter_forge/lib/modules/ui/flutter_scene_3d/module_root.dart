@@ -382,7 +382,11 @@ class _SelectionPanel extends StatelessWidget {
               icon: const Icon(Icons.center_focus_strong),
               label: const Text('聚焦'),
             ),
-            TextButton(onPressed: onClear, child: const Text('取消选择')),
+            TextButton(
+              key: const Key('clear-selected-part'),
+              onPressed: onClear,
+              child: const Text('取消选择'),
+            ),
           ],
         ),
       ),
