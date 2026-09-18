@@ -11,6 +11,7 @@
   "route": "/flutter-scene-3d",
   "category": "ui",
   "supported_platforms": [
+    "android",
     "macOS",
     "windows"
   ],

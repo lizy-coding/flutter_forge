@@ -15,6 +15,7 @@
 | 0007 | Web 运行能力与启动体验基线 | accepted |
 | 0008 | Flutter Scene 依赖与平台证据边界 | accepted；Windows 部分被 0009 取代 |
 | 0009 | Flutter Scene Windows 逻辑准入 | accepted |
+| 0010 | Flutter Scene Android 只读准入 | accepted |
 
 ## 状态定义
 

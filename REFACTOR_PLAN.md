@@ -356,6 +356,31 @@
         "desktop integration flow covers navigation, camera input, selection, focus, clear and return",
         "Windows host build, GPU, DPI, interaction, and installer evidence remains required"
       ]
+    },
+    {
+      "id": "flutter_scene_3d_android_view_only_admission",
+      "priority": 17,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/android/app/src/main/AndroidManifest.xml",
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d"
+      ],
+      "acceptance": [
+        "android_flutter_gpu_enabled",
+        "android_catalog_and_route_admission",
+        "android_view_only_scene",
+        "android_controls_selection_and_focus_hidden",
+        "android_debug_apk_build",
+        "android_gpu_first_frame_manual_evidence"
+      ],
+      "evidence": [
+        "Android manifest enables Flutter GPU",
+        "module policy limits Android to automatic view-only rendering",
+        "catalog and widget contracts cover Android admission and hidden controls",
+        "Android emulator or device automation is intentionally deferred by scope",
+        "Android host build and GPU first-frame evidence remains required"
+      ]
     }
   ],
   "quality_gate": [

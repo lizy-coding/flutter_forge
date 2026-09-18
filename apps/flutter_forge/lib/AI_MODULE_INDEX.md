@@ -194,6 +194,7 @@
         "module_registry"
       ],
       "supported_platforms": [
+        "android",
         "macOS",
         "windows"
       ],
