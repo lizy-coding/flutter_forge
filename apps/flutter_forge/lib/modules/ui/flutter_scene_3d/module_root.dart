@@ -7,13 +7,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 import 'scene_camera_controller.dart';
+import 'scene_interaction_mode.dart';
 import 'scene_runtime.dart';
 import 'scene_selection_controller.dart';
 
 class FlutterScene3dPage extends StatefulWidget {
-  const FlutterScene3dPage({super.key, this.runtime});
+  const FlutterScene3dPage({
+    super.key,
+    this.runtime,
+    this.interactionMode = SceneInteractionMode.interactive,
+  });
 
   final SceneDemoRuntime? runtime;
+  final SceneInteractionMode interactionMode;
 
   @override
   State<FlutterScene3dPage> createState() => _FlutterScene3dPageState();
@@ -31,6 +37,7 @@ class _FlutterScene3dPageState extends State<FlutterScene3dPage> {
       interactiveDemo: _SceneDemo(
         runtime: _runtime,
         initialization: _initialization,
+        interactionMode: widget.interactionMode,
       ),
       sections: const [
         LearningObjectives(
@@ -74,10 +81,15 @@ SceneView(scene, cameraBuilder: buildOrbitCamera);''',
 }
 
 class _SceneDemo extends StatefulWidget {
-  const _SceneDemo({required this.runtime, required this.initialization});
+  const _SceneDemo({
+    required this.runtime,
+    required this.initialization,
+    required this.interactionMode,
+  });
 
   final SceneDemoRuntime runtime;
   final Future<void> initialization;
+  final SceneInteractionMode interactionMode;
 
   @override
   State<_SceneDemo> createState() => _SceneDemoState();
@@ -89,6 +101,8 @@ class _SceneDemoState extends State<_SceneDemo> {
   bool? _lastReducedMotion;
 
   SceneCameraController get _camera => widget.runtime.camera;
+  bool get _isInteractive =>
+      widget.interactionMode == SceneInteractionMode.interactive;
 
   @override
   void initState() {
@@ -124,7 +138,7 @@ class _SceneDemoState extends State<_SceneDemo> {
     return Focus(
       focusNode: _focusNode,
       autofocus: true,
-      onKeyEvent: _handleKeyEvent,
+      onKeyEvent: _isInteractive ? _handleKeyEvent : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -160,9 +174,12 @@ class _SceneDemoState extends State<_SceneDemo> {
                     fit: StackFit.expand,
                     children: [
                       Listener(
-                        onPointerDown: (_) => _focusNode.requestFocus(),
+                        onPointerDown: _isInteractive
+                            ? (_) => _focusNode.requestFocus()
+                            : null,
                         onPointerSignal: (event) {
-                          if (event is PointerScrollEvent &&
+                          if (_isInteractive &&
+                              event is PointerScrollEvent &&
                               _camera.enhancedMode) {
                             _focusNode.requestFocus();
                             _camera.beginInteraction();
@@ -174,33 +191,41 @@ class _SceneDemoState extends State<_SceneDemo> {
                           child: GestureDetector(
                             key: _sceneSurfaceKey,
                             behavior: HitTestBehavior.opaque,
-                            onTapUp: (details) {
-                              final box =
-                                  _sceneSurfaceKey.currentContext
-                                          ?.findRenderObject()
-                                      as RenderBox?;
-                              if (box != null) {
-                                widget.runtime.selectAt(
-                                  details.localPosition,
-                                  box.size,
-                                );
-                              }
-                            },
-                            onPanStart: (_) => _camera.beginInteraction(),
-                            onPanUpdate: (details) =>
-                                _camera.dragBy(details.delta),
-                            onPanEnd: (details) => _camera.endInteraction(
-                              details.velocity.pixelsPerSecond,
-                            ),
+                            onTapUp: _isInteractive
+                                ? (details) {
+                                    final box =
+                                        _sceneSurfaceKey.currentContext
+                                                ?.findRenderObject()
+                                            as RenderBox?;
+                                    if (box != null) {
+                                      widget.runtime.selectAt(
+                                        details.localPosition,
+                                        box.size,
+                                      );
+                                    }
+                                  }
+                                : null,
+                            onPanStart: _isInteractive
+                                ? (_) => _camera.beginInteraction()
+                                : null,
+                            onPanUpdate: _isInteractive
+                                ? (details) => _camera.dragBy(details.delta)
+                                : null,
+                            onPanEnd: _isInteractive
+                                ? (details) => _camera.endInteraction(
+                                    details.velocity.pixelsPerSecond,
+                                  )
+                                : null,
                             child: widget.runtime.buildView(),
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: _OrientationThumbnail(camera: _camera),
-                      ),
+                      if (_isInteractive)
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: _OrientationThumbnail(camera: _camera),
+                        ),
                     ],
                   ),
                 );
@@ -208,64 +233,79 @@ class _SceneDemoState extends State<_SceneDemo> {
             ),
           ),
           const SizedBox(height: 12),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8,
-            children: [
-              ChoiceChip(
-                key: const Key('basic-mode'),
-                label: const Text('基础模式'),
-                selected: !_camera.enhancedMode,
-                onSelected: (_) => _camera.setEnhancedMode(false),
+          if (!_isInteractive)
+            const Card(
+              key: Key('android-view-only-notice'),
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Text(
+                  'Android 第一阶段为只读查看：保留自动巡展，暂不开放手势、选择与聚焦。',
+                  textAlign: TextAlign.center,
+                ),
               ),
-              ChoiceChip(
-                key: const Key('enhanced-mode'),
-                label: const Text('增强模式'),
-                selected: _camera.enhancedMode,
-                onSelected: (_) => _camera.setEnhancedMode(true),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _camera.enhancedMode
-                ? '拖拽环绕 · 滚轮缩放 · 方向键与 +/- 控制'
-                : '使用下方按钮观察离散控制效果',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final controls = _controls();
-              if (constraints.maxWidth >= 620) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: controls
-                      .map(
-                        (control) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: control,
-                        ),
-                      )
-                      .toList(),
+            ),
+          if (_isInteractive)
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8,
+              children: [
+                ChoiceChip(
+                  key: const Key('basic-mode'),
+                  label: const Text('基础模式'),
+                  selected: !_camera.enhancedMode,
+                  onSelected: (_) => _camera.setEnhancedMode(false),
+                ),
+                ChoiceChip(
+                  key: const Key('enhanced-mode'),
+                  label: const Text('增强模式'),
+                  selected: _camera.enhancedMode,
+                  onSelected: (_) => _camera.setEnhancedMode(true),
+                ),
+              ],
+            ),
+          if (_isInteractive) const SizedBox(height: 8),
+          if (_isInteractive)
+            Text(
+              _camera.enhancedMode
+                  ? '拖拽环绕 · 滚轮缩放 · 方向键与 +/- 控制'
+                  : '使用下方按钮观察离散控制效果',
+              textAlign: TextAlign.center,
+            ),
+          if (_isInteractive) const SizedBox(height: 12),
+          if (_isInteractive)
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final controls = _controls();
+                if (constraints.maxWidth >= 620) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: controls
+                        .map(
+                          (control) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: control,
+                          ),
+                        )
+                        .toList(),
+                  );
+                }
+                return Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: controls,
                 );
-              }
-              return Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 8,
-                runSpacing: 8,
-                children: controls,
-              );
-            },
-          ),
+              },
+            ),
           const SizedBox(height: 8),
           _CameraStatus(camera: _camera),
-          const SizedBox(height: 8),
-          _SelectionPanel(
-            selection: widget.runtime.selection,
-            onFocus: widget.runtime.focusSelection,
-            onClear: widget.runtime.clearSelection,
-          ),
+          if (_isInteractive) const SizedBox(height: 8),
+          if (_isInteractive)
+            _SelectionPanel(
+              selection: widget.runtime.selection,
+              onFocus: widget.runtime.focusSelection,
+              onClear: widget.runtime.clearSelection,
+            ),
         ],
       ),
     );
