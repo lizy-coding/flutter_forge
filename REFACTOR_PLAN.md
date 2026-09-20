@@ -5,6 +5,7 @@
   "completed_milestones": [
     "directory_layers",
     "shared_package_extraction",
+    "module_manifest_route_composition",
     "module_analysis_coverage",
     "app_navigation_boundary",
     "host_bootstrap_boundary",
@@ -92,7 +93,12 @@
       "acceptance": [
         "no_windows_hardcode",
         "android_system_info",
-        "error_branch_test"
+        "error_branch_test",
+        "mobile_usb_route_disabled"
+      ],
+      "evidence": [
+        "USB module remains catalog-visible but has no supported host routes",
+        "generic Android USB monitoring is deferred until a concrete OTG workflow exists"
       ]
     },
     {
@@ -380,6 +386,52 @@
         "catalog and widget contracts cover Android admission and hidden controls",
         "Android emulator or device automation is intentionally deferred by scope",
         "Android host build and GPU first-frame evidence remains required"
+      ]
+    },
+    {
+      "id": "android_online_video_playback",
+      "priority": 18,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/android/app/src/main/AndroidManifest.xml",
+        "apps/flutter_forge/lib/modules/platform/online_video_player",
+        "apps/flutter_forge/test/modules/platform/online_video_player"
+      ],
+      "acceptance": [
+        "android_catalog_and_route_admission",
+        "android_release_internet_permission",
+        "compact_video_controls",
+        "android_debug_apk_build",
+        "android_real_video_playback"
+      ],
+      "evidence": [
+        "video_player_android is registered in GeneratedPluginRegistrant",
+        "main Android manifest grants INTERNET for release playback",
+        "catalog and 320dp widget contracts cover Android entry",
+        "Android device playback evidence remains required"
+      ]
+    },
+    {
+      "id": "android_file_picker_admission",
+      "priority": 19,
+      "status": "pending",
+      "targets": [
+        "packages/file_picker_bridge",
+        "apps/flutter_forge/lib/modules/platform/file_picker",
+        "apps/flutter_forge/test/modules/platform/file_picker"
+      ],
+      "acceptance": [
+        "android_catalog_and_route_admission",
+        "android_file_selector_backend",
+        "compact_file_picker_layout",
+        "android_debug_apk_build",
+        "android_real_device_pick_and_cancel"
+      ],
+      "evidence": [
+        "file_picker_bridge selects file_selector on Android",
+        "file_selector_android is registered in GeneratedPluginRegistrant",
+        "catalog and compact widget contracts cover Android entry",
+        "Android real-device document provider behavior remains required"
       ]
     }
   ],

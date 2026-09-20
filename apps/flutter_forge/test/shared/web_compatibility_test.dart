@@ -37,7 +37,7 @@ void main() {
         (entry) => entry.path == path,
       );
       expect(isModuleAvailable(module), isTrue, reason: path);
-      expect(module.supportsWeb, isTrue, reason: path);
+      expect(module.platformSupport.web, isTrue, reason: path);
     }
   });
 
@@ -65,8 +65,8 @@ void main() {
     ]) {
       expect(isModuleAvailable(module, platform, false), isTrue);
     }
-    expect(module.supportedPlatforms, isNull);
-    expect(module.supportsWeb, isTrue);
+    expect(module.platformSupport.nativePlatforms, isNull);
+    expect(module.platformSupport.web, isTrue);
   });
 
   testWidgets('Web entries render safe compatibility states', (tester) async {

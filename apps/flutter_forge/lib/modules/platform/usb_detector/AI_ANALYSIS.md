@@ -10,9 +10,10 @@
   },
   "route": "/usb-detector",
   "category": "platform",
-  "supported_platforms": [
-    "android"
-  ],
+  "platform_support": {
+    "native_platforms": [],
+    "web": false
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart"

@@ -10,6 +10,10 @@
   },
   "route": "/adsorption-line",
   "category": "ui",
+  "platform_support": {
+    "native_platforms": "all",
+    "web": true
+  },
   "entrypoints": [
     "module_entry.dart",
     "pages",

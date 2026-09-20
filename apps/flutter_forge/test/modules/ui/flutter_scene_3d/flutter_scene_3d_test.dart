@@ -249,7 +249,7 @@ void main() {
     );
 
     expect(module.status, ModuleStatus.ready);
-    expect(module.supportedPlatforms, {
+    expect(module.platformSupport.nativePlatforms, {
       TargetPlatform.macOS,
       TargetPlatform.windows,
       TargetPlatform.android,

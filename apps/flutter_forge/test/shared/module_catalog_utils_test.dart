@@ -4,14 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/module_registry/module_entry.dart';
+import 'package:flutter_forge_app/module_registry/module_platform_support.dart';
 
 void main() {
   ModuleEntry createModule({
     required String path,
     required ModuleCategory category,
     List<GoRoute> routes = const [],
-    Set<TargetPlatform>? supportedPlatforms,
-    bool? supportsWeb,
+    Set<TargetPlatform>? nativePlatforms,
+    bool web = true,
   }) {
     return ModuleEntry(
       title: path,
@@ -24,8 +25,10 @@ void main() {
       status: ModuleStatus.ready,
       builder: (_) => const SizedBox.shrink(),
       routes: routes,
-      supportedPlatforms: supportedPlatforms,
-      supportsWeb: supportsWeb,
+      platformSupport: ModulePlatformSupport(
+        nativePlatforms: nativePlatforms,
+        web: web,
+      ),
     );
   }
 
@@ -76,7 +79,8 @@ void main() {
     final module = createModule(
       path: '/macos-only',
       category: ModuleCategory.platform,
-      supportedPlatforms: {TargetPlatform.macOS},
+      nativePlatforms: {TargetPlatform.macOS},
+      web: false,
     );
 
     expect(isModuleAvailable(module, TargetPlatform.macOS, true), isFalse);
@@ -86,8 +90,7 @@ void main() {
     final module = createModule(
       path: '/web-capable',
       category: ModuleCategory.platform,
-      supportedPlatforms: {TargetPlatform.macOS},
-      supportsWeb: true,
+      nativePlatforms: {TargetPlatform.macOS},
     );
 
     expect(isModuleAvailable(module, TargetPlatform.windows, true), isTrue);
@@ -97,7 +100,8 @@ void main() {
     final module = createModule(
       path: '/macos-only',
       category: ModuleCategory.platform,
-      supportedPlatforms: {TargetPlatform.macOS},
+      nativePlatforms: {TargetPlatform.macOS},
+      web: false,
     );
 
     expect(isModuleAvailable(module, TargetPlatform.macOS, false), isTrue);
@@ -109,7 +113,8 @@ void main() {
     final module = createModule(
       path: '/windows-only',
       category: ModuleCategory.platform,
-      supportedPlatforms: {TargetPlatform.windows},
+      nativePlatforms: {TargetPlatform.windows},
+      web: false,
     );
 
     expect(buildCategoryRoutes([module]), isEmpty);

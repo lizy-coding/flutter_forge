@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_forge_app/app/router/app_route_table.dart';
+import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/modules/platform/online_video_player/module_root.dart';
 import 'package:flutter_forge_app/modules/platform/online_video_player/state/video_player_adapter.dart';
@@ -6,6 +9,35 @@ import 'package:flutter_forge_app/modules/platform/online_video_player/widgets/v
 import 'package:video_player/video_player.dart';
 
 void main() {
+  test('catalog admits online video on Android, macOS, and Windows', () {
+    final module = AppRouteTable.modules.singleWhere(
+      (item) => item.path == '/online-video-player',
+    );
+
+    expect(module.platformSupport.nativePlatforms, {
+      TargetPlatform.android,
+      TargetPlatform.macOS,
+      TargetPlatform.windows,
+    });
+    for (final platform in [
+      TargetPlatform.android,
+      TargetPlatform.macOS,
+      TargetPlatform.windows,
+    ]) {
+      expect(isModuleAvailable(module, platform, false), isTrue);
+    }
+    expect(
+      AppRouteTable.routes.where((route) => route.path == module.path),
+      {
+            TargetPlatform.android,
+            TargetPlatform.macOS,
+            TargetPlatform.windows,
+          }.contains(defaultTargetPlatform)
+          ? isNotEmpty
+          : isEmpty,
+    );
+  });
+
   testWidgets('controls render playback, seek, rate and volume controls', (
     tester,
   ) async {
@@ -59,6 +91,22 @@ void main() {
     expect(find.byKey(const Key('video-error-placeholder')), findsOneWidget);
     expect(find.text('视频加载失败，请检查网络后重试'), findsOneWidget);
     expect(adapter.openCount, 1);
+  });
+
+  testWidgets('video controls fit a compact Android viewport', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(320, 640));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final adapter = FakeVideoPlayerAdapter();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MyHomePage(title: '在线视频播放', adapter: adapter),
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(const Key('video-play-pause')), findsOneWidget);
   });
 }
 

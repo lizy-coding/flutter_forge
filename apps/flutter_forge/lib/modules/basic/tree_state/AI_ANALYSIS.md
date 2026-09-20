@@ -10,6 +10,10 @@
   },
   "route": "/tree-state",
   "category": "basic",
+  "platform_support": {
+    "native_platforms": "all",
+    "web": true
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_routes.dart",

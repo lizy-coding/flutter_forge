@@ -27,7 +27,8 @@
     "bootstrap": "lib/app/app_bootstrap.dart",
     "app": "lib/app/app.dart",
     "router": "lib/app/router/app_router.dart",
-    "route_table": "lib/app/router/app_route_table.dart"
+    "route_table": "lib/app/router/app_route_table.dart",
+    "module_manifest": "lib/module_registry/module_manifest.dart"
   },
   "repository": {
     "layout": "pub_workspace",
@@ -147,7 +148,7 @@
       "module_entry.dart",
       "AI_ANALYSIS.md"
     ],
-    "required_registration": "lib/app/router/app_route_table.dart",
+    "required_registration": "lib/module_registry/module_manifest.dart",
     "required_metadata": [
       "category",
       "difficulty",

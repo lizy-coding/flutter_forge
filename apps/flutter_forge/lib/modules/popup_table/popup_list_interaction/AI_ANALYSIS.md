@@ -10,6 +10,10 @@
   },
   "route": "/popup-list-interaction",
   "category": "popup_table",
+  "platform_support": {
+    "native_platforms": "all",
+    "web": true
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart",
