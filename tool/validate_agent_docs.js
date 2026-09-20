@@ -148,8 +148,15 @@ if (moduleIndex) {
     if (contract.node?.status !== mod.status) {
       failures.push(`${mod.analysis}:index_mismatch:status`);
     }
-    if (typeof mod.platform_support?.web !== 'boolean') {
-      failures.push(`lib/AI_MODULE_INDEX.md:${mod.id}:platform_support_web_not_boolean`);
+    const targetPlatforms = ['android', 'iOS', 'macOS', 'web', 'windows'];
+    if (JSON.stringify(mod.platform_support?.target_platforms) !== JSON.stringify(targetPlatforms)) {
+      failures.push(`lib/AI_MODULE_INDEX.md:${mod.id}:platform_target_set_invalid`);
+    }
+    const excludedPlatforms = mod.platform_support?.excluded_platforms;
+    if (!Array.isArray(excludedPlatforms)) {
+      failures.push(`lib/AI_MODULE_INDEX.md:${mod.id}:excluded_platforms_not_array`);
+    } else if (excludedPlatforms.some((platform) => !targetPlatforms.includes(platform))) {
+      failures.push(`lib/AI_MODULE_INDEX.md:${mod.id}:excluded_platform_outside_target_set`);
     }
     if (JSON.stringify(contract.platform_support) !== JSON.stringify(mod.platform_support)) {
       failures.push(`${mod.analysis}:index_mismatch:platform_support`);

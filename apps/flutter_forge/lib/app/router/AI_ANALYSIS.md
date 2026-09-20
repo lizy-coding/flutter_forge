@@ -14,6 +14,7 @@
   ],
   "owns": [
     "go_router_root",
+    "stable_guarded_module_routes",
     "module_route_aggregation",
     "module_catalog_composition"
   ],

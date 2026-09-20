@@ -11,8 +11,16 @@
   "route": "/isolate-basic",
   "category": "async",
   "platform_support": {
-    "native_platforms": "all",
-    "web": false
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": [
+      "web"
+    ]
   },
   "entrypoints": [
     "module_entry.dart",

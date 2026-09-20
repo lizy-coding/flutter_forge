@@ -11,12 +11,17 @@
   "route": "/webview",
   "category": "platform",
   "platform_support": {
-    "native_platforms": [
+    "target_platforms": [
       "android",
+      "iOS",
       "macOS",
+      "web",
       "windows"
     ],
-    "web": false
+    "excluded_platforms": [
+      "iOS",
+      "web"
+    ]
   },
   "entrypoints": [
     "module_entry.dart",

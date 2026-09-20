@@ -11,7 +11,9 @@
   "entrypoints": [
     "app.dart",
     "app_bootstrap.dart",
+    "app_platform_provider.dart",
     "module_home_page.dart",
+    "unsupported_module_page.dart",
     "category_navigation.dart",
     "navigation_policy.dart",
     "category_window_app.dart",
@@ -20,9 +22,11 @@
   ],
   "owns": [
     "host_bootstrap",
+    "platform_snapshot_injection",
     "material_app_router",
     "router",
     "module_home",
+    "unsupported_module_route",
     "responsive_navigation_policy",
     "adaptive_category_navigation",
     "desktop_category_window_shell"

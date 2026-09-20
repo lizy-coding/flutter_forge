@@ -13,7 +13,8 @@
     "agent_takeover_ready",
     "pc_window_lifecycle_baseline",
     "pc_build_matrix",
-    "flutter_scene_3d_macos_baseline"
+    "flutter_scene_3d_macos_baseline",
+    "platform_snapshot_guarded_routes"
   ],
   "dependency_migration": {
     "layout": "pub_workspace",
@@ -432,6 +433,33 @@
         "file_selector_android is registered in GeneratedPluginRegistrant",
         "catalog and compact widget contracts cover Android entry",
         "Android real-device document provider behavior remains required"
+      ]
+    },
+    {
+      "id": "platform_snapshot_guarded_routes",
+      "priority": 20,
+      "status": "completed",
+      "targets": [
+        "apps/flutter_forge/lib/module_registry",
+        "apps/flutter_forge/lib/app",
+        "apps/flutter_forge/test/shared"
+      ],
+      "acceptance": [
+        "process_immutable_platform_snapshot",
+        "five_product_target_platforms",
+        "excluded_platform_contract",
+        "stable_guarded_module_routes",
+        "unsupported_module_explanation",
+        "android_debug_apk_build",
+        "web_release_build"
+      ],
+      "evidence": [
+        "bootstrap injects one AppPlatformSnapshot into Router and ProviderScope",
+        "module contracts use target_platforms and excluded_platforms",
+        "guarded route tests cover supported and unsupported module paths",
+        "bare analyze and full test suite pass",
+        "Android debug APK and Web release builds pass",
+        "iOS is modeled but has no host directory or build evidence"
       ]
     }
   ],

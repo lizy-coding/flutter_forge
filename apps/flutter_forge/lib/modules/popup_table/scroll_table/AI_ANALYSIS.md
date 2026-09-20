@@ -11,8 +11,14 @@
   "route": "/scroll-table",
   "category": "popup_table",
   "platform_support": {
-    "native_platforms": "all",
-    "web": true
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": []
   },
   "entrypoints": [
     "module_entry.dart",

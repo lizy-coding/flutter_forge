@@ -11,12 +11,16 @@
   "route": "/file-picker",
   "category": "platform",
   "platform_support": {
-    "native_platforms": [
+    "target_platforms": [
       "android",
+      "iOS",
       "macOS",
+      "web",
       "windows"
     ],
-    "web": true
+    "excluded_platforms": [
+      "iOS"
+    ]
   },
   "entrypoints": [
     "module_entry.dart",
