@@ -8,7 +8,7 @@
 |------|------|------|
 | 0001 | 单仓布局 (Pub Workspace) | accepted |
 | 0002 | Agent 契约生成源 | accepted |
-| 0003 | 平台模块可用性 | accepted |
+| 0003 | 平台模块可用性 | accepted；平台声明与路由注册部分被 0011 取代 |
 | 0004 | 质量门禁策略 | proposed |
 | 0005 | 移动端单窗口与桌面响应式导航 | accepted |
 | 0006 | PC 可维护性封板与 Android 兼容轨道 | accepted |
@@ -16,6 +16,7 @@
 | 0008 | Flutter Scene 依赖与平台证据边界 | accepted；Windows 部分被 0009 取代 |
 | 0009 | Flutter Scene Windows 逻辑准入 | accepted |
 | 0010 | Flutter Scene Android 只读准入 | accepted |
+| 0011 | 平台快照与守卫路由 | accepted |
 
 ## 状态定义
 
