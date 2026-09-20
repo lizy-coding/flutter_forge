@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/app.dart';
+import 'package:flutter_forge_app/app/app_platform_provider.dart';
 import 'package:flutter_forge_app/app/router/app_router.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -11,10 +14,18 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Windows file picker returns from native dialog', (tester) async {
-    await tester.pumpWidget(const App());
+    const platform = AppPlatformSnapshot(platform: AppTargetPlatform.windows);
+    final router = AppRouter.create(platform);
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [appPlatformProvider.overrideWithValue(platform)],
+        child: App(router: router),
+      ),
+    );
     await tester.pump(const Duration(milliseconds: 500));
 
-    AppRouter.router.go(_filePickerRoute);
+    router.go(_filePickerRoute);
     await tester.pump(const Duration(milliseconds: 500));
 
     // README.md is a valid text-mode target. The test must not claim that the

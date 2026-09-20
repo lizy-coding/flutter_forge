@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/modules/platform/online_video_player/module_root.dart';
@@ -14,27 +14,23 @@ void main() {
       (item) => item.path == '/online-video-player',
     );
 
-    expect(module.platformSupport.nativePlatforms, {
-      TargetPlatform.android,
-      TargetPlatform.macOS,
-      TargetPlatform.windows,
-    });
+    expect(module.platformSupport.excludedPlatforms, {AppTargetPlatform.iOS});
     for (final platform in [
-      TargetPlatform.android,
-      TargetPlatform.macOS,
-      TargetPlatform.windows,
+      AppTargetPlatform.android,
+      AppTargetPlatform.macOS,
+      AppTargetPlatform.web,
+      AppTargetPlatform.windows,
     ]) {
-      expect(isModuleAvailable(module, platform, false), isTrue);
+      expect(
+        isModuleAvailable(module, AppPlatformSnapshot(platform: platform)),
+        isTrue,
+      );
     }
     expect(
-      AppRouteTable.routes.where((route) => route.path == module.path),
-      {
-            TargetPlatform.android,
-            TargetPlatform.macOS,
-            TargetPlatform.windows,
-          }.contains(defaultTargetPlatform)
-          ? isNotEmpty
-          : isEmpty,
+      AppRouteTable.routesFor(
+        const AppPlatformSnapshot(platform: AppTargetPlatform.iOS),
+      ).where((route) => route.path == module.path),
+      isNotEmpty,
     );
   });
 

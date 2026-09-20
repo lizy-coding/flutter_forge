@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/module_root.dart';
@@ -249,30 +249,25 @@ void main() {
     );
 
     expect(module.status, ModuleStatus.ready);
-    expect(module.platformSupport.nativePlatforms, {
-      TargetPlatform.macOS,
-      TargetPlatform.windows,
-      TargetPlatform.android,
+    expect(module.platformSupport.excludedPlatforms, {
+      AppTargetPlatform.iOS,
+      AppTargetPlatform.web,
     });
-    expect(isModuleAvailable(module, TargetPlatform.macOS), isTrue);
-    expect(isModuleAvailable(module, TargetPlatform.windows), isTrue);
-    expect(isModuleAvailable(module, TargetPlatform.android), isTrue);
     for (final platform in [
-      TargetPlatform.iOS,
-      TargetPlatform.linux,
-      TargetPlatform.fuchsia,
+      AppTargetPlatform.macOS,
+      AppTargetPlatform.windows,
+      AppTargetPlatform.android,
     ]) {
-      expect(isModuleAvailable(module, platform), isFalse);
+      expect(
+        isModuleAvailable(module, AppPlatformSnapshot(platform: platform)),
+        isTrue,
+      );
     }
     expect(
-      AppRouteTable.routes.where((route) => route.path == module.path),
-      {
-            TargetPlatform.android,
-            TargetPlatform.macOS,
-            TargetPlatform.windows,
-          }.contains(defaultTargetPlatform)
-          ? isNotEmpty
-          : isEmpty,
+      AppRouteTable.routesFor(
+        const AppPlatformSnapshot(platform: AppTargetPlatform.web),
+      ).where((route) => route.path == module.path),
+      isNotEmpty,
     );
   });
 }

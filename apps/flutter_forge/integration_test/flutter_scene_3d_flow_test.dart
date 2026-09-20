@@ -3,16 +3,25 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/app/app.dart';
+import 'package:flutter_forge_app/app/app_platform_provider.dart';
 import 'package:flutter_forge_app/app/router/app_router.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  late AppPlatformSnapshot platform;
+  late GoRouter router;
 
   setUp(() {
-    AppRouter.router.go('/');
+    platform = AppPlatformSnapshot.detect();
+    router = AppRouter.create(platform)..go('/');
   });
+
+  tearDown(() => router.dispose());
 
   testWidgets('3D viewer desktop interaction flow', (tester) async {
     expect(
@@ -21,7 +30,12 @@ void main() {
       reason: 'This acceptance flow requires a desktop Flutter GPU host.',
     );
 
-    await tester.pumpWidget(const App());
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [appPlatformProvider.overrideWithValue(platform)],
+        child: App(router: router),
+      ),
+    );
     await _pumpFrames(tester, const Duration(milliseconds: 600));
     expect(find.text('Flutter 学习实验室'), findsOneWidget);
 

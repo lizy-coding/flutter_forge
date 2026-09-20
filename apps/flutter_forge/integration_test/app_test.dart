@@ -1,27 +1,39 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/app.dart';
+import 'package:flutter_forge_app/app/app_platform_provider.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/app/router/app_router.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/modules/popup_table/popup_widgets/module_root.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  late AppPlatformSnapshot platform;
+  late GoRouter router;
 
   setUp(() {
-    AppRouter.router.go('/');
+    platform = AppPlatformSnapshot.detect();
+    router = AppRouter.create(platform)..go('/');
   });
 
+  tearDown(() => router.dispose());
+
+  Widget testApp() => ProviderScope(
+    overrides: [appPlatformProvider.overrideWithValue(platform)],
+    child: App(router: router),
+  );
+
   testWidgets('available modules open and return', (tester) async {
-    await tester.pumpWidget(const App());
+    await tester.pumpWidget(testApp());
     await tester.pumpAndSettle();
 
     expect(find.text('Flutter 学习实验室'), findsOneWidget);
 
-    final platform = defaultTargetPlatform;
     final modules = AppRouteTable.modules
         .where((module) => isModuleAvailable(module, platform))
         .toList();
@@ -51,10 +63,10 @@ void main() {
   testWidgets('popup and list child routes open from the module page', (
     tester,
   ) async {
-    await tester.pumpWidget(const App());
+    await tester.pumpWidget(testApp());
     await tester.pumpAndSettle();
 
-    AppRouter.router.go('/popup-list-interaction');
+    router.go('/popup-list-interaction');
     await tester.pumpAndSettle();
 
     final popupTile = find.widgetWithText(ListTile, '弹窗组件');
@@ -65,9 +77,9 @@ void main() {
     await tester.pageBack();
     await tester.pumpAndSettle();
     await tester.pump(const Duration(milliseconds: 300));
-    AppRouter.router.go('/popup-list-interaction');
+    router.go('/popup-list-interaction');
     await tester.pumpAndSettle();
-    AppRouter.router.go('/popup-list-interaction/list');
+    router.go('/popup-list-interaction/list');
     await tester.pumpAndSettle();
     expect(find.text('二维滚动表格演示'), findsOneWidget);
   });

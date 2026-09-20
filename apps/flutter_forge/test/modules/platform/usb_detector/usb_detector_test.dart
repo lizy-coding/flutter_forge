@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/modules/platform/usb_detector/module_entry.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,13 +15,24 @@ void main() {
       (item) => item.path == '/usb-detector',
     );
 
-    expect(module.platformSupport.nativePlatforms, isEmpty);
-    for (final platform in TargetPlatform.values) {
-      expect(isModuleAvailable(module, platform, false), isFalse);
+    expect(module.platformSupport.excludedPlatforms, {
+      AppTargetPlatform.android,
+      AppTargetPlatform.iOS,
+      AppTargetPlatform.macOS,
+      AppTargetPlatform.web,
+      AppTargetPlatform.windows,
+    });
+    for (final platform in AppTargetPlatform.values) {
+      expect(
+        isModuleAvailable(module, AppPlatformSnapshot(platform: platform)),
+        isFalse,
+      );
     }
     expect(
-      AppRouteTable.routes.where((route) => route.path == module.path),
-      isEmpty,
+      AppRouteTable.routesFor(
+        const AppPlatformSnapshot(platform: AppTargetPlatform.android),
+      ).where((route) => route.path == module.path),
+      isNotEmpty,
     );
   });
 

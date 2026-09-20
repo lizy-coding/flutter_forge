@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/modules/platform/dio_interceptor/module_entry.dart';
 import 'package:flutter_forge_app/modules/platform/file_picker/module_entry.dart';
@@ -12,6 +13,8 @@ import 'package:flutter_forge_app/modules/ui/gcode_visualizer/module_entry.dart'
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  const web = AppPlatformSnapshot(platform: AppTargetPlatform.web);
+
   test('Web catalog keeps native-only capabilities unavailable', () {
     for (final path in [
       '/isolate-basic',
@@ -23,7 +26,7 @@ void main() {
       final module = AppRouteTable.modules.singleWhere(
         (entry) => entry.path == path,
       );
-      expect(isModuleAvailable(module), isFalse, reason: path);
+      expect(isModuleAvailable(module, web), isFalse, reason: path);
     }
   });
 
@@ -36,8 +39,7 @@ void main() {
       final module = AppRouteTable.modules.singleWhere(
         (entry) => entry.path == path,
       );
-      expect(isModuleAvailable(module), isTrue, reason: path);
-      expect(module.platformSupport.web, isTrue, reason: path);
+      expect(isModuleAvailable(module, web), isTrue, reason: path);
     }
   });
 
@@ -59,14 +61,16 @@ void main() {
     );
 
     for (final platform in [
-      TargetPlatform.android,
-      TargetPlatform.macOS,
-      TargetPlatform.windows,
+      AppTargetPlatform.android,
+      AppTargetPlatform.macOS,
+      AppTargetPlatform.windows,
     ]) {
-      expect(isModuleAvailable(module, platform, false), isTrue);
+      expect(
+        isModuleAvailable(module, AppPlatformSnapshot(platform: platform)),
+        isTrue,
+      );
     }
-    expect(module.platformSupport.nativePlatforms, isNull);
-    expect(module.platformSupport.web, isTrue);
+    expect(module.platformSupport.excludedPlatforms, isEmpty);
   });
 
   testWidgets('Web entries render safe compatibility states', (tester) async {

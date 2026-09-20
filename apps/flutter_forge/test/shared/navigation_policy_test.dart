@@ -1,12 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_forge_app/app/navigation_policy.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Android always uses in-app navigation', () {
     expect(
       NavigationPolicy.resolve(
-        platform: TargetPlatform.android,
+        platform: const AppPlatformSnapshot(
+          platform: AppTargetPlatform.android,
+        ),
         width: 1200,
         multiWindowSupported: true,
       ),
@@ -17,7 +19,7 @@ void main() {
   test('iOS always uses in-app navigation', () {
     expect(
       NavigationPolicy.resolve(
-        platform: TargetPlatform.iOS,
+        platform: const AppPlatformSnapshot(platform: AppTargetPlatform.iOS),
         width: 1200,
         multiWindowSupported: true,
       ),
@@ -28,10 +30,9 @@ void main() {
   test('Web always uses in-app navigation on a desktop browser', () {
     expect(
       NavigationPolicy.resolve(
-        platform: TargetPlatform.macOS,
+        platform: const AppPlatformSnapshot(platform: AppTargetPlatform.web),
         width: 1200,
         multiWindowSupported: true,
-        isWeb: true,
       ),
       CategoryNavigationMode.inApp,
     );
@@ -40,7 +41,7 @@ void main() {
   test('compact desktop windows use in-app navigation', () {
     expect(
       NavigationPolicy.resolve(
-        platform: TargetPlatform.macOS,
+        platform: const AppPlatformSnapshot(platform: AppTargetPlatform.macOS),
         width: 599,
         multiWindowSupported: true,
       ),
@@ -51,7 +52,7 @@ void main() {
   test('600dp desktop windows can use separate windows', () {
     expect(
       NavigationPolicy.resolve(
-        platform: TargetPlatform.macOS,
+        platform: const AppPlatformSnapshot(platform: AppTargetPlatform.macOS),
         width: 600,
         multiWindowSupported: true,
       ),
@@ -62,7 +63,9 @@ void main() {
   test('unsupported multi-window hosts fall back to in-app navigation', () {
     expect(
       NavigationPolicy.resolve(
-        platform: TargetPlatform.linux,
+        platform: const AppPlatformSnapshot(
+          platform: AppTargetPlatform.unsupported,
+        ),
         width: 1200,
         multiWindowSupported: false,
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/modules/popup_table/popup_list_interaction/module_entry.dart';
 import 'package:flutter_forge_app/modules/popup_table/popup_widgets/module_root.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +14,9 @@ void main() {
   testWidgets('popup nested route opens from its module page', (tester) async {
     final router = GoRouter(
       initialLocation: '/popup-list-interaction',
-      routes: AppRouteTable.routes,
+      routes: AppRouteTable.routesFor(
+        const AppPlatformSnapshot(platform: AppTargetPlatform.macOS),
+      ),
     );
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await tester.pumpAndSettle();
@@ -31,7 +34,9 @@ void main() {
   testWidgets('list nested route opens from its module page', (tester) async {
     final router = GoRouter(
       initialLocation: '/popup-list-interaction',
-      routes: AppRouteTable.routes,
+      routes: AppRouteTable.routesFor(
+        const AppPlatformSnapshot(platform: AppTargetPlatform.macOS),
+      ),
     );
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await tester.pumpAndSettle();

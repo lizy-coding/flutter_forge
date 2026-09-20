@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/modules/platform/file_picker/module_root.dart';
@@ -13,19 +14,25 @@ void main() {
       (item) => item.path == '/file-picker',
     );
 
-    expect(module.platformSupport.nativePlatforms, {
-      TargetPlatform.android,
-      TargetPlatform.macOS,
-      TargetPlatform.windows,
-    });
+    expect(module.platformSupport.excludedPlatforms, {AppTargetPlatform.iOS});
     for (final platform in [
-      TargetPlatform.android,
-      TargetPlatform.macOS,
-      TargetPlatform.windows,
+      AppTargetPlatform.android,
+      AppTargetPlatform.macOS,
+      AppTargetPlatform.web,
+      AppTargetPlatform.windows,
     ]) {
-      expect(isModuleAvailable(module, platform, false), isTrue);
+      expect(
+        isModuleAvailable(module, AppPlatformSnapshot(platform: platform)),
+        isTrue,
+      );
     }
-    expect(isModuleAvailable(module, TargetPlatform.iOS, false), isFalse);
+    expect(
+      isModuleAvailable(
+        module,
+        const AppPlatformSnapshot(platform: AppTargetPlatform.iOS),
+      ),
+      isFalse,
+    );
   });
 
   testWidgets('picked file shows its name and path', (tester) async {
