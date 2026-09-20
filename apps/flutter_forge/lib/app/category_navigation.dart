@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../module_registry/app_platform_snapshot.dart';
 import '../module_registry/module_catalog_utils.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
@@ -15,12 +15,14 @@ import 'navigation_policy.dart';
 class CategoryNavigation {
   const CategoryNavigation._();
 
-  static CategoryNavigationMode modeFor(BuildContext context) {
+  static CategoryNavigationMode modeFor(
+    BuildContext context,
+    AppPlatformSnapshot platform,
+  ) {
     return NavigationPolicy.resolve(
-      platform: defaultTargetPlatform,
+      platform: platform,
       width: MediaQuery.sizeOf(context).width,
       multiWindowSupported: MultiWindowManager.isSupported,
-      isWeb: kIsWeb,
     );
   }
 
@@ -28,8 +30,9 @@ class CategoryNavigation {
     BuildContext context, {
     required ModuleCategory category,
     required List<ModuleEntry> modules,
+    required AppPlatformSnapshot platform,
   }) async {
-    if (modeFor(context) == CategoryNavigationMode.separateWindow) {
+    if (modeFor(context, platform) == CategoryNavigationMode.separateWindow) {
       await MultiWindowManager.instance.createCategoryWindow(category);
       return;
     }
@@ -38,7 +41,11 @@ class CategoryNavigation {
     final filtered = filterModulesByCategory(modules, category);
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
-        builder: (_) => CategoryHomePage(category: category, modules: filtered),
+        builder: (_) => CategoryHomePage(
+          category: category,
+          modules: filtered,
+          platform: platform,
+        ),
       ),
     );
   }

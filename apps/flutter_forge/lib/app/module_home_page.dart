@@ -1,21 +1,24 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../module_registry/app_platform_snapshot.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import '../module_registry/module_catalog_utils.dart';
 import 'category_navigation.dart';
 import 'navigation_policy.dart';
+import 'app_platform_provider.dart';
 
-class ModuleHomePage extends StatelessWidget {
+class ModuleHomePage extends ConsumerWidget {
   const ModuleHomePage({super.key, required this.modules});
 
   final List<ModuleEntry> modules;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     const categories = ModuleCategory.values;
+    final platform = ref.watch(appPlatformProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Flutter 学习实验室')),
@@ -50,7 +53,7 @@ class ModuleHomePage extends StatelessWidget {
                       ),
                       IconButton(
                         icon: Icon(
-                          CategoryNavigation.modeFor(context) ==
+                          CategoryNavigation.modeFor(context, platform) ==
                                   CategoryNavigationMode.separateWindow
                               ? Icons.open_in_new
                               : Icons.chevron_right,
@@ -61,13 +64,15 @@ class ModuleHomePage extends StatelessWidget {
                           context,
                           category: category,
                           modules: modules,
+                          platform: platform,
                         ),
                       ),
                     ],
                   ),
                 ),
                 ...categoryModules.map(
-                  (module) => ModuleListTile(module: module),
+                  (module) =>
+                      ModuleListTile(module: module, platform: platform),
                 ),
                 const Divider(height: 1),
               ],
@@ -80,9 +85,14 @@ class ModuleHomePage extends StatelessWidget {
 }
 
 class ModuleListTile extends StatelessWidget {
-  const ModuleListTile({super.key, required this.module});
+  const ModuleListTile({
+    super.key,
+    required this.module,
+    required this.platform,
+  });
 
   final ModuleEntry module;
+  final AppPlatformSnapshot platform;
 
   Color _difficultyColor(Difficulty difficulty) {
     return switch (difficulty) {
@@ -95,7 +105,7 @@ class ModuleListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final difficultyColor = _difficultyColor(module.difficulty);
-    final isAvailable = isModuleAvailable(module, defaultTargetPlatform);
+    final isAvailable = isModuleAvailable(module, platform);
     final textOpacity = isAvailable ? 1.0 : 0.55;
 
     return ListTile(
@@ -166,7 +176,7 @@ class ModuleListTile extends StatelessWidget {
         isAvailable ? Icons.chevron_right : Icons.block,
         color: isAvailable ? null : Colors.grey,
       ),
-      onTap: isAvailable ? () => context.push(module.path) : null,
+      onTap: () => context.push(module.path),
     );
   }
 }

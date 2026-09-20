@@ -1,18 +1,14 @@
-import 'package:flutter/foundation.dart';
+import 'app_platform_snapshot.dart';
 
 /// Declares where a module is available without coupling routing to a host.
 class ModulePlatformSupport {
-  const ModulePlatformSupport({this.nativePlatforms, this.web = false});
+  const ModulePlatformSupport({this.excludedPlatforms = const {}});
 
-  /// A null set means every native Flutter host is supported.
-  final Set<TargetPlatform>? nativePlatforms;
+  /// Product target platforms that this module explicitly does not support.
+  final Set<AppTargetPlatform> excludedPlatforms;
 
-  /// Whether the browser implementation is supported.
-  final bool web;
-
-  bool supports(TargetPlatform platform, {required bool isWeb}) {
-    if (isWeb) return web;
-    final platforms = nativePlatforms;
-    return platforms == null || platforms.contains(platform);
+  bool supports(AppPlatformSnapshot snapshot) {
+    return snapshot.isProductTarget &&
+        !excludedPlatforms.contains(snapshot.platform);
   }
 }

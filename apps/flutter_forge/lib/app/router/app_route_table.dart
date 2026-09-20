@@ -3,24 +3,29 @@
 import 'package:go_router/go_router.dart';
 
 import '../module_home_page.dart';
+import '../unsupported_module_page.dart';
+import '../../module_registry/app_platform_snapshot.dart';
 import '../../module_registry/module_catalog_utils.dart';
 import '../../module_registry/module_entry.dart';
 import '../../module_registry/module_manifest.dart';
 
-final List<GoRoute> _routes = [
+List<GoRoute> _routesFor(AppPlatformSnapshot platform) => [
   GoRoute(
     path: '/',
     builder: (context, state) => ModuleHomePage(modules: moduleManifest),
   ),
-  for (final module in availableModules(moduleManifest))
+  for (final module in moduleManifest)
     GoRoute(
       path: module.path,
-      builder: (context, state) => module.builder(context),
-      routes: module.routes,
+      builder: (context, state) => isModuleAvailable(module, platform)
+          ? module.builder(context)
+          : UnsupportedModulePage(module: module, platform: platform),
+      routes: isModuleAvailable(module, platform) ? module.routes : const [],
     ),
 ];
 
 class AppRouteTable {
-  static List<GoRoute> get routes => _routes;
+  static List<GoRoute> routesFor(AppPlatformSnapshot platform) =>
+      _routesFor(platform);
   static List<ModuleEntry> get modules => moduleManifest;
 }

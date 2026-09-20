@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app_platform_snapshot.dart';
 import 'module_category.dart';
 import 'module_platform_support.dart';
 
@@ -32,7 +33,6 @@ class ModuleEntry {
 
   final ModulePlatformSupport platformSupport;
 
-  bool isSupportedOn(TargetPlatform platform, {required bool isWeb}) {
-    return platformSupport.supports(platform, isWeb: isWeb);
-  }
+  bool isSupportedOn(AppPlatformSnapshot snapshot) =>
+      platformSupport.supports(snapshot);
 }

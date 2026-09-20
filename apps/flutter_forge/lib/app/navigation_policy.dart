@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../module_registry/app_platform_snapshot.dart';
 
 enum CategoryNavigationMode { inApp, separateWindow }
 
@@ -8,15 +8,11 @@ class NavigationPolicy {
   static const double compactWidthBreakpoint = 600;
 
   static CategoryNavigationMode resolve({
-    required TargetPlatform platform,
+    required AppPlatformSnapshot platform,
     required double width,
     required bool multiWindowSupported,
-    bool isWeb = false,
   }) {
-    if (isWeb ||
-        platform == TargetPlatform.android ||
-        platform == TargetPlatform.iOS ||
-        platform == TargetPlatform.fuchsia) {
+    if (platform.hostFamily != AppHostFamily.desktop) {
       return CategoryNavigationMode.inApp;
     }
 
