@@ -15,13 +15,72 @@ class ModuleHomePage extends ConsumerWidget {
 
   final List<ModuleEntry> modules;
 
+  void _openCategory(
+    BuildContext context,
+    ModuleCategory category,
+    AppPlatformSnapshot platform,
+  ) {
+    Navigator.of(context).pop();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      CategoryNavigation.open(
+        context,
+        category: category,
+        modules: modules,
+        platform: platform,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const categories = ModuleCategory.values;
     final platform = ref.watch(appPlatformProvider);
+    final useCategoryDrawer = NavigationPolicy.usesMobileCategoryDrawer(
+      platform,
+    );
+    final categories = ModuleCategory.values
+        .where(
+          (category) => modules.any((module) => module.category == category),
+        )
+        .toList(growable: false);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Flutter 学习实验室')),
+      drawer: useCategoryDrawer
+          ? Drawer(
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+                      child: Text(
+                        '学习目录',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        children: [
+                          for (final category in categories)
+                            ListTile(
+                              key: ValueKey('category-drawer:${category.name}'),
+                              leading: const Icon(Icons.book_outlined),
+                              title: Text(category.label),
+                              trailing: const Icon(Icons.chevron_right),
+                              onTap: () =>
+                                  _openCategory(context, category, platform),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
       body: SafeArea(
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -31,8 +90,6 @@ class ModuleHomePage extends ConsumerWidget {
             final categoryModules = modules
                 .where((module) => module.category == category)
                 .toList();
-
-            if (categoryModules.isEmpty) return const SizedBox.shrink();
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

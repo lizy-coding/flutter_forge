@@ -3,6 +3,27 @@ import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('mobile platforms use the category drawer', () {
+    expect(
+      NavigationPolicy.usesMobileCategoryDrawer(
+        const AppPlatformSnapshot(platform: AppTargetPlatform.android),
+      ),
+      isTrue,
+    );
+    expect(
+      NavigationPolicy.usesMobileCategoryDrawer(
+        const AppPlatformSnapshot(platform: AppTargetPlatform.iOS),
+      ),
+      isTrue,
+    );
+    expect(
+      NavigationPolicy.usesMobileCategoryDrawer(
+        const AppPlatformSnapshot(platform: AppTargetPlatform.macOS),
+      ),
+      isFalse,
+    );
+  });
+
   test('Android always uses in-app navigation', () {
     expect(
       NavigationPolicy.resolve(

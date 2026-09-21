@@ -7,6 +7,9 @@ class NavigationPolicy {
 
   static const double compactWidthBreakpoint = 600;
 
+  static bool usesMobileCategoryDrawer(AppPlatformSnapshot platform) =>
+      platform.hostFamily == AppHostFamily.mobile;
+
   static CategoryNavigationMode resolve({
     required AppPlatformSnapshot platform,
     required double width,

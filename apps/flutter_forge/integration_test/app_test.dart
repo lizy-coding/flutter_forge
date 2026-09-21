@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/app.dart';
 import 'package:flutter_forge_app/app/app_platform_provider.dart';
+import 'package:flutter_forge_app/app/category_window_app.dart';
+import 'package:flutter_forge_app/app/navigation_policy.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/app/router/app_router.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
@@ -82,5 +84,26 @@ void main() {
     router.go('/popup-list-interaction/list');
     await tester.pumpAndSettle();
     expect(find.text('二维滚动表格演示'), findsOneWidget);
+  });
+
+  testWidgets('mobile category drawer opens a top-level category', (
+    tester,
+  ) async {
+    if (!NavigationPolicy.usesMobileCategoryDrawer(platform)) {
+      return;
+    }
+
+    await tester.pumpWidget(testApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
+    expect(find.text('学习目录'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('category-drawer:platform')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CategoryHomePage), findsOneWidget);
+    expect(find.text('网络与平台'), findsOneWidget);
   });
 }
