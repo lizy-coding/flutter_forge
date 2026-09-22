@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../module_registry/app_platform_snapshot.dart';
 import '../module_registry/module_category.dart';
@@ -37,33 +38,13 @@ class CategoryHomePage extends StatelessWidget {
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1200),
-                  child: Row(
-                    children: [
-                      Icon(category.icon, size: 32),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              category.label,
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            Text('${categoryModules.length} 个学习模块'),
-                          ],
-                        ),
-                      ),
-                      if (!focusedWindow &&
-                          platform.hostFamily == AppHostFamily.desktop &&
-                          MultiWindowManager.isSupported)
-                        OutlinedButton.icon(
-                          key: ValueKey('open-window:${category.name}'),
-                          onPressed: () => MultiWindowManager.instance
-                              .createCategoryWindow(category),
-                          icon: const Icon(Icons.open_in_new),
-                          label: const Text('在新窗口打开'),
-                        ),
-                    ],
+                  child: _CategoryHeader(
+                    category: category,
+                    moduleCount: categoryModules.length,
+                    showWindowAction:
+                        !focusedWindow &&
+                        platform.hostFamily == AppHostFamily.desktop &&
+                        MultiWindowManager.isSupported,
                   ),
                 ),
               ),
@@ -93,6 +74,92 @@ class CategoryHomePage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CategoryHeader extends StatelessWidget {
+  const _CategoryHeader({
+    required this.category,
+    required this.moduleCount,
+    required this.showWindowAction,
+  });
+
+  final ModuleCategory category;
+  final int moduleCount;
+  final bool showWindowAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return DecoratedBox(
+      key: ValueKey('category-header:${category.name}'),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            colors.primaryContainer.withValues(alpha: 0.72),
+            colors.surfaceContainerHigh,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: colors.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: colors.primary,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Icon(category.icon, color: colors.onPrimary, size: 28),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    category.label,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$moduleCount 个学习模块',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (showWindowAction) ...[
+              const SizedBox(width: 16),
+              Tooltip(
+                message: '在独立窗口中专注学习这个分类',
+                child: FilledButton.tonalIcon(
+                  key: ValueKey('open-window:${category.name}'),
+                  onPressed: () => MultiWindowManager.instance
+                      .createCategoryWindow(category),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 16,
+                    ),
+                  ),
+                  icon: const Icon(Icons.open_in_new_rounded, size: 19),
+                  label: const Text('在新窗口打开'),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -130,6 +197,17 @@ class ModuleCard extends StatelessWidget {
                     visualDensity: VisualDensity.compact,
                     label: Text(module.difficulty.label),
                   ),
+                  if (platform.isWeb)
+                    IconButton(
+                      key: ValueKey('open-tab:${module.path}'),
+                      tooltip: '在新标签页打开',
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () => launchUrl(
+                        Uri.base.resolve(module.path),
+                        webOnlyWindowName: '_blank',
+                      ),
+                      icon: const Icon(Icons.open_in_new_rounded, size: 19),
+                    ),
                 ],
               ),
               const SizedBox(height: 6),
