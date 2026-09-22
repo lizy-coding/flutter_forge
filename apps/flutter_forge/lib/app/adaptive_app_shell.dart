@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../module_registry/module_category.dart';
@@ -64,88 +65,96 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
           sidebarExpanded: _sidebarExpanded,
         );
         final compact = layout == AppNavigationLayout.compact;
-        return Scaffold(
-          key: const ValueKey('adaptive-app-shell'),
-          appBar:
-              compact &&
-                  (widget.location == '/' ||
-                      widget.location.startsWith('/category/'))
-              ? AppBar(
-                  title: const Text('Flutter Forge'),
-                  actions: [
-                    IconButton(
-                      tooltip: '搜索模块',
-                      onPressed: _showSearch,
-                      icon: const Icon(Icons.search),
-                    ),
-                  ],
-                )
-              : null,
-          drawer: compact
-              ? NavigationDrawer(
-                  selectedIndex: _selectedIndex(),
-                  onDestinationSelected: (index) {
-                    Navigator.of(context).pop();
-                    _goTo(index);
-                  },
-                  children: _destinations
-                      .map(
-                        (destination) => NavigationDrawerDestination(
-                          key: ValueKey(
-                            'category-drawer:${_destinations.indexOf(destination) == 0 ? 'home' : ModuleCategory.values[_destinations.indexOf(destination) - 1].name}',
-                          ),
-                          icon: Icon(destination.icon),
-                          label: Text(destination.label),
+        return CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.slash): _showSearch,
+          },
+          child: Focus(
+            autofocus: true,
+            child: Scaffold(
+              key: const ValueKey('adaptive-app-shell'),
+              appBar:
+                  compact &&
+                      (widget.location == '/' ||
+                          widget.location.startsWith('/category/'))
+                  ? AppBar(
+                      title: const Text('Flutter Forge'),
+                      actions: [
+                        IconButton(
+                          tooltip: '搜索模块',
+                          onPressed: _showSearch,
+                          icon: const Icon(Icons.search),
                         ),
-                      )
-                      .toList(),
-                )
-              : null,
-          body: compact
-              ? widget.child
-              : Row(
-                  children: [
-                    if (layout == AppNavigationLayout.sidebar)
-                      _Sidebar(
-                        selectedIndex: _selectedIndex(),
-                        onDestinationSelected: _goTo,
-                        onSearch: _showSearch,
-                        onCollapse: () =>
-                            setState(() => _sidebarExpanded = false),
-                      )
-                    else
-                      NavigationRail(
-                        key: const ValueKey('navigation-rail'),
-                        selectedIndex: _selectedIndex(),
-                        onDestinationSelected: _goTo,
-                        leading: Column(
-                          children: [
-                            IconButton(
-                              tooltip: '展开侧栏',
-                              onPressed: () =>
-                                  setState(() => _sidebarExpanded = true),
-                              icon: const Icon(Icons.menu_open),
-                            ),
-                            IconButton(
-                              tooltip: '搜索模块',
-                              onPressed: _showSearch,
-                              icon: const Icon(Icons.search),
-                            ),
-                          ],
-                        ),
-                        destinations: _destinations
-                            .map(
-                              (destination) => NavigationRailDestination(
-                                icon: Icon(destination.icon),
-                                label: Text(destination.label),
+                      ],
+                    )
+                  : null,
+              drawer: compact
+                  ? NavigationDrawer(
+                      selectedIndex: _selectedIndex(),
+                      onDestinationSelected: (index) {
+                        Navigator.of(context).pop();
+                        _goTo(index);
+                      },
+                      children: _destinations
+                          .map(
+                            (destination) => NavigationDrawerDestination(
+                              key: ValueKey(
+                                'category-drawer:${_destinations.indexOf(destination) == 0 ? 'home' : ModuleCategory.values[_destinations.indexOf(destination) - 1].name}',
                               ),
-                            )
-                            .toList(),
-                      ),
-                    const VerticalDivider(width: 1),
-                    Expanded(child: widget.child),
-                  ],
-                ),
+                              icon: Icon(destination.icon),
+                              label: Text(destination.label),
+                            ),
+                          )
+                          .toList(),
+                    )
+                  : null,
+              body: compact
+                  ? widget.child
+                  : Row(
+                      children: [
+                        if (layout == AppNavigationLayout.sidebar)
+                          _Sidebar(
+                            selectedIndex: _selectedIndex(),
+                            onDestinationSelected: _goTo,
+                            onSearch: _showSearch,
+                            onCollapse: () =>
+                                setState(() => _sidebarExpanded = false),
+                          )
+                        else
+                          NavigationRail(
+                            key: const ValueKey('navigation-rail'),
+                            selectedIndex: _selectedIndex(),
+                            onDestinationSelected: _goTo,
+                            leading: Column(
+                              children: [
+                                IconButton(
+                                  tooltip: '展开侧栏',
+                                  onPressed: () =>
+                                      setState(() => _sidebarExpanded = true),
+                                  icon: const Icon(Icons.menu_open),
+                                ),
+                                IconButton(
+                                  tooltip: '搜索模块',
+                                  onPressed: _showSearch,
+                                  icon: const Icon(Icons.search),
+                                ),
+                              ],
+                            ),
+                            destinations: _destinations
+                                .map(
+                                  (destination) => NavigationRailDestination(
+                                    icon: Icon(destination.icon),
+                                    label: Text(destination.label),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        const VerticalDivider(width: 1),
+                        Expanded(child: widget.child),
+                      ],
+                    ),
+            ),
+          ),
         );
       },
     );
@@ -189,10 +198,30 @@ class _Sidebar extends StatelessWidget {
                 key: const ValueKey('sidebar-search'),
                 readOnly: true,
                 onTap: onSearch,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search),
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search),
                   hintText: '搜索模块标题',
-                  border: OutlineInputBorder(),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          '/',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  ),
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ),
