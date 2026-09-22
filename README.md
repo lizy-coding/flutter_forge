@@ -1,212 +1,186 @@
-# Flutter 学习实验室
+# Flutter Forge
 
-本项目是面向 Flutter 初学者的学习项目集合，所有学习模块位于 `apps/flutter_forge/lib/modules/` 目录下，按主题分类，通过路由切换进入不同模块。项目同时维护 `apps/flutter_forge/lib/app/` 应用壳、`apps/flutter_forge/lib/module_registry/` 模块元数据和 `apps/flutter_forge/lib/shared/` 共享能力，让示例既能独立学习，也能按真实工程方式演进。
+> 把 Flutter 的底层机制、工程架构与跨平台能力，变成可以运行、交互、对照和验证的学习现场。
 
-在线体验：[Flutter Forge Web](https://lizy-coding.github.io/flutter_forge/)
+Flutter Forge 不是零散 Demo 的陈列柜，而是一座面向真实工程的 Flutter 学习工坊。项目将三棵树、事件循环、Isolate、状态管理、动效、3D、网络、文件选择、视频与原生能力组织为 **23 个可注册学习模块**；每个模块都带有学习语义、平台边界和独立测试，并运行在同一套响应式导航、模块注册与质量门禁之上。
 
-![demo](https://raw.githubusercontent.com/lizy-coding/flutter_forge/master/assets/demo.gif)
+[在线体验 Flutter Forge Web](https://lizy-coding.github.io/flutter_forge/)
 
-Full video: https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-624071b0e2ea
+![Flutter Forge 演示](https://raw.githubusercontent.com/lizy-coding/flutter_forge/master/assets/demo.gif)
 
-## 推荐学习顺序
+完整演示视频：https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-624071b0e2ea
 
-1. **三棵树与生命周期** - 理解 Flutter 渲染基础
-2. **事件循环与微任务** - 掌握异步执行顺序
-3. **Stream 订阅机制** - 学习流式数据处理
-4. **Isolate 并发** - 理解多线程与性能优化
-5. **状态管理演进** - 对比 Provider/Riverpod/Bloc
-6. **UI 动效与绘制** - 学习动画与自定义绘制
-7. **网络与平台能力** - 实战拦截器、USB 设备等
+## 为什么是 Flutter Forge
 
-## 支持平台
+- **从“看代码”到“看见机制”**：用可操作页面展示重建、队列调度、流订阅、并发、状态流转、绘制与平台调用。
+- **从单页示例到工程系统**：模块通过统一注册表进入目录与路由，共享能力有明确边界，不靠复制粘贴拼装功能。
+- **从“能运行”到“知道在哪里能运行”**：平台支持与学习质量分开建模；不支持的能力仍保留在目录中，并给出明确说明。
+- **从一次演示到可持续演进**：机器可解析的 Agent 契约、生成校验、静态分析、全量测试和 FlutterGuard 共同守住变更质量。
 
-- macOS
-- Windows
-- 移动端（iOS / Android）
+## 系统全景
 
-平台相关模块通过注册表中的 `supportedPlatforms` 判定可用性。未支持当前平台的模块仍显示在目录中，但会标记为不可用且不会注册可进入的路由；未填写该字段的模块默认支持所有平台。
+```mermaid
+flowchart TB
+    User[学习者] --> Host[Flutter Host<br/>Android · macOS · Web · Windows]
 
-分类导航采用响应式策略：Android、iOS 和 Web 使用应用内导航；小于 `600dp` 的紧凑窗口使用应用内导航；只有支持多窗口的桌面大窗口才创建独立分类窗口。
+    subgraph App[应用壳 apps/flutter_forge/lib/app]
+        Bootstrap[App Bootstrap<br/>初始化平台快照]
+        Shell[MaterialApp.router<br/>目录与学习入口]
+        Policy[NavigationPolicy<br/>响应式导航决策]
+        Router[GoRouter<br/>稳定路由与不可用守卫]
+    end
 
-## 环境与快速开始
+    subgraph Registry[模块注册层 module_registry]
+        Manifest[Module Manifest<br/>23 个模块的元数据]
+        Catalog[Catalog Utils<br/>分类、检索与平台判定]
+        Snapshot[AppPlatformSnapshot<br/>进程级不可变平台模型]
+    end
 
-- Flutter 3.x / Dart 3.x
-- 应用目录执行：
-  ```bash
-  cd apps/flutter_forge
-  flutter pub get
-  flutter run [-d <device>]
-  ```
-- 代码检查与格式化：
-  ```bash
-  flutter analyze
-  dart format .
-  ```
-- 标准验收（全量质量门禁）：
-  ```bash
-  bash tool/quality_gate.sh
-  ```
-  分层验收标准与自动化计划见 `docs/QUALITY_ACCEPTANCE.md`。
+    subgraph Modules[六类学习模块]
+        Basic[基础机制]
+        Async[异步并发]
+        State[架构与状态]
+        UI[UI 与动效]
+        Popup[弹窗与列表]
+        Platform[网络与平台]
+    end
 
-## 项目结构
+    subgraph Shared[共享能力与工作区包]
+        Learning[LearningScaffold<br/>教学页面模板]
+        MultiWindow[MultiWindowManager<br/>桌面窗口生命周期]
+        Packages[file_picker_bridge<br/>flutter_ioc_core<br/>desktop_multi_window]
+    end
 
-```
-apps/flutter_forge/lib/
-├── main.dart                     # 入口
-├── app/                          # 应用壳
-│   ├── app.dart                  # MaterialApp.router
-│   └── router/                   # go_router 路由配置
-├── module_registry/              # 模块元数据（入口模型、枚举）
-├── shared/                       # 共享能力迁移后的边界文档与过渡层
-│   ├── AI_ANALYSIS.md
-│   └── platform/AI_ANALYSIS.md
-└── modules/                      # 学习模块分区
-    ├── basic/                    # 基础机制
-    ├── async/                    # 异步并发
-    ├── state/                    # 状态管理
-    ├── ui/                       # UI 与动效
-    ├── popup_table/              # 弹窗与列表
-    └── platform/                 # 网络与平台
+    Host --> Bootstrap --> Shell
+    Bootstrap --> Snapshot
+    Shell --> Policy
+    Shell --> Router
+    Policy --> Snapshot
+    Policy --> MultiWindow
+    Router --> Manifest --> Catalog
+    Catalog --> Snapshot
+    Catalog --> Modules
+    Modules --> Learning
+    Modules --> Packages
 ```
 
-同级能力包：
+这套结构把职责切成四层：应用壳负责启动与导航，注册层负责模块事实与平台判定，模块层只承载学习内容和局部状态，共享层提供业务无关能力。普通模块不直接决定平台目录可见性，也不拥有多窗口策略。
 
-```
-apps/flutter_forge/lib/shared/learning # 应用内教学模板组件
-packages/file_picker_bridge            # 文件选择 Dart API / MethodChannel client
-packages/flutter_ioc_core              # 纯 Dart IoC 容器核心
-```
+### 导航与平台决策
 
-## 维护文档
+```mermaid
+flowchart LR
+    Open[打开学习分类] --> Desktop{桌面平台？}
+    Desktop -- 否：Android / iOS / Web --> InApp[当前应用内导航]
+    Desktop -- 是 --> Width{窗口宽度 ≥ 600dp？}
+    Width -- 否 --> InApp
+    Width -- 是 --> Capability{多窗口能力可用？}
+    Capability -- 否 --> InApp
+    Capability -- 是 --> Window[创建或复用分类窗口]
 
-修改代码前先读根目录的：
-
-- `AGENTS.md`：agent 维护契约（修改前必读）
-- `CONTEXT.md`：PC 封板、Android 兼容轨道和模块准入术语
-- `AI_PROJECT_CONTEXT.md`：项目整体上下文与目录约定
-- `REFACTOR_PLAN.md`：阶段性归拢重构计划
-- 目标模块或共享能力的 `AI_ANALYSIS.md`
-- 质量验收标准与自动化测试计划：`docs/QUALITY_ACCEPTANCE.md`
-- 专项演进计划：`docs/GCODE_VISUALIZER_EVOLUTION_PLAN.md`
-- 历史验收报告：`docs/reports/`
-
-新增或迁移能力时需要同步更新对应层级的 `AI_ANALYSIS.md`。例如本轮同级包迁移后，相关文档为：
-
-- `apps/flutter_forge/lib/shared/AI_ANALYSIS.md`
-- `apps/flutter_forge/lib/shared/platform/AI_ANALYSIS.md`
-- `packages/file_picker_bridge/AI_ANALYSIS.md`
-- `packages/flutter_ioc_core/AI_ANALYSIS.md`
-- `apps/flutter_forge/lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md`
-
-## 贡献指南
-
-### 分支策略
-
-- `dev` — 开发主分支
-- `feat/<name>` — 功能分支
-- `fix/<name>` — 修复分支
-
-### 提交规范
-
-```
-<type>(<scope>): <subject>
-
-type: feat, fix, chore, docs, refactor, test
-scope: 受影响的模块名或包名
+    Route[进入模块路由] --> Supported{当前目标平台可用？}
+    Supported -- 是 --> Lesson[加载教学模块]
+    Supported -- 否 --> Guard[显示统一不可用说明]
 ```
 
-示例:
+Android、iOS 与 Web 始终使用应用内导航；桌面端只有在宽窗口且多窗口能力可用时才创建分类窗口。模块路径保持稳定，平台受限模块会进入统一说明页，而不是消失或落入 404。
+
+## 学习地图
+
+| 主题 | 代表模块 | 你会观察到什么 |
+|------|----------|----------------|
+| 基础机制 | 三棵树与生命周期、事件循环、防抖与节流 | Widget/Element/RenderObject 关系、任务队列与调用时序 |
+| 异步并发 | Stream 订阅、Isolate 对比、多任务管理器 | 背压、生命周期、主线程响应与跨 Isolate 通信 |
+| 架构与状态 | 状态管理演进、Flutter IoC、本地持久化 | setState 到 Bloc 的取舍、依赖作用域与状态恢复 |
+| UI 与动效 | 智能吸附线、下载动效、字体选择器、3D 查看器、G-code | 绘制、手势、Overlay、相机控制与 GPU 场景 |
+| 弹窗与列表 | 弹窗合集、二维滚动表格、Overlay 跟随对照 | 浮层定位、嵌套路由与二维滚动布局 |
+| 网络与平台 | Dio 拦截器、文件选择、在线视频、WebView、USB | 请求链路、原生边界、媒体生命周期与不可用降级 |
+
+推荐从“三棵树与生命周期”开始，依次进入事件循环、Stream、Isolate、状态管理，再探索 UI/3D 与平台能力。目录中的难度、预计用时、概念标签和学习状态可以帮助你自行调整路线。
+
+## 平台边界
+
+Flutter Forge 的目标平台模型覆盖 Android、iOS、macOS、Web 和 Windows，但“进入目标集合”不等于所有能力都已完成真机验收。
+
+| 平台 | 当前仓库能力边界 |
+|------|------------------|
+| macOS | 桌面主线；支持宽窗口分类多窗口，部分 GPU/原生模块以 macOS 为已接入基线 |
+| Windows | 桌面主线；核心真机能力已有记录，多窗口专项仍以验收报告为准 |
+| Android | 单窗口兼容轨道；构建、模拟器遍历与基础原生通道已有证据，USB/键盘等真机行为仍需设备验收 |
+| Web | 单窗口浏览器交付；Safari/Chrome 已覆盖主体模块，原生 WebView、USB、G-code 与 Isolate 模块保留不可用态 |
+| iOS | 已进入平台判定模型；当前仓库没有 iOS Host 与构建证据，不应视为已交付 |
+
+运行时以 `ModulePlatformSupport` 的排除集合描述平台限制，目录与路由统一通过 `module_registry` 判定。学习质量状态（`pending` / `ready` / `recommended`）不用于表达平台支持。
+
+详细证据见 [`docs/reports/`](docs/reports/)；分层验收规则见 [`docs/QUALITY_ACCEPTANCE.md`](docs/QUALITY_ACCEPTANCE.md)。
+
+## 快速开始
+
+环境要求：Flutter `>=3.47.2`、Dart `^3.11.5`。
+
+```bash
+# 在仓库根目录解析 Pub Workspace
+flutter pub get
+
+# 启动主应用
+cd apps/flutter_forge
+flutter run -d <device>
 ```
-feat(tree_state): add repaint boundary demo page
-fix(gcode_core): resolve toolpath offset calculation
-chore(packages): update agent doc schema
+
+Web Release 使用仓库提供的受检脚本，确保本地 CanvasKit、启动壳与同源媒体契约一致：
+
+```bash
+bash tool/build_web_release.sh
 ```
 
-### PR 流程
+提交变更前执行完整门禁：
 
-1. 从 `dev` 创建功能分支
-2. 修改代码，遵循 AGENTS.md 规则
-3. 执行 `bash tool/quality_gate.sh`，确保通过
-4. 更新 AI_ANALYSIS.md（如适用）
-5. 运行 `bash tool/generate_harness_ai_analysis.sh`
-6. 提交 PR，填写 PR 模板
+```bash
+bash tool/quality_gate.sh
+```
 
-### Definition of Done
+门禁会依次检查 Agent 文档漂移、Dart 格式、bare `flutter analyze`、全部测试、测试目录布局和 FlutterGuard HIGH 问题。
 
-- [ ] 代码通过 `dart format .`（0 changed）
-- [ ] 代码通过 `flutter analyze`（0 errors）
-- [ ] 新增逻辑有测试覆盖
-- [ ] Agent 契约已更新（如适用）
-- [ ] 质量门禁通过
-- [ ] 教学 UI 变更附截图/说明
+## 仓库结构
 
-### 禁止事项
+```text
+flutter_forge/
+├── apps/flutter_forge/              # Flutter 应用与各平台 Host
+│   ├── lib/app/                      # 启动、应用壳、路由与导航策略
+│   ├── lib/module_registry/          # 模块元数据、平台快照与目录操作
+│   ├── lib/shared/                   # 教学模板与业务无关的共享能力
+│   └── lib/modules/                  # 六类、23 个学习模块
+├── packages/
+│   ├── file_picker_bridge/           # 跨平台文件选择边界
+│   ├── flutter_ioc_core/             # 纯 Dart IoC 核心
+│   └── desktop_multi_window/         # 桌面多窗口插件与本地修复
+├── docs/adr/                          # 架构决策记录
+├── docs/reports/                      # 分平台验收证据
+├── tool/                              # 契约生成、测试与质量门禁
+├── AI_PROJECT_CONTEXT.md              # 机器可解析项目契约
+└── REFACTOR_PLAN.md                   # 机器可解析演进队列
+```
 
-- 禁止 `path: ../...` 外部依赖
-- 禁止孤立 demo 页面（无解释无交互）
-- 禁止首页出现纯工程目录名
-- 禁止修改生成物而不更新生成源
-- 禁止直接提交到 protected 分支
+`gcode_core` 作为独立 Git 依赖维护；Canvas、时间线和播放控件由它提供，教学编排与文件选择留在 Flutter Forge。工作区包禁止使用指向仓库外部的 `path: ../...` 依赖。
 
-## 共享能力
+## 如何新增或修改模块
 
-### 教学模板
+每个学习模块都不是孤立页面，而是一个受契约约束的可注册单元：
 
-`apps/flutter_forge/lib/shared/learning` 提供统一教学页面骨架，模块可以用学习目标、概念标签、代码片段、常见坑和练习卡片组织内容。
+1. 使用 `module_entry.dart` 暴露 `*Entry` Widget。
+2. 在模块注册源中补全标题、副标题、分类、难度、概念、预计用时和状态。
+3. 至少使用一个 `lib/shared/learning` 教学模板组件。
+4. 维护模块 `AI_ANALYSIS.md`，并通过生成脚本校验机器契约。
+5. 为逻辑、交互和平台分支补充对应测试。
+6. 执行 `bash tool/quality_gate.sh`，涉及教学 UI 时补充人工验收或截图说明。
 
-### 模块平台可用性
+完整规则以 [`AGENTS.md`](AGENTS.md) 为准。架构与平台变更还应先阅读 [`CONTEXT.md`](CONTEXT.md) 和相关 [`docs/adr/`](docs/adr/)。
 
-平台限制只在模块注册表声明。非平台模块默认可用，平台模块通过 `supportedPlatforms` 显式列出支持平台；目录和路由层统一使用注册表判定结果。
+## 协作与分支
 
-### 平台文件选择
+- `dev` 是持续开发分支，功能、修复、文档与发版准备先进入 `dev`。
+- `master` 是受保护稳定分支，只能通过从 `dev` 发起的 Pull Request 合入。
+- 不直接推送、强制推送或删除 `master`；合入后将合并拓扑同步回 `dev`。
+- 提交信息采用 `<type>(<scope>): <subject>`，常用类型包括 `feat`、`fix`、`docs`、`refactor`、`test` 和 `chore`。
 
-`packages/file_picker_bridge` 提供业务无关的文件选择接口：
-
-- Dart 接口：`FilePickerService`
-- 默认实现：`MethodChannelFilePicker`
-- macOS 通道：`file_picker_bridge/file_picker`
-- 当前使用方：`modules/ui/gcode_visualizer`
-
-模块只传入允许的扩展名、标题和提示文案；文件读取、解析和错误展示仍由模块自己负责。
-
-### G-code 核心
-
-[`gcode_core`](https://github.com/lizy-coding/gcode_core) 在独立仓库维护，应用通过 Git 依赖固定完整 commit，锁文件记录解析版本。升级时同步生成器中的外部依赖契约并执行完整质量门禁。该 Flutter 包提供：
-
-- 逐行读取抽象
-- G0/G1 解析
-- 错误收集
-- 轨迹段构建
-
-Canvas、时间线和播放控件由该包提供；教学页面、文件选择编排及播放状态保留在 `modules/ui/gcode_visualizer`。当前 macOS 最低支持版本为 12.0。
-
-## 示例索引（按主题）
-
-### UI 与动效
-- `modules/ui/adsorption_line`：智能吸附线画板，矩形/圆形/线条创建与拖拽，对齐辅助线、工具栏和快捷键。
-- `modules/ui/download_animation`：下载飞入动效三种实现（自定义 View / CustomPaint / Overlay），带参数调节面板。
-- `modules/ui/gcode_visualizer`：G-code 解析与轨迹动画，支持 G0/G1 指令解析、路径输入和系统文件选择、刀路轨迹绘制、播放进度控制与指令高亮，使用 `LearningScaffold` 教学模板。
-
-### 弹窗与列表
-- `modules/popup_table/popup_widgets`：常见弹窗合集，包含顺序链式 Overlay 演示与多种触发方式。
-- `modules/popup_table/popup_list_interaction`：弹窗与列表交互组合入口，集成弹窗演示与二维表格。
-- `modules/popup_table/scroll_table`：二维滚动表格，固定表头/行头，基于 `two_dimensional_scrollables`。
-- `modules/popup_table/overlay_follow_compare`：Overlay 跟随方案对照组，对比 `CompositedTransformFollower` 与 `markNeedsBuild` 两种浮层跟随机制。
-
-### 基础机制
-- `modules/basic/tree_state`：Widget/Element/RenderObject 三棵树与生命周期、CustomPainter、RepaintBoundary 重绘范围示例。
-- `modules/basic/microtask`：事件循环演示，微任务队列与事件队列的执行顺序可视化。
-- `modules/basic/debounce_throttle`：防抖与节流执行时序对比。
-
-### 异步与并发
-- `modules/async/isolate_basic`：主线程 vs Isolate 执行耗时计算的 UI 流畅度对比。
-- `modules/async/isolate_task_manager`：多任务 Isolate 管理器，支持进度上报、暂停/恢复/停止。
-- `modules/async/stream_subscription`：单订阅/广播流示例，包含暂停/恢复/取消与变换工具。
-
-### 架构与状态
-- `modules/state/status_management`：状态管理演进链路，串联 setState、Provider、Riverpod、Bloc，附时间轴动画与测试用例。
-- `modules/state/flutter_ioc`：Provider + 自研 IoC 容器示例，支持注册/作用域/属性注入，含 `test/ioc_container_test.dart`。
-
-### 网络与平台
-- `modules/platform/dio_interceptor`：Dio 拦截器链路（Auth/Error/Retry/Log）+ 内置本地 Mock Server，覆盖登录/列表/Token 刷新。
-- `modules/platform/usb_detector`：跨平台 USB 设备检测，周期扫描与手动刷新，使用 Stream 推送设备与状态消息。
+发布不由业务仓库 CI 直接创建 GitHub Release；发布计划与执行统一经 Agent Hub 的 `release_hosting` 流程完成。
