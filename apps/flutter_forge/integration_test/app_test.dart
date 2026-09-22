@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/app.dart';
 import 'package:flutter_forge_app/app/app_platform_provider.dart';
-import 'package:flutter_forge_app/app/category_window_app.dart';
-import 'package:flutter_forge_app/app/navigation_policy.dart';
+import 'package:flutter_forge_app/app/module_home_page.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/app/router/app_router.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
@@ -89,7 +88,7 @@ void main() {
   testWidgets('mobile category drawer opens a top-level category', (
     tester,
   ) async {
-    if (!NavigationPolicy.usesMobileCategoryDrawer(platform)) {
+    if (platform.hostFamily != AppHostFamily.mobile) {
       return;
     }
 
@@ -98,7 +97,7 @@ void main() {
 
     await tester.tap(find.byTooltip('Open navigation menu'));
     await tester.pumpAndSettle();
-    expect(find.text('学习目录'), findsOneWidget);
+    expect(find.text('创作者主页'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('category-drawer:platform')));
     await tester.pumpAndSettle();

@@ -29,7 +29,7 @@ void main() {
       );
     }
     expect(
-      AppRouteTable.routesFor(
+      AppRouteTable.moduleRoutesFor(
         const AppPlatformSnapshot(platform: AppTargetPlatform.android),
       ).where((route) => route.path == module.path),
       isNotEmpty,

@@ -2,18 +2,17 @@
 
 import 'package:go_router/go_router.dart';
 
+import '../adaptive_app_shell.dart';
+import '../creator_home_page.dart';
 import '../module_home_page.dart';
 import '../unsupported_module_page.dart';
 import '../../module_registry/app_platform_snapshot.dart';
 import '../../module_registry/module_catalog_utils.dart';
 import '../../module_registry/module_entry.dart';
+import '../../module_registry/module_category.dart';
 import '../../module_registry/module_manifest.dart';
 
-List<GoRoute> _routesFor(AppPlatformSnapshot platform) => [
-  GoRoute(
-    path: '/',
-    builder: (context, state) => ModuleHomePage(modules: moduleManifest),
-  ),
+List<GoRoute> _moduleRoutesFor(AppPlatformSnapshot platform) => [
   for (final module in moduleManifest)
     GoRoute(
       path: module.path,
@@ -24,8 +23,39 @@ List<GoRoute> _routesFor(AppPlatformSnapshot platform) => [
     ),
 ];
 
+List<RouteBase> _routesFor(AppPlatformSnapshot platform) => [
+  ShellRoute(
+    builder: (context, state, child) => AdaptiveAppShell(
+      modules: moduleManifest,
+      location: state.uri.path,
+      child: child,
+    ),
+    routes: [
+      GoRoute(path: '/', builder: (context, state) => const CreatorHomePage()),
+      GoRoute(
+        path: '/category/:category',
+        builder: (context, state) {
+          final name = state.pathParameters['category'];
+          final category = ModuleCategory.values.firstWhere(
+            (candidate) => candidate.name == name,
+            orElse: () => ModuleCategory.basic,
+          );
+          return CategoryHomePage(
+            category: category,
+            modules: moduleManifest,
+            platform: platform,
+          );
+        },
+      ),
+      ..._moduleRoutesFor(platform),
+    ],
+  ),
+];
+
 class AppRouteTable {
-  static List<GoRoute> routesFor(AppPlatformSnapshot platform) =>
+  static List<RouteBase> routesFor(AppPlatformSnapshot platform) =>
       _routesFor(platform);
+  static List<GoRoute> moduleRoutesFor(AppPlatformSnapshot platform) =>
+      _moduleRoutesFor(platform);
   static List<ModuleEntry> get modules => moduleManifest;
 }

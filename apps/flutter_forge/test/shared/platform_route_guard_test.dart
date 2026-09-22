@@ -40,7 +40,7 @@ void main() {
 
     await tester.tap(find.text('返回模块目录'));
     await tester.pumpAndSettle();
-    expect(find.text('Flutter 学习实验室'), findsOneWidget);
+    expect(find.text('Lizy'), findsOneWidget);
   });
 
   testWidgets('supported module path renders its business page', (

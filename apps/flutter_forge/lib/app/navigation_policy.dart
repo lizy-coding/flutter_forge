@@ -1,28 +1,19 @@
-import '../module_registry/app_platform_snapshot.dart';
-
-enum CategoryNavigationMode { inApp, separateWindow }
+enum AppNavigationLayout { compact, rail, sidebar }
 
 class NavigationPolicy {
   const NavigationPolicy._();
 
   static const double compactWidthBreakpoint = 600;
+  static const double sidebarWidthBreakpoint = 1024;
 
-  static bool usesMobileCategoryDrawer(AppPlatformSnapshot platform) =>
-      platform.hostFamily == AppHostFamily.mobile;
-
-  static CategoryNavigationMode resolve({
-    required AppPlatformSnapshot platform,
+  static AppNavigationLayout layoutFor({
     required double width,
-    required bool multiWindowSupported,
+    required bool sidebarExpanded,
   }) {
-    if (platform.hostFamily != AppHostFamily.desktop) {
-      return CategoryNavigationMode.inApp;
+    if (width < compactWidthBreakpoint) return AppNavigationLayout.compact;
+    if (width < sidebarWidthBreakpoint || !sidebarExpanded) {
+      return AppNavigationLayout.rail;
     }
-
-    if (width < compactWidthBreakpoint || !multiWindowSupported) {
-      return CategoryNavigationMode.inApp;
-    }
-
-    return CategoryNavigationMode.separateWindow;
+    return AppNavigationLayout.sidebar;
   }
 }

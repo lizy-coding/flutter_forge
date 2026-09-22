@@ -1194,18 +1194,17 @@ function writeRouteTable() {
   routeLines.push('');
   routeLines.push("import 'package:go_router/go_router.dart';");
   routeLines.push('');
+  routeLines.push("import '../adaptive_app_shell.dart';");
+  routeLines.push("import '../creator_home_page.dart';");
   routeLines.push("import '../module_home_page.dart';");
   routeLines.push("import '../unsupported_module_page.dart';");
   routeLines.push("import '../../module_registry/app_platform_snapshot.dart';");
   routeLines.push("import '../../module_registry/module_catalog_utils.dart';");
   routeLines.push("import '../../module_registry/module_entry.dart';");
+  routeLines.push("import '../../module_registry/module_category.dart';");
   routeLines.push("import '../../module_registry/module_manifest.dart';");
   routeLines.push('');
-  routeLines.push('List<GoRoute> _routesFor(AppPlatformSnapshot platform) => [');
-  routeLines.push('  GoRoute(');
-  routeLines.push("    path: '/',");
-  routeLines.push('    builder: (context, state) => ModuleHomePage(modules: moduleManifest),');
-  routeLines.push('  ),');
+  routeLines.push('List<GoRoute> _moduleRoutesFor(AppPlatformSnapshot platform) => [');
   routeLines.push('  for (final module in moduleManifest)');
   routeLines.push('    GoRoute(');
   routeLines.push('      path: module.path,');
@@ -1216,9 +1215,43 @@ function writeRouteTable() {
   routeLines.push('    ),');
   routeLines.push('];');
   routeLines.push('');
+  routeLines.push('List<RouteBase> _routesFor(AppPlatformSnapshot platform) => [');
+  routeLines.push('  ShellRoute(');
+  routeLines.push('    builder: (context, state, child) => AdaptiveAppShell(');
+  routeLines.push('      modules: moduleManifest,');
+  routeLines.push('      location: state.uri.path,');
+  routeLines.push('      child: child,');
+  routeLines.push('    ),');
+  routeLines.push('    routes: [');
+  routeLines.push('      GoRoute(');
+  routeLines.push("        path: '/',");
+  routeLines.push('        builder: (context, state) => const CreatorHomePage(),');
+  routeLines.push('      ),');
+  routeLines.push('      GoRoute(');
+  routeLines.push("        path: '/category/:category',");
+  routeLines.push('        builder: (context, state) {');
+  routeLines.push("          final name = state.pathParameters['category'];");
+  routeLines.push('          final category = ModuleCategory.values.firstWhere(');
+  routeLines.push('            (candidate) => candidate.name == name,');
+  routeLines.push('            orElse: () => ModuleCategory.basic,');
+  routeLines.push('          );');
+  routeLines.push('          return CategoryHomePage(');
+  routeLines.push('            category: category,');
+  routeLines.push('            modules: moduleManifest,');
+  routeLines.push('            platform: platform,');
+  routeLines.push('          );');
+  routeLines.push('        },');
+  routeLines.push('      ),');
+  routeLines.push('      ..._moduleRoutesFor(platform),');
+  routeLines.push('    ],');
+  routeLines.push('  ),');
+  routeLines.push('];');
+  routeLines.push('');
   routeLines.push('class AppRouteTable {');
-  routeLines.push('  static List<GoRoute> routesFor(AppPlatformSnapshot platform) =>');
+  routeLines.push('  static List<RouteBase> routesFor(AppPlatformSnapshot platform) =>');
   routeLines.push('      _routesFor(platform);');
+  routeLines.push('  static List<GoRoute> moduleRoutesFor(AppPlatformSnapshot platform) =>');
+  routeLines.push('      _moduleRoutesFor(platform);');
   routeLines.push('  static List<ModuleEntry> get modules => moduleManifest;');
   routeLines.push('}');
   routeLines.push('');
@@ -1267,9 +1300,9 @@ function writeLayerIndexes() {
     rel: 'lib/app/AI_ANALYSIS.md',
     id: 'flutter_forge_app.app',
     kind: 'app_index',
-    entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
-    owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'module_home', 'unsupported_module_route', 'responsive_navigation_policy', 'adaptive_category_navigation', 'desktop_category_window_shell'],
-    depends: ['go_router', 'module_registry', 'shared/multi_window', 'modules'],
+    entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
+    owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'creator_home', 'module_catalog', 'title_search', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell'],
+    depends: ['go_router', 'flutter_riverpod', 'url_launcher', 'module_registry', 'shared/multi_window', 'modules'],
     children: ['router/AI_ANALYSIS.md'],
   });
   writeIndex({
@@ -1277,8 +1310,8 @@ function writeLayerIndexes() {
     id: 'flutter_forge_app.app.router',
     kind: 'router_index',
     entrypoints: ['app_router.dart', 'app_route_table.dart'],
-    owns: ['go_router_root', 'stable_guarded_module_routes', 'module_route_aggregation', 'module_catalog_composition'],
-    depends: ['app/module_home_page', 'module_registry', 'modules'],
+    owns: ['go_router_root', 'adaptive_shell_route', 'creator_home_route', 'category_route', 'stable_guarded_module_routes', 'module_route_aggregation', 'module_catalog_composition'],
+    depends: ['app/adaptive_app_shell', 'app/creator_home_page', 'app/module_home_page', 'module_registry', 'modules'],
   });
   writeIndex({
     rel: 'lib/module_registry/AI_ANALYSIS.md',

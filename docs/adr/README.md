@@ -17,6 +17,7 @@
 | 0009 | Flutter Scene Windows 逻辑准入 | accepted |
 | 0010 | Flutter Scene Android 只读准入 | accepted |
 | 0011 | 平台快照与守卫路由 | accepted |
+| 0012 | 自适应导航外壳与分类专注窗口 | accepted |
 
 ## 状态定义
 

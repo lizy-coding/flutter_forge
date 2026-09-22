@@ -27,7 +27,7 @@ void main() {
       );
     }
     expect(
-      AppRouteTable.routesFor(
+      AppRouteTable.moduleRoutesFor(
         const AppPlatformSnapshot(platform: AppTargetPlatform.iOS),
       ).where((route) => route.path == module.path),
       isNotEmpty,
