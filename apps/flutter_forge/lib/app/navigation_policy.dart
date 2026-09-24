@@ -1,29 +1,19 @@
-import 'package:flutter/foundation.dart';
-
-enum CategoryNavigationMode { inApp, separateWindow }
+enum AppNavigationLayout { compact, rail, sidebar }
 
 class NavigationPolicy {
   const NavigationPolicy._();
 
   static const double compactWidthBreakpoint = 600;
+  static const double sidebarWidthBreakpoint = 1024;
 
-  static CategoryNavigationMode resolve({
-    required TargetPlatform platform,
+  static AppNavigationLayout layoutFor({
     required double width,
-    required bool multiWindowSupported,
-    bool isWeb = false,
+    required bool sidebarExpanded,
   }) {
-    if (isWeb ||
-        platform == TargetPlatform.android ||
-        platform == TargetPlatform.iOS ||
-        platform == TargetPlatform.fuchsia) {
-      return CategoryNavigationMode.inApp;
+    if (width < compactWidthBreakpoint) return AppNavigationLayout.compact;
+    if (width < sidebarWidthBreakpoint || !sidebarExpanded) {
+      return AppNavigationLayout.rail;
     }
-
-    if (width < compactWidthBreakpoint || !multiWindowSupported) {
-      return CategoryNavigationMode.inApp;
-    }
-
-    return CategoryNavigationMode.separateWindow;
+    return AppNavigationLayout.sidebar;
   }
 }

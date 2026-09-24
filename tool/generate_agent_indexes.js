@@ -79,8 +79,8 @@ const modules = [
     estimatedMinutes: 20,
     entry: 'IsolateTestEntry',
     routes: 'IsolateTestRoutes',
-    supportsWeb: false,
-    supportsWebComment: '// Safari Web validation showed no usable progress lifecycle for Isolate.spawn.',
+    excludedPlatforms: ['web'],
+    platformSupportComment: '// Safari Web validation showed no usable progress lifecycle for Isolate.spawn.',
   },
   {
     category: 'async',
@@ -94,8 +94,8 @@ const modules = [
     concepts: ['Isolate.spawn', '多任务', '进度上报', '暂停/恢复'],
     estimatedMinutes: 35,
     entry: 'IsolateStreamEntry',
-    supportsWeb: false,
-    supportsWebComment: '// Safari Web validation showed tasks stalled at zero progress.',
+    excludedPlatforms: ['web'],
+    platformSupportComment: '// Safari Web validation showed tasks stalled at zero progress.',
   },
   {
     category: 'state',
@@ -143,8 +143,8 @@ const modules = [
     id: 'gcode_visualizer',
     route: '/gcode-visualizer',
     status: 'ready',
-    supportedPlatforms: ['macOS'],
-    supportedPlatformsComment: '// gcode_core v0.2.0-dev.1 validates macOS GPU rendering only.',
+    excludedPlatforms: ['android', 'iOS', 'web', 'windows'],
+    platformSupportComment: '// gcode_core v0.2.0-dev.1 validates macOS GPU rendering only.',
     depends: ['shared_learning', 'gcode_core', 'file_picker_bridge', 'module_registry'],
     title: 'G-code 解析与轨迹动画',
     subtitle: '解析 G-code 指令，绘制刀路轨迹并用动画展示执行过程',
@@ -200,14 +200,14 @@ const modules = [
     route: '/flutter-scene-3d',
     status: 'ready',
     depends: ['shared_learning', 'flutter_scene', 'vector_math', 'module_registry'],
-    title: 'Flutter Scene 3D 入门',
-    subtitle: '用一个可交互长方体理解场景、网格与相机控制',
+    title: '教学型 3D 查看器',
+    subtitle: '用轨道相机、部件选取与聚焦反馈理解 3D 查看器交互',
     difficulty: 'intermediate',
-    concepts: ['Flutter GPU', 'Scene', 'Node', 'Mesh', 'PerspectiveCamera'],
-    estimatedMinutes: 25,
+    concepts: ['轨道相机', 'Scene Raycast', '部件聚焦', 'Reduced Motion'],
+    estimatedMinutes: 35,
     entry: 'FlutterScene3dEntry',
-    supportedPlatforms: ['macOS'],
-    supportedPlatformsComment: '// Evidence boundary: only macOS is admitted; other hosts remain catalog-visible but unavailable.',
+    excludedPlatforms: ['iOS', 'web'],
+    platformSupportComment: '// Android is view-only; Windows and Android host evidence remains pending.',
   },
   {
     category: 'popup_table',
@@ -275,8 +275,8 @@ const modules = [
     estimatedMinutes: 35,
     entry: 'InterceptorTestEntry',
     routes: 'InterceptorTestRoutes',
-    supportsWeb: true,
-    supportsWebComment: '// Web uses an in-memory Dio adapter; native hosts keep the localhost mock server.',
+    excludedPlatforms: [],
+    platformSupportComment: '// Web uses an in-memory Dio adapter; native hosts keep the localhost mock server.',
   },
   {
     category: 'platform',
@@ -290,8 +290,8 @@ const modules = [
     concepts: ['Android USB', 'MethodChannel', 'Stream 广播', '设备扫描'],
     estimatedMinutes: 25,
     entry: 'UsbDetectorEntry',
-    supportedPlatforms: ['android'],
-    supportedPlatformsComment: '// Android-only: Windows 原生插件已移除，目录显示不可用、路由不注册',
+    excludedPlatforms: ['android', 'iOS', 'macOS', 'web', 'windows'],
+    platformSupportComment: '// Disabled on every target until the module is reframed as a concrete OTG workflow.',
   },
   {
     category: 'platform',
@@ -305,9 +305,8 @@ const modules = [
     concepts: ['FilePickerService', 'MethodChannel', '平台桥接', '扩展名过滤', '取消分支'],
     estimatedMinutes: 20,
     entry: 'FilePickerEntry',
-    supportedPlatforms: ['macOS', 'windows'],
-    supportsWeb: true,
-    supportsWebComment: '// Web accepts one user-selected file and exposes only its filename.',
+    excludedPlatforms: ['iOS'],
+    platformSupportComment: '// Android uses file_selector; Web exposes only the selected filename.',
   },
   {
     category: 'platform',
@@ -321,9 +320,8 @@ const modules = [
     concepts: ['video_player', '平台播放器', 'HTTP 流', '播放控制', '倍速', 'Controller 生命周期'],
     estimatedMinutes: 35,
     entry: 'OnlineVideoPlayerEntry',
-    supportedPlatforms: ['macOS', 'windows'],
-    supportsWeb: true,
-    supportsWebComment: '// Web uses a same-origin media asset and starts playback from a user gesture.',
+    excludedPlatforms: ['iOS'],
+    platformSupportComment: '// Web uses same-origin media; native targets use their registered backends.',
   },
   {
     category: 'platform',
@@ -337,11 +335,17 @@ const modules = [
     concepts: ['WebView', 'WebView2', '加载进度', '生命周期'],
     estimatedMinutes: 30,
     entry: 'WebViewEntry',
-    supportedPlatforms: ['android', 'macOS', 'windows'],
-    supportedPlatformsComment: '// Android/macOS use webview_flutter; Windows uses WebView2.',
+    excludedPlatforms: ['iOS', 'web'],
+    platformSupportComment: '// Android/macOS use webview_flutter; Windows uses WebView2.',
   },
 
 ];
+
+for (const module of modules) {
+  if (module.category === 'platform' && module.excludedPlatforms === undefined) {
+    throw new Error(`Platform module ${module.id} must declare excludedPlatforms`);
+  }
+}
 
 const categoryComments = {
   basic: '基础机制',
@@ -531,7 +535,7 @@ function writeSchema() {
     },
     module_contract_policy: {
       keep_for_module_rule: true,
-      content: ['route', 'category', 'status', 'supported_platforms', 'supports_web', 'entrypoints', 'analysis_parent'],
+      content: ['route', 'category', 'status', 'platform_support', 'entrypoints', 'analysis_parent'],
       avoid: ['class_descriptions', 'long_file_inventory', 'natural_language_notes'],
     },
     package_contract_policy: {
@@ -554,7 +558,7 @@ function writeProjectContext() {
     platform: {
       current_hosts: ['macos', 'windows'],
       next_host: 'web',
-      target_hosts: ['android', 'macos', 'web', 'windows'],
+      target_hosts: ['android', 'ios', 'macos', 'web', 'windows'],
     },
     entrypoints: {
       process: 'lib/main.dart',
@@ -562,6 +566,7 @@ function writeProjectContext() {
       app: 'lib/app/app.dart',
       router: 'lib/app/router/app_router.dart',
       route_table: 'lib/app/router/app_route_table.dart',
+      module_manifest: 'lib/module_registry/module_manifest.dart',
     },
     repository: {
       layout: 'pub_workspace',
@@ -588,7 +593,7 @@ function writeProjectContext() {
       {
         id: 'module_registry',
         path: 'lib/module_registry',
-        owns: ['module_metadata', 'catalog_operations'],
+        owns: ['module_metadata', 'platform_snapshot', 'catalog_operations'],
         may_depend_on: ['flutter', 'go_router'],
       },
       {
@@ -606,7 +611,7 @@ function writeProjectContext() {
     ],
     module_contract: {
       required_files: ['module_entry.dart', 'AI_ANALYSIS.md'],
-      required_registration: 'lib/app/router/app_route_table.dart',
+      required_registration: 'lib/module_registry/module_manifest.dart',
       required_metadata: ['category', 'difficulty', 'concepts', 'estimatedMinutes', 'status', 'subtitle'],
       required_learning_dependency: 'shared_learning',
       route_path_style: 'kebab_case',
@@ -620,7 +625,11 @@ function writeProjectContext() {
       compact_width_breakpoint_dp: 600,
       mobile_window_policy: 'in_app_navigation_only',
       web_window_policy: 'in_app_navigation_only',
-      web_platform_detection: 'kIsWeb_before_defaultTargetPlatform',
+      platform_snapshot: 'bootstrap_initialized_process_immutable',
+      target_platforms: ['android', 'ios', 'macos', 'web', 'windows'],
+      non_target_platforms: 'unsupported',
+      module_platform_semantics: 'target_platform_available_unless_excluded',
+      unsupported_route: 'stable_guarded_module_route',
       web_release_build: 'bash tool/build_web_release.sh',
       web_startup_shell: 'web/index.html + web/flutter_bootstrap.js',
       platform_capability_contract: 'business_neutral_interface',
@@ -674,6 +683,7 @@ function writeRefactorPlan() {
     completed_milestones: [
       'directory_layers',
       'shared_package_extraction',
+      'module_manifest_route_composition',
       'module_analysis_coverage',
       'app_navigation_boundary',
       'host_bootstrap_boundary',
@@ -682,6 +692,7 @@ function writeRefactorPlan() {
       'pc_window_lifecycle_baseline',
       'pc_build_matrix',
       'flutter_scene_3d_macos_baseline',
+      'platform_snapshot_guarded_routes',
     ],
     dependency_migration: {
       layout: 'pub_workspace',
@@ -723,7 +734,16 @@ function writeRefactorPlan() {
         priority: 6,
         status: 'pending',
         targets: ['lib/modules/platform/usb_detector'],
-        acceptance: ['no_windows_hardcode', 'android_system_info', 'error_branch_test'],
+        acceptance: [
+          'no_windows_hardcode',
+          'android_system_info',
+          'error_branch_test',
+          'mobile_usb_route_disabled',
+        ],
+        evidence: [
+          'USB module remains catalog-visible but has no supported host routes',
+          'generic Android USB monitoring is deferred until a concrete OTG workflow exists',
+        ],
       },
       {
         id: 'mobile_layout_baseline',
@@ -859,6 +879,175 @@ function writeRefactorPlan() {
           'Windows, mobile and Web remain unavailable pending separate evidence',
         ],
       },
+      {
+        id: 'flutter_scene_3d_camera_motion',
+        priority: 14,
+        status: 'pending',
+        targets: [
+          'apps/flutter_forge/lib/modules/ui/flutter_scene_3d',
+          'apps/flutter_forge/test/modules/ui/flutter_scene_3d',
+          'apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart',
+        ],
+        acceptance: [
+          'bounded_two_axis_orbit',
+          'direct_manipulation_takeover',
+          'bounded_inertial_coasting',
+          'keyboard_and_reduced_motion',
+          'macos_motion_visual_acceptance',
+        ],
+        evidence: [
+          'controller and widget automation pass for takeover, bounds, inertia, mode comparison and reduced motion',
+          'expanded zoom bounds and the single-scene orientation thumbnail have controller and widget coverage',
+          'macOS Debug build passes and the real window renders the updated 3D first frame',
+          'macOS pointer, keyboard and motion-feel acceptance remains required for completion',
+        ],
+      },
+      {
+        id: 'flutter_scene_3d_scene_picking',
+        priority: 15,
+        status: 'pending',
+        targets: [
+          'apps/flutter_forge/lib/modules/ui/flutter_scene_3d',
+          'apps/flutter_forge/test/modules/ui/flutter_scene_3d',
+        ],
+        acceptance: [
+          'nearest_visible_part_selection',
+          'drag_does_not_select',
+          'selection_highlight_and_details',
+          'focus_selected_part',
+          'clear_selection',
+          'macos_retina_pointer_acceptance',
+        ],
+        evidence: [
+          'selection state and widget focus flow have automated coverage',
+          'runtime uses screenPointToRay and Scene.raycast without physics',
+          'macOS Retina pointer and rendered highlight acceptance remains required',
+        ],
+      },
+      {
+        id: 'flutter_scene_3d_windows_admission',
+        priority: 16,
+        status: 'pending',
+        targets: [
+          'apps/flutter_forge/windows/runner/main.cpp',
+          'apps/flutter_forge/lib/modules/ui/flutter_scene_3d',
+          'apps/flutter_forge/test/modules/ui/flutter_scene_3d',
+          'apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart',
+        ],
+        acceptance: [
+          'windows_catalog_and_route_admission',
+          'desktop_3d_viewer_automated_ui_flow',
+          'windows_debug_and_release_build',
+          'impeller_flutter_gpu_first_frame',
+          'windows_pointer_keyboard_and_dpi',
+          'selection_highlight_and_focus',
+          'windows_installer_launch',
+        ],
+        evidence: [
+          'Windows runner enables Flutter GPU through DartProject',
+          'catalog and route contract admits macOS and Windows',
+          'desktop integration flow covers navigation, camera input, selection, focus, clear and return',
+          'Windows host build, GPU, DPI, interaction, and installer evidence remains required',
+        ],
+      },
+      {
+        id: 'flutter_scene_3d_android_view_only_admission',
+        priority: 17,
+        status: 'pending',
+        targets: [
+          'apps/flutter_forge/android/app/src/main/AndroidManifest.xml',
+          'apps/flutter_forge/lib/modules/ui/flutter_scene_3d',
+          'apps/flutter_forge/test/modules/ui/flutter_scene_3d',
+        ],
+        acceptance: [
+          'android_flutter_gpu_enabled',
+          'android_catalog_and_route_admission',
+          'android_view_only_scene',
+          'android_controls_selection_and_focus_hidden',
+          'android_debug_apk_build',
+          'android_gpu_first_frame_manual_evidence',
+        ],
+        evidence: [
+          'Android manifest enables Flutter GPU',
+          'module policy limits Android to automatic view-only rendering',
+          'catalog and widget contracts cover Android admission and hidden controls',
+          'Android emulator or device automation is intentionally deferred by scope',
+          'Android host build and GPU first-frame evidence remains required',
+        ],
+      },
+      {
+        id: 'android_online_video_playback',
+        priority: 18,
+        status: 'pending',
+        targets: [
+          'apps/flutter_forge/android/app/src/main/AndroidManifest.xml',
+          'apps/flutter_forge/lib/modules/platform/online_video_player',
+          'apps/flutter_forge/test/modules/platform/online_video_player',
+        ],
+        acceptance: [
+          'android_catalog_and_route_admission',
+          'android_release_internet_permission',
+          'compact_video_controls',
+          'android_debug_apk_build',
+          'android_real_video_playback',
+        ],
+        evidence: [
+          'video_player_android is registered in GeneratedPluginRegistrant',
+          'main Android manifest grants INTERNET for release playback',
+          'catalog and 320dp widget contracts cover Android entry',
+          'Android device playback evidence remains required',
+        ],
+      },
+      {
+        id: 'android_file_picker_admission',
+        priority: 19,
+        status: 'pending',
+        targets: [
+          'packages/file_picker_bridge',
+          'apps/flutter_forge/lib/modules/platform/file_picker',
+          'apps/flutter_forge/test/modules/platform/file_picker',
+        ],
+        acceptance: [
+          'android_catalog_and_route_admission',
+          'android_file_selector_backend',
+          'compact_file_picker_layout',
+          'android_debug_apk_build',
+          'android_real_device_pick_and_cancel',
+        ],
+        evidence: [
+          'file_picker_bridge selects file_selector on Android',
+          'file_selector_android is registered in GeneratedPluginRegistrant',
+          'catalog and compact widget contracts cover Android entry',
+          'Android real-device document provider behavior remains required',
+        ],
+      },
+      {
+        id: 'platform_snapshot_guarded_routes',
+        priority: 20,
+        status: 'completed',
+        targets: [
+          'apps/flutter_forge/lib/module_registry',
+          'apps/flutter_forge/lib/app',
+          'apps/flutter_forge/test/shared',
+        ],
+        acceptance: [
+          'process_immutable_platform_snapshot',
+          'five_product_target_platforms',
+          'excluded_platform_contract',
+          'stable_guarded_module_routes',
+          'unsupported_module_explanation',
+          'android_debug_apk_build',
+          'web_release_build',
+        ],
+        evidence: [
+          'bootstrap injects one AppPlatformSnapshot into Router and ProviderScope',
+          'module contracts use target_platforms and excluded_platforms',
+          'guarded route tests cover supported and unsupported module paths',
+          'bare analyze and full test suite pass',
+          'Android debug APK and Web release builds pass',
+          'iOS is modeled but has no host directory or build evidence',
+        ],
+      },
     ],
     quality_gate: [
       'node tool/validate_agent_docs.js',
@@ -875,8 +1064,6 @@ function writeRefactorPlan() {
       'recommended_module_visual_evidence',
       'flutter_scene_3d_model_loading',
       'flutter_scene_3d_material_lighting',
-      'flutter_scene_3d_scene_picking',
-      'flutter_scene_3d_windows_admission',
     ],
   });
 }
@@ -884,17 +1071,19 @@ function writeRefactorPlan() {
 function writeModuleIndex() {
   writeJson('lib/AI_MODULE_INDEX.md', {
     schema: 'flutter_forge.agent_docs.module_index.v1',
-    registry: 'lib/app/router/app_route_table.dart',
+    registry: 'lib/module_registry/module_manifest.dart',
     count: modules.length,
-    modules: modules.map(({ category, id, route, status, depends, supportedPlatforms, supportsWeb }) => ({
+    modules: modules.map(({ category, id, route, status, depends, excludedPlatforms = [] }) => ({
       id,
       category,
       path: `lib/modules/${category}/${id}`,
       route,
       status,
       depends,
-      ...(supportedPlatforms ? { supported_platforms: supportedPlatforms } : {}),
-      ...(supportsWeb !== undefined ? { supports_web: supportsWeb } : {}),
+      platform_support: {
+        target_platforms: ['android', 'iOS', 'macOS', 'web', 'windows'],
+        excluded_platforms: excludedPlatforms,
+      },
       analysis: `lib/modules/${category}/${id}/AI_ANALYSIS.md`,
     })),
   });
@@ -908,31 +1097,30 @@ function conceptsLiteral(concepts) {
 }
 
 function writeRouteTable() {
-  const file = path.join(appRoot, 'lib/app/router/app_route_table.dart');
+  const manifestFile = path.join(appRoot, 'lib/module_registry/module_manifest.dart');
   const lines = [];
 
   lines.push('// GENERATED by tool/generate_agent_indexes.js - DO NOT EDIT');
   lines.push('');
-  lines.push("import 'package:flutter/foundation.dart';");
   lines.push("import 'package:go_router/go_router.dart';");
   lines.push('');
-  lines.push("import '../module_home_page.dart';");
-  lines.push("import '../../module_registry/module_category.dart';");
-  lines.push("import '../../module_registry/module_catalog_utils.dart';");
-  lines.push("import '../../module_registry/module_entry.dart';");
+  lines.push("import 'app_platform_snapshot.dart';");
+  lines.push("import 'module_category.dart';");
+  lines.push("import 'module_entry.dart';");
+  lines.push("import 'module_platform_support.dart';");
 
   const emittedImports = new Set();
   for (const [category, id, kind, gap] of routeTableImportOrder) {
     if (!modules.some((m) => m.category === category && m.id === id)) continue;
     const fileName = kind === 'routes' ? 'module_routes.dart' : 'module_entry.dart';
-    lines.push(`import '../../modules/${category}/${id}/${fileName}';`);
+    lines.push(`import '../modules/${category}/${id}/${fileName}';`);
     emittedImports.add(`${category}/${id}/${fileName}`);
     if (gap === 'gap') lines.push('');
   }
   for (const m of modules) {
     for (const fileName of ['module_entry.dart', m.routes ? 'module_routes.dart' : null].filter(Boolean)) {
       if (emittedImports.has(`${m.category}/${m.id}/${fileName}`)) continue;
-      lines.push(`import '../../modules/${m.category}/${m.id}/${fileName}';`);
+      lines.push(`import '../modules/${m.category}/${m.id}/${fileName}';`);
     }
   }
 
@@ -954,7 +1142,7 @@ function writeRouteTable() {
   }
   lines.push('// ==================== 模块注册 ====================');
   lines.push('');
-  lines.push('final List<ModuleEntry> _modules = [');
+  lines.push('final List<ModuleEntry> moduleManifest = [');
   let previousCategory = null;
   for (const m of modules) {
     if (m.category !== previousCategory) {
@@ -971,23 +1159,20 @@ function writeRouteTable() {
     lines.push(`    concepts: ${conceptsLiteral(m.concepts)},`);
     lines.push(`    estimatedMinutes: ${m.estimatedMinutes},`);
     lines.push(`    status: ModuleStatus.${m.status},`);
-    if (m.supportsWeb !== undefined) {
-      if (m.supportsWebComment) {
-        lines.push(`    ${m.supportsWebComment}`);
-      }
-      lines.push(`    supportsWeb: ${m.supportsWeb},`);
-    }
-    if (m.supportedPlatforms) {
-      if (m.supportedPlatformsComment) {
-        lines.push(`    ${m.supportedPlatformsComment}`);
-      }
-      const platforms = m.supportedPlatforms.map((platform) => `TargetPlatform.${platform}`);
-      const inlinePlatforms = `    supportedPlatforms: {${platforms.join(', ')}},`;
+    if (m.platformSupportComment) lines.push(`    ${m.platformSupportComment}`);
+    const excludedPlatforms = m.excludedPlatforms ?? [];
+    const platforms = excludedPlatforms.map((platform) => `AppTargetPlatform.${platform}`);
+    if (platforms.length === 0) {
+      lines.push('    platformSupport: const ModulePlatformSupport(),');
+    } else {
+      const inlinePlatforms = `      excludedPlatforms: {${platforms.join(', ')}},`;
+      lines.push('    platformSupport: const ModulePlatformSupport(');
       if (inlinePlatforms.length <= 80) {
         lines.push(inlinePlatforms);
       } else {
-        lines.push('    supportedPlatforms: {', ...platforms.map((platform) => `      ${platform},`), '    },');
+        lines.push('      excludedPlatforms: {', ...platforms.map((platform) => `        ${platform},`), '      },');
       }
+      lines.push('    ),');
     }
     lines.push(`    builder: (context) => const ${m.entry}(),`);
     if (m.subRoutesExpander) {
@@ -999,27 +1184,80 @@ function writeRouteTable() {
   }
   lines.push('];');
   lines.push('');
-  lines.push('final List<GoRoute> _routes = [');
-  lines.push('  GoRoute(');
-  lines.push("    path: '/',");
-  lines.push('    builder: (context, state) => ModuleHomePage(modules: _modules),');
-  lines.push('  ),');
-  lines.push('  for (final module in availableModules(_modules))');
-  lines.push('    GoRoute(');
-  lines.push('      path: module.path,');
-  lines.push('      builder: (context, state) => module.builder(context),');
-  lines.push('      routes: module.routes,');
-  lines.push('    ),');
-  lines.push('];');
-  lines.push('');
-  lines.push('class AppRouteTable {');
-  lines.push('  static List<GoRoute> get routes => _routes;');
-  lines.push('  static List<ModuleEntry> get modules => _modules;');
-  lines.push('}');
-  lines.push('');
+
+  fs.mkdirSync(path.dirname(manifestFile), { recursive: true });
+  fs.writeFileSync(manifestFile, lines.join('\n'));
+
+  const file = path.join(appRoot, 'lib/app/router/app_route_table.dart');
+  const routeLines = [];
+  routeLines.push('// GENERATED by tool/generate_agent_indexes.js - DO NOT EDIT');
+  routeLines.push('');
+  routeLines.push("import 'package:go_router/go_router.dart';");
+  routeLines.push('');
+  routeLines.push("import '../adaptive_app_shell.dart';");
+  routeLines.push("import '../creator_home_page.dart';");
+  routeLines.push("import '../module_home_page.dart';");
+  routeLines.push("import '../unsupported_module_page.dart';");
+  routeLines.push("import '../../module_registry/app_platform_snapshot.dart';");
+  routeLines.push("import '../../module_registry/module_catalog_utils.dart';");
+  routeLines.push("import '../../module_registry/module_entry.dart';");
+  routeLines.push("import '../../module_registry/module_category.dart';");
+  routeLines.push("import '../../module_registry/module_manifest.dart';");
+  routeLines.push('');
+  routeLines.push('List<GoRoute> _moduleRoutesFor(AppPlatformSnapshot platform) => [');
+  routeLines.push('  for (final module in moduleManifest)');
+  routeLines.push('    GoRoute(');
+  routeLines.push('      path: module.path,');
+  routeLines.push('      builder: (context, state) => isModuleAvailable(module, platform)');
+  routeLines.push('          ? module.builder(context)');
+  routeLines.push('          : UnsupportedModulePage(module: module, platform: platform),');
+  routeLines.push('      routes: isModuleAvailable(module, platform) ? module.routes : const [],');
+  routeLines.push('    ),');
+  routeLines.push('];');
+  routeLines.push('');
+  routeLines.push('List<RouteBase> _routesFor(AppPlatformSnapshot platform) => [');
+  routeLines.push('  ShellRoute(');
+  routeLines.push('    builder: (context, state, child) => AdaptiveAppShell(');
+  routeLines.push('      modules: moduleManifest,');
+  routeLines.push('      location: state.uri.path,');
+  routeLines.push('      child: child,');
+  routeLines.push('    ),');
+  routeLines.push('    routes: [');
+  routeLines.push('      GoRoute(');
+  routeLines.push("        path: '/',");
+  routeLines.push('        builder: (context, state) => const CreatorHomePage(),');
+  routeLines.push('      ),');
+  routeLines.push('      GoRoute(');
+  routeLines.push("        path: '/category/:category',");
+  routeLines.push('        builder: (context, state) {');
+  routeLines.push("          final name = state.pathParameters['category'];");
+  routeLines.push('          final category = ModuleCategory.values.firstWhere(');
+  routeLines.push('            (candidate) => candidate.name == name,');
+  routeLines.push('            orElse: () => ModuleCategory.basic,');
+  routeLines.push('          );');
+  routeLines.push('          return CategoryHomePage(');
+  routeLines.push('            category: category,');
+  routeLines.push('            modules: moduleManifest,');
+  routeLines.push('            platform: platform,');
+  routeLines.push('          );');
+  routeLines.push('        },');
+  routeLines.push('      ),');
+  routeLines.push('      ..._moduleRoutesFor(platform),');
+  routeLines.push('    ],');
+  routeLines.push('  ),');
+  routeLines.push('];');
+  routeLines.push('');
+  routeLines.push('class AppRouteTable {');
+  routeLines.push('  static List<RouteBase> routesFor(AppPlatformSnapshot platform) =>');
+  routeLines.push('      _routesFor(platform);');
+  routeLines.push('  static List<GoRoute> moduleRoutesFor(AppPlatformSnapshot platform) =>');
+  routeLines.push('      _moduleRoutesFor(platform);');
+  routeLines.push('  static List<ModuleEntry> get modules => moduleManifest;');
+  routeLines.push('}');
+  routeLines.push('');
 
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, lines.join('\n'));
+  fs.writeFileSync(file, routeLines.join('\n'));
 }
 
 function writeRootIndexes() {
@@ -1062,9 +1300,9 @@ function writeLayerIndexes() {
     rel: 'lib/app/AI_ANALYSIS.md',
     id: 'flutter_forge_app.app',
     kind: 'app_index',
-    entrypoints: ['app.dart', 'app_bootstrap.dart', 'module_home_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
-    owns: ['host_bootstrap', 'material_app_router', 'router', 'module_home', 'responsive_navigation_policy', 'adaptive_category_navigation', 'desktop_category_window_shell'],
-    depends: ['go_router', 'module_registry', 'shared/multi_window', 'modules'],
+    entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
+    owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'creator_home', 'module_catalog', 'title_search', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell'],
+    depends: ['go_router', 'flutter_riverpod', 'url_launcher', 'module_registry', 'shared/multi_window', 'modules'],
     children: ['router/AI_ANALYSIS.md'],
   });
   writeIndex({
@@ -1072,15 +1310,15 @@ function writeLayerIndexes() {
     id: 'flutter_forge_app.app.router',
     kind: 'router_index',
     entrypoints: ['app_router.dart', 'app_route_table.dart'],
-    owns: ['go_router_root', 'module_route_aggregation', 'module_catalog_composition'],
-    depends: ['app/module_home_page', 'module_registry', 'modules'],
+    owns: ['go_router_root', 'adaptive_shell_route', 'creator_home_route', 'category_route', 'stable_guarded_module_routes', 'module_route_aggregation', 'module_catalog_composition'],
+    depends: ['app/adaptive_app_shell', 'app/creator_home_page', 'app/module_home_page', 'module_registry', 'modules'],
   });
   writeIndex({
     rel: 'lib/module_registry/AI_ANALYSIS.md',
     id: 'flutter_forge_app.module_registry',
     kind: 'registry_index',
-    entrypoints: ['module_entry.dart', 'module_category.dart', 'module_catalog_utils.dart'],
-    owns: ['module_entry_model', 'module_category_enum', 'difficulty_enum', 'module_status_enum', 'native_web_availability', 'module_catalog_filtering', 'category_route_rebasing'],
+    entrypoints: ['app_platform_snapshot.dart', 'module_entry.dart', 'module_category.dart', 'module_platform_support.dart', 'module_catalog_utils.dart'],
+    owns: ['platform_snapshot', 'product_target_platforms', 'module_entry_model', 'module_category_enum', 'difficulty_enum', 'module_status_enum', 'excluded_platform_availability', 'module_catalog_filtering', 'category_route_rebasing'],
     depends: ['flutter_material', 'go_router'],
   });
   writeIndex({
@@ -1136,7 +1374,7 @@ function writeModuleIndexes() {
 }
 
 function writeModuleContracts() {
-  for (const { category, id: module, route, status, depends, supportedPlatforms, supportsWeb } of modules) {
+  for (const { category, id: module, route, status, depends, excludedPlatforms = [] } of modules) {
     const dir = path.join(appRoot, 'lib/modules', category, module);
     const entrypoints = [];
     for (const item of ['module_entry.dart', 'module_root.dart', 'module_routes.dart']) {
@@ -1157,8 +1395,10 @@ function writeModuleContracts() {
       },
       route,
       category,
-      ...(supportedPlatforms ? { supported_platforms: supportedPlatforms } : {}),
-      ...(supportsWeb !== undefined ? { supports_web: supportsWeb } : {}),
+      platform_support: {
+        target_platforms: ['android', 'iOS', 'macOS', 'web', 'windows'],
+        excluded_platforms: excludedPlatforms,
+      },
       entrypoints: entrypoints.length ? entrypoints : ['module_entry.dart'],
       owns: ['module_entry', 'module_ui', 'module_docs'],
       depends,

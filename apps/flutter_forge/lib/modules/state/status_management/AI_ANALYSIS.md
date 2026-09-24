@@ -10,6 +10,16 @@
   },
   "route": "/status-management",
   "category": "state",
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": []
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_routes.dart",

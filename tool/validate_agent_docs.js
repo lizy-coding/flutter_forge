@@ -148,11 +148,18 @@ if (moduleIndex) {
     if (contract.node?.status !== mod.status) {
       failures.push(`${mod.analysis}:index_mismatch:status`);
     }
-    if ('supports_web' in mod && typeof mod.supports_web !== 'boolean') {
-      failures.push(`lib/AI_MODULE_INDEX.md:${mod.id}:supports_web_not_boolean`);
+    const targetPlatforms = ['android', 'iOS', 'macOS', 'web', 'windows'];
+    if (JSON.stringify(mod.platform_support?.target_platforms) !== JSON.stringify(targetPlatforms)) {
+      failures.push(`lib/AI_MODULE_INDEX.md:${mod.id}:platform_target_set_invalid`);
     }
-    if (contract.supports_web !== mod.supports_web) {
-      failures.push(`${mod.analysis}:index_mismatch:supports_web`);
+    const excludedPlatforms = mod.platform_support?.excluded_platforms;
+    if (!Array.isArray(excludedPlatforms)) {
+      failures.push(`lib/AI_MODULE_INDEX.md:${mod.id}:excluded_platforms_not_array`);
+    } else if (excludedPlatforms.some((platform) => !targetPlatforms.includes(platform))) {
+      failures.push(`lib/AI_MODULE_INDEX.md:${mod.id}:excluded_platform_outside_target_set`);
+    }
+    if (JSON.stringify(contract.platform_support) !== JSON.stringify(mod.platform_support)) {
+      failures.push(`${mod.analysis}:index_mismatch:platform_support`);
     }
   }
 
@@ -234,7 +241,7 @@ if (moduleIndex) {
     }
   }
 
-  // ── phase 5b: single-source consistency — generate source vs index vs route table ──
+  // ── phase 5b: single-source consistency — generate source vs index vs manifest ──
 
   function readGenerateSourceModules() {
     const source = fs.readFileSync(path.join(root, 'tool/generate_agent_indexes.js'), 'utf8');
@@ -253,9 +260,19 @@ if (moduleIndex) {
 
   const generateModules = readGenerateSourceModules();
   const generateById = new Map(generateModules.map((m) => [m.id, m]));
+  const manifestContent = fileExists('lib/module_registry/module_manifest.dart')
+    ? fs.readFileSync(resolveProjectPath('lib/module_registry/module_manifest.dart'), 'utf8')
+    : '';
   const routeTableContent = fileExists('lib/app/router/app_route_table.dart')
     ? fs.readFileSync(resolveProjectPath('lib/app/router/app_route_table.dart'), 'utf8')
     : '';
+
+  if (routeTableContent.includes("../../modules/")) {
+    failures.push('app_route_table.dart:must_not_import_feature_modules');
+  }
+  if (routeTableContent && !routeTableContent.includes('moduleManifest')) {
+    failures.push('app_route_table.dart:missing_module_manifest_composition');
+  }
 
   for (const mod of moduleIndex.modules ?? []) {
     const gen = generateById.get(mod.id);
@@ -268,8 +285,8 @@ if (moduleIndex) {
         failures.push(`generate source:${mod.id}:mismatch:${key} index=${mod[key]} source=${gen[key]}`);
       }
     }
-    if (routeTableContent && !routeTableContent.includes(`path: '${mod.route}'`)) {
-      failures.push(`app_route_table.dart:missing_module_path:${mod.route}`);
+    if (manifestContent && !manifestContent.includes(`path: '${mod.route}'`)) {
+      failures.push(`module_manifest.dart:missing_module_path:${mod.route}`);
     }
   }
   for (const gen of generateModules) {

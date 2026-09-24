@@ -1,12 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../module_registry/app_platform_snapshot.dart';
 import '../module_registry/module_catalog_utils.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import '../shared/multi_window/multi_window_manager.dart';
-import 'category_window_app.dart';
-import 'navigation_policy.dart';
+import 'module_home_page.dart';
 
 /// Selects the platform-appropriate way to open a module category.
 ///
@@ -15,31 +14,24 @@ import 'navigation_policy.dart';
 class CategoryNavigation {
   const CategoryNavigation._();
 
-  static CategoryNavigationMode modeFor(BuildContext context) {
-    return NavigationPolicy.resolve(
-      platform: defaultTargetPlatform,
-      width: MediaQuery.sizeOf(context).width,
-      multiWindowSupported: MultiWindowManager.isSupported,
-      isWeb: kIsWeb,
-    );
-  }
-
-  static Future<void> open(
+  static Future<void> openInApp(
     BuildContext context, {
     required ModuleCategory category,
     required List<ModuleEntry> modules,
+    required AppPlatformSnapshot platform,
   }) async {
-    if (modeFor(context) == CategoryNavigationMode.separateWindow) {
-      await MultiWindowManager.instance.createCategoryWindow(category);
-      return;
-    }
-
-    if (!context.mounted) return;
     final filtered = filterModulesByCategory(modules, category);
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
-        builder: (_) => CategoryHomePage(category: category, modules: filtered),
+        builder: (_) => CategoryHomePage(
+          category: category,
+          modules: filtered,
+          platform: platform,
+        ),
       ),
     );
   }
+
+  static Future<String?> openInNewWindow(ModuleCategory category) =>
+      MultiWindowManager.instance.createCategoryWindow(category);
 }

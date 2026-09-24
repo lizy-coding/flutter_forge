@@ -10,9 +10,22 @@
   },
   "route": "/usb-detector",
   "category": "platform",
-  "supported_platforms": [
-    "android"
-  ],
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ]
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart"

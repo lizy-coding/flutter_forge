@@ -10,7 +10,18 @@
   },
   "route": "/isolate-basic",
   "category": "async",
-  "supports_web": false,
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": [
+      "web"
+    ]
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart",

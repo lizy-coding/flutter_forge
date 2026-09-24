@@ -17,6 +17,7 @@
     "next_host": "web",
     "target_hosts": [
       "android",
+      "ios",
       "macos",
       "web",
       "windows"
@@ -27,7 +28,8 @@
     "bootstrap": "lib/app/app_bootstrap.dart",
     "app": "lib/app/app.dart",
     "router": "lib/app/router/app_router.dart",
-    "route_table": "lib/app/router/app_route_table.dart"
+    "route_table": "lib/app/router/app_route_table.dart",
+    "module_manifest": "lib/module_registry/module_manifest.dart"
   },
   "repository": {
     "layout": "pub_workspace",
@@ -109,6 +111,7 @@
       "path": "lib/module_registry",
       "owns": [
         "module_metadata",
+        "platform_snapshot",
         "catalog_operations"
       ],
       "may_depend_on": [
@@ -147,7 +150,7 @@
       "module_entry.dart",
       "AI_ANALYSIS.md"
     ],
-    "required_registration": "lib/app/router/app_route_table.dart",
+    "required_registration": "lib/module_registry/module_manifest.dart",
     "required_metadata": [
       "category",
       "difficulty",
@@ -168,7 +171,17 @@
     "compact_width_breakpoint_dp": 600,
     "mobile_window_policy": "in_app_navigation_only",
     "web_window_policy": "in_app_navigation_only",
-    "web_platform_detection": "kIsWeb_before_defaultTargetPlatform",
+    "platform_snapshot": "bootstrap_initialized_process_immutable",
+    "target_platforms": [
+      "android",
+      "ios",
+      "macos",
+      "web",
+      "windows"
+    ],
+    "non_target_platforms": "unsupported",
+    "module_platform_semantics": "target_platform_available_unless_excluded",
+    "unsupported_route": "stable_guarded_module_route",
     "web_release_build": "bash tool/build_web_release.sh",
     "web_startup_shell": "web/index.html + web/flutter_bootstrap.js",
     "platform_capability_contract": "business_neutral_interface"

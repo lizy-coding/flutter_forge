@@ -10,9 +10,21 @@
   },
   "route": "/gcode-visualizer",
   "category": "ui",
-  "supported_platforms": [
-    "macOS"
-  ],
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": [
+      "android",
+      "iOS",
+      "web",
+      "windows"
+    ]
+  },
   "entrypoints": [
     "module_entry.dart",
     "pages",

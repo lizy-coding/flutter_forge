@@ -10,9 +10,19 @@
   },
   "route": "/flutter-scene-3d",
   "category": "ui",
-  "supported_platforms": [
-    "macOS"
-  ],
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": [
+      "iOS",
+      "web"
+    ]
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart"

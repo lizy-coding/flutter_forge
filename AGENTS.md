@@ -1,148 +1,72 @@
-# AGENTS.md - Agent 维护契约
+# AGENTS.md — Agent 开发规则
 
-> 本文档约束所有 AI agent 对本项目的修改行为。修改代码前必须阅读。
+本文件是项目级 Agent 入口。以可执行规则为主；项目事实以机器契约和代码为准。
 
-## 前置阅读
+## 修改前必读
 
-执行任何修改前，agent 必须读取：
-1. `AI_ANALYSIS_SCHEMA.json` - agent 文档 schema
-2. `AI_PROJECT_CONTEXT.md` - 机器可解析项目契约
-3. `REFACTOR_PLAN.md` - 机器可解析任务队列
-4. 目标模块的 `AI_ANALYSIS.md` - 机器可解析模块契约
+1. `AI_ANALYSIS_SCHEMA.json`
+2. `AI_PROJECT_CONTEXT.md`
+3. `REFACTOR_PLAN.md`
+4. 目标目录最近的 `AI_ANALYSIS.md`
 
-涉及平台、导航拓扑或模块准入时，同时读取 `CONTEXT.md` 和相关 `docs/adr/`。
+涉及平台、导航、模块准入或发布时，再读 `CONTEXT.md` 与相关 `docs/adr/`。`AI_*.md` 和 `REFACTOR_PLAN.md` 是 JSON 机器契约，禁止加入 Markdown 段落。
 
-以上 agent 文档均为 JSON，禁止加入 Markdown、自然语言段落或手工文件清单。
+## 事实源与边界
 
-## 新增模块规则
+- 模块、路由、平台限制及 Agent 文档的生成源：`tool/generate_agent_indexes.js`。
+- 生成物禁止手改；修改生成源后运行 `bash tool/generate_harness_ai_analysis.sh`。
+- `app/` 负责启动、应用壳和导航；`module_registry/` 负责模块元数据与平台判定。
+- `shared/` 只放业务无关能力，不依赖 `app/` 或 `modules/`。
+- `modules/` 是学习模块叶子节点，模块之间禁止直接依赖。
+- 工作区内部包位于 `packages/`；禁止引用仓库外 `path: ../...` 依赖。
 
-新模块 **必须** 包含以下内容，否则视为不合规：
+## 模块规则
 
-| 必需项 | 说明 |
-|--------|------|
-| `module_entry.dart` | 导出 `*Entry` Widget，作为模块入口 |
-| `AI_ANALYSIS.md` | 模块机器契约：route、category、status、entrypoints、owns、depends、analysis_parent、validation |
-| 路由注册 | 在 `apps/flutter_forge/lib/app/router/app_route_table.dart` 的 `_modules` 中注册 |
-| 模块元数据 | `ModuleEntry` 必须填写 `category`、`difficulty`、`concepts`、`estimatedMinutes`、`status`、`subtitle` |
-| 教学页面 | 至少 1 个页面使用 `lib/shared/learning` 中的教学模板组件（`LearningScaffold` 等） |
+新增模块必须同时具备：
 
-平台可用性规则：
+- `module_entry.dart`，导出 `*Entry` Widget。
+- `AI_ANALYSIS.md` 模块契约。
+- 生成器中的模块注册、路由和完整 `ModuleEntry` 元数据。
+- 至少一个 `lib/shared/learning` 教学模板组件。
+- 对应模块测试；涉及状态、异步或平台能力时补行为测试。
 
-- `ModuleEntry.supportedPlatforms == null` 表示模块默认支持所有平台。
-- 平台相关模块必须显式填写 `supportedPlatforms`，并在字段旁保留语义清晰的注释。
-- 平台判定必须通过 `module_registry/module_catalog_utils.dart` 集中执行，模块页面不得自行调用 `Platform` API 决定目录可见性。
-- 不支持的模块保留在目录中，显示不可用状态；其模块路由不注册。
-- 平台可用性与 `ModuleStatus`（学习质量状态）分离，不能用 `pending/ready/recommended` 表达平台限制。
+标题使用中文学习语义，禁止只有工程目录名或无解释、无交互的孤立 Demo。
 
-导航拓扑规则：
+## 平台与导航
 
-- Android、iOS 和 Web 永远使用应用内导航，不创建业务多窗口。
-- 小于 `600dp` 的紧凑窗口使用应用内导航。
-- 只有支持多窗口的桌面平台且窗口宽度不小于 `600dp` 时，才允许创建分类窗口。
-- UI 必须通过 `NavigationPolicy` 获取导航模式，不能直接用 `Platform.isMacOS` 等条件决定业务导航。
-- `MultiWindowManager` 只负责桌面窗口生命周期，不负责移动端导航策略。
+- 平台限制用 `ModulePlatformSupport.excludedPlatforms` 表达；普通模块使用空排除集合。
+- 平台模块必须在生成源中显式声明排除集合并说明依据。
+- 目录和路由统一通过 `module_registry` 判定；模块页面不得自行决定目录可见性。
+- 不支持的平台保留稳定模块路径，并进入统一不可用说明页。
+- 平台可用性与 `ModuleStatus.pending/ready/recommended` 相互独立。
+- Android、iOS、Web 和小于 `600dp` 的窗口使用应用内导航。
+- 仅桌面宽窗口且多窗口能力可用时创建分类窗口。
+- UI 通过 `NavigationPolicy` 选择导航模式；`MultiWindowManager` 只管理桌面窗口生命周期。
+- 平台接入、构建通过和真机/真实主机验收必须分开描述；不得扩大证据范围。
 
-## 初版封板与业务准入
+## 修改流程
 
-- 当前封板目标是 PC 基线（macOS/Windows）；Android 是非阻塞兼容轨道，不得被描述为已完成的全平台封板。
-- 在 PC 封板完成前，禁止新增依赖多窗口、原生插件或复杂跨平台状态的新业务模块。
-- PC 封板至少需要三分类窗口创建、重复打开复用、关闭后重开、无黑屏、无 `Invalid engine handle`，以及 macOS/Windows 构建证据。
-- Windows 构建必须在 Windows CI 或 Windows 主机完成；macOS 主机上的拒绝结果不能作为 Windows 通过证据。
-- Android 业务必须保持单窗口；Android 平台能力未完成时，模块必须声明平台限制并提供明确不可用状态。
-- 新业务模块必须通过 Agent Hub 冻结任务、模块契约、Tier 1 测试；涉及状态、异步或平台能力时必须补充行为测试。
-- 模块脚手架属于封板后的效率建设，不作为当前封板前置条件。
+1. 检查 `git status`，保留用户已有改动。
+2. 读取目标契约和代码，修改最小必要范围。
+3. 模块、依赖、路由、层级或平台声明变化时，同步更新生成源。
+4. 逻辑变化补定向测试；教学 UI 变化补人工验收或截图说明。
+5. 执行 `bash tool/quality_gate.sh`。
 
-## 修改模块规则
+质量门禁必须通过：Agent 文档无漂移、Dart 格式无漂移、bare `flutter analyze` 无 issue、全量测试通过、测试布局合规、FlutterGuard 无 HIGH。
 
-1. 修改前先读取该模块的 `AI_ANALYSIS.md`
-2. 修改模块、依赖、路由或层级时，更新 `tool/generate_agent_indexes.js` 中的生成源
-3. 执行 `bash tool/generate_harness_ai_analysis.sh` 重新生成并校验 agent 文档
-4. 如果修改了路由注册，同步更新元数据字段
+## Git 与发布
 
-## 验收规则
+- `dev` 是开发分支；功能、修复、文档和发版准备先进入 `dev`。
+- `master` 只能通过从 `dev` 发起的 Pull Request 合入；禁止直接或强制推送。
+- 未经用户明确授权，不提交、不推送、不合并，不处理无关工作树改动。
+- 禁止修改 `.github/workflows/ci.yml`、`tool/quality_gate.sh` 或其他门禁脚本语义，除非任务显式授权 `packaging_change` 并要求人工验收。
+- 业务仓库 CI 只能构建暂存产物；GitHub Release 必须由 Agent Hub `release_hosting` 的 `release-plan` / `release-run --execute` 流程执行。
 
-每次代码修改后 **必须** 执行：
+## 常用命令
+
 ```bash
+bash tool/generate_harness_ai_analysis.sh
 bash tool/quality_gate.sh
-```
-
-等效手动步骤（quality_gate.sh 内部执行顺序）:
-1. `bash tool/generate_harness_ai_analysis.sh` + `git diff --exit-code` (文档不漂移)
-2. `dart format .` + `git diff --exit-code -- '*.dart'` (格式不漂移)
-3. `flutter analyze` (bare：info/warning 同样视为失败)
-4. `bash tool/test_all.sh` (全部测试通过)
-5. `bash tool/verify_test_layout.sh` (测试目录布局合规并输出模块测试覆盖报告)
-6. `cd apps/flutter_forge && dart run flutterguard_cli:flutterguard scan . --fail-on high` (无 HIGH 问题，仅本地执行)
-
-- `flutter analyze` 必须通过（bare，不允许任何 issue，含 info）
-- `flutterguard scan --fail-on high` 必须通过，不允许引入高优问题（仅本地；CI 不运行 flutterguard）
-- 远端打包门禁为 `.github/workflows/ci.yml`，同样使用 bare `flutter analyze`，是唯一权威的远端验收
-- 涉及逻辑代码时补充测试
-- 涉及 UI 教学页时进行人工验收或截图说明
-
-## 禁止事项
-
-| 禁止 | 说明 |
-|------|------|
-| 孤立 demo | 禁止新增无解释、无交互的粗糙 demo 页面 |
-| 纯工程名 | 禁止首页出现纯工程目录名（如 `tree_state`），必须使用中文学习语义标题 |
-| 跳过分析文档 | 禁止修改模块后不更新 `AI_ANALYSIS.md` |
-| 绕过分析 | 禁止绕过 `flutter analyze` 直接提交 |
-| 破坏元数据 | 禁止注册 `ModuleEntry` 时省略 `subtitle`、`category`、`difficulty` 等字段 |
-| 修改打包门禁 | 禁止修改 `.github/workflows/ci.yml`、`tool/quality_gate.sh` 及其余 `tool/*.sh` 门禁脚本的语义，除非任务显式声明并经人工验收（agent-hub 侧同样受 `packaging_change` 保护路径守卫约束）。`.github/workflows/release.yml` 是首个安装器发布任务明确授权的打包工作流；后续修改仍需显式 `packaging_change` 任务和人工验收。 |
-
-发布工作流规则：业务仓库 CI 只能构建并上传暂存产物，禁止直接创建、编辑或上传 GitHub Release。所有发布必须由 Agent Hub 的 `release_hosting` 图通过 `release-plan` 冻结 `ReleaseProgram`，再由 `release-run --execute` 执行；绕过 Agent Hub 的发布入口视为不合规。
-
-## Git 分支规则
-
-- `dev` 是持续开发与日常推送分支，所有功能、修复、文档和发版准备改动先进入 `dev`。
-- `master` 是受保护的稳定分支，禁止直接推送、强制推送或删除，只能通过从 `dev` 发起的 Pull Request 合入。
-- 合入 `master` 前必须通过仓库 CI 的 `quality-gate`，所有 review thread 必须解决。当前仓库只有单一管理员，强制批准数为 0，避免 PR 作者无法自审形成死锁；新增具备 write 权限的维护者后再恢复至少 1 次批准。
-- `master` 合入后，应将其合并拓扑同步回 `dev`，避免 GitHub 因 PR merge commit 显示 `master` 虚假领先；不得通过重写 `dev` 历史处理该差异。
-- Agent 不得使用管理员绕过权限直接更新 `master`。标签与 Release 仍遵循 Agent Hub `release_hosting` 规则。
-
-## Harless 巡检职责
-
-定期执行以下检查：
-
-1. 扫描 `apps/flutter_forge/lib/modules/` 下所有模块目录，检查是否都在 `_modules` 中注册
-2. 检查每个模块是否有 `AI_ANALYSIS.md`
-3. 检查重点模块是否使用教学模板（`lib/shared/learning`）
-4. 检查 `ModuleEntry` 元数据是否完整（所有必填字段）
-5. 标记低质量模块的 `status` 为 `ModuleStatus.pending`
-6. 检查 `flutter analyze` 和 `dart format` 是否通过
-
-## 启用预提交钩子
-
-```bash
+bash tool/build_web_release.sh
 git config core.hooksPath .githooks
-```
-
-这会在每次 `git commit` 前自动执行 FlutterGuard 扫描，阻止引入高优问题的提交。
-
-## 模块分类枚举
-
-```dart
-ModuleCategory.basic       // 基础机制
-ModuleCategory.async       // 异步并发
-ModuleCategory.state       // 状态管理
-ModuleCategory.ui          // UI 与动效
-ModuleCategory.popupTable  // 弹窗与列表
-ModuleCategory.platform    // 网络与平台
-```
-
-## 难度等级枚举
-
-```dart
-Difficulty.beginner       // 入门
-Difficulty.intermediate   // 进阶
-Difficulty.advanced       // 实战
-```
-
-## 模块状态枚举
-
-```dart
-ModuleStatus.pending      // 待整改
-ModuleStatus.ready        // 可学习
-ModuleStatus.recommended  // 推荐
 ```

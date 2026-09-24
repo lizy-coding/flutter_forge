@@ -10,6 +10,16 @@
   },
   "route": "/font-picker",
   "category": "ui",
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": []
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart",

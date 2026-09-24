@@ -10,11 +10,18 @@
   },
   "route": "/file-picker",
   "category": "platform",
-  "supported_platforms": [
-    "macOS",
-    "windows"
-  ],
-  "supports_web": true,
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": [
+      "iOS"
+    ]
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart",

@@ -1,6 +1,6 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
-  "registry": "lib/app/router/app_route_table.dart",
+  "registry": "lib/module_registry/module_manifest.dart",
   "count": 23,
   "modules": [
     {
@@ -14,6 +14,16 @@
         "module_registry",
         "go_router"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/basic/tree_state/AI_ANALYSIS.md"
     },
     {
@@ -27,6 +37,16 @@
         "module_registry",
         "go_router"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/basic/microtask/AI_ANALYSIS.md"
     },
     {
@@ -39,6 +59,16 @@
         "shared_learning",
         "module_registry"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/basic/debounce_throttle/AI_ANALYSIS.md"
     },
     {
@@ -52,6 +82,16 @@
         "module_registry",
         "go_router"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/async/stream_subscription/AI_ANALYSIS.md"
     },
     {
@@ -65,7 +105,18 @@
         "module_registry",
         "go_router"
       ],
-      "supports_web": false,
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "web"
+        ]
+      },
       "analysis": "lib/modules/async/isolate_basic/AI_ANALYSIS.md"
     },
     {
@@ -78,7 +129,18 @@
         "shared_learning",
         "module_registry"
       ],
-      "supports_web": false,
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "web"
+        ]
+      },
       "analysis": "lib/modules/async/isolate_task_manager/AI_ANALYSIS.md"
     },
     {
@@ -95,6 +157,16 @@
         "module_registry",
         "go_router"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/state/status_management/AI_ANALYSIS.md"
     },
     {
@@ -109,6 +181,16 @@
         "provider",
         "module_registry"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/state/flutter_ioc/AI_ANALYSIS.md"
     },
     {
@@ -122,6 +204,16 @@
         "shared_preferences",
         "module_registry"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/state/local_persistence/AI_ANALYSIS.md"
     },
     {
@@ -136,9 +228,21 @@
         "file_picker_bridge",
         "module_registry"
       ],
-      "supported_platforms": [
-        "macOS"
-      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "android",
+          "iOS",
+          "web",
+          "windows"
+        ]
+      },
       "analysis": "lib/modules/ui/gcode_visualizer/AI_ANALYSIS.md"
     },
     {
@@ -152,6 +256,16 @@
         "provider",
         "module_registry"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/ui/adsorption_line/AI_ANALYSIS.md"
     },
     {
@@ -165,6 +279,16 @@
         "module_registry",
         "go_router"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/ui/download_animation/AI_ANALYSIS.md"
     },
     {
@@ -179,6 +303,16 @@
         "module_registry",
         "go_router"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/ui/font_picker/AI_ANALYSIS.md"
     },
     {
@@ -193,9 +327,19 @@
         "vector_math",
         "module_registry"
       ],
-      "supported_platforms": [
-        "macOS"
-      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web"
+        ]
+      },
       "analysis": "lib/modules/ui/flutter_scene_3d/AI_ANALYSIS.md"
     },
     {
@@ -208,6 +352,16 @@
         "shared_learning",
         "module_registry"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/popup_table/popup_widgets/AI_ANALYSIS.md"
     },
     {
@@ -221,6 +375,16 @@
         "module_registry",
         "go_router"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/popup_table/popup_list_interaction/AI_ANALYSIS.md"
     },
     {
@@ -234,6 +398,16 @@
         "two_dimensional_scrollables",
         "module_registry"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/popup_table/scroll_table/AI_ANALYSIS.md"
     },
     {
@@ -246,6 +420,16 @@
         "shared_learning",
         "module_registry"
       ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/popup_table/overlay_follow_compare/AI_ANALYSIS.md"
     },
     {
@@ -260,7 +444,16 @@
         "module_registry",
         "go_router"
       ],
-      "supports_web": true,
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
       "analysis": "lib/modules/platform/dio_interceptor/AI_ANALYSIS.md"
     },
     {
@@ -274,9 +467,22 @@
         "device_info_plus",
         "module_registry"
       ],
-      "supported_platforms": [
-        "android"
-      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ]
+      },
       "analysis": "lib/modules/platform/usb_detector/AI_ANALYSIS.md"
     },
     {
@@ -290,11 +496,18 @@
         "file_picker_bridge",
         "module_registry"
       ],
-      "supported_platforms": [
-        "macOS",
-        "windows"
-      ],
-      "supports_web": true,
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS"
+        ]
+      },
       "analysis": "lib/modules/platform/file_picker/AI_ANALYSIS.md"
     },
     {
@@ -311,11 +524,18 @@
         "video_player_win",
         "module_registry"
       ],
-      "supported_platforms": [
-        "macOS",
-        "windows"
-      ],
-      "supports_web": true,
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS"
+        ]
+      },
       "analysis": "lib/modules/platform/online_video_player/AI_ANALYSIS.md"
     },
     {
@@ -330,11 +550,19 @@
         "webview_flutter",
         "webview_windows"
       ],
-      "supported_platforms": [
-        "android",
-        "macOS",
-        "windows"
-      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web"
+        ]
+      },
       "analysis": "lib/modules/platform/webview/AI_ANALYSIS.md"
     }
   ]

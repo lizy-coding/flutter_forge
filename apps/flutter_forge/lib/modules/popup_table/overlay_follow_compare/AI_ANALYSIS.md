@@ -10,6 +10,16 @@
   },
   "route": "/overlay-compare",
   "category": "popup_table",
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": []
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart",

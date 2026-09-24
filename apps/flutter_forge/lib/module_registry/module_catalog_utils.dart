@@ -1,6 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app_platform_snapshot.dart';
 import 'module_category.dart';
 import 'module_entry.dart';
 
@@ -11,34 +12,33 @@ List<ModuleEntry> filterModulesByCategory(
   return allModules.where((module) => module.category == category).toList();
 }
 
-bool isModuleAvailable(
-  ModuleEntry module, [
-  TargetPlatform? platform,
-  bool? web,
-]) {
-  return module.isSupportedOn(
-    platform ?? defaultTargetPlatform,
-    isWeb: web ?? kIsWeb,
-  );
-}
+bool isModuleAvailable(ModuleEntry module, AppPlatformSnapshot platform) =>
+    module.isSupportedOn(platform);
 
 List<ModuleEntry> availableModules(
-  List<ModuleEntry> modules, [
-  TargetPlatform? platform,
-  bool? web,
-]) {
+  List<ModuleEntry> modules,
+  AppPlatformSnapshot platform,
+) {
   return modules
-      .where((module) => isModuleAvailable(module, platform, web))
+      .where((module) => isModuleAvailable(module, platform))
       .toList();
 }
 
-List<GoRoute> buildCategoryRoutes(List<ModuleEntry> modules) {
+List<GoRoute> buildCategoryRoutes(
+  List<ModuleEntry> modules,
+  AppPlatformSnapshot platform, {
+  required Widget Function(BuildContext, ModuleEntry) unsupportedBuilder,
+}) {
   return [
-    for (final module in availableModules(modules))
+    for (final module in modules)
       GoRoute(
         path: _stripLeadingSlash(module.path),
-        builder: (context, state) => module.builder(context),
-        routes: _rebasedRoutes(module.routes),
+        builder: (context, state) => isModuleAvailable(module, platform)
+            ? module.builder(context)
+            : unsupportedBuilder(context, module),
+        routes: isModuleAvailable(module, platform)
+            ? _rebasedRoutes(module.routes)
+            : const [],
       ),
   ];
 }

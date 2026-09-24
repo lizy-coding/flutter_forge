@@ -10,11 +10,19 @@
   },
   "route": "/webview",
   "category": "platform",
-  "supported_platforms": [
-    "android",
-    "macOS",
-    "windows"
-  ],
+  "platform_support": {
+    "target_platforms": [
+      "android",
+      "iOS",
+      "macOS",
+      "web",
+      "windows"
+    ],
+    "excluded_platforms": [
+      "iOS",
+      "web"
+    ]
+  },
   "entrypoints": [
     "module_entry.dart",
     "module_root.dart"

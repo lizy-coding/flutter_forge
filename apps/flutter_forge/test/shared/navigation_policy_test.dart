@@ -1,72 +1,36 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_forge_app/app/navigation_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('Android always uses in-app navigation', () {
+  test('compact windows use hidden navigation', () {
     expect(
-      NavigationPolicy.resolve(
-        platform: TargetPlatform.android,
-        width: 1200,
-        multiWindowSupported: true,
-      ),
-      CategoryNavigationMode.inApp,
+      NavigationPolicy.layoutFor(width: 599, sidebarExpanded: true),
+      AppNavigationLayout.compact,
     );
   });
 
-  test('iOS always uses in-app navigation', () {
+  test('medium windows use a navigation rail', () {
     expect(
-      NavigationPolicy.resolve(
-        platform: TargetPlatform.iOS,
-        width: 1200,
-        multiWindowSupported: true,
-      ),
-      CategoryNavigationMode.inApp,
+      NavigationPolicy.layoutFor(width: 600, sidebarExpanded: true),
+      AppNavigationLayout.rail,
+    );
+    expect(
+      NavigationPolicy.layoutFor(width: 1023, sidebarExpanded: true),
+      AppNavigationLayout.rail,
     );
   });
 
-  test('Web always uses in-app navigation on a desktop browser', () {
+  test('expanded windows use a sidebar', () {
     expect(
-      NavigationPolicy.resolve(
-        platform: TargetPlatform.macOS,
-        width: 1200,
-        multiWindowSupported: true,
-        isWeb: true,
-      ),
-      CategoryNavigationMode.inApp,
+      NavigationPolicy.layoutFor(width: 1024, sidebarExpanded: true),
+      AppNavigationLayout.sidebar,
     );
   });
 
-  test('compact desktop windows use in-app navigation', () {
+  test('manual collapse keeps a wide window on the rail', () {
     expect(
-      NavigationPolicy.resolve(
-        platform: TargetPlatform.macOS,
-        width: 599,
-        multiWindowSupported: true,
-      ),
-      CategoryNavigationMode.inApp,
-    );
-  });
-
-  test('600dp desktop windows can use separate windows', () {
-    expect(
-      NavigationPolicy.resolve(
-        platform: TargetPlatform.macOS,
-        width: 600,
-        multiWindowSupported: true,
-      ),
-      CategoryNavigationMode.separateWindow,
-    );
-  });
-
-  test('unsupported multi-window hosts fall back to in-app navigation', () {
-    expect(
-      NavigationPolicy.resolve(
-        platform: TargetPlatform.linux,
-        width: 1200,
-        multiWindowSupported: false,
-      ),
-      CategoryNavigationMode.inApp,
+      NavigationPolicy.layoutFor(width: 1440, sidebarExpanded: false),
+      AppNavigationLayout.rail,
     );
   });
 }

@@ -19,6 +19,7 @@ class CustomWindow: NSWindow {
             defer: false)
 
         self.isReleasedWhenClosed = false
+        self.contentMinSize = NSSize(width: 800, height: 600)
     }
 
     deinit {

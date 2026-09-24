@@ -5,6 +5,7 @@
   "completed_milestones": [
     "directory_layers",
     "shared_package_extraction",
+    "module_manifest_route_composition",
     "module_analysis_coverage",
     "app_navigation_boundary",
     "host_bootstrap_boundary",
@@ -12,7 +13,8 @@
     "agent_takeover_ready",
     "pc_window_lifecycle_baseline",
     "pc_build_matrix",
-    "flutter_scene_3d_macos_baseline"
+    "flutter_scene_3d_macos_baseline",
+    "platform_snapshot_guarded_routes"
   ],
   "dependency_migration": {
     "layout": "pub_workspace",
@@ -92,7 +94,12 @@
       "acceptance": [
         "no_windows_hardcode",
         "android_system_info",
-        "error_branch_test"
+        "error_branch_test",
+        "mobile_usb_route_disabled"
+      ],
+      "evidence": [
+        "USB module remains catalog-visible but has no supported host routes",
+        "generic Android USB monitoring is deferred until a concrete OTG workflow exists"
       ]
     },
     {
@@ -285,6 +292,175 @@
         "quality gate passed all six stages on 2026-09-13",
         "Windows, mobile and Web remain unavailable pending separate evidence"
       ]
+    },
+    {
+      "id": "flutter_scene_3d_camera_motion",
+      "priority": 14,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart"
+      ],
+      "acceptance": [
+        "bounded_two_axis_orbit",
+        "direct_manipulation_takeover",
+        "bounded_inertial_coasting",
+        "keyboard_and_reduced_motion",
+        "macos_motion_visual_acceptance"
+      ],
+      "evidence": [
+        "controller and widget automation pass for takeover, bounds, inertia, mode comparison and reduced motion",
+        "expanded zoom bounds and the single-scene orientation thumbnail have controller and widget coverage",
+        "macOS Debug build passes and the real window renders the updated 3D first frame",
+        "macOS pointer, keyboard and motion-feel acceptance remains required for completion"
+      ]
+    },
+    {
+      "id": "flutter_scene_3d_scene_picking",
+      "priority": 15,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d"
+      ],
+      "acceptance": [
+        "nearest_visible_part_selection",
+        "drag_does_not_select",
+        "selection_highlight_and_details",
+        "focus_selected_part",
+        "clear_selection",
+        "macos_retina_pointer_acceptance"
+      ],
+      "evidence": [
+        "selection state and widget focus flow have automated coverage",
+        "runtime uses screenPointToRay and Scene.raycast without physics",
+        "macOS Retina pointer and rendered highlight acceptance remains required"
+      ]
+    },
+    {
+      "id": "flutter_scene_3d_windows_admission",
+      "priority": 16,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/windows/runner/main.cpp",
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart"
+      ],
+      "acceptance": [
+        "windows_catalog_and_route_admission",
+        "desktop_3d_viewer_automated_ui_flow",
+        "windows_debug_and_release_build",
+        "impeller_flutter_gpu_first_frame",
+        "windows_pointer_keyboard_and_dpi",
+        "selection_highlight_and_focus",
+        "windows_installer_launch"
+      ],
+      "evidence": [
+        "Windows runner enables Flutter GPU through DartProject",
+        "catalog and route contract admits macOS and Windows",
+        "desktop integration flow covers navigation, camera input, selection, focus, clear and return",
+        "Windows host build, GPU, DPI, interaction, and installer evidence remains required"
+      ]
+    },
+    {
+      "id": "flutter_scene_3d_android_view_only_admission",
+      "priority": 17,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/android/app/src/main/AndroidManifest.xml",
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/test/modules/ui/flutter_scene_3d"
+      ],
+      "acceptance": [
+        "android_flutter_gpu_enabled",
+        "android_catalog_and_route_admission",
+        "android_view_only_scene",
+        "android_controls_selection_and_focus_hidden",
+        "android_debug_apk_build",
+        "android_gpu_first_frame_manual_evidence"
+      ],
+      "evidence": [
+        "Android manifest enables Flutter GPU",
+        "module policy limits Android to automatic view-only rendering",
+        "catalog and widget contracts cover Android admission and hidden controls",
+        "Android emulator or device automation is intentionally deferred by scope",
+        "Android host build and GPU first-frame evidence remains required"
+      ]
+    },
+    {
+      "id": "android_online_video_playback",
+      "priority": 18,
+      "status": "pending",
+      "targets": [
+        "apps/flutter_forge/android/app/src/main/AndroidManifest.xml",
+        "apps/flutter_forge/lib/modules/platform/online_video_player",
+        "apps/flutter_forge/test/modules/platform/online_video_player"
+      ],
+      "acceptance": [
+        "android_catalog_and_route_admission",
+        "android_release_internet_permission",
+        "compact_video_controls",
+        "android_debug_apk_build",
+        "android_real_video_playback"
+      ],
+      "evidence": [
+        "video_player_android is registered in GeneratedPluginRegistrant",
+        "main Android manifest grants INTERNET for release playback",
+        "catalog and 320dp widget contracts cover Android entry",
+        "Android device playback evidence remains required"
+      ]
+    },
+    {
+      "id": "android_file_picker_admission",
+      "priority": 19,
+      "status": "pending",
+      "targets": [
+        "packages/file_picker_bridge",
+        "apps/flutter_forge/lib/modules/platform/file_picker",
+        "apps/flutter_forge/test/modules/platform/file_picker"
+      ],
+      "acceptance": [
+        "android_catalog_and_route_admission",
+        "android_file_selector_backend",
+        "compact_file_picker_layout",
+        "android_debug_apk_build",
+        "android_real_device_pick_and_cancel"
+      ],
+      "evidence": [
+        "file_picker_bridge selects file_selector on Android",
+        "file_selector_android is registered in GeneratedPluginRegistrant",
+        "catalog and compact widget contracts cover Android entry",
+        "Android real-device document provider behavior remains required"
+      ]
+    },
+    {
+      "id": "platform_snapshot_guarded_routes",
+      "priority": 20,
+      "status": "completed",
+      "targets": [
+        "apps/flutter_forge/lib/module_registry",
+        "apps/flutter_forge/lib/app",
+        "apps/flutter_forge/test/shared"
+      ],
+      "acceptance": [
+        "process_immutable_platform_snapshot",
+        "five_product_target_platforms",
+        "excluded_platform_contract",
+        "stable_guarded_module_routes",
+        "unsupported_module_explanation",
+        "android_debug_apk_build",
+        "web_release_build"
+      ],
+      "evidence": [
+        "bootstrap injects one AppPlatformSnapshot into Router and ProviderScope",
+        "module contracts use target_platforms and excluded_platforms",
+        "guarded route tests cover supported and unsupported module paths",
+        "bare analyze and full test suite pass",
+        "Android debug APK and Web release builds pass",
+        "iOS is modeled but has no host directory or build evidence"
+      ]
     }
   ],
   "quality_gate": [
@@ -301,8 +477,6 @@
     "flutterguard_med_reduction",
     "recommended_module_visual_evidence",
     "flutter_scene_3d_model_loading",
-    "flutter_scene_3d_material_lighting",
-    "flutter_scene_3d_scene_picking",
-    "flutter_scene_3d_windows_admission"
+    "flutter_scene_3d_material_lighting"
   ]
 }

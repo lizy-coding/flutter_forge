@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/modules/platform/webview/module_root.dart';
 import 'webview_session_test.dart' show FakeWebViewBackend;
@@ -10,10 +11,22 @@ void main() {
     final module = AppRouteTable.modules.singleWhere(
       (m) => m.path == '/webview',
     );
-    expect(isModuleAvailable(module, TargetPlatform.android), isTrue);
-    expect(isModuleAvailable(module, TargetPlatform.windows), isTrue);
-    expect(isModuleAvailable(module, TargetPlatform.macOS), isTrue);
-    expect(isModuleAvailable(module, TargetPlatform.iOS), isFalse);
+    for (final platform in [
+      AppTargetPlatform.android,
+      AppTargetPlatform.macOS,
+      AppTargetPlatform.windows,
+    ]) {
+      expect(
+        isModuleAvailable(module, AppPlatformSnapshot(platform: platform)),
+        isTrue,
+      );
+    }
+    for (final platform in [AppTargetPlatform.iOS, AppTargetPlatform.web]) {
+      expect(
+        isModuleAvailable(module, AppPlatformSnapshot(platform: platform)),
+        isFalse,
+      );
+    }
   });
   testWidgets(
     'teaching page fits compact viewport and rejects invalid navigation',
