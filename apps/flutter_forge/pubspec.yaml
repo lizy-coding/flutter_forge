@@ -13,7 +13,7 @@ dependencies:
   gcode_core:
     git:
       url: https://github.com/lizy-coding/gcode_core.git
-      ref: v0.2.0-dev.1
+      ref: v0.2.0
   file_picker_bridge:
     path: ../../packages/file_picker_bridge
   flutter_ioc_core:
