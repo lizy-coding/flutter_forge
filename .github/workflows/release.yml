@@ -22,7 +22,7 @@ jobs:
         include:
           - os: macos-latest
             platform: macos
-            artifact: flutter_forge-macos-x64.zip
+            artifact: flutter_forge-macos-x64.dmg
           - os: windows-latest
             platform: windows
             artifact: flutter_forge-windows-x64.zip
@@ -56,9 +56,28 @@ jobs:
         env:
           FLUTTER_XCODE_CC: ${{ github.workspace }}/apps/flutter_forge/tool/macos/compiler_probe.py
         run: flutter build macos --release
-      - name: Package macOS
+      - name: Package macOS DMG
         if: matrix.platform == 'macos'
-        run: ditto -c -k --keepParent 'apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app' ${{ matrix.artifact }}
+        shell: bash
+        run: |
+          app_path="$GITHUB_WORKSPACE/apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app"
+          dmg_root="$RUNNER_TEMP/flutter-forge-dmg"
+          app_version="$(sed -n 's/^version: *//p' "$GITHUB_WORKSPACE/apps/flutter_forge/pubspec.yaml" | head -1 | tr -d "'\"")"
+          dmg_path="$GITHUB_WORKSPACE/release-assets/FlutterForge-${app_version}-macos-x64.dmg"
+          test -d "$app_path"
+          test -n "$app_version"
+          mkdir -p "$dmg_root"
+          mkdir -p "$(dirname "$dmg_path")"
+          ditto "$app_path" "$dmg_root/Flutter Forge.app"
+          ln -s /Applications "$dmg_root/Applications"
+          hdiutil create \
+            -volname "Flutter Forge" \
+            -srcfolder "$dmg_root" \
+            -fs HFS+ \
+            -format UDZO \
+            -ov \
+            "$dmg_path"
+          hdiutil verify "$dmg_path"
       - name: Build Windows
         if: matrix.platform == 'windows'
         working-directory: apps/flutter_forge
@@ -91,7 +110,7 @@ jobs:
         if: matrix.platform == 'macos'
         with:
           name: ${{ matrix.artifact }}
-          path: ${{ matrix.artifact }}
+          path: release-assets/*.dmg
           retention-days: 14
       - name: Upload Windows installer
         if: matrix.platform == 'windows'
@@ -146,7 +165,7 @@ jobs:
             fi
           }
 
-          printf '%s\n' 'Flutter Forge 多平台发布。macOS 和 Windows 产物未签名；首次运行时，macOS 请右键选择“打开”（或执行 `xattr -dr com.apple.quarantine`），Windows SmartScreen 请点击“更多信息（More info）”后选择“仍要运行（Run anyway）”。Android 产物使用工作流构建签名，仅用于项目当前发布轨道。' > release-notes.md
+          printf '%s\n' 'Flutter Forge 多平台发布。macOS 使用 DMG 安装镜像，macOS 和 Windows 产物未签名；首次运行时，macOS 请右键选择“打开”（或执行 `xattr -dr com.apple.quarantine`），Windows SmartScreen 请点击“更多信息（More info）”后选择“仍要运行（Run anyway）”。Android 产物使用工作流构建签名，仅用于项目当前发布轨道。' > release-notes.md
           printf '\n' >> release-notes.md
           write_group "Features" '^feat(\(.+\))?!?:'
           write_group "Fixes" '^fix(\(.+\))?!?:'
