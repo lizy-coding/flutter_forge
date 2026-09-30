@@ -1,0 +1,65 @@
+name: Deploy Flutter Web to Cloudflare Pages
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-pages
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.47.2"
+
+jobs:
+  deploy:
+    name: Build and deploy Cloudflare Pages
+    if: ${{ vars.CLOUDFLARE_PAGES_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Build Web release for site root
+        working-directory: apps/flutter_forge
+        run: >-
+          flutter build web
+          --release
+          --base-href "/"
+          --no-web-resources-cdn
+          --pwa-strategy=none
+
+      - name: Verify Web artifact and Pages Free limits
+        shell: bash
+        run: |
+          output=apps/flutter_forge/build/web
+          test -f "$output/main.dart.js"
+          test -f "$output/media/flutter-forge-sample.mp4"
+          grep -q '"useLocalCanvasKit":true' "$output/flutter_bootstrap.js"
+          grep -q 'flutter-forge-loading' "$output/index.html"
+          grep -q '<base href="/">' "$output/index.html"
+          if find "$output" -type f -size +26214399c -print -quit | grep -q .; then
+            echo 'Cloudflare Pages Free rejects assets larger than 25 MiB.' >&2
+            find "$output" -type f -size +26214399c -print >&2
+            exit 1
+          fi
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/flutter_forge/build/web --project-name=flutter-forge --branch=dev
