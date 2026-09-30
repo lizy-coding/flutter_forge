@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 23,
+  "count": 24,
   "modules": [
     {
       "id": "tree_state",
@@ -484,6 +484,33 @@
         ]
       },
       "analysis": "lib/modules/platform/usb_detector/AI_ANALYSIS.md"
+    },
+    {
+      "id": "bluetooth_ble",
+      "category": "platform",
+      "path": "lib/modules/platform/bluetooth_ble",
+      "route": "/bluetooth-ble",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "universal_ble",
+        "module_registry"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web",
+          "windows"
+        ]
+      },
+      "analysis": "lib/modules/platform/bluetooth_ble/AI_ANALYSIS.md"
     },
     {
       "id": "file_picker",

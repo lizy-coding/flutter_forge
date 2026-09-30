@@ -180,7 +180,7 @@
       "windows"
     ],
     "non_target_platforms": "unsupported",
-    "module_platform_semantics": "target_platform_available_unless_excluded",
+    "module_platform_semantics": "target_platform_entry_open_unless_excluded",
     "unsupported_route": "stable_guarded_module_route",
     "web_release_build": "bash tool/build_web_release.sh",
     "web_startup_shell": "web/index.html + web/flutter_bootstrap.js",

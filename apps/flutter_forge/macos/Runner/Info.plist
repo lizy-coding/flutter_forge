@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>用于学习 BLE 扫描、连接和读取附近设备的特征值。</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>用于学习 BLE 外设的服务和特征值。</string>
 	<key>FLTEnableImpeller</key>
 	<true/>
 	<key>FLTEnableFlutterGPU</key>

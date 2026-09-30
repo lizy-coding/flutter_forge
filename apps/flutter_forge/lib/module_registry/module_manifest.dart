@@ -38,6 +38,7 @@ import '../modules/popup_table/overlay_follow_compare/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_routes.dart';
 import '../modules/platform/file_picker/module_entry.dart';
+import '../modules/platform/bluetooth_ble/module_entry.dart';
 import '../modules/platform/online_video_player/module_entry.dart';
 import '../modules/platform/usb_detector/module_entry.dart';
 import '../modules/state/local_persistence/module_entry.dart';
@@ -360,6 +361,25 @@ final List<ModuleEntry> moduleManifest = [
       },
     ),
     builder: (context) => const UsbDetectorEntry(),
+  ),
+  ModuleEntry(
+    title: 'BLE 连接生命周期',
+    path: '/bluetooth-ble',
+    subtitle: '观察扫描、连接、服务发现、读取与订阅、断开',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['BLE Central', 'GATT', '特征值属性', '通知订阅', '资源释放'],
+    estimatedMinutes: 30,
+    status: ModuleStatus.ready,
+    // Android and macOS expose the BLE learning flow; GATT acceptance is tracked separately.
+    platformSupport: const ModulePlatformSupport(
+      excludedPlatforms: {
+        AppTargetPlatform.iOS,
+        AppTargetPlatform.web,
+        AppTargetPlatform.windows,
+      },
+    ),
+    builder: (context) => const BluetoothBleEntry(),
   ),
   ModuleEntry(
     title: '文件选择器',
