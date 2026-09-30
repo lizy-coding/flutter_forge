@@ -494,6 +494,7 @@
       "depends": [
         "shared_learning",
         "universal_ble",
+        "url_launcher",
         "module_registry"
       ],
       "platform_support": {

@@ -298,7 +298,7 @@ const modules = [
     id: 'bluetooth_ble',
     route: '/bluetooth-ble',
     status: 'ready',
-    depends: ['shared_learning', 'universal_ble', 'module_registry'],
+    depends: ['shared_learning', 'universal_ble', 'url_launcher', 'module_registry'],
     title: 'BLE 连接生命周期',
     subtitle: '观察扫描、连接、服务发现、读取与订阅、断开',
     difficulty: 'intermediate',
@@ -420,7 +420,7 @@ const categoryMeta = {
   state: [['status_management', 'flutter_ioc', 'local_persistence'], ['state_management'], ['provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core', 'shared_preferences']],
   ui: [['gcode_visualizer', 'adsorption_line', 'download_animation', 'font_picker', 'flutter_scene_3d'], ['ui_animation_custom_paint_3d_scene'], ['provider', 'gcode_core', 'file_picker_bridge', 'flutter_scene', 'vector_math', 'shared_learning', 'module_registry']],
   popup_table: [['popup_widgets', 'popup_list_interaction', 'scroll_table', 'overlay_follow_compare'], ['popup_overlay_table'], ['module_registry', 'shared_learning', 'two_dimensional_scrollables']],
-  platform: [['dio_interceptor', 'usb_detector', 'bluetooth_ble', 'file_picker', 'online_video_player', 'webview'], ['network_platform'], ['dio', 'device_info_plus', 'universal_ble', 'video_player', 'video_player_web', 'video_player_win', 'shared_learning', 'file_picker_bridge', 'webview_flutter', 'webview_windows']],
+  platform: [['dio_interceptor', 'usb_detector', 'bluetooth_ble', 'file_picker', 'online_video_player', 'webview'], ['network_platform'], ['dio', 'device_info_plus', 'universal_ble', 'url_launcher', 'video_player', 'video_player_web', 'video_player_win', 'shared_learning', 'file_picker_bridge', 'webview_flutter', 'webview_windows']],
 };
 
 const flutterGuardDependency = {

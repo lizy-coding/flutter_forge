@@ -23,6 +23,7 @@
     "dio",
     "device_info_plus",
     "universal_ble",
+    "url_launcher",
     "video_player",
     "video_player_web",
     "video_player_win",

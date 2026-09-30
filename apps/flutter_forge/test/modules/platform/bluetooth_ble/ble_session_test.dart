@@ -10,6 +10,97 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:universal_ble/universal_ble.dart';
 
 void main() {
+  for (final platform in [TargetPlatform.macOS, TargetPlatform.windows]) {
+    testWidgets('$platform shows a two-pane workspace and settings entry', (
+      tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = platform;
+      tester.view.physicalSize = const Size(1280, 850);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final client = FakeBleClient();
+      await tester.pumpWidget(
+        MaterialApp(home: BluetoothBlePage(client: client)),
+      );
+      await tester.pump();
+      expect(find.byKey(const Key('ble-wide-layout')), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.byKey(const Key('ble-details-pane'))).dx,
+        greaterThan(
+          tester.getTopLeft(find.byKey(const Key('ble-device-pane'))).dx,
+        ),
+      );
+      final settings = find.byKey(
+        Key(
+          platform == TargetPlatform.macOS
+              ? 'ble-macos-settings'
+              : 'ble-windows-settings',
+        ),
+      );
+      await tester.tap(settings);
+      await tester.pump();
+      expect(client.settingsCount, 1);
+      expect(find.byKey(const Key('ble-enable-bluetooth')), findsNothing);
+      if (platform == TargetPlatform.macOS) {
+        expect(find.textContaining('未查询到匹配服务'), findsOneWidget);
+      }
+      tester.view.physicalSize = const Size(640, 850);
+      await tester.pump();
+      expect(find.byKey(const Key('ble-compact-layout')), findsOneWidget);
+      tester.view.physicalSize = const Size(1280, 420);
+      await tester.pump();
+      expect(find.byKey(const Key('ble-compact-layout')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      await client.close();
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
+
+  testWidgets('compact Android supports large text and long device names', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    tester.view.physicalSize = const Size(320, 740);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final client = FakeBleClient();
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.6)),
+          child: child!,
+        ),
+        home: BluetoothBlePage(client: client),
+      ),
+    );
+    client.scan.add(
+      BleDevice(
+        deviceId: 'long-id',
+        name: '这是一个名称很长的蓝牙外设用于验证小屏触控布局',
+        rssi: -45,
+      ),
+    );
+    await tester.pump();
+    expect(find.byKey(const Key('ble-compact-layout')), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('连接').hitTestable(),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('连接'));
+    await tester.pump();
+    await tester.ensureVisible(find.byKey(const Key('ble-disconnect')));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+    await client.close();
+    debugDefaultTargetPlatformOverride = null;
+  });
   testWidgets(
     'Windows uses the common BLE page without Android system controls',
     (tester) async {
@@ -53,7 +144,7 @@ void main() {
     expect(find.text('连接 GATT'), findsOneWidget);
     expect(
       tester.getTopLeft(find.text('Connected headphones')).dy,
-      lessThan(tester.getTopLeft(find.text('蓝牙与权限')).dy),
+      lessThan(tester.getTopLeft(find.text('附近设备')).dy),
     );
     client.audioDevices = [];
     client.systemDevices = [];

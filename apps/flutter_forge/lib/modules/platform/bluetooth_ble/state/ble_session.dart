@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:universal_ble/universal_ble.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SystemAudioDevice {
   const SystemAudioDevice({
@@ -45,8 +46,23 @@ abstract class BleClient {
 class UniversalBleClient implements BleClient {
   static const _systemChannel = MethodChannel('flutter_forge/bluetooth_system');
   @override
-  Future<void> openBluetoothSettings() =>
-      _systemChannel.invokeMethod<void>('openSettings');
+  Future<void> openBluetoothSettings() async {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      await _systemChannel.invokeMethod<void>('openSettings');
+      return;
+    }
+    final uri = switch (defaultTargetPlatform) {
+      TargetPlatform.macOS => Uri.parse(
+        'x-apple.systempreferences:com.apple.BluetoothSettings',
+      ),
+      TargetPlatform.windows => Uri.parse('ms-settings:bluetooth'),
+      _ => throw UnsupportedError('当前平台不提供系统蓝牙设置入口'),
+    };
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw StateError('系统未能打开蓝牙设置');
+    }
+  }
+
   @override
   Future<List<SystemAudioDevice>> getConnectedAudioDevices() async {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return [];
