@@ -380,11 +380,11 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: "v0.2.0"
-      resolved-ref: "318dd628a1e3900b0c8b90d7883983f850c7cb34"
+      ref: "v0.2.1"
+      resolved-ref: "22d76ad54e11ad752771b594b8345d5f9aab6a31"
       url: "https://github.com/lizy-coding/gcode_core.git"
     source: git
-    version: "0.2.0"
+    version: "0.2.1"
   glob:
     dependency: transitive
     description:

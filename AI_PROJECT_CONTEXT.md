@@ -70,8 +70,8 @@
       "name": "gcode_core",
       "source": "git",
       "url": "https://github.com/lizy-coding/gcode_core.git",
-      "ref": "v0.2.0",
-      "resolved_ref": "318dd628a1e3900b0c8b90d7883983f850c7cb34",
+      "ref": "v0.2.1",
+      "resolved_ref": "22d76ad54e11ad752771b594b8345d5f9aab6a31",
       "entrypoint": "lib/gcode_core.dart",
       "flutter_min": "3.47.2",
       "entry_platforms": [
