@@ -9,11 +9,13 @@
     "status": "active"
   },
   "entrypoints": [
+    "learning",
     "multi_window",
     "platform"
   ],
   "owns": [
     "business_free_capabilities",
+    "learning_templates",
     "desktop_window_lifecycle",
     "platform_boundaries"
   ],

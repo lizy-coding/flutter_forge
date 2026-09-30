@@ -18,8 +18,9 @@
     "popup_overlay_table"
   ],
   "depends": [
-    "module_registry",
     "shared_learning",
+    "module_registry",
+    "go_router",
     "two_dimensional_scrollables"
   ],
   "children": [

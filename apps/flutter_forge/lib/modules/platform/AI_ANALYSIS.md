@@ -20,15 +20,17 @@
     "network_platform"
   ],
   "depends": [
+    "shared_learning",
     "dio",
+    "module_registry",
+    "go_router",
     "device_info_plus",
     "universal_ble",
     "url_launcher",
+    "file_picker_bridge",
     "video_player",
     "video_player_web",
     "video_player_win",
-    "shared_learning",
-    "file_picker_bridge",
     "webview_flutter",
     "webview_windows"
   ],

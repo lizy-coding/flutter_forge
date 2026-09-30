@@ -6,42 +6,38 @@ import 'app_platform_snapshot.dart';
 import 'module_category.dart';
 import 'module_entry.dart';
 import 'module_platform_support.dart';
-import '../modules/basic/debounce_throttle/module_entry.dart';
-import '../modules/basic/microtask/module_entry.dart';
-import '../modules/basic/microtask/module_routes.dart';
 import '../modules/basic/tree_state/module_entry.dart';
 import '../modules/basic/tree_state/module_routes.dart';
-
+import '../modules/basic/microtask/module_entry.dart';
+import '../modules/basic/microtask/module_routes.dart';
+import '../modules/basic/debounce_throttle/module_entry.dart';
+import '../modules/async/stream_subscription/module_entry.dart';
+import '../modules/async/stream_subscription/module_routes.dart';
 import '../modules/async/isolate_basic/module_entry.dart';
 import '../modules/async/isolate_basic/module_routes.dart';
 import '../modules/async/isolate_task_manager/module_entry.dart';
-import '../modules/async/stream_subscription/module_entry.dart';
-import '../modules/async/stream_subscription/module_routes.dart';
-
-import '../modules/state/flutter_ioc/module_entry.dart';
-import '../modules/state/status_management/module_routes.dart';
-
 import '../modules/state/status_management/module_entry.dart';
+import '../modules/state/status_management/module_routes.dart';
+import '../modules/state/flutter_ioc/module_entry.dart';
+import '../modules/state/local_persistence/module_entry.dart';
+import '../modules/ui/gcode_visualizer/module_entry.dart';
 import '../modules/ui/adsorption_line/module_entry.dart';
 import '../modules/ui/download_animation/module_entry.dart';
 import '../modules/ui/download_animation/module_routes.dart';
 import '../modules/ui/font_picker/module_entry.dart';
 import '../modules/ui/font_picker/module_routes.dart';
 import '../modules/ui/flutter_scene_3d/module_entry.dart';
-import '../modules/ui/gcode_visualizer/module_entry.dart';
 import '../modules/popup_table/popup_widgets/module_entry.dart';
 import '../modules/popup_table/popup_list_interaction/module_entry.dart';
 import '../modules/popup_table/popup_list_interaction/module_routes.dart';
 import '../modules/popup_table/scroll_table/module_entry.dart';
 import '../modules/popup_table/overlay_follow_compare/module_entry.dart';
-
 import '../modules/platform/dio_interceptor/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_routes.dart';
-import '../modules/platform/file_picker/module_entry.dart';
-import '../modules/platform/bluetooth_ble/module_entry.dart';
-import '../modules/platform/online_video_player/module_entry.dart';
 import '../modules/platform/usb_detector/module_entry.dart';
-import '../modules/state/local_persistence/module_entry.dart';
+import '../modules/platform/bluetooth_ble/module_entry.dart';
+import '../modules/platform/file_picker/module_entry.dart';
+import '../modules/platform/online_video_player/module_entry.dart';
 import '../modules/platform/webview/module_entry.dart';
 
 // ==================== 状态管理子路由（模块内部已定义映射） ====================
@@ -195,7 +191,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['G-code', 'Parser', 'CustomPaint', 'PathMetric', '动画控制'],
     estimatedMinutes: 45,
     status: ModuleStatus.ready,
-    // gcode_core v0.2.0-dev.1 validates macOS GPU rendering only.
+    // The G-code learning module opens only its macOS entry; device evidence is separate.
     platformSupport: const ModulePlatformSupport(
       excludedPlatforms: {
         AppTargetPlatform.android,

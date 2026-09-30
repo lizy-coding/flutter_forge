@@ -11,10 +11,12 @@
   },
   "platform": {
     "current_hosts": [
+      "android",
       "macos",
+      "web",
       "windows"
     ],
-    "next_host": "web",
+    "host_evidence_semantics": "directory_presence_only",
     "target_hosts": [
       "android",
       "ios",
@@ -35,6 +37,7 @@
     "layout": "pub_workspace",
     "workspace_root": ".",
     "members": [
+      "apps/flutter_forge",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
       "packages/desktop_multi_window"
@@ -67,10 +70,11 @@
       "name": "gcode_core",
       "source": "git",
       "url": "https://github.com/lizy-coding/gcode_core.git",
-      "ref": "v0.2.0-dev.1",
+      "ref": "v0.2.0",
+      "resolved_ref": "318dd628a1e3900b0c8b90d7883983f850c7cb34",
       "entrypoint": "lib/gcode_core.dart",
       "flutter_min": "3.47.2",
-      "supported_platforms": [
+      "entry_platforms": [
         "macOS"
       ],
       "requires": [
@@ -80,12 +84,16 @@
       "macos_deployment_target_min": "12.0"
     }
   ],
+  "capability_aliases": {
+    "shared_learning": "lib/shared/learning"
+  },
   "external_tools": [
     {
       "package": "flutterguard_cli",
       "source": "git",
       "url": "https://github.com/lizy-coding/flutterguard.git",
       "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
+      "resolved_ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
       "immutable": true,
       "lock_status": "git_pinned"
     }
@@ -117,7 +125,8 @@
       "may_depend_on": [
         "flutter",
         "go_router"
-      ]
+      ],
+      "assembly_exception": "lib/module_registry/module_manifest.dart"
     },
     {
       "id": "shared",
@@ -205,7 +214,13 @@
       "{target}/AI_ANALYSIS.md"
     ],
     "update_source": [
-      "tool/generate_agent_indexes.js"
+      "tool/generate_agent_indexes.js",
+      "tool/agent_indexes/catalog.js",
+      "tool/agent_indexes/project.js",
+      "tool/agent_indexes/plan.js",
+      "tool/agent_indexes/generator.js",
+      "tool/agent_indexes/contracts.js",
+      "tool/agent_indexes/routes.js"
     ],
     "generate": "bash tool/generate_harness_ai_analysis.sh",
     "validate": [

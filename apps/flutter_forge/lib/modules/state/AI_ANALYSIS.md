@@ -17,9 +17,12 @@
     "state_management"
   ],
   "depends": [
+    "shared_learning",
     "provider",
     "flutter_riverpod",
     "flutter_bloc",
+    "module_registry",
+    "go_router",
     "flutter_ioc_core",
     "shared_preferences"
   ],

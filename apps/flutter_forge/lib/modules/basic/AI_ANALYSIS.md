@@ -17,8 +17,9 @@
     "basic_mechanisms"
   ],
   "depends": [
+    "shared_learning",
     "module_registry",
-    "shared_learning"
+    "go_router"
   ],
   "children": [
     "tree_state/AI_ANALYSIS.md",
