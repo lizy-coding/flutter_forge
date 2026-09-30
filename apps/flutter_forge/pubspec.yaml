@@ -1,7 +1,7 @@
 name: flutter_forge_app
 description: Flutter Forge app shell.
 publish_to: 'none'
-version: 1.2.6
+version: 1.2.7
 
 environment:
   sdk: ^3.11.5
@@ -13,7 +13,7 @@ dependencies:
   gcode_core:
     git:
       url: https://github.com/lizy-coding/gcode_core.git
-      ref: v0.2.0
+      ref: v0.2.1
   file_picker_bridge:
     path: ../../packages/file_picker_bridge
   flutter_ioc_core:
@@ -43,6 +43,7 @@ dependencies:
   flutter_scene: 0.23.0
   hooks: ^2.0.0
   vector_math: ^2.1.4
+  universal_ble: ^2.3.0
 
 dev_dependencies:
   integration_test:

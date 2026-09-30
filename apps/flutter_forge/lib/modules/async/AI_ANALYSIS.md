@@ -17,8 +17,9 @@
     "async_concurrency"
   ],
   "depends": [
+    "shared_learning",
     "module_registry",
-    "shared_learning"
+    "go_router"
   ],
   "children": [
     "stream_subscription/AI_ANALYSIS.md",

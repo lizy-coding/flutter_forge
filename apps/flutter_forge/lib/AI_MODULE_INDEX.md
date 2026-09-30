@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 23,
+  "count": 24,
   "modules": [
     {
       "id": "tree_state",
@@ -350,6 +350,7 @@
       "status": "ready",
       "depends": [
         "shared_learning",
+        "shared_popup",
         "module_registry"
       ],
       "platform_support": {
@@ -372,6 +373,8 @@
       "status": "ready",
       "depends": [
         "shared_learning",
+        "shared_popup",
+        "shared_table",
         "module_registry",
         "go_router"
       ],
@@ -395,7 +398,7 @@
       "status": "ready",
       "depends": [
         "shared_learning",
-        "two_dimensional_scrollables",
+        "shared_table",
         "module_registry"
       ],
       "platform_support": {
@@ -484,6 +487,33 @@
         ]
       },
       "analysis": "lib/modules/platform/usb_detector/AI_ANALYSIS.md"
+    },
+    {
+      "id": "bluetooth_ble",
+      "category": "platform",
+      "path": "lib/modules/platform/bluetooth_ble",
+      "route": "/bluetooth-ble",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "universal_ble",
+        "url_launcher",
+        "module_registry"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web"
+        ]
+      },
+      "analysis": "lib/modules/platform/bluetooth_ble/AI_ANALYSIS.md"
     },
     {
       "id": "file_picker",

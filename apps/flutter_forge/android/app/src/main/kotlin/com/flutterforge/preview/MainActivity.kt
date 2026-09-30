@@ -13,6 +13,10 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
+        val bluetoothSystem = BluetoothSystemChannel(this)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "flutter_forge/bluetooth_system")
+            .setMethodCallHandler { call, result -> bluetoothSystem.handle(call.method, result) }
+
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             channelName,

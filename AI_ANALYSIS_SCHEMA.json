@@ -30,6 +30,8 @@
       "lib/app/router/AI_ANALYSIS.md",
       "lib/shared/platform/AI_ANALYSIS.md",
       "lib/shared/multi_window/AI_ANALYSIS.md",
+      "lib/shared/popup/AI_ANALYSIS.md",
+      "lib/shared/table/AI_ANALYSIS.md",
       "lib/modules/basic/AI_ANALYSIS.md",
       "lib/modules/async/AI_ANALYSIS.md",
       "lib/modules/state/AI_ANALYSIS.md",

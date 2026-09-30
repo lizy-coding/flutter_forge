@@ -22,10 +22,11 @@
     "host_integrations"
   ],
   "depends": [
-    "git:https://github.com/lizy-coding/gcode_core.git#v0.2.0-dev.1",
-    "packages/shared_learning",
+    "git:https://github.com/lizy-coding/gcode_core.git#v0.2.1",
+    "lib/shared/learning",
     "packages/file_picker_bridge",
     "packages/flutter_ioc_core",
+    "packages/desktop_multi_window",
     "git:https://github.com/lizy-coding/flutterguard.git#9f9be84a73dc4b99a956a8529b8c334849566b03"
   ],
   "children": [
@@ -44,6 +45,8 @@
     "doc_mode": "machine_contract"
   },
   "validation": [
+    "node --test tool/agent_indexes/generator.test.js",
+    "node tool/generate_agent_indexes.js --check",
     "bash tool/generate_harness_ai_analysis.sh",
     "dart format .",
     "flutter analyze",

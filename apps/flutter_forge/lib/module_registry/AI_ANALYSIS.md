@@ -24,7 +24,9 @@
     "module_status_enum",
     "excluded_platform_availability",
     "module_catalog_filtering",
-    "category_route_rebasing"
+    "category_route_rebasing",
+    "shared_guarded_route_composition",
+    "child_route_semantics"
   ],
   "depends": [
     "flutter_material",

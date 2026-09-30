@@ -29,10 +29,14 @@
   "owns": [
     "module_entry",
     "module_ui",
-    "module_docs"
+    "module_docs",
+    "popup_result_state",
+    "cell_edit_drafts"
   ],
   "depends": [
     "shared_learning",
+    "shared_popup",
+    "shared_table",
     "module_registry",
     "go_router"
   ],
@@ -44,6 +48,7 @@
     "doc_mode": "machine_contract"
   },
   "validation": [
-    "flutter analyze"
+    "flutter analyze",
+    "flutter test test/modules/popup_table/popup_list_interaction"
   ]
 }

@@ -11,6 +11,7 @@
   "entrypoints": [
     "dio_interceptor",
     "usb_detector",
+    "bluetooth_ble",
     "file_picker",
     "online_video_player",
     "webview"
@@ -19,19 +20,24 @@
     "network_platform"
   ],
   "depends": [
+    "shared_learning",
     "dio",
+    "module_registry",
+    "go_router",
     "device_info_plus",
+    "universal_ble",
+    "url_launcher",
+    "file_picker_bridge",
     "video_player",
     "video_player_web",
     "video_player_win",
-    "shared_learning",
-    "file_picker_bridge",
     "webview_flutter",
     "webview_windows"
   ],
   "children": [
     "dio_interceptor/AI_ANALYSIS.md",
     "usb_detector/AI_ANALYSIS.md",
+    "bluetooth_ble/AI_ANALYSIS.md",
     "file_picker/AI_ANALYSIS.md",
     "online_video_player/AI_ANALYSIS.md",
     "webview/AI_ANALYSIS.md"

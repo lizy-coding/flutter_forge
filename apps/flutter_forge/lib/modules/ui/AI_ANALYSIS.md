@@ -19,13 +19,14 @@
     "ui_animation_custom_paint_3d_scene"
   ],
   "depends": [
-    "provider",
+    "shared_learning",
     "gcode_core",
     "file_picker_bridge",
+    "module_registry",
+    "provider",
+    "go_router",
     "flutter_scene",
-    "vector_math",
-    "shared_learning",
-    "module_registry"
+    "vector_math"
   ],
   "children": [
     "gcode_visualizer/AI_ANALYSIS.md",

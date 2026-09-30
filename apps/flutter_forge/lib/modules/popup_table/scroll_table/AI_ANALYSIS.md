@@ -28,11 +28,12 @@
   "owns": [
     "module_entry",
     "module_ui",
-    "module_docs"
+    "module_docs",
+    "table_sample_data"
   ],
   "depends": [
     "shared_learning",
-    "two_dimensional_scrollables",
+    "shared_table",
     "module_registry"
   ],
   "children": [],
@@ -43,6 +44,7 @@
     "doc_mode": "machine_contract"
   },
   "validation": [
-    "flutter analyze"
+    "flutter analyze",
+    "flutter test test/modules/popup_table/scroll_table"
   ]
 }

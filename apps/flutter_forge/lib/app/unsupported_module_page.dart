@@ -16,12 +16,7 @@ class UnsupportedModulePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final supportedPlatforms = AppTargetPlatform.values
-        .where((candidate) => candidate != AppTargetPlatform.unsupported)
-        .where(
-          (candidate) =>
-              !module.platformSupport.excludedPlatforms.contains(candidate),
-        )
+    final openPlatforms = module.platformSupport.openTargetPlatforms
         .map((candidate) => candidate.label)
         .join('、');
 
@@ -48,9 +43,9 @@ class UnsupportedModulePage extends StatelessWidget {
                 Text('当前平台：${platform.platform.label}'),
                 const SizedBox(height: 8),
                 Text(
-                  supportedPlatforms.isEmpty
+                  openPlatforms.isEmpty
                       ? '当前没有开放的目标平台'
-                      : '支持平台：$supportedPlatforms',
+                      : '已开放平台：$openPlatforms',
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),

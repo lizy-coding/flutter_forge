@@ -47,7 +47,7 @@ class PopupDemoInteractiveDemo extends StatelessWidget {
     required this.onShowModalBottomSheet,
     required this.onShowCupertinoAlert,
     required this.onShowCustomDialog,
-    required this.onShowContextMenu,
+    required this.onContextMenuSelected,
     required this.onDemoOpenChain,
     required this.onDemoCloseChain,
     required this.onDemoOpenOverlayChain,
@@ -66,7 +66,7 @@ class PopupDemoInteractiveDemo extends StatelessWidget {
   final Future<void> Function() onShowModalBottomSheet;
   final Future<void> Function() onShowCupertinoAlert;
   final Future<void> Function() onShowCustomDialog;
-  final Future<void> Function(TapDownDetails) onShowContextMenu;
+  final ValueChanged<String> onContextMenuSelected;
   final Future<void> Function() onDemoOpenChain;
   final Future<void> Function() onDemoCloseChain;
   final Future<void> Function() onDemoOpenOverlayChain;
@@ -93,7 +93,7 @@ class PopupDemoInteractiveDemo extends StatelessWidget {
               onShowModalBottomSheet: onShowModalBottomSheet,
               onShowCupertinoAlert: onShowCupertinoAlert,
               onShowCustomDialog: onShowCustomDialog,
-              onShowContextMenu: onShowContextMenu,
+              onContextMenuSelected: onContextMenuSelected,
               onDemoOpenChain: onDemoOpenChain,
               onDemoCloseChain: onDemoCloseChain,
               onDemoOpenOverlayChain: onDemoOpenOverlayChain,
@@ -180,7 +180,7 @@ class _PopupDemoList extends StatelessWidget {
     required this.onShowModalBottomSheet,
     required this.onShowCupertinoAlert,
     required this.onShowCustomDialog,
-    required this.onShowContextMenu,
+    required this.onContextMenuSelected,
     required this.onDemoOpenChain,
     required this.onDemoCloseChain,
     required this.onDemoOpenOverlayChain,
@@ -195,7 +195,7 @@ class _PopupDemoList extends StatelessWidget {
   final Future<void> Function() onShowModalBottomSheet;
   final Future<void> Function() onShowCupertinoAlert;
   final Future<void> Function() onShowCustomDialog;
-  final Future<void> Function(TapDownDetails) onShowContextMenu;
+  final ValueChanged<String> onContextMenuSelected;
   final Future<void> Function() onDemoOpenChain;
   final Future<void> Function() onDemoCloseChain;
   final Future<void> Function() onDemoOpenOverlayChain;
@@ -239,7 +239,7 @@ class _PopupDemoList extends StatelessWidget {
             child: const Text('打开'),
           ),
         ),
-        ContextMenuTile(onShowMenu: onShowContextMenu),
+        ContextMenuTile(onSelected: onContextMenuSelected),
         const Divider(height: 16),
         DialogDemoTile(
           leading: const Icon(Icons.info_outline),

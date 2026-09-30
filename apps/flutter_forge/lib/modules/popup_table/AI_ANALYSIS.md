@@ -18,9 +18,11 @@
     "popup_overlay_table"
   ],
   "depends": [
-    "module_registry",
     "shared_learning",
-    "two_dimensional_scrollables"
+    "shared_popup",
+    "module_registry",
+    "shared_table",
+    "go_router"
   ],
   "children": [
     "popup_widgets/AI_ANALYSIS.md",

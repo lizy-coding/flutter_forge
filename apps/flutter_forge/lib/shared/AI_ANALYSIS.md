@@ -9,13 +9,19 @@
     "status": "active"
   },
   "entrypoints": [
+    "learning",
     "multi_window",
-    "platform"
+    "platform",
+    "popup",
+    "table"
   ],
   "owns": [
     "business_free_capabilities",
+    "learning_templates",
     "desktop_window_lifecycle",
-    "platform_boundaries"
+    "platform_boundaries",
+    "popup_ownership",
+    "reusable_table_view"
   ],
   "depends": [
     "desktop_multi_window",
@@ -23,7 +29,9 @@
   ],
   "children": [
     "multi_window/AI_ANALYSIS.md",
-    "platform/AI_ANALYSIS.md"
+    "platform/AI_ANALYSIS.md",
+    "popup/AI_ANALYSIS.md",
+    "table/AI_ANALYSIS.md"
   ],
   "contracts": {
     "no_natural_language": true,

@@ -133,6 +133,19 @@ Web Release 使用仓库提供的受检脚本，确保本地 CanvasKit、启动�
 bash tool/build_web_release.sh
 ```
 
+### Web 托管
+
+`dev` 分支继续通过 `.github/workflows/deploy-pages.yml` 发布到 GitHub Pages。另有 `.github/workflows/deploy-cloudflare-pages.yml`，将同一应用构建为站点根路径 `/` 后上传到 Cloudflare Pages Free；两条流程互不依赖。
+
+启用 Cloudflare 发布：
+
+1. 在 Cloudflare **Workers & Pages** 创建名为 `flutter-forge` 的 **Direct Upload** Pages 项目，生产分支设为 `dev`。不要选择 Git 集成，否则会产生另一条自动构建流程。
+2. 创建具有账号级 **Cloudflare Pages: Edit** 权限的 API Token，并在 GitHub 仓库 Actions secrets 中设置 `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`。
+3. 在 GitHub 仓库 Actions variable 中设置 `CLOUDFLARE_PAGES_ENABLED=true`。此后推送到 `dev` 或手动运行 Cloudflare 工作流会部署；未设置该变量时工作流跳过。
+4. 首次部署后检查 Cloudflare 提供的 `*.pages.dev` 地址，包括首页、深层路由、CanvasKit 资源和同源视频。国内访问速度须从目标网络实测。
+
+Cloudflare Pages Free 单文件上限为 25 MiB；工作流在上传前检查构建产物。GitHub Pages 使用 `/flutter_forge/`，Cloudflare Pages 使用 `/`，不可互换两份构建产物。
+
 提交变更前执行完整门禁：
 
 ```bash

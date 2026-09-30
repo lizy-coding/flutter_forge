@@ -24,15 +24,17 @@ List<ModuleEntry> availableModules(
       .toList();
 }
 
-List<GoRoute> buildCategoryRoutes(
+/// Builds guarded module routes for the main or a category navigator.
+List<GoRoute> buildModuleRoutes(
   List<ModuleEntry> modules,
   AppPlatformSnapshot platform, {
   required Widget Function(BuildContext, ModuleEntry) unsupportedBuilder,
+  bool nested = false,
 }) {
   return [
     for (final module in modules)
       GoRoute(
-        path: _stripLeadingSlash(module.path),
+        path: nested ? _stripLeadingSlash(module.path) : module.path,
         builder: (context, state) => isModuleAvailable(module, platform)
             ? module.builder(context)
             : unsupportedBuilder(context, module),
@@ -43,17 +45,36 @@ List<GoRoute> buildCategoryRoutes(
   ];
 }
 
+List<GoRoute> buildCategoryRoutes(
+  List<ModuleEntry> modules,
+  AppPlatformSnapshot platform, {
+  required Widget Function(BuildContext, ModuleEntry) unsupportedBuilder,
+}) => buildModuleRoutes(
+  modules,
+  platform,
+  unsupportedBuilder: unsupportedBuilder,
+  nested: true,
+);
+
 String _stripLeadingSlash(String path) {
   return path.startsWith('/') ? path.substring(1) : path;
 }
 
-List<GoRoute> _rebasedRoutes(List<GoRoute> routes) {
-  return routes.map((route) {
-    final strippedPath = _stripLeadingSlash(route.path);
-    return GoRoute(
-      path: strippedPath,
-      builder: route.builder,
-      routes: route.routes,
-    );
-  }).toList();
+List<RouteBase> _rebasedRoutes(List<RouteBase> routes) {
+  return [
+    for (final route in routes)
+      if (route is GoRoute)
+        GoRoute(
+          path: _stripLeadingSlash(route.path),
+          name: route.name,
+          builder: route.builder,
+          pageBuilder: route.pageBuilder,
+          redirect: route.redirect,
+          onExit: route.onExit,
+          parentNavigatorKey: route.parentNavigatorKey,
+          routes: _rebasedRoutes(route.routes),
+        )
+      else
+        route,
+  ];
 }

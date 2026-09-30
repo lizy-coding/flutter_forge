@@ -36,7 +36,7 @@ void main() {
     expect(find.byType(UnsupportedModulePage), findsOneWidget);
     expect(find.text('当前平台暂不支持此模块'), findsOneWidget);
     expect(find.text('当前平台：iOS'), findsOneWidget);
-    expect(find.text('支持平台：Android、macOS、Web、Windows'), findsOneWidget);
+    expect(find.text('已开放平台：Android、macOS、Web、Windows'), findsOneWidget);
 
     await tester.tap(find.text('返回模块目录'));
     await tester.pumpAndSettle();
