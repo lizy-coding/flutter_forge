@@ -19,9 +19,10 @@
   ],
   "depends": [
     "shared_learning",
+    "shared_popup",
     "module_registry",
-    "go_router",
-    "two_dimensional_scrollables"
+    "shared_table",
+    "go_router"
   ],
   "children": [
     "popup_widgets/AI_ANALYSIS.md",

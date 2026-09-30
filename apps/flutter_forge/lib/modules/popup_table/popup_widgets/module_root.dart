@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
+import 'package:flutter_forge_app/shared/popup/popup_scope.dart';
 
 import 'widgets/bottom_sheet_demo.dart';
 import 'widgets/demo_section.dart';
@@ -18,15 +21,8 @@ class PopDemoHomePage extends StatefulWidget {
 
 class _PopDemoHomePageState extends State<PopDemoHomePage> {
   final ChainOrderStore _orderStore = ChainOrderStore(initial: kChainDialogIds);
-  final Map<String, Route<void>> _chainRoutes = <String, Route<void>>{};
-  final Map<String, List<OverlayEntry>> _overlayEntries =
-      <String, List<OverlayEntry>>{};
-
+  final PopupScope _popups = PopupScope();
   bool _showBottomSheet = false;
-  bool _chainOpening = false;
-  bool _chainClosing = false;
-  bool _overlayOpening = false;
-  bool _overlayClosing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +45,7 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
         onShowModalBottomSheet: _showModalBottomSheet,
         onShowCupertinoAlert: _showCupertinoAlert,
         onShowCustomDialog: _showCustomDialog,
-        onShowContextMenu: _showContextMenu,
+        onContextMenuSelected: _onContextMenuSelected,
         onDemoOpenChain: _demoOpenChain,
         onDemoCloseChain: _demoCloseChain,
         onDemoOpenOverlayChain: _demoOpenOverlayChain,
@@ -62,20 +58,51 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
 
   @override
   void dispose() {
-    _chainRoutes.clear();
-    for (final entries in _overlayEntries.values) {
-      for (final entry in entries) {
-        entry.remove();
-      }
-    }
-    _overlayEntries.clear();
+    _popups.dispose();
     _orderStore.dispose();
     super.dispose();
   }
 
+  Future<T?> _showOwnedDialog<T>({
+    required WidgetBuilder builder,
+    bool barrierDismissible = true,
+  }) {
+    final navigator = Navigator.of(context, rootNavigator: true);
+    return _popups.push<T>(
+      navigator,
+      DialogRoute<T>(
+        context: context,
+        builder: builder,
+        barrierDismissible: barrierDismissible,
+        themes: InheritedTheme.capture(from: context, to: navigator.context),
+      ),
+    );
+  }
+
+  Future<T?> _showOwnedSheet<T>({
+    required WidgetBuilder builder,
+    bool isScrollControlled = false,
+  }) {
+    final navigator = Navigator.of(context);
+    return _popups.push<T>(
+      navigator,
+      ModalBottomSheetRoute<T>(
+        builder: builder,
+        isScrollControlled: isScrollControlled,
+        showDragHandle: true,
+        capturedThemes: InheritedTheme.capture(
+          from: context,
+          to: navigator.context,
+        ),
+        barrierLabel: MaterialLocalizations.of(
+          context,
+        ).modalBarrierDismissLabel,
+      ),
+    );
+  }
+
   Future<void> _showAlertDialog() async {
-    await showDialog<void>(
-      context: context,
+    await _showOwnedDialog<void>(
       builder: (context) => AlertDialog(
         title: const Text('提示'),
         content: const Text('这是一个 AlertDialog 示例。'),
@@ -94,8 +121,7 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
   }
 
   Future<void> _showSimpleDialog() async {
-    final result = await showDialog<String>(
-      context: context,
+    final result = await _showOwnedDialog<String>(
       builder: (context) => SimpleDialog(
         title: const Text('选择一个选项'),
         children: [
@@ -121,32 +147,32 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
   }
 
   Future<void> _showModalBottomSheet() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
+    await _showOwnedSheet<void>(
       builder: (context) => const ModalBottomSheetContent(),
     );
   }
 
   Future<void> _showCupertinoAlert() async {
-    await showCupertinoDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('iOS 风格弹窗'),
-        content: const Text('通过双击手势触发。'),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('好的'),
-          ),
-        ],
+    await _popups.push<void>(
+      Navigator.of(context, rootNavigator: true),
+      CupertinoDialogRoute<void>(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: const Text('iOS 风格弹窗'),
+          content: const Text('通过双击手势触发。'),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('好的'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Future<void> _showCustomDialog() async {
-    await showDialog<void>(
-      context: context,
+    await _showOwnedDialog<void>(
       barrierDismissible: false,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -204,43 +230,35 @@ class _PopDemoHomePageState extends State<PopDemoHomePage> {
 
   Future<void> _showDatePicker() async {
     final now = DateTime.now();
-    await showDatePicker(
-      context: context,
-      initialDate: now,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 2),
+    await _showOwnedDialog<DateTime>(
+      builder: (_) => DatePickerDialog(
+        initialDate: now,
+        firstDate: DateTime(now.year - 1),
+        lastDate: DateTime(now.year + 2),
+      ),
     );
   }
 
   Future<void> _showTimePicker() async {
-    await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    await _showOwnedDialog<TimeOfDay>(
+      builder: (_) => TimePickerDialog(initialTime: TimeOfDay.now()),
+    );
   }
 
   void _showAbout() {
-    showAboutDialog(
-      context: context,
-      applicationName: 'Flutter 弹窗学习',
-      applicationVersion: '1.0.0',
-      applicationIcon: const FlutterLogo(),
-      children: const [Text('展示多种弹窗类型与触发方式。')],
+    unawaited(
+      _showOwnedDialog<void>(
+        builder: (_) => const AboutDialog(
+          applicationName: 'Flutter 弹窗学习',
+          applicationVersion: '1.0.0',
+          applicationIcon: FlutterLogo(),
+          children: [Text('展示多种弹窗类型与触发方式。')],
+        ),
+      ),
     );
   }
 
-  Future<void> _showContextMenu(TapDownDetails details) async {
-    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-    final selected = await showMenu<String>(
-      context: context,
-      position: RelativeRect.fromRect(
-        details.globalPosition & const Size(40, 40),
-        Offset.zero & overlay.size,
-      ),
-      items: const [
-        PopupMenuItem(value: 'edit', child: Text('编辑')),
-        PopupMenuItem(value: 'share', child: Text('分享')),
-        PopupMenuItem(value: 'delete', child: Text('删除')),
-      ],
-    );
-    if (!mounted || selected == null) return;
+  void _onContextMenuSelected(String selected) {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('选择了: $selected')));
@@ -261,34 +279,15 @@ extension _PopupDialogRoutes on _PopDemoHomePageState {
   }
 
   Future<void> _openDialogsInOrder(List<MapEntry<String, Widget>> items) async {
-    if (_chainOpening) return;
-    _chainOpening = true;
     final nav = Navigator.of(context, rootNavigator: true);
-    for (final item in items) {
-      final existed = _chainRoutes.remove(item.key);
-      if (existed != null) nav.removeRoute(existed);
+    await _popups.sequence('dialog', items, (item) {
       final route = _buildRawDialogRoute(_noBack(item.value));
-      _chainRoutes[item.key] = route;
-      nav.push(route);
-      await Future<void>.delayed(const Duration(milliseconds: 120));
-    }
-    _chainOpening = false;
+      unawaited(_popups.push<void>(nav, route, id: item.key));
+    });
   }
 
-  Future<void> _closeDialogsInOrder(List<String> order) async {
-    if (_chainClosing) return;
-    _chainClosing = true;
-    final nav = Navigator.of(context, rootNavigator: true);
-    for (final id in order) {
-      final route = _chainRoutes.remove(id);
-      if (route == null) continue;
-      try {
-        nav.removeRoute(route);
-      } catch (_) {}
-      await Future<void>.delayed(const Duration(milliseconds: 120));
-    }
-    _chainClosing = false;
-  }
+  Future<void> _closeDialogsInOrder(List<String> order) =>
+      _popups.sequence('dialog', order, _popups.closeRoute);
 
   Future<void> _demoOpenChain() async {
     await _openDialogsInOrder([
@@ -335,12 +334,7 @@ extension _PopupDialogRoutes on _PopDemoHomePageState {
   }
 
   void _closeDialogById(String id) {
-    final nav = Navigator.of(context, rootNavigator: true);
-    final route = _chainRoutes.remove(id);
-    if (route == null) return;
-    try {
-      nav.removeRoute(route);
-    } catch (_) {}
+    _popups.closeRoute(id);
   }
 }
 
@@ -361,44 +355,18 @@ extension _PopupOverlayDialogs on _PopDemoHomePageState {
   }
 
   Future<void> _openOverlayInOrder(List<MapEntry<String, Widget>> items) async {
-    if (_overlayOpening) return;
-    _overlayOpening = true;
     final overlay = _overlayOf();
-    for (final item in items) {
-      final existed = _overlayEntries.remove(item.key);
-      if (existed != null) {
-        for (final entry in existed) {
-          entry.remove();
-        }
-      }
-      final entries = _buildOverlayEntries(_noBack(item.value));
-      overlay.insert(entries[0]);
-      overlay.insert(entries[1]);
-      _overlayEntries[item.key] = entries;
-      await Future<void>.delayed(const Duration(milliseconds: 120));
-    }
-    _overlayOpening = false;
+    await _popups.sequence('overlay', items, (item) {
+      _popups.insertOverlay(
+        item.key,
+        overlay,
+        _buildOverlayEntries(_noBack(item.value)),
+      );
+    });
   }
 
-  Future<void> _closeOverlayInOrder(List<String> order) async {
-    if (_overlayClosing) return;
-    _overlayClosing = true;
-    for (final id in order) {
-      final entries = _overlayEntries.remove(id);
-      if (entries == null) continue;
-      if (entries.length >= 2) {
-        entries[1].remove();
-        await Future<void>.delayed(const Duration(milliseconds: 80));
-        entries[0].remove();
-      } else {
-        for (final entry in entries) {
-          entry.remove();
-        }
-      }
-      await Future<void>.delayed(const Duration(milliseconds: 120));
-    }
-    _overlayClosing = false;
-  }
+  Future<void> _closeOverlayInOrder(List<String> order) =>
+      _popups.sequence('overlay', order, _popups.closeOverlay);
 
   Future<void> _demoOpenOverlayChain() async {
     final order = List<String>.from(_orderStore.openOrder.value);
@@ -430,22 +398,11 @@ extension _PopupOverlayDialogs on _PopDemoHomePageState {
   }
 
   void _closeOverlayById(String id) {
-    final entries = _overlayEntries.remove(id);
-    if (entries == null) return;
-    if (entries.length >= 2) {
-      entries[1].remove();
-      entries[0].remove();
-    } else {
-      for (final entry in entries) {
-        entry.remove();
-      }
-    }
+    _popups.closeOverlay(id);
   }
 
   Future<void> _editOverlayOrders() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
+    await _showOwnedSheet<void>(
       isScrollControlled: true,
       builder: (context) => OverlayOrderEditor(
         fixedIds: kChainDialogIds,
@@ -457,15 +414,6 @@ extension _PopupOverlayDialogs on _PopDemoHomePageState {
   }
 
   void _overlayApplyVisibleOrder(List<String> order) {
-    final overlay = _overlayOf();
-    final newEntries = <OverlayEntry>[];
-    for (final id in order) {
-      final pair = _overlayEntries[id];
-      if (pair == null) continue;
-      newEntries
-        ..add(pair[0])
-        ..add(pair[1]);
-    }
-    if (newEntries.isNotEmpty) overlay.rearrange(newEntries);
+    _popups.rearrange(_overlayOf(), order);
   }
 }

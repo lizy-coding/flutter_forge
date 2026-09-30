@@ -34,7 +34,8 @@
     "unsupported_module_route",
     "responsive_navigation_shell",
     "adaptive_category_navigation",
-    "desktop_category_window_shell"
+    "desktop_category_window_shell",
+    "category_router_lifecycle"
   ],
   "depends": [
     "go_router",

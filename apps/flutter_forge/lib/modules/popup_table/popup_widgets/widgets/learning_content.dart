@@ -9,7 +9,7 @@ List<Widget> buildPopupLearningSections() {
         '理解 AlertDialog、SimpleDialog、BottomSheet 的区别与适用场景',
         '掌握通过 Navigator 管理链式对话框',
         '学习使用 OverlayEntry 自定义弹窗',
-        '理解 ContextMenu（showMenu）的触发方式',
+        '理解 ContextMenu（MenuAnchor）的触发方式',
       ],
     ),
     ConceptChips(
@@ -18,7 +18,7 @@ List<Widget> buildPopupLearningSections() {
         'AlertDialog',
         'SimpleDialog',
         'BottomSheet',
-        'showMenu',
+        'MenuAnchor',
         'OverlayEntry',
         'Navigator',
         'showDatePicker',

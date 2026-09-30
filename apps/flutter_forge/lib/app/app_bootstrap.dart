@@ -14,7 +14,7 @@ Future<void> bootstrapFlutterForgeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   final platform = AppPlatformSnapshot.detect();
 
-  Widget root = App(router: AppRouter.create(platform));
+  Widget? root;
   if (!platform.isWeb && MultiWindowManager.isSupported) {
     final windowController = await WindowController.fromCurrentEngine();
     final arguments = MultiWindowManager.parseArguments(
@@ -33,7 +33,7 @@ Future<void> bootstrapFlutterForgeApp() async {
   runApp(
     ProviderScope(
       overrides: [appPlatformProvider.overrideWithValue(platform)],
-      child: root,
+      child: root ?? App(router: AppRouter.create(platform)),
     ),
   );
 }

@@ -85,7 +85,9 @@
     }
   ],
   "capability_aliases": {
-    "shared_learning": "lib/shared/learning"
+    "shared_learning": "lib/shared/learning",
+    "shared_popup": "lib/shared/popup",
+    "shared_table": "lib/shared/table"
   },
   "external_tools": [
     {

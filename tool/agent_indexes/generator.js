@@ -77,6 +77,29 @@ function loadFacts(root, modules, workspacePackages) {
   };
 }
 
+function validateModuleDependencies(modules, appRoot) {
+  function walk(directory, module) {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const file = path.join(directory, entry.name);
+      if (entry.isDirectory()) { walk(file, module); continue; }
+      if (!entry.name.endsWith('.dart')) continue;
+      const content = fs.readFileSync(file, 'utf8');
+      for (const match of content.matchAll(/^(?:import|export)\s+['"]([^'"]+)['"]/gm)) {
+        const uri = match[1];
+        const target = uri.startsWith('package:flutter_forge_app/')
+          ? path.join(appRoot, 'lib', uri.slice('package:flutter_forge_app/'.length))
+          : uri.startsWith('package:') || uri.startsWith('dart:') ? null : path.resolve(directory, uri);
+        if (!target) continue;
+        const relative = path.relative(path.join(appRoot, 'lib/modules'), target).split(path.sep);
+        if (!relative[0].startsWith('..') && (relative[0] !== module.category || relative[1] !== module.id)) {
+          throw new Error(`Cross-module dependency: ${module.id} -> ${uri}`);
+        }
+      }
+    }
+  }
+  for (const module of modules) walk(path.join(appRoot, 'lib/modules', module.category, module.id), module);
+}
+
 function validateModules(modules, categories, appRoot) {
   const ids = new Set();
   const routes = new Set();
@@ -106,6 +129,7 @@ function validateModules(modules, categories, appRoot) {
       if (!fs.existsSync(path.join(dir, file))) throw new Error(`Missing module entry file: ${module.id}/${file}`);
     }
   }
+  validateModuleDependencies(modules, appRoot);
 }
 
 function generate({ root, appRoot, check = false }, render) {

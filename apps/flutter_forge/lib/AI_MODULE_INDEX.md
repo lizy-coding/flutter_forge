@@ -350,6 +350,7 @@
       "status": "ready",
       "depends": [
         "shared_learning",
+        "shared_popup",
         "module_registry"
       ],
       "platform_support": {
@@ -372,6 +373,8 @@
       "status": "ready",
       "depends": [
         "shared_learning",
+        "shared_popup",
+        "shared_table",
         "module_registry",
         "go_router"
       ],
@@ -395,7 +398,7 @@
       "status": "ready",
       "depends": [
         "shared_learning",
-        "two_dimensional_scrollables",
+        "shared_table",
         "module_registry"
       ],
       "platform_support": {

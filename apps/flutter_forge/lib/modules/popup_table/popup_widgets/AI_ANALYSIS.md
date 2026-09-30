@@ -28,10 +28,13 @@
   "owns": [
     "module_entry",
     "module_ui",
-    "module_docs"
+    "module_docs",
+    "owned_dialog_routes",
+    "cancellable_popup_chains"
   ],
   "depends": [
     "shared_learning",
+    "shared_popup",
     "module_registry"
   ],
   "children": [],
@@ -42,6 +45,7 @@
     "doc_mode": "machine_contract"
   },
   "validation": [
-    "flutter analyze"
+    "flutter analyze",
+    "flutter test test/modules/popup_table/popup_widgets"
   ]
 }

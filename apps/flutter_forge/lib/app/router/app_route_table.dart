@@ -12,16 +12,13 @@ import '../../module_registry/module_entry.dart';
 import '../../module_registry/module_category.dart';
 import '../../module_registry/module_manifest.dart';
 
-List<GoRoute> _moduleRoutesFor(AppPlatformSnapshot platform) => [
-  for (final module in moduleManifest)
-    GoRoute(
-      path: module.path,
-      builder: (context, state) => isModuleAvailable(module, platform)
-          ? module.builder(context)
-          : UnsupportedModulePage(module: module, platform: platform),
-      routes: isModuleAvailable(module, platform) ? module.routes : const [],
-    ),
-];
+List<GoRoute> _moduleRoutesFor(AppPlatformSnapshot platform) =>
+    buildModuleRoutes(
+      moduleManifest,
+      platform,
+      unsupportedBuilder: (_, module) =>
+          UnsupportedModulePage(module: module, platform: platform),
+    );
 
 List<RouteBase> _routesFor(AppPlatformSnapshot platform) => [
   ShellRoute(
