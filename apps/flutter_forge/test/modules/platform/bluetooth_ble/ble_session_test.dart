@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/modules/platform/bluetooth_ble/module_root.dart';
@@ -10,6 +10,46 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:universal_ble/universal_ble.dart';
 
 void main() {
+  testWidgets('connected device stays at top with disconnect action', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final client = FakeBleClient();
+    await tester.pumpWidget(
+      MaterialApp(home: BluetoothBlePage(client: client)),
+    );
+    expect(find.text('当前连接'), findsOneWidget);
+    client.scan.add(BleDevice(deviceId: 'device', name: 'Test device'));
+    await tester.pump();
+    await tester.ensureVisible(find.text('连接'));
+    await tester.tap(find.text('连接'));
+    await tester.pump();
+    expect(find.text('Test device'), findsOneWidget);
+    expect(find.byKey(const Key('ble-disconnect')), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+    await client.close();
+  });
+
+  testWidgets('Android can request the system Bluetooth switch', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    final client = FakeBleClient()..poweredOn = false;
+    await tester.pumpWidget(
+      MaterialApp(home: BluetoothBlePage(client: client)),
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('ble-enable-bluetooth')));
+    await tester.pump();
+    expect(client.enableCount, 1);
+    expect(find.text('适配器：已开启'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+    await client.close();
+    debugDefaultTargetPlatformOverride = null;
+  });
   testWidgets(
     'scan list favors readable names and can reveal unnamed devices',
     (tester) async {
@@ -134,6 +174,8 @@ class FakeBleClient implements BleClient {
   final valueStream = StreamController<Uint8List>.broadcast();
   List<BleService> services = [];
   bool denyPermission = false;
+  bool poweredOn = true;
+  int enableCount = 0;
   int startCount = 0;
   int stopCount = 0;
   int readCount = 0;
@@ -151,7 +193,15 @@ class FakeBleClient implements BleClient {
   Stream<Uint8List> values(String id, String characteristic) =>
       valueStream.stream;
   @override
-  Future<AvailabilityState> availability() async => AvailabilityState.poweredOn;
+  Future<AvailabilityState> availability() async =>
+      poweredOn ? AvailabilityState.poweredOn : AvailabilityState.poweredOff;
+  @override
+  Future<bool> enableBluetooth() async {
+    enableCount++;
+    poweredOn = true;
+    return true;
+  }
+
   @override
   Future<bool> hasPermissions() async => !denyPermission;
   @override

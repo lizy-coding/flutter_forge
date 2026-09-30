@@ -11,6 +11,7 @@ abstract class BleClient {
   Future<AvailabilityState> availability();
   Future<bool> hasPermissions();
   Future<void> requestPermissions();
+  Future<bool> enableBluetooth();
   Future<void> startScan();
   Future<void> stopScan();
   Future<List<BleDevice>> getSystemDevices();
@@ -46,6 +47,9 @@ class UniversalBleClient implements BleClient {
   Future<bool> hasPermissions() => UniversalBle.hasPermissions();
   @override
   Future<void> requestPermissions() => UniversalBle.requestPermissions();
+  @override
+  Future<bool> enableBluetooth() =>
+      UniversalBle.enableBluetooth(timeout: BleSession.operationTimeout);
   @override
   Future<void> startScan() => UniversalBle.startScan();
   @override
@@ -131,6 +135,29 @@ class BleSession extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       error = '读取蓝牙状态失败：$e';
+      notifyListeners();
+    }
+  }
+
+  Future<void> requestEnableBluetooth() async {
+    if (busy || availabilityState == AvailabilityState.poweredOn) return;
+    busy = true;
+    error = null;
+    notifyListeners();
+    try {
+      final accepted = await client.enableBluetooth().timeout(operationTimeout);
+      await refreshStatus();
+      if (!accepted || availabilityState != AvailabilityState.poweredOn) {
+        error = '蓝牙尚未开启，请在系统中开启后刷新状态。';
+        _log(error!);
+      } else {
+        _log('系统蓝牙已开启');
+      }
+    } catch (e) {
+      error = '请求开启系统蓝牙失败：$e';
+      _log(error!);
+    } finally {
+      busy = false;
       notifyListeners();
     }
   }

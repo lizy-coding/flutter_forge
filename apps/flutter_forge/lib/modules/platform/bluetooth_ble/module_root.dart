@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:universal_ble/universal_ble.dart';
 
 import '../../../shared/learning/learning_scaffold.dart';
@@ -30,6 +31,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
   List<BleDevice> get _visibleDevices {
     final search = query.trim().toLowerCase();
     final result = session.devices.values.where((device) {
+      if (device.deviceId == session.connectedId) return false;
       if (!showUnnamed && !_hasName(device) && device.isSystemDevice != true) {
         return false;
       }
@@ -75,23 +77,54 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const LearningObjectives(
-            objectives: [
-              '操作 BLE 扫描、连接、服务发现、读取与订阅、断开；连接与 GATT 流程待手工验证',
-              '只对特征值声明支持的操作开放按钮；数值按原始十六进制展示',
-              '对比平台权限、设备断开和资源释放行为',
+          _section('当前连接', [
+            if (session.connectedId == null)
+              const Text('尚未连接设备。开启蓝牙并扫描后，从附近设备列表发起连接。')
+            else ...[
+              Text(
+                _deviceName(
+                  session.devices[session.connectedId] ??
+                      BleDevice(deviceId: session.connectedId!, name: null),
+                ),
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              SelectableText('设备标识：${session.connectedId}'),
+              Text('GATT 服务：${session.services.length} 项'),
+              OutlinedButton.icon(
+                key: const Key('ble-disconnect'),
+                onPressed: session.disconnect,
+                icon: const Icon(Icons.link_off),
+                label: const Text('断开连接'),
+              ),
             ],
-          ),
-          const SizedBox(height: 16),
-          _section('1. 蓝牙状态与权限', [
+          ]),
+          _section('蓝牙与权限', [
             Text('适配器：${_availabilityLabel(session.availabilityState)}'),
             Text('权限：${session.permissionGranted ? '已授予' : '未授予或待确认'}'),
-            TextButton(
-              onPressed: session.refreshStatus,
-              child: const Text('刷新状态'),
+            Wrap(
+              spacing: 8,
+              children: [
+                if (defaultTargetPlatform == TargetPlatform.android &&
+                    session.availabilityState == AvailabilityState.poweredOff)
+                  FilledButton.icon(
+                    key: const Key('ble-enable-bluetooth'),
+                    onPressed: session.busy
+                        ? null
+                        : session.requestEnableBluetooth,
+                    icon: const Icon(Icons.bluetooth),
+                    label: const Text('请求开启系统蓝牙'),
+                  ),
+                OutlinedButton(
+                  onPressed: session.busy ? null : session.refreshStatus,
+                  child: const Text('刷新状态'),
+                ),
+              ],
             ),
+            if (defaultTargetPlatform == TargetPlatform.macOS &&
+                session.availabilityState == AvailabilityState.poweredOff)
+              const Text('请在 macOS 系统设置中开启蓝牙，然后刷新状态。'),
           ]),
-          _section('2. 附近设备扫描', [
+          _section('附近设备', [
             Text(session.scanning ? '扫描中…' : '未扫描'),
             Wrap(
               spacing: 8,
@@ -190,15 +223,9 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
                 ),
               ),
           ]),
-          _section('3. 服务与特征值', [
+          _section('服务与特征值', [
             if (session.connectedId == null) const Text('连接外设后显示 GATT 服务。'),
             if (session.connectedId != null) ...[
-              Text('已连接：${session.connectedId}'),
-              OutlinedButton(
-                key: const Key('ble-disconnect'),
-                onPressed: session.disconnect,
-                child: const Text('断开连接'),
-              ),
               if (session.services.isEmpty) const Text('未发现服务，或服务发现仍在进行。'),
               for (final service in session.services)
                 ExpansionTile(
@@ -266,6 +293,13 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
             for (final log in session.logs.take(12)) Text(log),
             if (session.logs.isEmpty) const Text('操作后显示状态变化与错误。'),
           ]),
+          const LearningObjectives(
+            objectives: [
+              '操作 BLE 扫描、连接、服务发现、读取与订阅、断开',
+              '只对特征值声明支持的操作开放按钮；数值按原始十六进制展示',
+              '对比平台权限、设备断开和资源释放行为',
+            ],
+          ),
         ],
       ),
     );
