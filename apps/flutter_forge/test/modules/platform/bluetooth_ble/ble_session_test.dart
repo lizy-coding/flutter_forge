@@ -10,6 +10,114 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:universal_ble/universal_ble.dart';
 
 void main() {
+  testWidgets(
+    'Windows uses the common BLE page without Android system controls',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      final client = FakeBleClient()
+        ..systemDevices = [
+          BleDevice(deviceId: 'windows-system', name: 'System BLE sensor'),
+        ];
+      await tester.pumpWidget(
+        MaterialApp(home: BluetoothBlePage(client: client)),
+      );
+      await tester.pump();
+      expect(find.text('System BLE sensor'), findsOneWidget);
+      expect(find.text('连接 GATT'), findsOneWidget);
+      expect(find.byKey(const Key('ble-enable-bluetooth')), findsNothing);
+      expect(find.byKey(const Key('ble-bluetooth-settings')), findsNothing);
+      expect(client.settingsCount, 0);
+      await tester.pumpWidget(const SizedBox());
+      await client.close();
+      debugDefaultTargetPlatformOverride = null;
+    },
+  );
+  testWidgets('system audio and GATT connections appear at top without scan', (
+    tester,
+  ) async {
+    final client = FakeBleClient()
+      ..systemDevices = [BleDevice(deviceId: 'gatt', name: 'System sensor')]
+      ..audioDevices = [
+        const SystemAudioDevice(
+          id: 'audio',
+          name: 'Connected headphones',
+          profiles: ['音频', '通话'],
+        ),
+      ];
+    await tester.pumpWidget(
+      MaterialApp(home: BluetoothBlePage(client: client)),
+    );
+    await tester.pump();
+    expect(find.text('Connected headphones'), findsOneWidget);
+    expect(find.text('System sensor'), findsOneWidget);
+    expect(find.text('连接 GATT'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('Connected headphones')).dy,
+      lessThan(tester.getTopLeft(find.text('蓝牙与权限')).dy),
+    );
+    client.audioDevices = [];
+    client.systemDevices = [];
+    await tester.tap(find.byKey(const Key('ble-system-devices')));
+    await tester.pump();
+    expect(find.text('Connected headphones'), findsNothing);
+    expect(find.text('System sensor'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+    await client.close();
+  });
+
+  testWidgets('Android powered-on control opens settings for shutdown', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    final client = FakeBleClient();
+    await tester.pumpWidget(
+      MaterialApp(home: BluetoothBlePage(client: client)),
+    );
+    await tester.pump();
+    await tester.ensureVisible(find.byKey(const Key('ble-bluetooth-settings')));
+    await tester.tap(find.byKey(const Key('ble-bluetooth-settings')));
+    await tester.pump();
+    expect(client.settingsCount, 1);
+    await tester.pumpWidget(const SizedBox());
+    await client.close();
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  test(
+    'connection refresh replaces stale system devices and preserves active GATT',
+    () async {
+      final client = FakeBleClient()
+        ..systemDevices = [BleDevice(deviceId: 'system', name: 'Sensor')];
+      final session = BleSession(client);
+      await session.connect(BleDevice(deviceId: 'active', name: 'Active'));
+      await session.loadSystemDevices();
+      expect(session.systemDevices.keys, ['system']);
+      expect(session.connectedId, 'active');
+      client.systemDevices = [];
+      await session.loadSystemDevices();
+      expect(session.systemDevices, isEmpty);
+      expect(session.connectedId, 'active');
+      await session.close();
+      await client.close();
+    },
+  );
+
+  test(
+    'Bluetooth power-off clears current system and application connections',
+    () async {
+      final client = FakeBleClient()
+        ..systemDevices = [BleDevice(deviceId: 'system', name: 'Sensor')];
+      final session = BleSession(client);
+      await session.refreshStatus();
+      await session.connect(BleDevice(deviceId: 'active', name: 'Active'));
+      client.available.add(AvailabilityState.poweredOff);
+      await Future<void>.delayed(Duration.zero);
+      expect(session.connectedId, isNull);
+      expect(session.systemDevices, isEmpty);
+      await session.close();
+      await client.close();
+    },
+  );
   testWidgets('connected device stays at top with disconnect action', (
     tester,
   ) async {
@@ -85,7 +193,7 @@ void main() {
   );
 
   test(
-    'catalog opens BLE on Android and macOS without claiming GATT acceptance',
+    'catalog opens BLE on Android macOS and Windows without claiming host acceptance',
     () {
       final module = AppRouteTable.modules.singleWhere(
         (item) => item.path == '/bluetooth-ble',
@@ -93,11 +201,11 @@ void main() {
       expect(module.platformSupport.excludedPlatforms, {
         AppTargetPlatform.iOS,
         AppTargetPlatform.web,
-        AppTargetPlatform.windows,
       });
       expect(module.platformSupport.openTargetPlatforms, [
         AppTargetPlatform.android,
         AppTargetPlatform.macOS,
+        AppTargetPlatform.windows,
       ]);
     },
   );
@@ -176,6 +284,8 @@ class FakeBleClient implements BleClient {
   bool denyPermission = false;
   bool poweredOn = true;
   int enableCount = 0;
+  int settingsCount = 0;
+  List<SystemAudioDevice> audioDevices = [];
   int startCount = 0;
   int stopCount = 0;
   int readCount = 0;
@@ -201,6 +311,15 @@ class FakeBleClient implements BleClient {
     poweredOn = true;
     return true;
   }
+
+  @override
+  Future<void> openBluetoothSettings() async {
+    settingsCount++;
+  }
+
+  @override
+  Future<List<SystemAudioDevice>> getConnectedAudioDevices() async =>
+      audioDevices;
 
   @override
   Future<bool> hasPermissions() async => !denyPermission;

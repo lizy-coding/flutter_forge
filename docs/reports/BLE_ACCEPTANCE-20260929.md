@@ -27,3 +27,7 @@
 | Web | DEFERRED | 首版不开放 Web，浏览器设备选择与服务授权需独立设计 |
 
 生成注册表将 Android 与 macOS 的模块入口开放，继续排除 iOS、Web 和 Windows。入口开放只表示可进入教学页面并操作 BLE 流程；各平台的真实设备证据仍按步骤独立记录。macOS 的状态与扫描不能证明完整 GATT 闭环；Android 已验证上述 iQOO 外设的读取和主动断开，通知订阅仍待手工验证。
+
+## 2026-09-30 接入更新
+
+Windows 已按统一规则开放模块目录和 `/bluetooth-ble` 稳定路由；当前排除集合仅保留 iOS、Web。以上表格及说明记录 2026-09-29 的历史状态，Windows 构建与真实主机 BLE 验收仍为 PENDING，未标记平台 PASS。详见 [Windows 接入记录](BLE_WINDOWS_ADMISSION-20260930.md)。

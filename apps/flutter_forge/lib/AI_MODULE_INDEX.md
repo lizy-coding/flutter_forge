@@ -506,8 +506,7 @@
         ],
         "excluded_platforms": [
           "iOS",
-          "web",
-          "windows"
+          "web"
         ]
       },
       "analysis": "lib/modules/platform/bluetooth_ble/AI_ANALYSIS.md"

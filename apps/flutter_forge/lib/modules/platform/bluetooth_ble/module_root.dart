@@ -14,7 +14,8 @@ class BluetoothBlePage extends StatefulWidget {
   State<BluetoothBlePage> createState() => _BluetoothBlePageState();
 }
 
-class _BluetoothBlePageState extends State<BluetoothBlePage> {
+class _BluetoothBlePageState extends State<BluetoothBlePage>
+    with WidgetsBindingObserver {
   late final BleSession session;
   String query = '';
   bool showUnnamed = false;
@@ -32,6 +33,12 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
     final search = query.trim().toLowerCase();
     final result = session.devices.values.where((device) {
       if (device.deviceId == session.connectedId) return false;
+      if (session.systemDevices.containsKey(device.deviceId) ||
+          session.systemAudioDevices.any(
+            (audio) => audio.id == device.deviceId,
+          )) {
+        return false;
+      }
       if (!showUnnamed && !_hasName(device) && device.isSystemDevice != true) {
         return false;
       }
@@ -54,6 +61,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     session = BleSession(widget.client ?? UniversalBleClient());
     session.addListener(_changed);
     session.refreshStatus();
@@ -64,7 +72,13 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) session.refreshStatus();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     session.removeListener(_changed);
     session.close();
     super.dispose();
@@ -78,9 +92,27 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
         padding: const EdgeInsets.all(16),
         children: [
           _section('当前连接', [
-            if (session.connectedId == null)
-              const Text('尚未连接设备。开启蓝牙并扫描后，从附近设备列表发起连接。')
-            else ...[
+            OutlinedButton.icon(
+              key: const Key('ble-system-devices'),
+              onPressed: session.refreshingConnections
+                  ? null
+                  : session.loadSystemDevices,
+              icon: const Icon(Icons.refresh),
+              label: Text(session.refreshingConnections ? '正在刷新连接…' : '刷新系统连接'),
+            ),
+            if (!session.permissionGranted)
+              const Text('点击刷新系统连接授予权限后，可显示系统已连接设备。'),
+            if (session.connectedId == null &&
+                session.systemDevices.isEmpty &&
+                session.systemAudioDevices.isEmpty &&
+                session.permissionGranted)
+              const Text('当前没有已连接设备。可开始扫描，或在系统蓝牙设置中连接设备。'),
+            if (session.connectionQueryError != null)
+              Text(
+                session.connectionQueryError!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            if (session.connectedId != null) ...[
               Text(
                 _deviceName(
                   session.devices[session.connectedId] ??
@@ -89,12 +121,20 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               SelectableText('设备标识：${session.connectedId}'),
-              Text('GATT 服务：${session.services.length} 项'),
+              Text('应用 BLE 已连接 · GATT 服务：${session.services.length} 项'),
               OutlinedButton.icon(
                 key: const Key('ble-disconnect'),
                 onPressed: session.disconnect,
                 icon: const Icon(Icons.link_off),
                 label: const Text('断开连接'),
+              ),
+            ],
+            ..._systemConnections(),
+            if (defaultTargetPlatform == TargetPlatform.android) ...[
+              const Text('此列表查询 BLE、音频与通话连接；手表等 HID 连接可能无法列出，请在系统设置中查看。'),
+              TextButton(
+                onPressed: session.openBluetoothSettings,
+                child: const Text('查看完整系统连接列表'),
               ),
             ],
           ]),
@@ -118,8 +158,21 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
                   onPressed: session.busy ? null : session.refreshStatus,
                   child: const Text('刷新状态'),
                 ),
+                if (defaultTargetPlatform == TargetPlatform.android)
+                  OutlinedButton.icon(
+                    key: const Key('ble-bluetooth-settings'),
+                    onPressed: session.openBluetoothSettings,
+                    icon: const Icon(Icons.settings_bluetooth),
+                    label: Text(
+                      session.availabilityState == AvailabilityState.poweredOn
+                          ? '关闭蓝牙（系统设置）'
+                          : '系统蓝牙设置',
+                    ),
+                  ),
               ],
             ),
+            if (defaultTargetPlatform == TargetPlatform.android)
+              const Text('开启需系统确认；关闭请在系统设置中操作，将影响所有蓝牙连接。'),
             if (defaultTargetPlatform == TargetPlatform.macOS &&
                 session.availabilityState == AvailabilityState.poweredOff)
               const Text('请在 macOS 系统设置中开启蓝牙，然后刷新状态。'),
@@ -143,19 +196,13 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
                   onPressed: session.scanning ? session.stopScan : null,
                   child: const Text('停止扫描'),
                 ),
-                OutlinedButton(
-                  key: const Key('ble-system-devices'),
-                  onPressed:
-                      session.busy ||
-                          session.scanning ||
-                          session.connectedId != null
-                      ? null
-                      : session.loadSystemDevices,
-                  child: const Text('系统已连接设备'),
-                ),
               ],
             ),
-            const Text('系统设备查询仅返回可访问的 BLE/GATT 设备；蓝牙音频连接不一定出现在此列表。'),
+            Text(
+              defaultTargetPlatform == TargetPlatform.android
+                  ? '附近广播不代表已经连接。系统音频与 BLE 连接显示在页面顶部。'
+                  : '附近广播不代表已经连接。系统 BLE 连接显示在页面顶部。',
+            ),
             const SizedBox(height: 8),
             TextField(
               key: const Key('ble-device-search'),
@@ -303,6 +350,49 @@ class _BluetoothBlePageState extends State<BluetoothBlePage> {
         ],
       ),
     );
+  }
+
+  List<Widget> _systemConnections() {
+    final audioById = {
+      for (final device in session.systemAudioDevices) device.id: device,
+    };
+    final ids = {...session.systemDevices.keys, ...audioById.keys}
+      ..remove(session.connectedId);
+    return [
+      for (final id in ids)
+        ListTile(
+          key: ValueKey('system-connection-$id'),
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(
+            audioById.containsKey(id)
+                ? Icons.headphones
+                : Icons.bluetooth_connected,
+          ),
+          title: Text(
+            audioById[id]?.name ??
+                _deviceName(
+                  session.systemDevices[id] ??
+                      BleDevice(deviceId: id, name: null),
+                ),
+          ),
+          subtitle: Text(
+            [
+              if (audioById[id] case final audio?)
+                '系统已连接 · ${audio.profiles.join('、')}',
+              if (session.systemDevices.containsKey(id)) '系统 BLE 已连接',
+              id,
+            ].join('\n'),
+          ),
+          trailing: session.systemDevices.containsKey(id)
+              ? TextButton(
+                  onPressed: session.busy || session.connectedId != null
+                      ? null
+                      : () => session.connect(session.systemDevices[id]!),
+                  child: const Text('连接 GATT'),
+                )
+              : null,
+        ),
+    ];
   }
 
   Widget _section(String title, List<Widget> children) => Card(

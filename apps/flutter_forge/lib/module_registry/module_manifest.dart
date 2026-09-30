@@ -371,13 +371,9 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['BLE Central', 'GATT', '特征值属性', '通知订阅', '资源释放'],
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
-    // Android and macOS expose the BLE learning flow; GATT acceptance is tracked separately.
+    // Android, macOS and Windows expose the BLE learning flow; host build and GATT acceptance are tracked separately.
     platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {
-        AppTargetPlatform.iOS,
-        AppTargetPlatform.web,
-        AppTargetPlatform.windows,
-      },
+      excludedPlatforms: {AppTargetPlatform.iOS, AppTargetPlatform.web},
     ),
     builder: (context) => const BluetoothBleEntry(),
   ),

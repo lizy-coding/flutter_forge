@@ -305,8 +305,8 @@ const modules = [
     concepts: ['BLE Central', 'GATT', '特征值属性', '通知订阅', '资源释放'],
     estimatedMinutes: 30,
     entry: 'BluetoothBleEntry',
-    excludedPlatforms: ['iOS', 'web', 'windows'],
-    platformSupportComment: '// Android and macOS expose the BLE learning flow; GATT acceptance is tracked separately.',
+    excludedPlatforms: ['iOS', 'web'],
+    platformSupportComment: '// Android, macOS and Windows expose the BLE learning flow; host build and GATT acceptance are tracked separately.',
   },
   {
     category: 'platform',

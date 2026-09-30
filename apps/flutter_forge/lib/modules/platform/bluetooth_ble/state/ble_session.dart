@@ -1,7 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:universal_ble/universal_ble.dart';
+
+class SystemAudioDevice {
+  const SystemAudioDevice({
+    required this.id,
+    required this.name,
+    required this.profiles,
+  });
+  final String id;
+  final String? name;
+  final List<String> profiles;
+}
 
 abstract class BleClient {
   Stream<BleDevice> get scanResults;
@@ -12,6 +24,8 @@ abstract class BleClient {
   Future<bool> hasPermissions();
   Future<void> requestPermissions();
   Future<bool> enableBluetooth();
+  Future<void> openBluetoothSettings();
+  Future<List<SystemAudioDevice>> getConnectedAudioDevices();
   Future<void> startScan();
   Future<void> stopScan();
   Future<List<BleDevice>> getSystemDevices();
@@ -29,6 +43,29 @@ abstract class BleClient {
 }
 
 class UniversalBleClient implements BleClient {
+  static const _systemChannel = MethodChannel('flutter_forge/bluetooth_system');
+  @override
+  Future<void> openBluetoothSettings() =>
+      _systemChannel.invokeMethod<void>('openSettings');
+  @override
+  Future<List<SystemAudioDevice>> getConnectedAudioDevices() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return [];
+    final result =
+        await _systemChannel.invokeListMethod<Map<Object?, Object?>>(
+          'connectedAudioDevices',
+        ) ??
+        [];
+    return result
+        .map(
+          (item) => SystemAudioDevice(
+            id: item['id'] as String,
+            name: item['name'] as String?,
+            profiles: (item['profiles'] as List).cast<String>(),
+          ),
+        )
+        .toList();
+  }
+
   @override
   Stream<BleDevice> get scanResults => UniversalBle.scanStream;
   @override
@@ -91,6 +128,17 @@ class BleSession extends ChangeNotifier {
     });
     _availabilitySubscription = client.availabilityChanges.listen((state) {
       availabilityState = state;
+      if (state == AvailabilityState.poweredOff) {
+        ++_connectionQueryGeneration;
+        systemDevices.clear();
+        systemAudioDevices = [];
+        scanning = false;
+        _scanTimer?.cancel();
+        ++_generation;
+        _clearConnection();
+      } else if (state == AvailabilityState.poweredOn) {
+        refreshStatus();
+      }
       notifyListeners();
     });
   }
@@ -98,6 +146,10 @@ class BleSession extends ChangeNotifier {
   final BleClient client;
   final Duration scanDuration;
   final Map<String, BleDevice> devices = {};
+  final Map<String, BleDevice> systemDevices = {};
+  List<SystemAudioDevice> systemAudioDevices = [];
+  bool refreshingConnections = false;
+  String? connectionQueryError;
   final Map<String, Uint8List> values = {};
   final Set<String> subscriptions = {};
   final List<String> logs = [];
@@ -115,6 +167,7 @@ class BleSession extends ChangeNotifier {
   Timer? _scanTimer;
   bool _closed = false;
   int _generation = 0;
+  int _connectionQueryGeneration = 0;
 
   void _log(String message) {
     logs.insert(
@@ -127,25 +180,46 @@ class BleSession extends ChangeNotifier {
 
   Future<void> refreshStatus() async {
     try {
-      availabilityState = await client.availability().timeout(operationTimeout);
-      permissionGranted = await client.hasPermissions().timeout(
-        operationTimeout,
-      );
+      final state = await client.availability().timeout(operationTimeout);
+      final granted = await client.hasPermissions().timeout(operationTimeout);
+      if (_closed) return;
+      availabilityState = state;
+      permissionGranted = granted;
       error = null;
       notifyListeners();
+      if (state == AvailabilityState.poweredOn && granted) {
+        await loadSystemDevices(requestPermission: false);
+      } else {
+        ++_connectionQueryGeneration;
+        systemDevices.clear();
+        systemAudioDevices = [];
+        notifyListeners();
+      }
     } catch (e) {
+      if (_closed) return;
       error = '读取蓝牙状态失败：$e';
       notifyListeners();
     }
   }
 
   Future<void> requestEnableBluetooth() async {
-    if (busy || availabilityState == AvailabilityState.poweredOn) return;
+    if (_closed || busy || availabilityState == AvailabilityState.poweredOn) {
+      return;
+    }
     busy = true;
     error = null;
     notifyListeners();
     try {
-      final accepted = await client.enableBluetooth().timeout(operationTimeout);
+      await client.requestPermissions().timeout(operationTimeout);
+      permissionGranted = await client.hasPermissions().timeout(
+        operationTimeout,
+      );
+      if (_closed) return;
+      if (!permissionGranted) throw StateError('蓝牙权限未授予');
+      final accepted = await client.enableBluetooth().timeout(
+        const Duration(seconds: 60),
+      );
+      if (_closed) return;
       await refreshStatus();
       if (!accepted || availabilityState != AvailabilityState.poweredOn) {
         error = '蓝牙尚未开启，请在系统中开启后刷新状态。';
@@ -154,35 +228,55 @@ class BleSession extends ChangeNotifier {
         _log('系统蓝牙已开启');
       }
     } catch (e) {
+      if (_closed) return;
       error = '请求开启系统蓝牙失败：$e';
       _log(error!);
     } finally {
       busy = false;
-      notifyListeners();
+      if (!_closed) notifyListeners();
+    }
+  }
+
+  Future<void> openBluetoothSettings() async {
+    try {
+      await client.openBluetoothSettings();
+    } catch (e) {
+      if (_closed) return;
+      error = '打开系统蓝牙设置失败：$e';
+      _log(error!);
     }
   }
 
   Future<void> startScan() async {
-    if (scanning || busy || connectedId != null) return;
+    if (_closed || scanning || busy || connectedId != null) return;
     busy = true;
     error = null;
     devices.clear();
     notifyListeners();
     try {
       await client.requestPermissions().timeout(operationTimeout);
-      permissionGranted = true;
+      permissionGranted = await client.hasPermissions().timeout(
+        operationTimeout,
+      );
+      if (_closed) return;
+      if (!permissionGranted) throw StateError('蓝牙权限未授予');
       await client.startScan().timeout(operationTimeout);
+      if (_closed) {
+        await client.stopScan().timeout(operationTimeout);
+        return;
+      }
       scanning = true;
       _log('开始扫描，${scanDuration.inSeconds} 秒后自动停止');
       _scanTimer = Timer(scanDuration, () {
         stopScan();
       });
     } catch (e) {
+      if (_closed) return;
       error = '扫描失败或权限被拒绝：$e';
       _log(error!);
     } finally {
       busy = false;
-      notifyListeners();
+      if (!_closed) notifyListeners();
     }
   }
 
@@ -201,23 +295,45 @@ class BleSession extends ChangeNotifier {
     }
   }
 
-  Future<void> loadSystemDevices() async {
-    if (busy || scanning || connectedId != null) return;
-    busy = true;
-    error = null;
+  Future<void> loadSystemDevices({bool requestPermission = true}) async {
+    if (_closed || refreshingConnections) return;
+    refreshingConnections = true;
+    final queryGeneration = ++_connectionQueryGeneration;
+    connectionQueryError = null;
     notifyListeners();
     try {
-      final found = await client.getSystemDevices().timeout(operationTimeout);
-      for (final device in found) {
-        devices[device.deviceId] = device;
+      if (requestPermission) {
+        await client.requestPermissions().timeout(operationTimeout);
       }
+      final granted = await client.hasPermissions().timeout(operationTimeout);
+      if (_closed) return;
+      permissionGranted = granted;
+      if (!granted) throw StateError('请先授予蓝牙连接权限');
+      final state = await client.availability().timeout(operationTimeout);
+      if (_closed) return;
+      availabilityState = state;
+      if (state != AvailabilityState.poweredOn) {
+        systemDevices.clear();
+        systemAudioDevices = [];
+        return;
+      }
+      final found = await client.getSystemDevices().timeout(operationTimeout);
+      final audio = await client.getConnectedAudioDevices().timeout(
+        operationTimeout,
+      );
+      if (_closed || queryGeneration != _connectionQueryGeneration) return;
+      systemDevices
+        ..clear()
+        ..addEntries(found.map((device) => MapEntry(device.deviceId, device)));
+      systemAudioDevices = audio;
       _log('系统已连接的 BLE 设备：${found.length} 台');
     } catch (e) {
-      error = '查询系统 BLE 设备失败：$e';
-      _log(error!);
+      if (_closed) return;
+      connectionQueryError = '查询系统连接失败：$e';
+      _log(connectionQueryError!);
     } finally {
-      busy = false;
-      notifyListeners();
+      refreshingConnections = false;
+      if (!_closed) notifyListeners();
     }
   }
 
@@ -235,6 +351,7 @@ class BleSession extends ChangeNotifier {
       await client.connect(id);
       if (_closed || generation != _generation) return;
       connectedId = id;
+      devices[id] = device;
       _connectionSubscription = client.connectionChanges(id).listen((
         connected,
       ) {
@@ -370,10 +487,10 @@ class BleSession extends ChangeNotifier {
       data.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join(' ');
 
   Future<void> close() async {
+    _closed = true;
     _scanTimer?.cancel();
     await stopScan();
     await disconnect();
-    _closed = true;
     await _scanSubscription?.cancel();
     await _availabilitySubscription?.cancel();
     super.dispose();

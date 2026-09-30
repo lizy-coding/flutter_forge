@@ -20,8 +20,7 @@
     ],
     "excluded_platforms": [
       "iOS",
-      "web",
-      "windows"
+      "web"
     ]
   },
   "entrypoints": [
