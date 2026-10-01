@@ -1,201 +1,139 @@
 # Flutter Forge
 
-> 把 Flutter 的底层机制、工程架构与跨平台能力，变成可以运行、交互、对照和验证的学习现场。
+**简体中文** · [English](README.en.md)
 
-Flutter Forge 不是零散 Demo 的陈列柜，而是一座面向真实工程的 Flutter 学习工坊。项目将三棵树、事件循环、Isolate、状态管理、动效、3D、网络、文件选择、视频与原生能力组织为 **23 个可注册学习模块**；每个模块都带有学习语义、平台边界和独立测试，并运行在同一套响应式导航、模块注册与质量门禁之上。
+> 跨平台 Flutter 工程实践：架构设计、图形绘制与性能治理。
 
-[在线体验 Flutter Forge Web](https://lizy-coding.github.io/flutter_forge/)
+将基础机制、异步并发、状态管理、绘制交互和原生能力整合为 **六类、24 个学习模块**，在同一套应用壳、模块契约和质量门禁下持续演进。
+
+[在线体验](https://lizy-coding.github.io/flutter_forge/) · [演示视频](https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-624071b0e2ea) · [架构决策](docs/adr/README.md) · [开发指南](docs/DEVELOPMENT.md)
 
 ![Flutter Forge 演示](https://raw.githubusercontent.com/lizy-coding/flutter_forge/master/assets/demo.gif)
 
-完整演示视频：https://github.com/user-attachments/assets/6af279c0-7d82-42bc-81b1-624071b0e2ea
+## 核心设计
 
-## 为什么是 Flutter Forge
+- **跨平台一致性**：共享目录与路由，按窗口空间调整导航，平台能力通过适配层接入。
+- **清晰的架构边界**：应用壳管理导航，注册层维护模块事实，学习模块彼此独立，共享能力与基础包复用。
+- **绘制与性能实践**：覆盖 2D 绘制、动效、3D 和轨迹可视化，通过并发与方案对照观察执行、重建和绘制成本。
+- **可持续治理**：生成式契约、静态分析、行为测试与资源生命周期检查共同约束变更。
 
-- **从“看代码”到“看见机制”**：用可操作页面展示重建、队列调度、流订阅、并发、状态流转、绘制与平台调用。
-- **从单页示例到工程系统**：模块通过统一注册表进入目录与路由，共享能力有明确边界，不靠复制粘贴拼装功能。
-- **从“能运行”到“知道在哪里能运行”**：平台支持与学习质量分开建模；不支持的能力仍保留在目录中，并给出明确说明。
-- **从一次演示到可持续演进**：机器可解析的 Agent 契约、生成校验、静态分析、全量测试和 FlutterGuard 共同守住变更质量。
-
-## 系统全景
+## 整体架构
 
 ```mermaid
 flowchart TB
-    User[学习者] --> Host[Flutter Host<br/>Android · macOS · Web · Windows]
-
-    subgraph App[应用壳 apps/flutter_forge/lib/app]
-        Bootstrap[App Bootstrap<br/>初始化平台快照]
-        Shell[MaterialApp.router<br/>目录与学习入口]
-        Policy[NavigationPolicy<br/>响应式导航决策]
-        Router[GoRouter<br/>稳定路由与不可用守卫]
-    end
-
-    subgraph Registry[模块注册层 module_registry]
-        Manifest[Module Manifest<br/>23 个模块的元数据]
-        Catalog[Catalog Utils<br/>分类、检索与平台判定]
-        Snapshot[AppPlatformSnapshot<br/>进程级不可变平台模型]
-    end
-
-    subgraph Modules[六类学习模块]
-        Basic[基础机制]
-        Async[异步并发]
-        State[架构与状态]
-        UI[UI 与动效]
-        Popup[弹窗与列表]
-        Platform[网络与平台]
-    end
-
-    subgraph Shared[共享能力与工作区包]
-        Learning[LearningScaffold<br/>教学页面模板]
-        MultiWindow[MultiWindowManager<br/>桌面窗口生命周期]
-        Packages[file_picker_bridge<br/>flutter_ioc_core<br/>desktop_multi_window]
-    end
-
-    Host --> Bootstrap --> Shell
-    Bootstrap --> Snapshot
-    Shell --> Policy
-    Shell --> Router
-    Policy --> Snapshot
-    Policy --> MultiWindow
-    Router --> Manifest --> Catalog
-    Catalog --> Snapshot
-    Catalog --> Modules
-    Modules --> Learning
-    Modules --> Packages
+    Host["平台宿主 · Android / macOS / Windows / Web"] --> Boot["启动层 · 初始化平台快照"]
+    Boot --> App["应用壳 · 自适应布局 / 导航 / 窗口编排"]
+    Boot --> Platform["平台快照 · 当前宿主与目标平台模型"]
+    App --> Registry["模块注册层 · 元数据 / 分类目录 / 平台准入"]
+    Registry --> Platform
+    App --> Routes["路由组合 · 首页 / 分类 / 模块 / 教学子页"]
+    Registry --> Routes
+    Routes --> Modules["学习模块 · 基础 / 异步 / 状态 / UI / 弹窗 / 平台"]
+    App --> Shared["共享能力 · 教学模板 / 浮层 / 表格 / 窗口生命周期"]
+    Modules --> Shared
+    Shared --> Packages["工作区包 · 文件选择 / 桌面多窗口"]
+    Modules --> Core["领域能力 · IoC / G-code"]
+    Packages --> Runtime["运行基础 · Flutter / GPU / 原生插件 / 浏览器"]
+    Core --> Runtime
 ```
 
-这套结构把职责切成四层：应用壳负责启动与导航，注册层负责模块事实与平台判定，模块层只承载学习内容和局部状态，共享层提供业务无关能力。普通模块不直接决定平台目录可见性，也不拥有多窗口策略。
+图中箭头表示主要的启动、组装与能力使用关系。应用启动时建立平台快照；注册层提供统一模块声明，路由据此组装页面与不可用说明。模块复用共享能力和独立包，宿主差异留在平台适配边界内。
 
-### 导航与平台决策
+### 项目层级概要
+
+```text
+flutter_forge/
+├── apps/flutter_forge/           应用与 Android / macOS / Windows / Web 宿主
+│   └── lib/
+│       ├── app/                  启动、应用壳与窗口编排
+│       │   └── router/           首页 → 分类 → 模块 → 教学子页
+│       ├── module_registry/      模块元数据、目录与平台判定
+│       ├── modules/              独立学习模块
+│       │   ├── basic/            基础机制
+│       │   ├── async/            异步并发
+│       │   ├── state/            架构与状态
+│       │   ├── ui/               绘制与交互
+│       │   ├── popup_table/      弹窗与列表
+│       │   └── platform/         网络与平台
+│       └── shared/               教学模板、浮层、表格与窗口生命周期
+├── packages/                     可复用工作区包
+│   ├── flutter_ioc_core/         纯 Dart 依赖注入
+│   ├── file_picker_bridge/       文件选择适配
+│   └── desktop_multi_window/     桌面多窗口
+├── docs/                         架构决策、开发指南与验收记录
+└── tool/                         契约生成、测试与质量门禁
+```
+
+应用壳负责组装，注册层统一驱动目录和路由；模块之间不直接依赖，共享层不反向依赖应用壳或模块。`gcode_core` 作为独立 Git 依赖接入。
+
+模块声明、路由组合与 Agent 契约由 [生成源](tool/generate_agent_indexes.js)统一维护。平台准入和学习状态分别建模；新增模块沿用同一套契约，无需另建导航体系。
+
+## 路由与跨平台导航
 
 ```mermaid
 flowchart LR
-    Open[打开学习分类] --> Desktop{桌面平台？}
-    Desktop -- 否：Android / iOS / Web --> InApp[当前应用内导航]
-    Desktop -- 是 --> Width{窗口宽度 ≥ 600dp？}
-    Width -- 否 --> InApp
-    Width -- 是 --> Capability{多窗口能力可用？}
-    Capability -- 否 --> InApp
-    Capability -- 是 --> Window[创建或复用分类窗口]
-
-    Route[进入模块路由] --> Supported{当前目标平台可用？}
-    Supported -- 是 --> Lesson[加载教学模块]
-    Supported -- 否 --> Guard[显示统一不可用说明]
+    Home["首页 /"] --> Category["分类目录 /category/:category"]
+    Category --> Entry["模块根路径 /module-path"]
+    Entry --> Guard{"平台入口开放？"}
+    Guard -->|是| Module["模块页面与教学子路由"]
+    Guard -->|否| Unavailable["统一不可用说明"]
+    Category -. 桌面端显式打开 .-> Window["分类专注窗口"]
 ```
 
-Android、iOS 与 Web 始终使用应用内导航；桌面端只有在宽窗口且多窗口能力可用时才创建分类窗口。模块路径保持稳定，平台受限模块会进入统一说明页，而不是消失或落入 404。
+图中展示页面访问流程：分类组织模块，模块使用独立根路径，如 `/tree-state`、`/flutter-scene-3d`；教学子页位于模块路径下，如 `/microtask/event-queue`。主窗口通过 GoRouter `ShellRoute` 共享导航外壳；受限模块保留根入口和说明页，不注册内部子路由。
 
-## 学习地图
+导航随可用宽度切换：**小于 600dp 使用 Drawer，600–1023dp 使用 NavigationRail，1024dp 起使用可折叠侧栏**。分类默认在应用内打开；桌面宽窗口且能力可用时，可显式打开并复用分类专注窗口。详见 [导航决策](docs/adr/0012-adaptive-navigation-shell.md)。
 
-| 主题 | 代表模块 | 你会观察到什么 |
-|------|----------|----------------|
-| 基础机制 | 三棵树与生命周期、事件循环、防抖与节流 | Widget/Element/RenderObject 关系、任务队列与调用时序 |
-| 异步并发 | Stream 订阅、Isolate 对比、多任务管理器 | 背压、生命周期、主线程响应与跨 Isolate 通信 |
-| 架构与状态 | 状态管理演进、Flutter IoC、本地持久化 | setState 到 Bloc 的取舍、依赖作用域与状态恢复 |
-| UI 与动效 | 智能吸附线、下载动效、字体选择器、3D 查看器、G-code | 绘制、手势、Overlay、相机控制与 GPU 场景 |
-| 弹窗与列表 | 弹窗合集、二维滚动表格、Overlay 跟随对照 | 浮层定位、嵌套路由与二维滚动布局 |
-| 网络与平台 | Dio 拦截器、文件选择、在线视频、WebView、USB | 请求链路、原生边界、媒体生命周期与不可用降级 |
+仓库已包含 Android、macOS、Windows、Web 宿主；iOS 仅纳入平台模型，尚无宿主与构建证据。模块入口开放、构建通过和真实设备验收分别记录，参见 [平台契约](docs/adr/0011-platform-snapshot-and-guarded-routes.md)与 [验收报告](docs/reports/)。
 
-推荐从“三棵树与生命周期”开始，依次进入事件循环、Stream、Isolate、状态管理，再探索 UI/3D 与平台能力。目录中的难度、预计用时、概念标签和学习状态可以帮助你自行调整路线。
+## 内容地图
 
-## 平台边界
+| 方向 | 代表内容 |
+|---|---|
+| [基础机制 · 3](apps/flutter_forge/lib/modules/basic/) | 三棵树与生命周期、事件循环、防抖与节流 |
+| [异步并发 · 3](apps/flutter_forge/lib/modules/async/) | Stream、Isolate 对比、多任务与进度管理 |
+| [架构与状态 · 3](apps/flutter_forge/lib/modules/state/) | 状态管理演进、IoC 生命周期、本地持久化 |
+| [绘制与交互 · 5](apps/flutter_forge/lib/modules/ui/) | 吸附画板、下载动效、字体、3D 查看器、G-code 轨迹 |
+| [弹窗与列表 · 4](apps/flutter_forge/lib/modules/popup_table/) | 弹窗组合、二维表格、Overlay 跟随方案对照 |
+| [网络与平台 · 6](apps/flutter_forge/lib/modules/platform/) | 请求拦截、文件、视频、WebView、BLE、USB |
 
-Flutter Forge 的目标平台模型覆盖 Android、iOS、macOS、Web 和 Windows，但“进入目标集合”不等于所有能力都已完成真机验收。
-
-| 平台 | 当前仓库能力边界 |
-|------|------------------|
-| macOS | 桌面主线；支持宽窗口分类多窗口，部分 GPU/原生模块以 macOS 为已接入基线 |
-| Windows | 桌面主线；核心真机能力已有记录，多窗口专项仍以验收报告为准 |
-| Android | 单窗口兼容轨道；构建、模拟器遍历与基础原生通道已有证据，USB/键盘等真机行为仍需设备验收 |
-| Web | 单窗口浏览器交付；Safari/Chrome 已覆盖主体模块，原生 WebView、USB、G-code 与 Isolate 模块保留不可用态 |
-| iOS | 已进入平台判定模型；当前仓库没有 iOS Host 与构建证据，不应视为已交付 |
-
-运行时以 `ModulePlatformSupport` 的排除集合描述平台限制，目录与路由统一通过 `module_registry` 判定。学习质量状态（`pending` / `ready` / `recommended`）不用于表达平台支持。
-
-详细证据见 [`docs/reports/`](docs/reports/)；分层验收规则见 [`docs/QUALITY_ACCEPTANCE.md`](docs/QUALITY_ACCEPTANCE.md)。
+入门建议：**三棵树 → 事件循环 → Stream → 状态管理**。平台限制以 [模块声明](apps/flutter_forge/lib/module_registry/module_manifest.dart)为准：Isolate 在 Web 不可用，G-code 仅开放 macOS，USB 功能暂不开放；3D 的 Android 入口仅自动巡展，Windows / Android 构建与 GPU 首帧验收仍需独立证据。
 
 ## 快速开始
 
-环境要求：Flutter `>=3.47.2`、Dart `^3.11.5`。
+Flutter `>=3.47.2` · Dart `^3.11.5`
 
 ```bash
-# 在仓库根目录解析 Pub Workspace
+# 仓库根目录解析工作区依赖
 flutter pub get
-
-# 启动主应用
 cd apps/flutter_forge
 flutter run -d <device>
 ```
 
-Web Release 使用仓库提供的受检脚本，确保本地 CanvasKit、启动壳与同源媒体契约一致：
+在仓库根目录执行：
 
 ```bash
-bash tool/build_web_release.sh
+bash tool/quality_gate.sh       # 契约、格式、分析、全量测试、布局与 FlutterGuard
+bash tool/build_web_release.sh  # Web Release 与资源检查
 ```
 
-### Web 托管
+<details>
+<summary>托管与发布</summary>
 
-`dev` 分支继续通过 `.github/workflows/deploy-pages.yml` 发布到 GitHub Pages。另有 `.github/workflows/deploy-cloudflare-pages.yml`，将同一应用构建为站点根路径 `/` 后上传到 Cloudflare Pages Free；两条流程互不依赖。
+[GitHub Pages](.github/workflows/deploy-pages.yml) 与 [Cloudflare Pages](.github/workflows/deploy-cloudflare-pages.yml) 使用独立流程，构建基路径分别为 `/flutter_forge/` 和 `/`。
 
-启用 Cloudflare 发布：
+Cloudflare 使用名为 `flutter-forge` 的 Direct Upload 项目（生产分支 `dev`）；配置 Pages: Edit 权限的 Token、secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` 和 variable `CLOUDFLARE_PAGES_ENABLED=true`。上传前检查 25 MiB 单文件限制，部署后验证深层路由与媒体资源。
 
-1. 在 Cloudflare **Workers & Pages** 创建名为 `flutter-forge` 的 **Direct Upload** Pages 项目，生产分支设为 `dev`。不要选择 Git 集成，否则会产生另一条自动构建流程。
-2. 创建具有账号级 **Cloudflare Pages: Edit** 权限的 API Token，并在 GitHub 仓库 Actions secrets 中设置 `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`。
-3. 在 GitHub 仓库 Actions variable 中设置 `CLOUDFLARE_PAGES_ENABLED=true`。此后推送到 `dev` 或手动运行 Cloudflare 工作流会部署；未设置该变量时工作流跳过。
-4. 首次部署后检查 Cloudflare 提供的 `*.pages.dev` 地址，包括首页、深层路由、CanvasKit 资源和同源视频。国内访问速度须从目标网络实测。
+CI 构建暂存产物；GitHub Release 经 Agent Hub `release_hosting` 的 `release-plan` / `release-run --execute` 发布。分发形式为 macOS DMG、Windows EXE、Android ARM64 debug APK 与 Web 静态文件。
 
-Cloudflare Pages Free 单文件上限为 25 MiB；工作流在上传前检查构建产物。GitHub Pages 使用 `/flutter_forge/`，Cloudflare Pages 使用 `/`，不可互换两份构建产物。
+</details>
 
-提交变更前执行完整门禁：
+## 开发与文档
 
-```bash
-bash tool/quality_gate.sh
-```
+开发变更先进入 `dev`，`master` 仅通过从 `dev` 发起的 PR 合入。新增模块需同步注册源、教学模板、模块契约与测试，并通过完整门禁。
 
-门禁会依次检查 Agent 文档漂移、Dart 格式、bare `flutter analyze`、全部测试、测试目录布局和 FlutterGuard HIGH 问题。
+[开发指南](docs/DEVELOPMENT.md) · [测试说明](docs/TESTING.md) · [架构决策](docs/adr/README.md) · [验收规则](docs/QUALITY_ACCEPTANCE.md) · [Agent 规则](AGENTS.md)
 
-## 仓库结构
+---
 
-```text
-flutter_forge/
-├── apps/flutter_forge/              # Flutter 应用与各平台 Host
-│   ├── lib/app/                      # 启动、应用壳、路由与导航策略
-│   ├── lib/module_registry/          # 模块元数据、平台快照与目录操作
-│   ├── lib/shared/                   # 教学模板与业务无关的共享能力
-│   └── lib/modules/                  # 六类、23 个学习模块
-├── packages/
-│   ├── file_picker_bridge/           # 跨平台文件选择边界
-│   ├── flutter_ioc_core/             # 纯 Dart IoC 核心
-│   └── desktop_multi_window/         # 桌面多窗口插件与本地修复
-├── docs/adr/                          # 架构决策记录
-├── docs/reports/                      # 分平台验收证据
-├── tool/                              # 契约生成、测试与质量门禁
-├── AI_PROJECT_CONTEXT.md              # 机器可解析项目契约
-└── REFACTOR_PLAN.md                   # 机器可解析演进队列
-```
-
-`gcode_core` 作为独立 Git 依赖维护；Canvas、时间线和播放控件由它提供，教学编排与文件选择留在 Flutter Forge。工作区包禁止使用指向仓库外部的 `path: ../...` 依赖。
-
-## 如何新增或修改模块
-
-每个学习模块都不是孤立页面，而是一个受契约约束的可注册单元：
-
-1. 使用 `module_entry.dart` 暴露 `*Entry` Widget。
-2. 在模块注册源中补全标题、副标题、分类、难度、概念、预计用时和状态。
-3. 至少使用一个 `lib/shared/learning` 教学模板组件。
-4. 维护模块 `AI_ANALYSIS.md`，并通过生成脚本校验机器契约。
-5. 为逻辑、交互和平台分支补充对应测试。
-6. 执行 `bash tool/quality_gate.sh`，涉及教学 UI 时补充人工验收或截图说明。
-
-完整规则以 [`AGENTS.md`](AGENTS.md) 为准。架构与平台变更还应先阅读 [`CONTEXT.md`](CONTEXT.md) 和相关 [`docs/adr/`](docs/adr/)。
-
-## 协作与分支
-
-- `dev` 是持续开发分支，功能、修复、文档与发版准备先进入 `dev`。
-- `master` 是受保护稳定分支，只能通过从 `dev` 发起的 Pull Request 合入。
-- 不直接推送、强制推送或删除 `master`；合入后将合并拓扑同步回 `dev`。
-- 提交信息采用 `<type>(<scope>): <subject>`，常用类型包括 `feat`、`fix`、`docs`、`refactor`、`test` 和 `chore`。
-
-发布不由业务仓库 CI 直接创建 GitHub Release；发布计划与执行统一经 Agent Hub 的 `release_hosting` 流程完成。
-
-当前四端分发产物为 macOS DMG、Windows EXE、Android ARM64 debug APK 和 Web 静态文件。Windows 安装器由 CI 从应用 `pubspec.yaml` 提取版本并传入 Inno Setup 的 `/DMyAppVersion`；Android 明确使用 debug 构建与 debug 签名。
+由 [Lizy](https://github.com/lizy-coding) 维护，专注 Flutter 跨平台与工程架构。 [掘金](https://juejin.cn/user/2085122730895063/posts) · [语雀](https://www.yuque.com/diligent_coding/flutter)
