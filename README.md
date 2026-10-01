@@ -197,3 +197,5 @@ flutter_forge/
 - 提交信息采用 `<type>(<scope>): <subject>`，常用类型包括 `feat`、`fix`、`docs`、`refactor`、`test` 和 `chore`。
 
 发布不由业务仓库 CI 直接创建 GitHub Release；发布计划与执行统一经 Agent Hub 的 `release_hosting` 流程完成。
+
+当前四端分发产物为 macOS DMG、Windows EXE、Android ARM64 debug APK 和 Web 静态文件。Windows 安装器由 CI 从应用 `pubspec.yaml` 提取版本并传入 Inno Setup 的 `/DMyAppVersion`；Android 明确使用 debug 构建与 debug 签名。
