@@ -18,7 +18,13 @@
       "web",
       "windows"
     ],
-    "excluded_platforms": []
+    "excluded_platforms": [],
+    "required_capabilities": [],
+    "unreviewed_dependencies": [],
+    "optional_capabilities": [],
+    "reasons": [],
+    "restriction": null,
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

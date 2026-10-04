@@ -1,0 +1,37 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "execution",
+  "module": "flutter_scene_3d",
+  "platform": "macOS",
+  "status": "pass",
+  "recorded_at": "2026-10-04T09:48:01.502Z",
+  "fingerprint": "dbc656dc53906ea95f41576d1f5eb714fabcb8f571753db8e908477671d2ac4d",
+  "revision": {
+    "commit": "f7996632559bcfb72243b831863d069ab9abfd71",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git; device=macos",
+  "command": [
+    "flutter",
+    "test",
+    "integration_test/flutter_scene_3d_flow_test.dart",
+    "-d",
+    "macos",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "test_summary": {
+    "completed": 1,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791107281105-0fba431f-da82-45bd-bd36-544f04e0718d.log",
+      "sha256": "b2a1858acf9ecce599208b909e5a786a5976436ef7f60a44fa05d200bc11f604"
+    }
+  ]
+}

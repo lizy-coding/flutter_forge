@@ -1,0 +1,36 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "logic",
+  "platform": "any",
+  "recorded_at": "2026-10-04T09:34:43.042Z",
+  "revision": {
+    "commit": "f7996632559bcfb72243b831863d069ab9abfd71",
+    "dirty": true
+  },
+  "command": [
+    "flutter",
+    "test",
+    "test/modules",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791106482807-63b7808f-4ffb-4f3e-99bf-c99e8919d248.log",
+      "sha256": "99fe52d56c5768bd87754d2ade3234b7f91946debfbc29bd6b8d3bf85a0ee7aa"
+    }
+  ],
+  "module": "flutter_scene_3d",
+  "fingerprint": "bbc6fa2b214f19421e8a9367ef5d607874b60212dbb06b5451979a58cabfe576",
+  "status": "pass",
+  "test_summary": {
+    "completed": 20,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "test_scope": "apps/flutter_forge/test/modules/ui/flutter_scene_3d"
+}

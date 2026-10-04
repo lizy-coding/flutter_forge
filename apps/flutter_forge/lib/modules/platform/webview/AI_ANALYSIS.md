@@ -21,7 +21,23 @@
     "excluded_platforms": [
       "iOS",
       "web"
-    ]
+    ],
+    "required_capabilities": [
+      "embedded_web"
+    ],
+    "unreviewed_dependencies": [],
+    "optional_capabilities": [],
+    "reasons": [
+      {
+        "capability": "embedded_web",
+        "reason": "embedded_web_adapters",
+        "sources": [
+          "apps/flutter_forge/lib/modules/platform/webview/module_entry.dart"
+        ]
+      }
+    ],
+    "restriction": null,
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

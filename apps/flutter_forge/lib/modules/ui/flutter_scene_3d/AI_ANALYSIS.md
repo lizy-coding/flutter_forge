@@ -21,7 +21,36 @@
     "excluded_platforms": [
       "iOS",
       "web"
-    ]
+    ],
+    "required_capabilities": [
+      "scene_render"
+    ],
+    "unreviewed_dependencies": [],
+    "optional_capabilities": [],
+    "reasons": [
+      {
+        "capability": "scene_render",
+        "reason": "scene_gpu_adapters",
+        "sources": [
+          "apps/flutter_forge/android/app/src/main/AndroidManifest.xml",
+          "apps/flutter_forge/windows/runner/main.cpp",
+          "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart"
+        ]
+      }
+    ],
+    "restriction": null,
+    "features": {
+      "scene_controls": {
+        "platforms": [
+          "macOS",
+          "windows"
+        ],
+        "reason": "desktop_scene_controls_android_view_only",
+        "sources": [
+          "apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"
+        ]
+      }
+    }
   },
   "entrypoints": [
     "module_entry.dart",

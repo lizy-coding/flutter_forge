@@ -20,7 +20,24 @@
     ],
     "excluded_platforms": [
       "web"
-    ]
+    ],
+    "required_capabilities": [
+      "isolates"
+    ],
+    "unreviewed_dependencies": [],
+    "optional_capabilities": [],
+    "reasons": [
+      {
+        "capability": "isolates",
+        "reason": "safari_isolate_progress_unreliable",
+        "sources": [
+          "apps/flutter_forge/lib/modules/async/isolate_basic",
+          "apps/flutter_forge/lib/modules/async/isolate_task_manager"
+        ]
+      }
+    ],
+    "restriction": null,
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

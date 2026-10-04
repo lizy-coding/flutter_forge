@@ -21,7 +21,26 @@
     "excluded_platforms": [
       "iOS",
       "web"
-    ]
+    ],
+    "required_capabilities": [
+      "ble_central"
+    ],
+    "unreviewed_dependencies": [
+      "url_launcher"
+    ],
+    "optional_capabilities": [],
+    "reasons": [
+      {
+        "capability": "ble_central",
+        "reason": "ble_central_adapters",
+        "sources": [
+          "apps/flutter_forge/lib/modules/platform/bluetooth_ble/module_entry.dart",
+          "apps/flutter_forge/lib/modules/platform/bluetooth_ble/state/ble_session.dart"
+        ]
+      }
+    ],
+    "restriction": null,
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

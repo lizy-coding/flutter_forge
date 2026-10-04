@@ -20,7 +20,23 @@
     ],
     "excluded_platforms": [
       "iOS"
-    ]
+    ],
+    "required_capabilities": [
+      "file_selection"
+    ],
+    "unreviewed_dependencies": [],
+    "optional_capabilities": [],
+    "reasons": [
+      {
+        "capability": "file_selection",
+        "reason": "file_bridge_adapters_web_filename_only",
+        "sources": [
+          "packages/file_picker_bridge/lib/file_picker_bridge.dart"
+        ]
+      }
+    ],
+    "restriction": null,
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

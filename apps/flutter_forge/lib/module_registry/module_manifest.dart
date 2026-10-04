@@ -2,10 +2,9 @@
 
 import 'package:go_router/go_router.dart';
 
-import 'app_platform_snapshot.dart';
 import 'module_category.dart';
 import 'module_entry.dart';
-import 'module_platform_support.dart';
+import 'module_platform_policies.dart';
 import '../modules/basic/constraint_layout/module_entry.dart';
 import '../modules/basic/tree_state/module_entry.dart';
 import '../modules/basic/tree_state/module_routes.dart';
@@ -75,7 +74,7 @@ final List<ModuleEntry> moduleManifest = [
     ],
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['constraint_layout']!,
     builder: (context) => const ConstraintLayoutEntry(),
   ),
   ModuleEntry(
@@ -87,7 +86,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Widget 树', 'Element 树', 'RenderObject', '生命周期'],
     estimatedMinutes: 30,
     status: ModuleStatus.recommended,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['tree_state']!,
     builder: (context) => const TreeStateEntry(),
     routes: TreeStateRoutes.routes,
   ),
@@ -100,7 +99,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Microtask', 'Event Queue', 'async/await', 'Zone'],
     estimatedMinutes: 25,
     status: ModuleStatus.recommended,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['microtask']!,
     builder: (context) => const MicrotaskEntry(),
     routes: MicrotaskRoutes.routes,
   ),
@@ -113,7 +112,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Debouncer', 'Throttle', 'Timer'],
     estimatedMinutes: 15,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['debounce_throttle']!,
     builder: (context) => const DebounceThrottleEntry(),
   ),
 
@@ -127,7 +126,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['StreamController', '单订阅', '广播流', 'Stream 变换'],
     estimatedMinutes: 30,
     status: ModuleStatus.recommended,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['stream_subscription']!,
     builder: (context) => const StreamSubscriptionEntry(),
     routes: StreamSubscriptionRoutes.routes,
   ),
@@ -140,10 +139,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Isolate', 'SendPort', 'ReceivePort', '性能优化'],
     estimatedMinutes: 20,
     status: ModuleStatus.ready,
-    // Safari Web validation showed no usable progress lifecycle for Isolate.spawn.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {AppTargetPlatform.web},
-    ),
+    platformSupport: modulePlatformPolicies['isolate_basic']!,
     builder: (context) => const IsolateTestEntry(),
     routes: IsolateTestRoutes.routes,
   ),
@@ -156,10 +152,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Isolate.spawn', '多任务', '进度上报', '暂停/恢复'],
     estimatedMinutes: 35,
     status: ModuleStatus.ready,
-    // Safari Web validation showed tasks stalled at zero progress.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {AppTargetPlatform.web},
-    ),
+    platformSupport: modulePlatformPolicies['isolate_task_manager']!,
     builder: (context) => const IsolateStreamEntry(),
   ),
 
@@ -173,7 +166,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Provider', 'Riverpod', 'Bloc', '状态提升', 'FutureProvider'],
     estimatedMinutes: 45,
     status: ModuleStatus.recommended,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['status_management']!,
     builder: (context) => const StatusManageEntry(),
     routes: _buildStatusManageRoutes(),
   ),
@@ -186,7 +179,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['IoC', '依赖注入', '生命周期', '作用域'],
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['flutter_ioc']!,
     builder: (context) => const FlutterIocEntry(),
   ),
   ModuleEntry(
@@ -198,7 +191,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['shared_preferences', '键值存储', '异步读取', '状态恢复', '测试替身'],
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['local_persistence']!,
     builder: (context) => const LocalPersistenceEntry(),
   ),
 
@@ -212,15 +205,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['G-code', 'Parser', 'CustomPaint', 'PathMetric', '动画控制'],
     estimatedMinutes: 45,
     status: ModuleStatus.ready,
-    // The G-code learning module opens only its macOS entry; device evidence is separate.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {
-        AppTargetPlatform.android,
-        AppTargetPlatform.iOS,
-        AppTargetPlatform.web,
-        AppTargetPlatform.windows,
-      },
-    ),
+    platformSupport: modulePlatformPolicies['gcode_visualizer']!,
     builder: (context) => const GcodeVisualizerEntry(),
   ),
   ModuleEntry(
@@ -232,7 +217,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['CustomPaint', '手势检测', '吸附算法', '状态管理'],
     estimatedMinutes: 40,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['adsorption_line']!,
     builder: (context) => const AdsorptionLineEntry(),
   ),
   ModuleEntry(
@@ -244,7 +229,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Tween 动画', 'CustomPaint', 'OverlayEntry', '动画配置'],
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['download_animation']!,
     builder: (context) => const DownloadAnimationEntry(),
     routes: DownloadAnimationRoutes.routes,
   ),
@@ -266,7 +251,7 @@ final List<ModuleEntry> moduleManifest = [
     ],
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['font_picker']!,
     builder: (context) => const FontPickerEntry(),
     routes: FontPickerRoutes.routes,
   ),
@@ -279,10 +264,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['轨道相机', 'Scene Raycast', '部件聚焦', 'Reduced Motion'],
     estimatedMinutes: 35,
     status: ModuleStatus.ready,
-    // Android is view-only; Windows and Android host evidence remains pending.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {AppTargetPlatform.iOS, AppTargetPlatform.web},
-    ),
+    platformSupport: modulePlatformPolicies['flutter_scene_3d']!,
     builder: (context) => const FlutterScene3dEntry(),
   ),
 
@@ -296,7 +278,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['AlertDialog', 'BottomSheet', 'Overlay', 'ContextMenu'],
     estimatedMinutes: 20,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['popup_widgets']!,
     builder: (context) => const PopWidgetEntry(),
   ),
   ModuleEntry(
@@ -308,7 +290,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Dialog', 'BottomSheet', 'Overlay', 'TableView', '二维滚动'],
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['popup_list_interaction']!,
     builder: (context) => const PopupListInteractionEntry(),
     routes: PopupListInteractionRoutes.routes,
   ),
@@ -321,7 +303,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['TableView', '固定表头', '二维滚动'],
     estimatedMinutes: 15,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['scroll_table']!,
     builder: (context) => const ScrollTableEntry(),
   ),
   ModuleEntry(
@@ -339,7 +321,7 @@ final List<ModuleEntry> moduleManifest = [
     ],
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['overlay_follow_compare']!,
     builder: (context) => const OverlayFollowCompareEntry(),
   ),
 
@@ -353,8 +335,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Dio', '拦截器', 'Token 刷新', 'Mock Server', '重试机制'],
     estimatedMinutes: 35,
     status: ModuleStatus.ready,
-    // Web uses an in-memory Dio adapter; native hosts keep the localhost mock server.
-    platformSupport: const ModulePlatformSupport(),
+    platformSupport: modulePlatformPolicies['dio_interceptor']!,
     builder: (context) => const InterceptorTestEntry(),
     routes: InterceptorTestRoutes.routes,
   ),
@@ -367,16 +348,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['Android USB', 'MethodChannel', 'Stream 广播', '设备扫描'],
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
-    // Disabled on every target until the module is reframed as a concrete OTG workflow.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {
-        AppTargetPlatform.android,
-        AppTargetPlatform.iOS,
-        AppTargetPlatform.macOS,
-        AppTargetPlatform.web,
-        AppTargetPlatform.windows,
-      },
-    ),
+    platformSupport: modulePlatformPolicies['usb_detector']!,
     builder: (context) => const UsbDetectorEntry(),
   ),
   ModuleEntry(
@@ -388,10 +360,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['BLE Central', 'GATT', '特征值属性', '通知订阅', '资源释放'],
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
-    // Android, macOS and Windows expose the BLE learning flow; host build and GATT acceptance are tracked separately.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {AppTargetPlatform.iOS, AppTargetPlatform.web},
-    ),
+    platformSupport: modulePlatformPolicies['bluetooth_ble']!,
     builder: (context) => const BluetoothBleEntry(),
   ),
   ModuleEntry(
@@ -403,10 +372,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['FilePickerService', 'MethodChannel', '平台桥接', '扩展名过滤', '取消分支'],
     estimatedMinutes: 20,
     status: ModuleStatus.ready,
-    // Android uses file_selector; Web exposes only the selected filename.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {AppTargetPlatform.iOS},
-    ),
+    platformSupport: modulePlatformPolicies['file_picker']!,
     builder: (context) => const FilePickerEntry(),
   ),
   ModuleEntry(
@@ -425,10 +391,7 @@ final List<ModuleEntry> moduleManifest = [
     ],
     estimatedMinutes: 35,
     status: ModuleStatus.ready,
-    // Web uses same-origin media; native targets use their registered backends.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {AppTargetPlatform.iOS},
-    ),
+    platformSupport: modulePlatformPolicies['online_video_player']!,
     builder: (context) => const OnlineVideoPlayerEntry(),
   ),
   ModuleEntry(
@@ -440,10 +403,7 @@ final List<ModuleEntry> moduleManifest = [
     concepts: ['WebView', 'WebView2', '加载进度', '生命周期'],
     estimatedMinutes: 30,
     status: ModuleStatus.ready,
-    // Android/macOS use webview_flutter; Windows uses WebView2.
-    platformSupport: const ModulePlatformSupport(
-      excludedPlatforms: {AppTargetPlatform.iOS, AppTargetPlatform.web},
-    ),
+    platformSupport: modulePlatformPolicies['webview']!,
     builder: (context) => const WebViewEntry(),
   ),
 ];

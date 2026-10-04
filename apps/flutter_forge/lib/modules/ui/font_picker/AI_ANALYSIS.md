@@ -18,7 +18,49 @@
       "web",
       "windows"
     ],
-    "excluded_platforms": []
+    "excluded_platforms": [],
+    "required_capabilities": [],
+    "unreviewed_dependencies": [],
+    "optional_capabilities": [
+      "font_file_import"
+    ],
+    "reasons": [
+      {
+        "capability": "font_file_import",
+        "reason": "font_import_requires_native_bytes_and_file_bridge",
+        "sources": [
+          "apps/flutter_forge/lib/modules/ui/font_picker/pages/font_picker_page.dart",
+          "apps/flutter_forge/lib/modules/ui/font_picker/pages/font_picker_web_page.dart"
+        ]
+      }
+    ],
+    "restriction": null,
+    "features": {
+      "font_file_import": {
+        "platforms": [
+          "android",
+          "macOS",
+          "windows"
+        ],
+        "reason": "font_import_requires_native_bytes_and_file_bridge",
+        "sources": [
+          "apps/flutter_forge/lib/modules/ui/font_picker/pages/font_picker_page.dart",
+          "apps/flutter_forge/lib/modules/ui/font_picker/pages/font_picker_web_page.dart"
+        ]
+      },
+      "font_preview": {
+        "platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "windows"
+        ],
+        "reason": "web_font_page_has_no_native_preview_controls",
+        "sources": [
+          "apps/flutter_forge/lib/modules/ui/font_picker/pages/font_picker_web_page.dart"
+        ]
+      }
+    }
   },
   "entrypoints": [
     "module_entry.dart",

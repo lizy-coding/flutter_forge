@@ -41,13 +41,21 @@ void main() {
       ),
     );
     await _pumpFrames(tester, const Duration(milliseconds: 600));
-    expect(find.text('Flutter 学习实验室'), findsOneWidget);
+    expect(find.byKey(const ValueKey('creator-home-scroll')), findsOneWidget);
+
+    final category = find.byKey(const ValueKey('home-category:ui'));
+    await tester.ensureVisible(category);
+    await tester.tap(category);
+    final categoryPage = find.byKey(const ValueKey('category-page:ui'));
+    await _pumpUntil(tester, categoryPage);
 
     final moduleTile = find.byKey(const ValueKey('module:/flutter-scene-3d'));
     await tester.scrollUntilVisible(
       moduleTile,
       500,
-      scrollable: find.byType(Scrollable).first,
+      scrollable: find
+          .descendant(of: categoryPage, matching: find.byType(Scrollable))
+          .first,
     );
     await tester.ensureVisible(moduleTile);
     await _pumpFrames(tester, const Duration(milliseconds: 200));
@@ -101,7 +109,10 @@ void main() {
 
     await tester.pageBack();
     await _pumpFrames(tester, const Duration(milliseconds: 400));
-    expect(find.text('Flutter 学习实验室'), findsOneWidget);
+    expect(categoryPage, findsOneWidget);
+    router.go('/');
+    await _pumpFrames(tester, const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('creator-home-scroll')), findsOneWidget);
   });
 }
 
