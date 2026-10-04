@@ -17,6 +17,20 @@ const contracts = {
 const modules = [
   {
     category: 'basic',
+    id: 'constraint_layout',
+    route: '/constraint-layout',
+    status: 'ready',
+    depends: ['shared_learning', 'module_registry'],
+    title: '约束与声明式布局',
+    subtitle: '拖动父容器约束，实时观察子组件尺寸与 Row、Column、Wrap 布局变化',
+    difficulty: 'beginner',
+    concepts: ['BoxConstraints', 'LayoutBuilder', 'SizedBox', 'Row', 'Column', 'Wrap', '声明式 UI'],
+    estimatedMinutes: 25,
+    entry: 'ConstraintLayoutEntry',
+    validation: ['flutter analyze', 'flutter test test/modules/basic/constraint_layout'],
+  },
+  {
+    category: 'basic',
     id: 'tree_state',
     route: '/tree-state',
     status: 'recommended',

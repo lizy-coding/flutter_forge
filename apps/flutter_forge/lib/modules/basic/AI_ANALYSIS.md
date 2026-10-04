@@ -9,6 +9,7 @@
     "status": "active"
   },
   "entrypoints": [
+    "constraint_layout",
     "tree_state",
     "microtask",
     "debounce_throttle"
@@ -22,6 +23,7 @@
     "go_router"
   ],
   "children": [
+    "constraint_layout/AI_ANALYSIS.md",
     "tree_state/AI_ANALYSIS.md",
     "microtask/AI_ANALYSIS.md",
     "debounce_throttle/AI_ANALYSIS.md"

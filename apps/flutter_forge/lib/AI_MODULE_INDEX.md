@@ -1,8 +1,30 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 24,
+  "count": 25,
   "modules": [
+    {
+      "id": "constraint_layout",
+      "category": "basic",
+      "path": "lib/modules/basic/constraint_layout",
+      "route": "/constraint-layout",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "module_registry"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": []
+      },
+      "analysis": "lib/modules/basic/constraint_layout/AI_ANALYSIS.md"
+    },
     {
       "id": "tree_state",
       "category": "basic",

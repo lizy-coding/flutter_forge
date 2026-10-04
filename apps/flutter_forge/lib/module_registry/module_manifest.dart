@@ -6,6 +6,7 @@ import 'app_platform_snapshot.dart';
 import 'module_category.dart';
 import 'module_entry.dart';
 import 'module_platform_support.dart';
+import '../modules/basic/constraint_layout/module_entry.dart';
 import '../modules/basic/tree_state/module_entry.dart';
 import '../modules/basic/tree_state/module_routes.dart';
 import '../modules/basic/microtask/module_entry.dart';
@@ -57,6 +58,26 @@ List<GoRoute> _buildStatusManageRoutes() => StatusManagementRoutes
 
 final List<ModuleEntry> moduleManifest = [
   // 基础机制
+  ModuleEntry(
+    title: '约束与声明式布局',
+    path: '/constraint-layout',
+    subtitle: '拖动父容器约束，实时观察子组件尺寸与 Row、Column、Wrap 布局变化',
+    category: ModuleCategory.basic,
+    difficulty: Difficulty.beginner,
+    concepts: [
+      'BoxConstraints',
+      'LayoutBuilder',
+      'SizedBox',
+      'Row',
+      'Column',
+      'Wrap',
+      '声明式 UI',
+    ],
+    estimatedMinutes: 25,
+    status: ModuleStatus.ready,
+    platformSupport: const ModulePlatformSupport(),
+    builder: (context) => const ConstraintLayoutEntry(),
+  ),
   ModuleEntry(
     title: '三棵树与生命周期',
     path: '/tree-state',
