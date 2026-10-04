@@ -309,6 +309,8 @@ const modules = [
     route: '/bluetooth-ble',
     status: 'ready',
     depends: ['shared_learning', 'universal_ble', 'url_launcher', 'module_registry'],
+    owns: ['module_entry', 'module_ui', 'module_docs', 'scan_lifecycle', 'gatt_lifecycle', 'advertisement_history'],
+    validation: ['flutter analyze', 'flutter test test/modules/platform/bluetooth_ble'],
     title: 'BLE 连接生命周期',
     subtitle: '观察扫描、连接、服务发现、读取与订阅、断开',
     difficulty: 'intermediate',

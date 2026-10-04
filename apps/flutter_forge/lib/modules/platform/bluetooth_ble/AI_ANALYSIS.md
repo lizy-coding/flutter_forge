@@ -31,7 +31,10 @@
   "owns": [
     "module_entry",
     "module_ui",
-    "module_docs"
+    "module_docs",
+    "scan_lifecycle",
+    "gatt_lifecycle",
+    "advertisement_history"
   ],
   "depends": [
     "shared_learning",
@@ -47,6 +50,7 @@
     "doc_mode": "machine_contract"
   },
   "validation": [
-    "flutter analyze"
+    "flutter analyze",
+    "flutter test test/modules/platform/bluetooth_ble"
   ]
 }
