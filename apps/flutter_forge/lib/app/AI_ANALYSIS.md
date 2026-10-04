@@ -20,6 +20,11 @@
     "category_navigation.dart",
     "navigation_policy.dart",
     "category_window_app.dart",
+    "theme/app_theme.dart",
+    "theme/app_theme_selection.dart",
+    "theme/app_theme_controller.dart",
+    "theme/forge_theme_tokens.dart",
+    "theme/theme_mode_button.dart",
     "router/app_router.dart",
     "router/app_route_table.dart"
   ],
@@ -35,7 +40,12 @@
     "responsive_navigation_shell",
     "adaptive_category_navigation",
     "desktop_category_window_shell",
-    "category_router_lifecycle"
+    "category_router_lifecycle",
+    "light_dark_theme",
+    "theme_palette_catalog",
+    "theme_semantic_tokens",
+    "theme_preference_persistence",
+    "cross_window_theme_sync"
   ],
   "depends": [
     "go_router",

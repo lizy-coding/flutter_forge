@@ -28,6 +28,9 @@ class MultiWindowManager {
   final MultiWindowPlatform _platform;
   final MultiWindowDiagnosticSink _diagnosticSink;
   StreamSubscription<void>? _windowCloseListener;
+  String _themeSelectionPayload = 'system';
+
+  static const themeSelectionMethod = 'themeSelectionChanged';
 
   /// Starts window lifecycle observation and removes stale category entries.
   Future<void> initialize() async {
@@ -81,7 +84,11 @@ class MultiWindowManager {
       _categoryWindows.remove(category);
     }
 
-    final args = jsonEncode({'type': 'category', 'category': category.name});
+    final args = jsonEncode({
+      'type': 'category',
+      'category': category.name,
+      'themeSelection': _themeSelectionPayload,
+    });
 
     final config = WindowConfiguration(hiddenAtLaunch: false, arguments: args);
 
@@ -135,6 +142,32 @@ class MultiWindowManager {
   bool isCategoryOpen(ModuleCategory category) =>
       _categoryWindows.containsKey(category);
 
+  void setThemeSelectionPayload(String payload) {
+    _themeSelectionPayload = payload;
+  }
+
+  Future<void> updateThemeSelection(String payload) async {
+    _themeSelectionPayload = payload;
+    final controllers = await _platform.getAllWindows();
+    for (final controller in controllers) {
+      final arguments = parseArguments(controller.arguments);
+      if (arguments.type == WindowType.category) {
+        try {
+          await _platform.invokeMethod(
+            controller,
+            themeSelectionMethod,
+            payload,
+          );
+        } catch (error) {
+          debugPrint(
+            '[multi-window] theme sync skipped for ${controller.windowId}: '
+            '$error',
+          );
+        }
+      }
+    }
+  }
+
   static WindowArguments parseArguments(dynamic args) {
     if (args is! String || args.isEmpty) {
       return const WindowArguments(type: WindowType.main);
@@ -160,6 +193,12 @@ abstract interface class MultiWindowPlatform {
   Future<MultiWindowController> createWindow(WindowConfiguration configuration);
 
   Future<void> showWindow(MultiWindowController controller);
+
+  Future<void> invokeMethod(
+    MultiWindowController controller,
+    String method,
+    Object? arguments,
+  );
 }
 
 class MultiWindowController {
@@ -204,6 +243,13 @@ class DesktopMultiWindowPlatform implements MultiWindowPlatform {
   @override
   Future<void> showWindow(MultiWindowController controller) =>
       controller.nativeController!.show();
+
+  @override
+  Future<void> invokeMethod(
+    MultiWindowController controller,
+    String method,
+    Object? arguments,
+  ) => controller.nativeController!.invokeMethod<void>(method, arguments);
 }
 
 enum WindowType { main, category }
@@ -211,8 +257,13 @@ enum WindowType { main, category }
 class WindowArguments {
   final WindowType type;
   final ModuleCategory? category;
+  final String themeSelectionPayload;
 
-  const WindowArguments({required this.type, this.category});
+  const WindowArguments({
+    required this.type,
+    this.category,
+    this.themeSelectionPayload = 'system',
+  });
 
   factory WindowArguments.fromJson(Map<String, dynamic> json) {
     final typeStr = json['type'] as String? ?? 'main';
@@ -224,6 +275,13 @@ class WindowArguments {
         orElse: () => ModuleCategory.basic,
       );
     }
-    return WindowArguments(type: type, category: category);
+    return WindowArguments(
+      type: type,
+      category: category,
+      themeSelectionPayload:
+          json['themeSelection'] as String? ??
+          json['themeMode'] as String? ??
+          'system',
+    );
   }
 }

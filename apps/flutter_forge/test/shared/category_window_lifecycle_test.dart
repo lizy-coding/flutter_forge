@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/category_window_app.dart';
+import 'package:flutter_forge_app/app/theme/app_theme_controller.dart';
+import 'package:flutter_forge_app/app/theme/app_theme_selection.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,13 +10,41 @@ import 'package:go_router/go_router.dart';
 void main() {
   const platform = AppPlatformSnapshot(platform: AppTargetPlatform.macOS);
 
+  testWidgets('category window responds to shared theme changes', (
+    tester,
+  ) async {
+    final controller = AppThemeController.forTesting(
+      const AppThemeSelection(mode: AppThemeModePreference.dark),
+    );
+    await tester.pumpWidget(
+      CategoryWindowApp(
+        category: ModuleCategory.basic,
+        platform: platform,
+        themeController: controller,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+      ThemeMode.dark,
+    );
+
+    await controller.setMode(AppThemeModePreference.light);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+      ThemeMode.light,
+    );
+  });
+
   testWidgets(
     'category window rebuild preserves the active module and router',
     (tester) async {
       await tester.pumpWidget(
-        const CategoryWindowApp(
+        CategoryWindowApp(
           category: ModuleCategory.popupTable,
           platform: platform,
+          themeController: AppThemeController.forTesting(),
         ),
       );
       await tester.pumpAndSettle();
@@ -29,6 +59,7 @@ void main() {
         CategoryWindowApp(
           category: ModuleCategory.popupTable,
           platform: AppPlatformSnapshot(platform: platform.platform),
+          themeController: AppThemeController.forTesting(),
         ),
       );
       await tester.pumpAndSettle();
@@ -54,9 +85,10 @@ void main() {
     'changing category replaces the router and disposes the previous one',
     (tester) async {
       await tester.pumpWidget(
-        const CategoryWindowApp(
+        CategoryWindowApp(
           category: ModuleCategory.popupTable,
           platform: platform,
+          themeController: AppThemeController.forTesting(),
         ),
       );
       await tester.pumpAndSettle();
@@ -66,9 +98,10 @@ void main() {
       previous.go('/popup-widgets');
       await tester.pumpAndSettle();
       await tester.pumpWidget(
-        const CategoryWindowApp(
+        CategoryWindowApp(
           category: ModuleCategory.basic,
           platform: platform,
+          themeController: AppThemeController.forTesting(),
         ),
       );
       await tester.pumpAndSettle();
