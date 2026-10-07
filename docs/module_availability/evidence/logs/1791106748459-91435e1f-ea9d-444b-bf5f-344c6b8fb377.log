@@ -1,0 +1,637 @@
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":94081,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/adsorption_line/adsorption_line_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/adsorption_line/adsorption_line_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":0}
+{"suite":{"id":2,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart"},"type":"suite","time":2}
+{"test":{"id":3,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart","suiteID":2,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":4,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"suite","time":2}
+{"test":{"id":5,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart","suiteID":4,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":6,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_selection_controller_test.dart"},"type":"suite","time":2}
+{"test":{"id":7,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_selection_controller_test.dart","suiteID":6,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":8,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_interaction_mode_test.dart"},"type":"suite","time":2}
+{"test":{"id":9,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_interaction_mode_test.dart","suiteID":8,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"count":37,"time":3,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":5,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1059}
+{"group":{"id":10,"suiteID":4,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":1059}
+{"group":{"id":11,"suiteID":4,"parentID":10,"name":"SceneCameraController","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":5,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"group","time":1059}
+{"test":{"id":12,"name":"SceneCameraController auto tour advances until direct manipulation takes over","suiteID":4,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1060}
+{"testID":7,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1069}
+{"group":{"id":13,"suiteID":6,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1069}
+{"test":{"id":14,"name":"selection can be replaced and cleared","suiteID":6,"groupIDs":[13],"metadata":{"skip":false,"skipReason":null},"line":5,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_selection_controller_test.dart"},"type":"testStart","time":1069}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1070}
+{"test":{"id":15,"name":"SceneCameraController coasting decays within the bounded duration and new input cancels it","suiteID":4,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":29,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1070}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1071}
+{"test":{"id":16,"name":"SceneCameraController zoom, pitch, reduced motion, and reset remain bounded","suiteID":4,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1071}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1072}
+{"test":{"id":17,"name":"SceneCameraController expanded zoom range exposes a relative zoom scale","suiteID":4,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":65,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1072}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1072}
+{"test":{"id":18,"name":"SceneCameraController basic mode rejects direct manipulation but keeps button controls","suiteID":4,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":77,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1072}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1073}
+{"test":{"id":19,"name":"SceneCameraController mode changes normalize interrupted transition and coasting","suiteID":4,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":91,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1073}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1074}
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1077}
+{"suite":{"id":20,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"suite","time":1080}
+{"test":{"id":21,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart","suiteID":20,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1080}
+{"suite":{"id":22,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/download_animation/download_animation_test.dart"},"type":"suite","time":1080}
+{"test":{"id":23,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/download_animation/download_animation_test.dart","suiteID":22,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1080}
+{"testID":9,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1096}
+{"group":{"id":24,"suiteID":8,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1096}
+{"test":{"id":25,"name":"Android uses view-only mode while desktop remains interactive","suiteID":8,"groupIDs":[24],"metadata":{"skip":false,"skipReason":null},"line":6,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_interaction_mode_test.dart"},"type":"testStart","time":1096}
+{"testID":25,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1104}
+{"suite":{"id":26,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/gcode_visualizer/gcode_visualizer_test.dart"},"type":"suite","time":1107}
+{"test":{"id":27,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/gcode_visualizer/gcode_visualizer_test.dart","suiteID":26,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1107}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":3,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1449}
+{"group":{"id":28,"suiteID":2,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":1450}
+{"test":{"id":29,"name":"catalog exposes platform fonts and a fallback","suiteID":2,"groupIDs":[28],"metadata":{"skip":false,"skipReason":null},"line":11,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart"},"type":"testStart","time":1450}
+{"testID":29,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1457}
+{"test":{"id":30,"name":"selecting a font updates the selected row and preview","suiteID":2,"groupIDs":[28],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":23,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart"},"type":"testStart","time":1457}
+{"testID":23,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1543}
+{"group":{"id":31,"suiteID":22,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1543}
+{"test":{"id":32,"name":"DownloadAnimationPage renders teaching components","suiteID":22,"groupIDs":[31],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":7,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/download_animation/download_animation_test.dart"},"type":"testStart","time":1543}
+{"testID":27,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1615}
+{"group":{"id":33,"suiteID":26,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1615}
+{"test":{"id":34,"name":"GcodeVisualizerPage renders key elements","suiteID":26,"groupIDs":[33],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":6,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/gcode_visualizer/gcode_visualizer_test.dart"},"type":"testStart","time":1615}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1691}
+{"group":{"id":35,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":1692}
+{"test":{"id":36,"name":"AdsorptionLinePage renders teaching components","suiteID":0,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":11,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/adsorption_line/adsorption_line_test.dart"},"type":"testStart","time":1692}
+{"testID":21,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1889}
+{"group":{"id":37,"suiteID":20,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":12,"line":null,"column":null,"url":null},"type":"group","time":1889}
+{"test":{"id":38,"name":"shows title, learning content, and semantic controls","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":18,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1889}
+{"testID":30,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1988}
+{"test":{"id":39,"name":"loading a local font inserts and selects a custom option","suiteID":2,"groupIDs":[28],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":49,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart"},"type":"testStart","time":1988}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2066}
+{"suite":{"id":40,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detector_test.dart"},"type":"suite","time":2074}
+{"test":{"id":41,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detector_test.dart","suiteID":40,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2074}
+{"testID":39,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2077}
+{"test":{"id":42,"name":"cancelled local font selection leaves list unchanged","suiteID":2,"groupIDs":[28],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":72,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart"},"type":"testStart","time":2078}
+{"testID":42,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2135}
+{"test":{"id":43,"name":"weight comparison exposes controls and toggles italic","suiteID":2,"groupIDs":[28],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":83,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart"},"type":"testStart","time":2135}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":36,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2184}
+{"test":{"id":44,"name":"adsorption board fits supported viewports","suiteID":0,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":28,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/adsorption_line/adsorption_line_test.dart"},"type":"testStart","time":2184}
+{"testID":43,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2214}
+{"suite":{"id":45,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detection_service_test.dart"},"type":"suite","time":2221}
+{"test":{"id":46,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detection_service_test.dart","suiteID":45,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2221}
+{"testID":34,"messageType":"print","message":"GCODE_GPU_INIT_FAILED Exception: Failed to initialize ShaderLibrary: Flutter GPU requires the Impeller rendering backend, but Impeller is not enabled. For more details about where Impeller is available and how to enable it, see: https://docs.flutter.dev/perf/impeller","type":"print","time":2245}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":34,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2285}
+{"suite":{"id":47,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_session_test.dart"},"type":"suite","time":2292}
+{"test":{"id":48,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_session_test.dart","suiteID":47,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2292}
+{"testID":44,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2306}
+{"test":{"id":49,"name":"drawing state throttles drag updates within one frame","suiteID":0,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":49,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/adsorption_line/adsorption_line_test.dart"},"type":"testStart","time":2306}
+{"testID":49,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2311}
+{"test":{"id":50,"name":"drawing painter repaints only when version or selection changes","suiteID":0,"groupIDs":[35],"metadata":{"skip":false,"skipReason":null},"line":73,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/adsorption_line/adsorption_line_test.dart"},"type":"testStart","time":2311}
+{"testID":50,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2313}
+{"suite":{"id":51,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_test.dart"},"type":"suite","time":2320}
+{"test":{"id":52,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_test.dart","suiteID":51,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2320}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":38,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2442}
+{"test":{"id":53,"name":"enhanced mode supports drag takeover and mode comparison","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":40,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2443}
+{"testID":53,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2543}
+{"test":{"id":54,"name":"reduced motion disables automatic and inertial motion","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":64,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2543}
+{"testID":54,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2577}
+{"test":{"id":55,"name":"Android view-only mode renders scene without controls","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":81,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2577}
+{"testID":55,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2599}
+{"test":{"id":56,"name":"basic mode blocks wheel zoom","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":104,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2599}
+{"testID":56,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2647}
+{"test":{"id":57,"name":"keyboard remains active after selecting a mode control","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":126,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2648}
+{"testID":52,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2661}
+{"group":{"id":58,"suiteID":51,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":2661}
+{"test":{"id":59,"name":"catalog enables Android, macOS and Windows WebView backends","suiteID":51,"groupIDs":[58],"metadata":{"skip":false,"skipReason":null},"line":10,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_test.dart"},"type":"testStart","time":2661}
+{"testID":59,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2670}
+{"test":{"id":60,"name":"teaching page fits compact viewport and rejects invalid navigation","suiteID":51,"groupIDs":[58],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":31,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_test.dart"},"type":"testStart","time":2670}
+{"testID":57,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2714}
+{"test":{"id":61,"name":"held arrow keys consume repeat events inside the viewer","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":143,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2714}
+{"testID":61,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2775}
+{"test":{"id":62,"name":"top-right orientation thumbnail previews and resets camera","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":175,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2775}
+{"testID":62,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2825}
+{"test":{"id":63,"name":"tap selects a part and focus targets its center","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":200,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2825}
+{"testID":48,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2840}
+{"group":{"id":64,"suiteID":47,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":2840}
+{"test":{"id":65,"name":"rejects executable and malformed URLs before native navigation","suiteID":47,"groupIDs":[64],"metadata":{"skip":false,"skipReason":null},"line":55,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_session_test.dart"},"type":"testStart","time":2840}
+{"testID":65,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2851}
+{"test":{"id":66,"name":"late initialization never navigates after disposal","suiteID":47,"groupIDs":[64],"metadata":{"skip":false,"skipReason":null},"line":75,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_session_test.dart"},"type":"testStart","time":2851}
+{"testID":66,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2852}
+{"test":{"id":67,"name":"reports initialization failure and allows retry","suiteID":47,"groupIDs":[64],"metadata":{"skip":false,"skipReason":null},"line":85,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_session_test.dart"},"type":"testStart","time":2852}
+{"testID":67,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2854}
+{"test":{"id":68,"name":"threshold, timeout, completion and navigation remain distinct","suiteID":47,"groupIDs":[64],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":95,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/webview/webview_session_test.dart"},"type":"testStart","time":2854}
+{"testID":63,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2903}
+{"test":{"id":69,"name":"shows loading state","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":223,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2903}
+{"testID":41,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2927}
+{"group":{"id":70,"suiteID":40,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":2927}
+{"test":{"id":71,"name":"module entry is constructible","suiteID":40,"groupIDs":[70],"metadata":{"skip":false,"skipReason":null},"line":9,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detector_test.dart"},"type":"testStart","time":2927}
+{"testID":46,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2932}
+{"group":{"id":72,"suiteID":45,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":2932}
+{"test":{"id":73,"name":"keeps Android listDevices channel contract","suiteID":45,"groupIDs":[72],"metadata":{"skip":false,"skipReason":null},"line":8,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detection_service_test.dart"},"type":"testStart","time":2933}
+{"testID":71,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2934}
+{"test":{"id":74,"name":"catalog keeps USB visible but blocks every platform route","suiteID":40,"groupIDs":[70],"metadata":{"skip":false,"skipReason":null},"line":13,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detector_test.dart"},"type":"testStart","time":2934}
+{"testID":69,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2935}
+{"test":{"id":75,"name":"shows initialization error state","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":233,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2935}
+{"testID":74,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2943}
+{"test":{"id":76,"name":"USB detector fits a compact Android viewport","suiteID":40,"groupIDs":[70],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":39,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detector_test.dart"},"type":"testStart","time":2943}
+{"testID":73,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2944}
+{"test":{"id":77,"name":"keeps enumerated devices when optional fields are unavailable","suiteID":45,"groupIDs":[72],"metadata":{"skip":false,"skipReason":null},"line":32,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/usb_detector/usb_detection_service_test.dart"},"type":"testStart","time":2944}
+{"testID":77,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2945}
+{"suite":{"id":78,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/error_interceptor_test.dart"},"type":"suite","time":2951}
+{"test":{"id":79,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/error_interceptor_test.dart","suiteID":78,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2951}
+{"testID":68,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2964}
+{"suite":{"id":80,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/web_mock_http_adapter_test.dart"},"type":"suite","time":2972}
+{"test":{"id":81,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/web_mock_http_adapter_test.dart","suiteID":80,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2972}
+{"testID":75,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2982}
+{"test":{"id":82,"name":"catalog registers Android, macOS, and Windows module and route","suiteID":20,"groupIDs":[37],"metadata":{"skip":false,"skipReason":null},"line":246,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2982}
+{"testID":82,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2987}
+{"suite":{"id":83,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/dio_interceptor_test.dart"},"type":"suite","time":2994}
+{"test":{"id":84,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/dio_interceptor_test.dart","suiteID":83,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2994}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":60,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3257}
+{"suite":{"id":85,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"suite","time":3264}
+{"test":{"id":86,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart","suiteID":85,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3264}
+{"testID":81,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3303}
+{"group":{"id":87,"suiteID":80,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":3303}
+{"test":{"id":88,"name":"Web adapter preserves login, auth and article workflow","suiteID":80,"groupIDs":[87],"metadata":{"skip":false,"skipReason":null},"line":13,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/web_mock_http_adapter_test.dart"},"type":"testStart","time":3303}
+{"testID":84,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3342}
+{"group":{"id":89,"suiteID":83,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":3343}
+{"test":{"id":90,"name":"module entry is constructible","suiteID":83,"groupIDs":[89],"metadata":{"skip":false,"skipReason":null},"line":6,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/dio_interceptor_test.dart"},"type":"testStart","time":3343}
+{"testID":76,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3343}
+{"suite":{"id":91,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"suite","time":3441}
+{"test":{"id":92,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart","suiteID":91,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3442}
+{"testID":90,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3442}
+{"suite":{"id":93,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"suite","time":3447}
+{"test":{"id":94,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart","suiteID":93,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3447}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":88,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3488}
+{"test":{"id":95,"name":"Web adapter rejects article requests without a token","suiteID":80,"groupIDs":[87],"metadata":{"skip":false,"skipReason":null},"line":39,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/web_mock_http_adapter_test.dart"},"type":"testStart","time":3488}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":95,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3548}
+{"suite":{"id":96,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/online_video_player_test.dart"},"type":"suite","time":3551}
+{"test":{"id":97,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/online_video_player_test.dart","suiteID":96,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3551}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":94,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3825}
+{"group":{"id":98,"suiteID":93,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":11,"line":null,"column":null,"url":null},"type":"group","time":3825}
+{"test":{"id":99,"name":"probe failure reaches error without creating any controller","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":23,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":3825}
+{"testID":99,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":3835}
+{"testID":99,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=false","type":"print","time":3835}
+{"testID":99,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3838}
+{"test":{"id":100,"name":"platform policy can let the player initialize without a probe","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":38,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":3838}
+{"testID":100,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":3839}
+{"testID":100,"messageType":"print","message":"[video-diag] initialize-complete 25ms success","type":"print","time":3865}
+{"testID":100,"messageType":"print","message":"video_player dispose failed: UnimplementedError: init() has not been implemented.","type":"print","time":3867}
+{"testID":100,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3867}
+{"test":{"id":101,"name":"default probe uses a ranged GET compatible with media servers","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":59,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":3867}
+{"testID":101,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":3868}
+{"testID":97,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3872}
+{"group":{"id":102,"suiteID":96,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":3872}
+{"test":{"id":103,"name":"catalog admits online video on Android, macOS, and Windows","suiteID":96,"groupIDs":[102],"metadata":{"skip":false,"skipReason":null},"line":12,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/online_video_player_test.dart"},"type":"testStart","time":3872}
+{"testID":101,"messageType":"print","message":"[video-diag] probe-complete 13ms reachable=true","type":"print","time":3882}
+{"testID":101,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":3883}
+{"testID":103,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3884}
+{"test":{"id":104,"name":"controls render playback, seek, rate and volume controls","suiteID":96,"groupIDs":[102],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":37,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/online_video_player_test.dart"},"type":"testStart","time":3884}
+{"testID":101,"messageType":"print","message":"[video-diag] initialize-complete 22ms success","type":"print","time":3905}
+{"testID":101,"messageType":"print","message":"video_player dispose failed: UnimplementedError: init() has not been implemented.","type":"print","time":3906}
+{"testID":101,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3906}
+{"test":{"id":105,"name":"default probe rejects an unreadable response stream","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":78,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":3906}
+{"testID":105,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":3907}
+{"testID":105,"messageType":"print","message":"[video-diag] probe-complete 2ms reachable=false","type":"print","time":3909}
+{"testID":105,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3910}
+{"test":{"id":106,"name":"no-frame monitor disposes the controller and enters error state","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":90,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":3910}
+{"testID":106,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":3911}
+{"testID":106,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=true","type":"print","time":3911}
+{"testID":106,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":3911}
+{"testID":106,"messageType":"print","message":"[video-diag] initialize-complete 22ms success","type":"print","time":3934}
+{"testID":79,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3955}
+{"group":{"id":107,"suiteID":78,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":3955}
+{"group":{"id":108,"suiteID":78,"parentID":107,"name":"ErrorInterceptor","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":6,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/error_interceptor_test.dart"},"type":"group","time":3955}
+{"test":{"id":109,"name":"ErrorInterceptor transformTimeout is handled and forwarded without error","suiteID":78,"groupIDs":[107,108],"metadata":{"skip":false,"skipReason":null},"line":9,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/error_interceptor_test.dart"},"type":"testStart","time":3955}
+{"testID":109,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 数据转换超时","type":"print","time":3963}
+{"testID":109,"messageType":"print","message":"URL: /x","type":"print","time":3963}
+{"testID":109,"messageType":"print","message":"Method: GET","type":"print","time":3963}
+{"testID":109,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3965}
+{"test":{"id":110,"name":"ErrorInterceptor every DioExceptionType value is forwarded without error","suiteID":78,"groupIDs":[107,108],"metadata":{"skip":false,"skipReason":null},"line":21,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/dio_interceptor/error_interceptor_test.dart"},"type":"testStart","time":3965}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 连接超时","type":"print","time":3966}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3966}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3966}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 请求超时","type":"print","time":3966}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3966}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 响应超时","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 证书验证失败","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 响应错误: 未知状态码","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 请求取消","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3967}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 连接错误，请检查网络","type":"print","time":3968}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3968}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3968}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 未知错误: null","type":"print","time":3968}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3968}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3968}
+{"testID":110,"messageType":"print","message":"ErrorInterceptor - 捕获到错误: 数据转换超时","type":"print","time":3968}
+{"testID":110,"messageType":"print","message":"URL: /x","type":"print","time":3968}
+{"testID":110,"messageType":"print","message":"Method: GET","type":"print","time":3968}
+{"testID":110,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3969}
+{"suite":{"id":111,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/file_picker/file_picker_test.dart"},"type":"suite","time":3973}
+{"test":{"id":112,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/file_picker/file_picker_test.dart","suiteID":111,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3973}
+{"testID":106,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3981}
+{"test":{"id":113,"name":"global loading watchdog releases a stalled initialization","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":111,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":3981}
+{"testID":113,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":3982}
+{"testID":113,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=true","type":"print","time":3982}
+{"testID":113,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":3983}
+{"testID":92,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4019}
+{"group":{"id":114,"suiteID":91,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":15,"line":null,"column":null,"url":null},"type":"group","time":4019}
+{"test":{"id":115,"name":"TargetPlatform.macOS shows a two-pane workspace and settings entry","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":14,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":4019}
+{"testID":113,"messageType":"print","message":"[video-diag] loading-watchdog 40ms timeout","type":"print","time":4024}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":104,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4189}
+{"test":{"id":116,"name":"play pause button follows adapter state","suiteID":96,"groupIDs":[102],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":56,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/online_video_player_test.dart"},"type":"testStart","time":4189}
+{"testID":86,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4247}
+{"group":{"id":117,"suiteID":85,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":22,"line":null,"column":null,"url":null},"type":"group","time":4247}
+{"test":{"id":118,"name":"cancelling permission preparation leaves existing system connections alone","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":86,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4247}
+{"testID":118,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4259}
+{"test":{"id":119,"name":"connection preflight rejects a powered-off adapter","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":105,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4259}
+{"testID":119,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4260}
+{"test":{"id":120,"name":"permission refusal before connection does not disconnect an unowned device","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":117,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4261}
+{"testID":120,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4262}
+{"test":{"id":121,"name":"a timed-out native scan start cannot later leave the scanner running","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":131,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4262}
+{"testID":116,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4267}
+{"test":{"id":122,"name":"module shows error placeholder without network access","suiteID":96,"groupIDs":[102],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":75,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/online_video_player_test.dart"},"type":"testStart","time":4267}
+{"testID":121,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4286}
+{"test":{"id":123,"name":"scan duration controls the deadline and rejects unbounded requests","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":149,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4287}
+{"testID":123,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4289}
+{"test":{"id":124,"name":"connection timeout is bounded and a late success is released","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":168,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4289}
+{"testID":124,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4312}
+{"test":{"id":125,"name":"duplicate characteristic reads share a guarded operation","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":188,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4312}
+{"testID":125,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4315}
+{"test":{"id":126,"name":"scan preserves previous results and ages advertisement state","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":203,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4315}
+{"testID":126,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4317}
+{"test":{"id":127,"name":"stopping keeps scan active until backend confirmation","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":245,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4318}
+{"testID":127,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4319}
+{"test":{"id":128,"name":"unconfirmed scan stop blocks connection and supports another stop","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":261,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4319}
+{"testID":128,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4320}
+{"test":{"id":129,"name":"connection phases separate the native link from GATT readiness","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":280,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4320}
+{"testID":129,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4322}
+{"test":{"id":130,"name":"cancel releases a connecting device and cleans a late successful connection","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":301,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4322}
+{"testID":130,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4324}
+{"test":{"id":131,"name":"a late service discovery cannot refill a cancelled connection","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":323,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4324}
+{"testID":131,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4325}
+{"test":{"id":132,"name":"unexpected disconnect invalidates in-flight service discovery","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":342,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4325}
+{"testID":132,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4326}
+{"test":{"id":133,"name":"disconnect keeps the link visible until the native state is confirmed","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":363,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4326}
+{"testID":133,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4327}
+{"test":{"id":134,"name":"a silent disconnect failure remains unconfirmed and can be retried","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":382,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4327}
+{"testID":134,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4328}
+{"test":{"id":135,"name":"failed connection can retry the same selected target","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":402,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4328}
+{"testID":135,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4329}
+{"test":{"id":136,"name":"a late read cannot refill values after disconnect","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":415,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4329}
+{"testID":136,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4330}
+{"test":{"id":137,"name":"page disposal cannot receive a late discovery update","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":430,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4330}
+{"testID":137,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4332}
+{"test":{"id":138,"name":"leaving the foreground requests a confirmed scan stop","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":443,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4332}
+{"testID":138,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4333}
+{"test":{"id":139,"name":"connection progress exposes cancellation and retry controls","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":457,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":4333}
+{"testID":122,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4393}
+{"test":{"id":140,"name":"video controls fit a compact Android viewport","suiteID":96,"groupIDs":[102],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":92,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/online_video_player_test.dart"},"type":"testStart","time":4393}
+{"testID":112,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4406}
+{"group":{"id":141,"suiteID":111,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":4406}
+{"test":{"id":142,"name":"catalog admits file picker on Android, macOS, and Windows","suiteID":111,"groupIDs":[141],"metadata":{"skip":false,"skipReason":null},"line":12,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/file_picker/file_picker_test.dart"},"type":"testStart","time":4406}
+{"testID":142,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4416}
+{"test":{"id":143,"name":"picked file shows its name and path","suiteID":111,"groupIDs":[141],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":38,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/file_picker/file_picker_test.dart"},"type":"testStart","time":4417}
+{"testID":140,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4439}
+{"suite":{"id":144,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/isolate_task_manager/isolate_task_manager_test.dart"},"type":"suite","time":4445}
+{"test":{"id":145,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/isolate_task_manager/isolate_task_manager_test.dart","suiteID":144,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":4445}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":115,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4647}
+{"test":{"id":146,"name":"TargetPlatform.windows shows a two-pane workspace and settings entry","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":14,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":4647}
+{"testID":146,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4771}
+{"test":{"id":147,"name":"compact Android supports large text and long device names","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":61,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":4771}
+{"testID":145,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4846}
+{"group":{"id":148,"suiteID":144,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":4846}
+{"test":{"id":149,"name":"module entry is constructible","suiteID":144,"groupIDs":[148],"metadata":{"skip":false,"skipReason":null},"line":6,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/isolate_task_manager/isolate_task_manager_test.dart"},"type":"testStart","time":4846}
+{"testID":149,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4853}
+{"suite":{"id":150,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/stream_subscription/stream_subscription_test.dart"},"type":"suite","time":4858}
+{"test":{"id":151,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/stream_subscription/stream_subscription_test.dart","suiteID":150,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":4858}
+{"testID":143,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4878}
+{"test":{"id":152,"name":"cancelled selection renders the cancel branch","suiteID":111,"groupIDs":[141],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":57,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/file_picker/file_picker_test.dart"},"type":"testStart","time":4879}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":152,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4945}
+{"test":{"id":153,"name":"missing plugin renders platform unsupported state","suiteID":111,"groupIDs":[141],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":67,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/file_picker/file_picker_test.dart"},"type":"testStart","time":4945}
+{"testID":147,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4949}
+{"test":{"id":154,"name":"Windows uses the common BLE page without Android system controls","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":104,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":4949}
+{"testID":113,"messageType":"print","message":"[video-diag] initialize-complete 1003ms timeout=TimeoutException after 0:00:01.000000: Future not completed","type":"print","time":4986}
+{"testID":113,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4986}
+{"test":{"id":155,"name":"Windows uses the shorter default initialize timeout","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":131,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":4987}
+{"testID":155,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4988}
+{"test":{"id":156,"name":"initialize failure releases the previous controller and errors","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":145,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":4988}
+{"testID":156,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":4989}
+{"testID":156,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=true","type":"print","time":4989}
+{"testID":156,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":4989}
+{"testID":153,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4997}
+{"test":{"id":157,"name":"filter mode controls allowed extensions","suiteID":111,"groupIDs":[141],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":79,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/file_picker/file_picker_test.dart"},"type":"testStart","time":4997}
+{"testID":139,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5009}
+{"test":{"id":158,"name":"RSSI updates preserve row order and show last-seen state","suiteID":85,"groupIDs":[117],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":494,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_controls_test.dart"},"type":"testStart","time":5010}
+{"testID":156,"messageType":"print","message":"[video-diag] initialize-complete 22ms success","type":"print","time":5012}
+{"testID":156,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":5013}
+{"testID":156,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=true","type":"print","time":5013}
+{"testID":156,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":5013}
+{"testID":154,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5029}
+{"test":{"id":159,"name":"system audio and GATT connections appear at top without scan","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":126,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5029}
+{"testID":157,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5059}
+{"test":{"id":160,"name":"file picker fits a compact Android viewport","suiteID":111,"groupIDs":[141],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":99,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/file_picker/file_picker_test.dart"},"type":"testStart","time":5060}
+{"testID":160,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5090}
+{"suite":{"id":161,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/isolate_basic/isolate_basic_test.dart"},"type":"suite","time":5096}
+{"test":{"id":162,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/isolate_basic/isolate_basic_test.dart","suiteID":161,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":5096}
+{"testID":156,"messageType":"print","message":"[video-diag] initialize-complete 102ms timeout=TimeoutException after 0:00:00.100000: Future not completed","type":"print","time":5116}
+{"testID":156,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5117}
+{"test":{"id":163,"name":"initialize timeout can be rebuilt on the next open","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":168,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":5117}
+{"testID":163,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":5118}
+{"testID":163,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=true","type":"print","time":5118}
+{"testID":163,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":5119}
+{"testID":158,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5121}
+{"testID":159,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5126}
+{"test":{"id":164,"name":"Android powered-on control opens settings for shutdown","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":159,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5127}
+{"suite":{"id":165,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart"},"type":"suite","time":5128}
+{"test":{"id":166,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart","suiteID":165,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":5129}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":164,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5178}
+{"test":{"id":167,"name":"connection refresh replaces stale system devices and preserves active GATT","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":177,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5178}
+{"testID":167,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5180}
+{"test":{"id":168,"name":"Bluetooth power-off clears current system and application connections","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":196,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5180}
+{"testID":168,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5181}
+{"test":{"id":169,"name":"connected device stays at top with disconnect action","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":212,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5181}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":163,"messageType":"print","message":"[video-diag] initialize-complete 82ms timeout=TimeoutException after 0:00:00.080000: Future not completed","type":"print","time":5201}
+{"testID":163,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":5202}
+{"testID":163,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=true","type":"print","time":5202}
+{"testID":163,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":5202}
+{"testID":163,"messageType":"print","message":"[video-diag] initialize-complete 21ms success","type":"print","time":5223}
+{"testID":163,"messageType":"print","message":"video_player dispose failed: UnimplementedError: init() has not been implemented.","type":"print","time":5224}
+{"testID":163,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5224}
+{"test":{"id":170,"name":"dispose releases a live controller without hanging","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":188,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":5224}
+{"testID":170,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":5225}
+{"testID":170,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=true","type":"print","time":5225}
+{"testID":170,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":5225}
+{"testID":169,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5239}
+{"test":{"id":171,"name":"Android can request the system Bluetooth switch","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":235,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5239}
+{"testID":170,"messageType":"print","message":"[video-diag] initialize-complete 21ms success","type":"print","time":5247}
+{"testID":170,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5260}
+{"test":{"id":172,"name":"concurrent open discards the superseded generation","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":210,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/online_video_player/video_player_adapter_test.dart"},"type":"testStart","time":5260}
+{"testID":172,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":5261}
+{"testID":172,"messageType":"print","message":"[video-diag] probe-start 0ms started","type":"print","time":5261}
+{"testID":172,"messageType":"print","message":"[video-diag] probe-complete 0ms reachable=true","type":"print","time":5261}
+{"testID":172,"messageType":"print","message":"[video-diag] initialize-start 0ms started","type":"print","time":5262}
+{"testID":172,"messageType":"print","message":"[video-diag] initialize-complete 22ms success","type":"print","time":5284}
+{"testID":171,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5287}
+{"test":{"id":173,"name":"scan list favors readable names and can reveal unnamed devices","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":252,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5287}
+{"testID":173,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5395}
+{"test":{"id":174,"name":"catalog opens BLE on Android macOS and Windows without claiming host acceptance","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":286,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5396}
+{"testID":174,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5399}
+{"test":{"id":175,"name":"scan stops on timeout and reports empty result","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":304,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5399}
+{"testID":172,"messageType":"print","message":"[video-diag] probe-complete 151ms reachable=true","type":"print","time":5413}
+{"testID":172,"messageType":"print","message":"video_player dispose failed: UnimplementedError: init() has not been implemented.","type":"print","time":5414}
+{"testID":172,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5414}
+{"suite":{"id":176,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/microtask/microtask_test.dart"},"type":"suite","time":5419}
+{"test":{"id":177,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/microtask/microtask_test.dart","suiteID":176,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":5419}
+{"testID":175,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5444}
+{"test":{"id":178,"name":"permission refusal prevents scanning","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":320,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5444}
+{"testID":178,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5446}
+{"test":{"id":179,"name":"read and subscription obey characteristic properties and release","suiteID":91,"groupIDs":[114],"metadata":{"skip":false,"skipReason":null},"line":330,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/platform/bluetooth_ble/ble_session_test.dart"},"type":"testStart","time":5446}
+{"testID":179,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5450}
+{"suite":{"id":180,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/tree_state/tree_state_test.dart"},"type":"suite","time":5458}
+{"test":{"id":181,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/tree_state/tree_state_test.dart","suiteID":180,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":5458}
+{"testID":166,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5463}
+{"group":{"id":182,"suiteID":165,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":5463}
+{"test":{"id":183,"name":"module entry is constructible","suiteID":165,"groupIDs":[182],"metadata":{"skip":false,"skipReason":null},"line":6,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart"},"type":"testStart","time":5463}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":183,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5470}
+{"test":{"id":184,"name":"comparison remains usable at 360x800","suiteID":165,"groupIDs":[182],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":10,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart"},"type":"testStart","time":5471}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":151,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5561}
+{"group":{"id":185,"suiteID":150,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":5561}
+{"test":{"id":186,"name":"StreamDemoPage renders teaching components","suiteID":150,"groupIDs":[185],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":7,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/stream_subscription/stream_subscription_test.dart"},"type":"testStart","time":5561}
+{"testID":181,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5838}
+{"group":{"id":187,"suiteID":180,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":5838}
+{"test":{"id":188,"name":"module entry is constructible","suiteID":180,"groupIDs":[187],"metadata":{"skip":false,"skipReason":null},"line":7,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/tree_state/tree_state_test.dart"},"type":"testStart","time":5838}
+{"testID":188,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5846}
+{"test":{"id":189,"name":"demo home keeps its scrollable entry list within bounds","suiteID":180,"groupIDs":[187],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":11,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/tree_state/tree_state_test.dart"},"type":"testStart","time":5846}
+{"testID":162,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5906}
+{"group":{"id":190,"suiteID":161,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":5906}
+{"test":{"id":191,"name":"module entry is constructible","suiteID":161,"groupIDs":[190],"metadata":{"skip":false,"skipReason":null},"line":7,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/isolate_basic/isolate_basic_test.dart"},"type":"testStart","time":5906}
+{"testID":191,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5914}
+{"test":{"id":192,"name":"isolate home fits supported viewports","suiteID":161,"groupIDs":[190],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":11,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/async/isolate_basic/isolate_basic_test.dart"},"type":"testStart","time":5914}
+{"testID":177,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5979}
+{"group":{"id":193,"suiteID":176,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":5979}
+{"test":{"id":194,"name":"module entry is constructible","suiteID":176,"groupIDs":[193],"metadata":{"skip":false,"skipReason":null},"line":7,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/microtask/microtask_test.dart"},"type":"testStart","time":5979}
+{"testID":194,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5987}
+{"test":{"id":195,"name":"microtask home fits supported viewports","suiteID":176,"groupIDs":[193],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":11,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/microtask/microtask_test.dart"},"type":"testStart","time":5988}
+{"testID":186,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6001}
+{"suite":{"id":196,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"suite","time":6009}
+{"test":{"id":197,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart","suiteID":196,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6009}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":184,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6081}
+{"test":{"id":198,"name":"scroll comparison remains usable at 360x800","suiteID":165,"groupIDs":[182],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":57,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart"},"type":"testStart","time":6081}
+{"testID":198,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6218}
+{"test":{"id":199,"name":"comparison remains usable at 600x900","suiteID":165,"groupIDs":[182],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":83,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart"},"type":"testStart","time":6218}
+{"testID":189,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6292}
+{"suite":{"id":200,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_layout_test.dart"},"type":"suite","time":6299}
+{"test":{"id":201,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_layout_test.dart","suiteID":200,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6299}
+{"testID":199,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6347}
+{"test":{"id":202,"name":"comparison remains usable at 1024x768","suiteID":165,"groupIDs":[182],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":83,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/debounce_throttle/debounce_throttle_test.dart"},"type":"testStart","time":6347}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":192,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6356}
+{"suite":{"id":203,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_list_interaction_test.dart"},"type":"suite","time":6362}
+{"test":{"id":204,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_list_interaction_test.dart","suiteID":203,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6362}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":202,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6445}
+{"suite":{"id":205,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/scroll_table/scroll_table_test.dart"},"type":"suite","time":6452}
+{"test":{"id":206,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/scroll_table/scroll_table_test.dart","suiteID":205,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6452}
+{"testID":195,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6475}
+{"suite":{"id":207,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/overlay_follow_compare/overlay_follow_compare_test.dart"},"type":"suite","time":6481}
+{"test":{"id":208,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/overlay_follow_compare/overlay_follow_compare_test.dart","suiteID":207,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6481}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":197,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":6653}
+{"group":{"id":209,"suiteID":196,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":11,"line":null,"column":null,"url":null},"type":"group","time":6653}
+{"test":{"id":210,"name":"drag updates constraints continuously and stops on cancellation","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":29,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":6653}
+{"testID":206,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":6761}
+{"group":{"id":211,"suiteID":205,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":6761}
+{"test":{"id":212,"name":"module entry is constructible","suiteID":205,"groupIDs":[211],"metadata":{"skip":false,"skipReason":null},"line":6,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/scroll_table/scroll_table_test.dart"},"type":"testStart","time":6761}
+{"testID":212,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6768}
+{"suite":{"id":213,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart"},"type":"suite","time":6772}
+{"test":{"id":214,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart","suiteID":213,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6772}
+{"testID":208,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":6824}
+{"group":{"id":215,"suiteID":207,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":6824}
+{"test":{"id":216,"name":"OverlayComparePage renders teaching components","suiteID":207,"groupIDs":[215],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":7,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/overlay_follow_compare/overlay_follow_compare_test.dart"},"type":"testStart","time":6824}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":204,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":6881}
+{"group":{"id":217,"suiteID":203,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":6882}
+{"test":{"id":218,"name":"module entry is constructible","suiteID":203,"groupIDs":[217],"metadata":{"skip":false,"skipReason":null},"line":10,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_list_interaction_test.dart"},"type":"testStart","time":6882}
+{"testID":218,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6890}
+{"test":{"id":219,"name":"popup nested route opens from its module page","suiteID":203,"groupIDs":[217],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":14,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_list_interaction_test.dart"},"type":"testStart","time":6890}
+{"testID":201,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7010}
+{"group":{"id":220,"suiteID":200,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":7011}
+{"test":{"id":221,"name":"(setUpAll)","suiteID":200,"groupIDs":[220],"metadata":{"skip":false,"skipReason":null},"line":16,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_layout_test.dart"},"type":"testStart","time":7011}
+{"testID":221,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7018}
+{"test":{"id":222,"name":"popup teaching page fits 320dp","suiteID":200,"groupIDs":[220],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":33,"root_column":7,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_layout_test.dart"},"type":"testStart","time":7018}
+{"testID":214,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7208}
+{"group":{"id":223,"suiteID":213,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":7,"line":null,"column":null,"url":null},"type":"group","time":7208}
+{"test":{"id":224,"name":"PopWidgetEntry renders module page","suiteID":213,"groupIDs":[223],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":13,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart"},"type":"testStart","time":7208}
+{"testID":216,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7323}
+{"suite":{"id":225,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/status_management/status_management_test.dart"},"type":"suite","time":7330}
+{"test":{"id":226,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/status_management/status_management_test.dart","suiteID":225,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":7330}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":222,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7436}
+{"test":{"id":227,"name":"table teaching page fits 320dp","suiteID":200,"groupIDs":[220],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":33,"root_column":7,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_layout_test.dart"},"type":"testStart","time":7436}
+{"testID":210,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7439}
+{"test":{"id":228,"name":"drag bounds remain valid and width handle triggers wrap","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":70,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":7440}
+{"testID":219,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7587}
+{"test":{"id":229,"name":"list nested route opens from its module page","suiteID":203,"groupIDs":[217],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":34,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_list_interaction_test.dart"},"type":"testStart","time":7587}
+{"testID":228,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7712}
+{"test":{"id":230,"name":"layout transition respects reduced motion: false","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":129,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":7712}
+{"testID":227,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7747}
+{"test":{"id":231,"name":"popup teaching page fits 1100dp","suiteID":200,"groupIDs":[220],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":33,"root_column":7,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_layout_test.dart"},"type":"testStart","time":7748}
+{"testID":229,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7769}
+{"test":{"id":232,"name":"cell edits commit only on save and cancel preserves the value","suiteID":203,"groupIDs":[217],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":54,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_list_interaction_test.dart"},"type":"testStart","time":7769}
+{"testID":224,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7779}
+{"test":{"id":233,"name":"PopDemoHomePage renders teaching components","suiteID":213,"groupIDs":[223],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":23,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart"},"type":"testStart","time":7779}
+{"testID":231,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7788}
+{"test":{"id":234,"name":"table teaching page fits 1100dp","suiteID":200,"groupIDs":[220],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":33,"root_column":7,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_layout_test.dart"},"type":"testStart","time":7788}
+{"testID":230,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7800}
+{"test":{"id":235,"name":"layout transition respects reduced motion: true","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":129,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":7800}
+{"testID":226,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7843}
+{"group":{"id":236,"suiteID":225,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":7843}
+{"test":{"id":237,"name":"module entry is constructible","suiteID":225,"groupIDs":[236],"metadata":{"skip":false,"skipReason":null},"line":8,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/status_management/status_management_test.dart"},"type":"testStart","time":7843}
+{"testID":237,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7852}
+{"test":{"id":238,"name":"riverpod lifting controls fit a compact Android viewport","suiteID":225,"groupIDs":[236],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":12,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/status_management/status_management_test.dart"},"type":"testStart","time":7852}
+{"testID":233,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7878}
+{"test":{"id":239,"name":"PopDemoHomePage FAB toggles bottom bar","suiteID":213,"groupIDs":[223],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":39,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart"},"type":"testStart","time":7878}
+{"testID":235,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7907}
+{"test":{"id":240,"name":"module is registered in basic with an unrestricted stable route","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":168,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":7907}
+{"testID":234,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7911}
+{"test":{"id":241,"name":"(tearDownAll)","suiteID":200,"groupIDs":[220],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":7911}
+{"testID":241,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7914}
+{"testID":240,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7914}
+{"test":{"id":242,"name":"loose constraints clamp requested size and tight constraints fill parent","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":177,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":7914}
+{"suite":{"id":243,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/flutter_ioc/flutter_ioc_test.dart"},"type":"suite","time":7922}
+{"test":{"id":244,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/flutter_ioc/flutter_ioc_test.dart","suiteID":243,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":7922}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":239,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8039}
+{"test":{"id":245,"name":"PopDemoHomePage toolbar shows date/time picker menu","suiteID":213,"groupIDs":[223],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":56,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart"},"type":"testStart","time":8039}
+{"testID":242,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8062}
+{"test":{"id":246,"name":"declared layout changes positions while preserving data","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":206,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":8062}
+{"testID":232,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8094}
+{"test":{"id":247,"name":"leaving the list with its editor open removes the popup","suiteID":203,"groupIDs":[217],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":81,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_list_interaction_test.dart"},"type":"testStart","time":8095}
+{"testID":245,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8118}
+{"test":{"id":248,"name":"leaving during dialog chain opening cleans up the module","suiteID":213,"groupIDs":[223],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":70,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart"},"type":"testStart","time":8118}
+{"testID":246,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8222}
+{"test":{"id":249,"name":"slider gestures update dimensions and reset restores experiment","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":235,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":8222}
+{"testID":238,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8315}
+{"test":{"id":250,"name":"status management home fits a compact Android viewport","suiteID":225,"groupIDs":[236],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":28,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/status_management/status_management_test.dart"},"type":"testStart","time":8315}
+{"testID":247,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8362}
+{"test":{"id":251,"name":"popup actions return a result and can be cancelled","suiteID":203,"groupIDs":[217],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":102,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_list_interaction/popup_list_interaction_test.dart"},"type":"testStart","time":8362}
+{"testID":244,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":8378}
+{"group":{"id":252,"suiteID":243,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":8378}
+{"test":{"id":253,"name":"module entry is constructible","suiteID":243,"groupIDs":[252],"metadata":{"skip":false,"skipReason":null},"line":6,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/flutter_ioc/flutter_ioc_test.dart"},"type":"testStart","time":8379}
+{"testID":253,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8388}
+{"suite":{"id":254,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/preferences_service_test.dart"},"type":"suite","time":8393}
+{"test":{"id":255,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/preferences_service_test.dart","suiteID":254,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":8394}
+{"testID":249,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8410}
+{"test":{"id":256,"name":"all modes fit 320dp with enlarged text","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":270,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":8410}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":250,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8458}
+{"suite":{"id":257,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/local_persistence_test.dart"},"type":"suite","time":8466}
+{"test":{"id":258,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/local_persistence_test.dart","suiteID":257,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":8466}
+{"testID":251,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8515}
+{"testID":248,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8515}
+{"test":{"id":259,"name":"leaving during overlay chain opening cleans up the module","suiteID":213,"groupIDs":[223],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":70,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart"},"type":"testStart","time":8516}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"suite":{"id":260,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/persistence_demo_controller_test.dart"},"type":"suite","time":8524}
+{"test":{"id":261,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/persistence_demo_controller_test.dart","suiteID":260,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":8524}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":256,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8589}
+{"test":{"id":262,"name":"all modes fit 600dp with enlarged text","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":270,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":8589}
+{"testID":259,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8702}
+{"test":{"id":263,"name":"context menu disappears when its anchor leaves the page","suiteID":213,"groupIDs":[223],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":107,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/popup_table/popup_widgets/popup_widgets_test.dart"},"type":"testStart","time":8703}
+{"testID":262,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8732}
+{"test":{"id":264,"name":"all modes fit 1200dp with enlarged text","suiteID":196,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":270,"root_column":5,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/basic/constraint_layout/constraint_layout_test.dart"},"type":"testStart","time":8732}
+{"testID":263,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8762}
+{"testID":264,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8853}
+{"testID":261,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":8854}
+{"group":{"id":265,"suiteID":260,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":8855}
+{"test":{"id":266,"name":"starts unloaded and restores persisted values","suiteID":260,"groupIDs":[265],"metadata":{"skip":false,"skipReason":null},"line":20,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/persistence_demo_controller_test.dart"},"type":"testStart","time":8855}
+{"testID":266,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8865}
+{"test":{"id":267,"name":"save operations are safe before load","suiteID":260,"groupIDs":[265],"metadata":{"skip":false,"skipReason":null},"line":30,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/persistence_demo_controller_test.dart"},"type":"testStart","time":8865}
+{"testID":267,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8866}
+{"test":{"id":268,"name":"increment persists the updated count","suiteID":260,"groupIDs":[265],"metadata":{"skip":false,"skipReason":null},"line":36,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/persistence_demo_controller_test.dart"},"type":"testStart","time":8866}
+{"testID":268,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8867}
+{"test":{"id":269,"name":"clearAll removes values and restores defaults","suiteID":260,"groupIDs":[265],"metadata":{"skip":false,"skipReason":null},"line":45,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/persistence_demo_controller_test.dart"},"type":"testStart","time":8867}
+{"testID":269,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8868}
+{"testID":258,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":9029}
+{"group":{"id":270,"suiteID":257,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":9030}
+{"test":{"id":271,"name":"shows loading while preferences are being restored","suiteID":257,"groupIDs":[270],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":9,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/local_persistence_test.dart"},"type":"testStart","time":9030}
+{"testID":255,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":9044}
+{"group":{"id":272,"suiteID":254,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":9044}
+{"test":{"id":273,"name":"reads and writes an int","suiteID":254,"groupIDs":[272],"metadata":{"skip":false,"skipReason":null},"line":13,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/preferences_service_test.dart"},"type":"testStart","time":9044}
+{"testID":273,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9053}
+{"test":{"id":274,"name":"reads and writes a bool","suiteID":254,"groupIDs":[272],"metadata":{"skip":false,"skipReason":null},"line":19,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/preferences_service_test.dart"},"type":"testStart","time":9053}
+{"testID":274,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9054}
+{"test":{"id":275,"name":"reads and writes a string","suiteID":254,"groupIDs":[272],"metadata":{"skip":false,"skipReason":null},"line":24,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/preferences_service_test.dart"},"type":"testStart","time":9054}
+{"testID":275,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9055}
+{"test":{"id":276,"name":"removes a key","suiteID":254,"groupIDs":[272],"metadata":{"skip":false,"skipReason":null},"line":29,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/preferences_service_test.dart"},"type":"testStart","time":9055}
+{"testID":276,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9056}
+{"test":{"id":277,"name":"clears all keys","suiteID":254,"groupIDs":[272],"metadata":{"skip":false,"skipReason":null},"line":35,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/state/local_persistence/preferences_service_test.dart"},"type":"testStart","time":9056}
+{"testID":277,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9057}
+{"testID":271,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9394}
+{"success":true,"type":"done","time":9399}

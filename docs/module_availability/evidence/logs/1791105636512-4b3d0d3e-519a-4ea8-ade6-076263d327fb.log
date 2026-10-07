@@ -1,0 +1,68 @@
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":88664,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":0}
+{"suite":{"id":2,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_selection_controller_test.dart"},"type":"suite","time":1}
+{"test":{"id":3,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_selection_controller_test.dart","suiteID":2,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"suite":{"id":4,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_interaction_mode_test.dart"},"type":"suite","time":1}
+{"test":{"id":5,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_interaction_mode_test.dart","suiteID":4,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"suite":{"id":6,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"suite","time":1}
+{"test":{"id":7,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart","suiteID":6,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":4,"time":2,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":5,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1078}
+{"group":{"id":8,"suiteID":4,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1079}
+{"test":{"id":9,"name":"Android uses view-only mode while desktop remains interactive","suiteID":4,"groupIDs":[8],"metadata":{"skip":false,"skipReason":null},"line":6,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_interaction_mode_test.dart"},"type":"testStart","time":1079}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1088}
+{"testID":3,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1090}
+{"group":{"id":10,"suiteID":2,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1090}
+{"test":{"id":11,"name":"selection can be replaced and cleared","suiteID":2,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":5,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_selection_controller_test.dart"},"type":"testStart","time":1091}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1098}
+{"testID":7,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1253}
+{"group":{"id":12,"suiteID":6,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":12,"line":null,"column":null,"url":null},"type":"group","time":1253}
+{"test":{"id":13,"name":"shows title, learning content, and semantic controls","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":18,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1253}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1390}
+{"group":{"id":14,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":1390}
+{"group":{"id":15,"suiteID":0,"parentID":14,"name":"SceneCameraController","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":5,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"group","time":1390}
+{"test":{"id":16,"name":"SceneCameraController auto tour advances until direct manipulation takes over","suiteID":0,"groupIDs":[14,15],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1390}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1398}
+{"test":{"id":17,"name":"SceneCameraController coasting decays within the bounded duration and new input cancels it","suiteID":0,"groupIDs":[14,15],"metadata":{"skip":false,"skipReason":null},"line":29,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1398}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1400}
+{"test":{"id":18,"name":"SceneCameraController zoom, pitch, reduced motion, and reset remain bounded","suiteID":0,"groupIDs":[14,15],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1400}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1401}
+{"test":{"id":19,"name":"SceneCameraController expanded zoom range exposes a relative zoom scale","suiteID":0,"groupIDs":[14,15],"metadata":{"skip":false,"skipReason":null},"line":65,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1401}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1402}
+{"test":{"id":20,"name":"SceneCameraController basic mode rejects direct manipulation but keeps button controls","suiteID":0,"groupIDs":[14,15],"metadata":{"skip":false,"skipReason":null},"line":77,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1402}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1402}
+{"test":{"id":21,"name":"SceneCameraController mode changes normalize interrupted transition and coasting","suiteID":0,"groupIDs":[14,15],"metadata":{"skip":false,"skipReason":null},"line":91,"column":5,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_camera_controller_test.dart"},"type":"testStart","time":1402}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1403}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1655}
+{"test":{"id":22,"name":"enhanced mode supports drag takeover and mode comparison","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":40,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1655}
+{"testID":22,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1738}
+{"test":{"id":23,"name":"reduced motion disables automatic and inertial motion","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":64,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1739}
+{"testID":23,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1769}
+{"test":{"id":24,"name":"Android view-only mode renders scene without controls","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":81,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1769}
+{"testID":24,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1787}
+{"test":{"id":25,"name":"basic mode blocks wheel zoom","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":104,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1787}
+{"testID":25,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1830}
+{"test":{"id":26,"name":"keyboard remains active after selecting a mode control","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":126,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1830}
+{"testID":26,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1877}
+{"test":{"id":27,"name":"held arrow keys consume repeat events inside the viewer","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":143,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1877}
+{"testID":27,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1917}
+{"test":{"id":28,"name":"top-right orientation thumbnail previews and resets camera","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":175,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1918}
+{"testID":28,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1950}
+{"test":{"id":29,"name":"tap selects a part and focus targets its center","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":200,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1951}
+{"testID":29,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1996}
+{"test":{"id":30,"name":"shows loading state","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":223,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":1996}
+{"testID":30,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2020}
+{"test":{"id":31,"name":"shows initialization error state","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":233,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2020}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2052}
+{"test":{"id":32,"name":"catalog registers Android, macOS, and Windows module and route","suiteID":6,"groupIDs":[12],"metadata":{"skip":false,"skipReason":null},"line":246,"column":3,"url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"},"type":"testStart","time":2052}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2056}
+{"success":true,"type":"done","time":2061}

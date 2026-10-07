@@ -356,7 +356,7 @@ void main() {
       await session.toggleSubscription(service, service.characteristics.first);
       expect(session.subscriptions, isNotEmpty);
       await session.disconnect();
-      expect(client.unsubscribeCount, 1);
+      expect(client.nativeState, BleConnectionState.disconnected);
       expect(client.disconnectCount, 1);
       expect(session.subscriptions, isEmpty);
       expect(session.services, isEmpty);
@@ -383,6 +383,8 @@ class FakeBleClient implements BleClient {
   int unsubscribeCount = 0;
   int disconnectCount = 0;
   List<BleDevice> systemDevices = [];
+  bool nativeScanning = false;
+  BleConnectionState nativeState = BleConnectionState.disconnected;
 
   @override
   Stream<BleDevice> get scanResults => scan.stream;
@@ -422,21 +424,32 @@ class FakeBleClient implements BleClient {
   @override
   Future<void> startScan() async {
     startCount++;
+    nativeScanning = true;
   }
 
   @override
   Future<void> stopScan() async {
     stopCount++;
+    nativeScanning = false;
   }
+
+  @override
+  Future<bool> isScanning() async => nativeScanning;
+  @override
+  Future<BleConnectionState> connectionState(String id) async => nativeState;
 
   @override
   Future<List<BleDevice>> getSystemDevices() async => systemDevices;
 
   @override
-  Future<void> connect(String id) async {}
+  Future<void> connect(String id) async {
+    nativeState = BleConnectionState.connected;
+  }
+
   @override
   Future<void> disconnect(String id) async {
     disconnectCount++;
+    nativeState = BleConnectionState.disconnected;
   }
 
   @override

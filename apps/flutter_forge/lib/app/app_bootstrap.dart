@@ -8,6 +8,7 @@ import 'app.dart';
 import 'app_platform_provider.dart';
 import 'category_window_app.dart';
 import 'router/app_router.dart';
+import 'theme/app_theme_controller.dart';
 
 /// Resolves the host-specific application shell before mounting Flutter.
 Future<void> bootstrapFlutterForgeApp() async {
@@ -15,17 +16,38 @@ Future<void> bootstrapFlutterForgeApp() async {
   final platform = AppPlatformSnapshot.detect();
 
   Widget? root;
+  WindowController? currentWindow;
+  var arguments = const WindowArguments(type: WindowType.main);
   if (!platform.isWeb && MultiWindowManager.isSupported) {
-    final windowController = await WindowController.fromCurrentEngine();
-    final arguments = MultiWindowManager.parseArguments(
-      windowController.arguments,
-    );
+    currentWindow = await WindowController.fromCurrentEngine();
+    arguments = MultiWindowManager.parseArguments(currentWindow.arguments);
+  }
+
+  final themeController = await AppThemeController.load(
+    initialSelectionPayload: arguments.type == WindowType.category
+        ? arguments.themeSelectionPayload
+        : null,
+  );
+
+  if (currentWindow != null) {
     if (arguments.type == WindowType.category && arguments.category != null) {
+      await currentWindow.setWindowMethodHandler((call) async {
+        if (call.method == MultiWindowManager.themeSelectionMethod) {
+          themeController.applyRemoteSelection(call.arguments as String?);
+        }
+      });
       root = CategoryWindowApp(
         category: arguments.category!,
         platform: platform,
+        themeController: themeController,
       );
     } else {
+      MultiWindowManager.instance.setThemeSelectionPayload(
+        themeController.selection.encode(),
+      );
+      themeController.setChangeHandler(
+        MultiWindowManager.instance.updateThemeSelection,
+      );
       await MultiWindowManager.instance.initialize();
     }
   }
@@ -33,7 +55,12 @@ Future<void> bootstrapFlutterForgeApp() async {
   runApp(
     ProviderScope(
       overrides: [appPlatformProvider.overrideWithValue(platform)],
-      child: root ?? App(router: AppRouter.create(platform)),
+      child:
+          root ??
+          App(
+            router: AppRouter.create(platform),
+            themeController: themeController,
+          ),
     ),
   );
 }

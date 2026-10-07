@@ -13,10 +13,9 @@ function writeRoutes({ modules, categoryComments, categoryEnumNames, writeText }
     lines.push('');
     lines.push("import 'package:go_router/go_router.dart';");
     lines.push('');
-    lines.push("import 'app_platform_snapshot.dart';");
-    lines.push("import 'module_category.dart';");
+        lines.push("import 'module_category.dart';");
     lines.push("import 'module_entry.dart';");
-    lines.push("import 'module_platform_support.dart';");
+    lines.push("import 'module_platform_policies.dart';");
 
     for (const m of modules) {
       for (const fileName of ['module_entry.dart', m.routes ? 'module_routes.dart' : null].filter(Boolean)) {
@@ -59,21 +58,7 @@ function writeRoutes({ modules, categoryComments, categoryEnumNames, writeText }
       lines.push(`    concepts: ${conceptsLiteral(m.concepts)},`);
       lines.push(`    estimatedMinutes: ${m.estimatedMinutes},`);
       lines.push(`    status: ModuleStatus.${m.status},`);
-      if (m.platformSupportComment) lines.push(`    ${m.platformSupportComment}`);
-      const excludedPlatforms = m.excludedPlatforms ?? [];
-      const platforms = excludedPlatforms.map((platform) => `AppTargetPlatform.${platform}`);
-      if (platforms.length === 0) {
-        lines.push('    platformSupport: const ModulePlatformSupport(),');
-      } else {
-        const inlinePlatforms = `      excludedPlatforms: {${platforms.join(', ')}},`;
-        lines.push('    platformSupport: const ModulePlatformSupport(');
-        if (inlinePlatforms.length <= 80) {
-          lines.push(inlinePlatforms);
-        } else {
-          lines.push('      excludedPlatforms: {', ...platforms.map((platform) => `        ${platform},`), '      },');
-        }
-        lines.push('    ),');
-      }
+      lines.push(`    platformSupport: modulePlatformPolicies['${m.id}']!,`);
       lines.push(`    builder: (context) => const ${m.entry}(),`);
       if (m.subRoutesExpander) {
         lines.push('    routes: _buildStatusManageRoutes(),');

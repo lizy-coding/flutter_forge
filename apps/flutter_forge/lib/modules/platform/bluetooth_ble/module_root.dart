@@ -20,6 +20,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
   String query = '';
   bool showUnnamed = false;
   String? selectedId;
+  int scanSeconds = 10;
   final _deviceScrollController = ScrollController();
   final _detailsScrollController = ScrollController();
   bool get _isMac => defaultTargetPlatform == TargetPlatform.macOS;
@@ -38,6 +39,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
   List<BleDevice> get _visibleDevices {
     final search = query.trim().toLowerCase();
     final result = session.devices.values.where((device) {
+      if (!session.lastSeen.containsKey(device.deviceId)) return false;
       if (device.deviceId == session.connectedId ||
           session.systemDevices.containsKey(device.deviceId) ||
           session.systemAudioDevices.any(
@@ -51,8 +53,14 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
           device.deviceId.toLowerCase().contains(search);
     }).toList();
     result.sort((a, b) {
-      final named = (_hasName(b) ? 1 : 0) - (_hasName(a) ? 1 : 0);
-      return named != 0 ? named : (b.rssi ?? -999).compareTo(a.rssi ?? -999);
+      final pinned = (a.deviceId == selectedId ? 0 : 1).compareTo(
+        b.deviceId == selectedId ? 0 : 1,
+      );
+      return pinned != 0
+          ? pinned
+          : (session.discoveryOrder[a.deviceId] ?? 0).compareTo(
+              session.discoveryOrder[b.deviceId] ?? 0,
+            );
     });
     return result;
   }
@@ -72,7 +80,14 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) session.refreshStatus();
+    if (state == AppLifecycleState.resumed) {
+      session.setActive(true);
+      session.refreshStatus();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached) {
+      session.setActive(false);
+    }
   }
 
   @override
@@ -151,7 +166,8 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
             children: [
               if (compact) _statusPanel(),
               if (compact &&
-                  (session.connectedId != null ||
+                  (session.connectionTarget != null ||
+                      session.connectedId != null ||
                       (session.systemDevices.isEmpty &&
                           session.systemAudioDevices.isEmpty)))
                 _applicationConnection(),
@@ -162,6 +178,13 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
         ),
         SliverList.builder(
           itemCount: devices.length,
+          findChildIndexCallback: (key) {
+            if (key is! ValueKey<String>) return null;
+            final index = devices.indexWhere(
+              (device) => key.value == 'ble-device-${device.deviceId}',
+            );
+            return index < 0 ? null : index;
+          },
           itemBuilder: (context, index) =>
               _deviceCard(devices[index], compact: compact),
         ),
@@ -248,37 +271,83 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
   Widget _applicationConnection() => _panel(
     title: '当前连接',
     icon: Icons.link,
-    child: session.connectedId == null
+    child: session.connectedId == null && session.connectionTarget == null
         ? const Text('本应用尚未建立 GATT 连接。选择附近设备或系统 BLE 设备后连接。')
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 _deviceName(
-                  session.devices[session.connectedId] ??
+                  session.connectionTarget ??
+                      session.devices[session.connectedId] ??
                       BleDevice(deviceId: session.connectedId!, name: null),
                 ),
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
-              SelectableText('设备标识：${session.connectedId}'),
+              SelectableText(
+                '设备标识：${session.connectedId ?? session.connectionTarget?.deviceId}',
+              ),
+              const SizedBox(height: 8),
+              Text(_linkLabel, key: const Key('ble-link-phase')),
+              if (session.busy && session.connectionTarget != null)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: LinearProgressIndicator(),
+                ),
               Wrap(
                 spacing: 12,
                 runSpacing: 8,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Text('应用 BLE 已连接 · GATT 服务：${session.services.length} 项'),
-                  OutlinedButton.icon(
-                    key: const Key('ble-disconnect'),
-                    onPressed: session.disconnect,
-                    icon: const Icon(Icons.link_off),
-                    label: const Text('断开连接'),
-                  ),
+                  if (session.gattReady)
+                    Text('GATT 服务：${session.services.length} 项'),
+                  if (session.canCancelConnection)
+                    OutlinedButton.icon(
+                      key: const Key('ble-cancel-connection'),
+                      onPressed: session.cancelConnection,
+                      icon: const Icon(Icons.close),
+                      label: const Text('取消连接'),
+                    ),
+                  if (session.connectedId != null ||
+                      session.linkPhase == BleLinkPhase.disconnectUnconfirmed)
+                    OutlinedButton.icon(
+                      key: const Key('ble-disconnect'),
+                      onPressed:
+                          session.linkPhase == BleLinkPhase.disconnecting ||
+                              session.linkPhase == BleLinkPhase.cancelling
+                          ? null
+                          : session.disconnect,
+                      icon: const Icon(Icons.link_off),
+                      label: Text(
+                        session.linkPhase == BleLinkPhase.disconnectUnconfirmed
+                            ? '重试确认断开'
+                            : '断开连接',
+                      ),
+                    ),
+                  if (session.canRetryConnection)
+                    FilledButton.icon(
+                      key: const Key('ble-retry-connection'),
+                      onPressed: session.retryConnection,
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('重新连接'),
+                    ),
                 ],
               ),
             ],
           ),
   );
+
+  String get _linkLabel => switch (session.linkPhase) {
+    BleLinkPhase.idle => '未连接',
+    BleLinkPhase.connecting => '连接中 · 可以取消',
+    BleLinkPhase.discovering => '链路已建立 · 正在发现服务',
+    BleLinkPhase.ready => '服务就绪 · 可以读取或订阅',
+    BleLinkPhase.cancelling => '正在取消并确认释放',
+    BleLinkPhase.disconnecting => '正在断开 · 等待系统确认',
+    BleLinkPhase.disconnectUnconfirmed => '断开未确认 · 暂不建立新连接',
+    BleLinkPhase.failed => '连接中断或失败 · 可以重试',
+  };
 
   Widget _systemConnections({bool compact = false}) {
     final audio = {
@@ -338,9 +407,9 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
                   ),
                   if (session.systemDevices.containsKey(id))
                     TextButton(
-                      onPressed: session.busy || session.connectedId != null
-                          ? null
-                          : () => _connect(session.systemDevices[id]!),
+                      onPressed: session.canConnect
+                          ? () => _connect(session.systemDevices[id]!)
+                          : null,
                       child: const Text('连接 GATT'),
                     ),
                 ],
@@ -370,21 +439,81 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
           children: [
             FilledButton.icon(
               key: const Key('ble-scan'),
-              onPressed:
-                  session.busy ||
-                      session.scanning ||
-                      session.connectedId != null
-                  ? null
-                  : session.startScan,
+              onPressed: session.canStartScan
+                  ? () => session.startScan(
+                      duration: Duration(seconds: scanSeconds),
+                    )
+                  : null,
               icon: const Icon(Icons.search),
-              label: Text(session.scanning ? '扫描中…' : '开始扫描'),
+              label: Text(
+                session.scanPhase == BleScanPhase.running
+                    ? '扫描中…'
+                    : session.scanPhase == BleScanPhase.starting
+                    ? '正在启动…'
+                    : session.lastSeen.isEmpty
+                    ? '开始扫描'
+                    : '再次扫描',
+              ),
             ),
             OutlinedButton(
-              onPressed: session.scanning ? session.stopScan : null,
-              child: const Text('停止扫描'),
+              key: const Key('ble-stop-scan'),
+              onPressed:
+                  session.scanPhase == BleScanPhase.running ||
+                      session.scanPhase == BleScanPhase.starting ||
+                      session.scanPhase == BleScanPhase.unconfirmed
+                  ? session.stopScan
+                  : null,
+              child: Text(
+                session.scanPhase == BleScanPhase.stopping
+                    ? '停止确认中…'
+                    : session.scanPhase == BleScanPhase.unconfirmed
+                    ? '重试停止扫描'
+                    : '停止扫描',
+              ),
+            ),
+            TextButton(
+              key: const Key('ble-clear-history'),
+              onPressed: session.scanning || session.busy
+                  ? null
+                  : () {
+                      session.clearScanHistory();
+                      setState(() => selectedId = null);
+                    },
+              child: const Text('清除历史'),
+            ),
+            SizedBox(
+              width: 180,
+              child: DropdownButtonFormField<int>(
+                key: const Key('ble-scan-duration'),
+                initialValue: scanSeconds,
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  labelText: '扫描时长',
+                  border: OutlineInputBorder(),
+                ),
+                items: [
+                  for (final seconds in [10, 20, 30])
+                    DropdownMenuItem(value: seconds, child: Text('$seconds 秒')),
+                ],
+                onChanged: session.canStartScan
+                    ? (seconds) {
+                        if (seconds != null) {
+                          setState(() => scanSeconds = seconds);
+                        }
+                      }
+                    : null,
+              ),
             ),
           ],
         ),
+        const SizedBox(height: 8),
+        Text(
+          session.scanPhase == BleScanPhase.running
+              ? '剩余 ${session.scanSecondsRemaining} 秒 · 本轮发现 ${session.currentRoundIds.length} 台'
+              : session.scanSummary,
+          key: const Key('ble-scan-status'),
+        ),
+        if (session.connectedId != null) const Text('先断开当前设备再开始新一轮扫描。'),
         const SizedBox(height: 12),
         TextField(
           key: const Key('ble-device-search'),
@@ -396,7 +525,8 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
           onChanged: (value) => setState(() => query = value),
         ),
         const SizedBox(height: 8),
-        Text('已发现 ${session.devices.length} 台 · 当前显示 $visibleCount 台'),
+        Text('累计发现 ${session.lastSeen.length} 台 · 当前显示 $visibleCount 台'),
+        const Text('保留历史广播；过期仅表示近期未再发现，不代表设备已断开。'),
         FilterChip(
           label: Text(
             '显示未命名 (${session.devices.values.where((d) => !_hasName(d)).length})',
@@ -406,7 +536,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
         ),
         if (visibleCount == 0)
           Text(
-            session.scanning
+            session.scanPhase == BleScanPhase.running
                 ? '等待外设广播…'
                 : session.devices.isEmpty
                 ? '开始扫描以发现附近 BLE 外设。'
@@ -419,9 +549,20 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
   void _connect(BleDevice device) {
     setState(() => selectedId = device.deviceId);
     session.connect(device);
+    final controller = _detailsScrollController.hasClients
+        ? _detailsScrollController
+        : _deviceScrollController;
+    if (controller.hasClients) {
+      controller.animateTo(
+        0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   Widget _deviceCard(BleDevice device, {required bool compact}) => Card(
+    key: ValueKey('ble-device-${device.deviceId}'),
     margin: const EdgeInsets.only(bottom: 8),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -435,14 +576,24 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Text(
-            device.rssi == null ? '附近 BLE 广播' : '信号 ${device.rssi} dBm',
+            [
+              if (device.rssi != null) '信号 ${device.rssi} dBm',
+              _advertisementLabel(device.deviceId),
+              if (selectedId == device.deviceId) '已选中 · 固定置顶',
+            ].join('\n'),
           ),
           onTap: () => setState(() => selectedId = device.deviceId),
           trailing: TextButton(
-            onPressed: session.busy || session.connectedId != null
-                ? null
-                : () => _connect(device),
-            child: const Text('连接'),
+            onPressed: session.canConnect ? () => _connect(device) : null,
+            child: Text(
+              session.connectionTarget?.deviceId == device.deviceId &&
+                      session.canCancelConnection
+                  ? '处理中'
+                  : session.advertisementState(device.deviceId) ==
+                        BleAdvertisementState.expired
+                  ? '尝试连接'
+                  : '连接',
+            ),
           ),
         ),
         if (compact)
@@ -455,6 +606,17 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
       ],
     ),
   );
+
+  String _advertisementLabel(String id) {
+    final age = session.ageOf(id)?.inSeconds ?? 0;
+    final seconds = age < 0 ? 0 : age;
+    final status = switch (session.advertisementState(id)) {
+      BleAdvertisementState.currentRound => '本轮发现',
+      BleAdvertisementState.previousRound => '历史结果',
+      BleAdvertisementState.expired => '广播已过期',
+    };
+    return '$status · $seconds 秒前';
+  }
 
   Widget _deviceDetails(BleDevice device) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,7 +638,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (session.connectedId == null) ...[
+          if (!session.gattReady) ...[
             if (selected != null) ...[
               Text(
                 _deviceName(selected),
@@ -486,7 +648,11 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
               _deviceDetails(selected),
               const SizedBox(height: 12),
             ],
-            const Text('连接外设后显示 GATT 服务。读取与订阅按钮按特征值属性开放。'),
+            Text(
+              session.linkPhase == BleLinkPhase.discovering
+                  ? '正在发现服务，完成后开放特征值操作。'
+                  : '连接外设后显示 GATT 服务。读取与订阅按钮按特征值属性开放。',
+            ),
           ] else if (session.services.isEmpty)
             const Text('未发现服务，或服务发现仍在进行。')
           else
@@ -527,8 +693,14 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
                 CharacteristicProperty.read,
               ))
                 TextButton(
-                  onPressed: () => session.read(service, characteristic),
-                  child: const Text('读取'),
+                  onPressed: session.pendingCharacteristics.contains(key)
+                      ? null
+                      : () => session.read(service, characteristic),
+                  child: Text(
+                    session.pendingCharacteristics.contains(key)
+                        ? '操作中…'
+                        : '读取',
+                  ),
                 ),
               if (characteristic.properties.contains(
                     CharacteristicProperty.notify,
@@ -537,8 +709,10 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
                     CharacteristicProperty.indicate,
                   ))
                 TextButton(
-                  onPressed: () =>
-                      session.toggleSubscription(service, characteristic),
+                  onPressed: session.pendingCharacteristics.contains(key)
+                      ? null
+                      : () =>
+                            session.toggleSubscription(service, characteristic),
                   child: Text(
                     session.subscriptions.contains(key) ? '停止订阅' : '订阅',
                   ),

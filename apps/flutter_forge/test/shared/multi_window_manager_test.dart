@@ -85,6 +85,43 @@ void main() {
       expect(platform.createdWindowIds, ['created-1']);
     },
   );
+
+  test('category window arguments carry the active theme selection', () async {
+    final platform = _FakeMultiWindowPlatform();
+    final manager = MultiWindowManager.forTesting(platform)
+      ..setThemeSelectionPayload(
+        '{"version":1,"mode":"dark","palette":"graphiteForge"}',
+      );
+
+    await manager.createCategoryWindow(ModuleCategory.ui);
+
+    final arguments = MultiWindowManager.parseArguments(
+      platform.windows.single.arguments,
+    );
+    expect(
+      arguments.themeSelectionPayload,
+      '{"version":1,"mode":"dark","palette":"graphiteForge"}',
+    );
+  });
+
+  test('theme changes are sent only to category windows', () async {
+    final platform = _FakeMultiWindowPlatform()
+      ..windows.add(_categoryWindow('category', ModuleCategory.basic))
+      ..windows.add(
+        const MultiWindowController(
+          windowId: 'main',
+          arguments: '{"type":"main"}',
+          nativeController: null,
+        ),
+      );
+    final manager = MultiWindowManager.forTesting(platform);
+
+    await manager.updateThemeSelection('dark');
+
+    expect(platform.invocations, [
+      ('category', MultiWindowManager.themeSelectionMethod, 'dark'),
+    ]);
+  });
 }
 
 MultiWindowController _categoryWindow(
@@ -101,6 +138,7 @@ class _FakeMultiWindowPlatform implements MultiWindowPlatform {
   final Set<String> failShowWindowIds = {};
   final List<String> shownWindowIds = [];
   final List<String> createdWindowIds = [];
+  final List<(String, String, Object?)> invocations = [];
 
   @override
   Future<List<MultiWindowController>> getAllWindows() async => [...windows];
@@ -126,5 +164,14 @@ class _FakeMultiWindowPlatform implements MultiWindowPlatform {
       windows.removeWhere((window) => window.windowId == controller.windowId);
       throw StateError('window closed before show');
     }
+  }
+
+  @override
+  Future<void> invokeMethod(
+    MultiWindowController controller,
+    String method,
+    Object? arguments,
+  ) async {
+    invocations.add((controller.windowId, method, arguments));
   }
 }

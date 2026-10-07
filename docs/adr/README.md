@@ -18,6 +18,7 @@
 | 0010 | Flutter Scene Android 只读准入 | accepted |
 | 0011 | 平台快照与守卫路由 | accepted |
 | 0012 | 自适应导航外壳与分类专注窗口 | accepted |
+| 0013 | [能力推导可用性与独立验证记录](0013-capability-derived-availability-and-evidence.md) | accepted |
 
 ## 状态定义
 

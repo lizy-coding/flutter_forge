@@ -1,3 +1,4 @@
+const { platformContract } = require('./availability');
 const fs = require('fs');
 const path = require('path');
 
@@ -98,19 +99,18 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       schema: 'flutter_forge.agent_docs.module_index.v1',
       registry: 'lib/module_registry/module_manifest.dart',
       count: modules.length,
-      modules: modules.map(({ category, id, route, status, depends, excludedPlatforms = [] }) => ({
+      modules: modules.map((module) => {
+        const { category, id, route, status, depends } = module;
+        return ({
         id,
         category,
         path: `lib/modules/${category}/${id}`,
         route,
         status,
         depends,
-        platform_support: {
-          target_platforms: ['android', 'iOS', 'macOS', 'web', 'windows'],
-          excluded_platforms: excludedPlatforms,
-        },
+        platform_support: platformContract(module),
         analysis: `lib/modules/${category}/${id}/AI_ANALYSIS.md`,
-      })),
+      }); }),
     });
   }
 
@@ -153,8 +153,8 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       rel: 'lib/app/AI_ANALYSIS.md',
       id: 'flutter_forge_app.app',
       kind: 'app_index',
-      entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
-      owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'creator_home', 'module_catalog', 'title_search', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell', 'category_router_lifecycle'],
+      entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'theme/app_theme.dart', 'theme/app_theme_selection.dart', 'theme/app_theme_controller.dart', 'theme/forge_theme_tokens.dart', 'theme/theme_mode_button.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
+      owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'creator_home', 'module_catalog', 'title_search', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell', 'category_router_lifecycle', 'light_dark_theme', 'theme_palette_catalog', 'theme_semantic_tokens', 'theme_preference_persistence', 'cross_window_theme_sync'],
       depends: ['go_router', 'flutter_riverpod', 'url_launcher', 'module_registry', 'shared/multi_window', 'modules'],
       children: ['router/AI_ANALYSIS.md'],
     });
@@ -170,8 +170,8 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       rel: 'lib/module_registry/AI_ANALYSIS.md',
       id: 'flutter_forge_app.module_registry',
       kind: 'registry_index',
-      entrypoints: ['app_platform_snapshot.dart', 'module_entry.dart', 'module_category.dart', 'module_platform_support.dart', 'module_catalog_utils.dart'],
-      owns: ['platform_snapshot', 'product_target_platforms', 'module_entry_model', 'module_category_enum', 'difficulty_enum', 'module_status_enum', 'excluded_platform_availability', 'module_catalog_filtering', 'category_route_rebasing', 'shared_guarded_route_composition', 'child_route_semantics'],
+      entrypoints: ['app_platform_snapshot.dart', 'module_entry.dart', 'module_category.dart', 'module_platform_support.dart', 'module_platform_policies.dart', 'module_catalog_utils.dart'],
+      owns: ['platform_snapshot', 'product_target_platforms', 'module_entry_model', 'module_category_enum', 'difficulty_enum', 'module_status_enum', 'excluded_platform_availability', 'capability_derived_feature_policy', 'module_catalog_filtering', 'category_route_rebasing', 'shared_guarded_route_composition', 'child_route_semantics'],
       depends: ['flutter_material', 'go_router'],
     });
     writeIndex({
@@ -245,7 +245,8 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
   }
 
   function writeModuleContracts() {
-    for (const { category, id: module, route, status, depends, owns = ['module_entry', 'module_ui', 'module_docs'], validation = ['flutter analyze'], excludedPlatforms = [] } of modules) {
+    for (const declaration of modules) {
+      const { category, id: module, route, status, depends, owns = ['module_entry', 'module_ui', 'module_docs'], validation = ['flutter analyze'] } = declaration;
       const dir = path.join(appRoot, 'lib/modules', category, module);
       const entrypoints = [];
       for (const item of ['module_entry.dart', 'module_root.dart', 'module_routes.dart']) {
@@ -266,10 +267,7 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
         },
         route,
         category,
-        platform_support: {
-          target_platforms: ['android', 'iOS', 'macOS', 'web', 'windows'],
-          excluded_platforms: excludedPlatforms,
-        },
+        platform_support: platformContract(declaration),
         entrypoints: entrypoints.length ? entrypoints : ['module_entry.dart'],
         owns,
         depends,

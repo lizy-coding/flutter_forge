@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import 'navigation_policy.dart';
+import 'theme/theme_mode_button.dart';
+import 'theme/forge_theme_tokens.dart';
 
 class AdaptiveAppShell extends StatefulWidget {
   const AdaptiveAppShell({
@@ -80,6 +82,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                   ? AppBar(
                       title: const Text('Flutter Forge'),
                       actions: [
+                        const ThemeModeButton(),
                         IconButton(
                           tooltip: '搜索模块',
                           onPressed: _showSearch,
@@ -138,6 +141,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                                   onPressed: _showSearch,
                                   icon: const Icon(Icons.search),
                                 ),
+                                const ThemeModeButton(),
                               ],
                             ),
                             destinations: _destinations
@@ -179,68 +183,77 @@ class _Sidebar extends StatelessWidget {
     return SizedBox(
       key: const ValueKey('expanded-sidebar'),
       width: 264,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ListTile(
-              title: const Text('Flutter Forge'),
-              subtitle: const Text('可交互的 Flutter 学习现场'),
-              trailing: IconButton(
-                tooltip: '收起侧栏',
-                onPressed: onCollapse,
-                icon: const Icon(Icons.menu_open),
+      child: Material(
+        color: context.forgeColors.sidebar,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ListTile(
+                title: const Text('Flutter Forge'),
+                subtitle: const Text('可交互的 Flutter 学习现场'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const ThemeModeButton(),
+                    IconButton(
+                      tooltip: '收起侧栏',
+                      onPressed: onCollapse,
+                      icon: const Icon(Icons.menu_open),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-              child: TextField(
-                key: const ValueKey('sidebar-search'),
-                readOnly: true,
-                onTap: onSearch,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.search),
-                  hintText: '搜索模块标题',
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.outlineVariant,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                child: TextField(
+                  key: const ValueKey('sidebar-search'),
+                  readOnly: true,
+                  onTap: onSearch,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    hintText: '搜索模块标题',
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
                         ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          '/',
-                          style: TextStyle(fontWeight: FontWeight.w700),
+                        child: const Center(
+                          child: Text(
+                            '/',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
                         ),
                       ),
                     ),
+                    border: const OutlineInputBorder(),
                   ),
-                  border: const OutlineInputBorder(),
                 ),
               ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _destinations.length,
-                itemBuilder: (context, index) {
-                  final destination = _destinations[index];
-                  return ListTile(
-                    key: ValueKey('sidebar-destination:$index'),
-                    selected: index == selectedIndex,
-                    leading: Icon(destination.icon),
-                    title: Text(destination.label),
-                    onTap: () => onDestinationSelected(index),
-                  );
-                },
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _destinations.length,
+                  itemBuilder: (context, index) {
+                    final destination = _destinations[index];
+                    return ListTile(
+                      key: ValueKey('sidebar-destination:$index'),
+                      selected: index == selectedIndex,
+                      leading: Icon(destination.icon),
+                      title: Text(destination.label),
+                      onTap: () => onDestinationSelected(index),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

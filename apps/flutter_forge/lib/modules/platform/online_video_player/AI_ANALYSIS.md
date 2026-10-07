@@ -20,7 +20,24 @@
     ],
     "excluded_platforms": [
       "iOS"
-    ]
+    ],
+    "required_capabilities": [
+      "media_playback"
+    ],
+    "unreviewed_dependencies": [],
+    "optional_capabilities": [],
+    "reasons": [
+      {
+        "capability": "media_playback",
+        "reason": "media_backend_adapters",
+        "sources": [
+          "apps/flutter_forge/lib/modules/platform/online_video_player/module_entry.dart",
+          "apps/flutter_forge/pubspec.yaml"
+        ]
+      }
+    ],
+    "restriction": null,
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

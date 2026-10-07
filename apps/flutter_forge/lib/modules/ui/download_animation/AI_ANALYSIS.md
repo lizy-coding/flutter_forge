@@ -18,7 +18,15 @@
       "web",
       "windows"
     ],
-    "excluded_platforms": []
+    "excluded_platforms": [],
+    "required_capabilities": [],
+    "unreviewed_dependencies": [
+      "flutter_svg"
+    ],
+    "optional_capabilities": [],
+    "reasons": [],
+    "restriction": null,
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

@@ -1,0 +1,36 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "logic",
+  "platform": "any",
+  "recorded_at": "2026-10-04T09:53:58.763Z",
+  "revision": {
+    "commit": "f7996632559bcfb72243b831863d069ab9abfd71",
+    "dirty": true
+  },
+  "command": [
+    "flutter",
+    "test",
+    "test/modules",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791107638383-accef5da-53b7-4bb7-b587-e01e1f914133.log",
+      "sha256": "cac0b38b697f0674b8b3685797a9b3ac8a8ac8378110c612cdfd91b696762c82"
+    }
+  ],
+  "module": "webview",
+  "fingerprint": "8117ad3aee5dcd6cbb6f504c37ca1217b6b8f12ebb69dd9911c20ba7e98821c7",
+  "status": "pass",
+  "test_summary": {
+    "completed": 6,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "test_scope": "apps/flutter_forge/test/modules/platform/webview"
+}

@@ -23,7 +23,32 @@
       "iOS",
       "web",
       "windows"
-    ]
+    ],
+    "required_capabilities": [
+      "gcode_render",
+      "file_selection"
+    ],
+    "unreviewed_dependencies": [],
+    "optional_capabilities": [],
+    "reasons": [
+      {
+        "capability": "gcode_render",
+        "reason": "macos_gcode_adapter_only",
+        "sources": [
+          "apps/flutter_forge/lib/modules/ui/gcode_visualizer/module_entry.dart",
+          "apps/flutter_forge/pubspec.yaml"
+        ]
+      },
+      {
+        "capability": "file_selection",
+        "reason": "file_bridge_adapters_web_filename_only",
+        "sources": [
+          "packages/file_picker_bridge/lib/file_picker_bridge.dart"
+        ]
+      }
+    ],
+    "restriction": null,
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

@@ -27,6 +27,13 @@ const categoryOwnership = {
 
 const workspacePackages = [
   {
+    name: 'flutter_battery', kind: 'flutter_plugin_package',
+    path: 'packages/flutter_battery', entrypoints: ['lib/flutter_battery.dart'],
+    owns: ['battery_api', 'battery_native_adapters', 'battery_event_lifecycle'],
+    depends: ['flutter_sdk', 'plugin_platform_interface'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'file_picker_bridge',
     kind: 'flutter_bridge_package',
     path: 'packages/file_picker_bridge',

@@ -40,12 +40,19 @@
       "apps/flutter_forge",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
-      "packages/desktop_multi_window"
+      "packages/desktop_multi_window",
+      "packages/flutter_battery"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "flutter_battery",
+      "type": "flutter_plugin_package",
+      "path": "packages/flutter_battery",
+      "entrypoint": "lib/flutter_battery.dart"
+    },
     {
       "name": "file_picker_bridge",
       "type": "flutter_bridge_package",
@@ -195,7 +202,11 @@
     "unsupported_route": "stable_guarded_module_route",
     "web_release_build": "bash tool/build_web_release.sh",
     "web_startup_shell": "web/index.html + web/flutter_bootstrap.js",
-    "platform_capability_contract": "business_neutral_interface"
+    "platform_capability_contract": "business_neutral_interface",
+    "availability_source": "tool/agent_indexes/availability.js",
+    "verification_semantics": "independent_labels_never_admission",
+    "maintenance_matrix": "docs/module_availability/matrix.json",
+    "acceptance_cases": "docs/module_availability/acceptance-cases.md"
   },
   "change_protocol": {
     "branch_policy": {
@@ -222,7 +233,11 @@
       "tool/agent_indexes/plan.js",
       "tool/agent_indexes/generator.js",
       "tool/agent_indexes/contracts.js",
-      "tool/agent_indexes/routes.js"
+      "tool/agent_indexes/routes.js",
+      "tool/agent_indexes/availability.js",
+      "tool/agent_indexes/verification.js",
+      "tool/agent_indexes/acceptance_cases.js",
+      "tool/agent_indexes/visual_flows.js"
     ],
     "generate": "bash tool/generate_harness_ai_analysis.sh",
     "validate": [

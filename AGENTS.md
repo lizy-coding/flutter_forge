@@ -11,11 +11,18 @@
 
 涉及平台、导航、模块准入或发布时，再读 `CONTEXT.md` 与相关 `docs/adr/`。`AI_*.md` 和 `REFACTOR_PLAN.md` 是 JSON 机器契约，禁止加入 Markdown 段落。
 
+## 有界探索
+
+- 先从 Agent Hub 的 `workspace/projects.json` 与 `agent-context --project flutter-forge` 获取身份、近期 Git 路径与定点证据。
+- Context/Capability 图必须传入明确的 `candidate_paths`；返回数量限制不代表实际读取范围受限。
+- 先读当前 HEAD、工作区差异、根契约和目标目录最近的指南，再沿明确 imports/exports 扩展相关文件。禁止用全库递归扫描替代定位。
+- 未提交实现可作为当前工作区事实，不能标成发布版本验收。已有生成物、截图和报告按其提交/主机范围解释。
+
 ## 事实源与边界
 
-- 模块、路由、平台限制及 Agent 文档的生成源：`tool/generate_agent_indexes.js`。
+- 模块、路由、平台限制及 Agent 文档入口：`tool/generate_agent_indexes.js`；生成流水线和契约实现位于 `tool/agent_indexes/`，遵循该目录 `AGENTS.md`。
 - 生成物禁止手改；修改生成源后运行 `bash tool/generate_harness_ai_analysis.sh`。
-- `app/` 负责启动、应用壳和导航；`module_registry/` 负责模块元数据与平台判定。
+- `apps/flutter_forge/lib/app/` 负责启动、应用壳、导航与主题；遵循其 `AGENTS.md`。`module_registry/` 负责模块元数据与平台判定。
 - `shared/` 只放业务无关能力，不依赖 `app/` 或 `modules/`。
 - `modules/` 是学习模块叶子节点，模块之间禁止直接依赖。
 - 工作区内部包位于 `packages/`；禁止引用仓库外 `path: ../...` 依赖。
@@ -35,7 +42,8 @@
 ## 平台与导航
 
 - 平台限制用 `ModulePlatformSupport.excludedPlatforms` 表达；普通模块使用空排除集合。
-- 平台模块必须在生成源中显式声明排除集合并说明依据。
+- 平台限制由 `tool/agent_indexes/availability.js` 的共用能力适配规则推导；模块仅声明可选能力或带依据的产品级禁用例外，禁止重复手填平台名单。
+- 逻辑、编译、执行与人工界面验收只做标识；通过 `tool/module_availability.js` 记录一次，生成矩阵与用例，证据来源变化标为 STALE。
 - 目录和路由统一通过 `module_registry` 判定；模块页面不得自行决定目录可见性。
 - 不支持的平台保留稳定模块路径，并进入统一不可用说明页。
 - 平台可用性与 `ModuleStatus.pending/ready/recommended` 相互独立。
@@ -61,6 +69,7 @@
 - 未经用户明确授权，不提交、不推送、不合并，不处理无关工作树改动。
 - 禁止修改 `.github/workflows/ci.yml`、`tool/quality_gate.sh` 或其他门禁脚本语义，除非任务显式授权 `packaging_change` 并要求人工验收。
 - 业务仓库 CI 只能构建暂存产物；GitHub Release 必须由 Agent Hub `release_hosting` 的 `release-plan` / `release-run --execute` 流程执行。
+- 分发格式以当前工作流与冻结 manifest 为准：macOS DMG、Windows EXE、Android ARM64 debug APK、Web 静态包。Windows 安装器从应用 `pubspec.yaml` 注入版本；Android debug 构建和 debug 签名必须显式记录。
 
 ## 常用命令
 

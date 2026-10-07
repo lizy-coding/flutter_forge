@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/app.dart';
 import 'package:flutter_forge_app/app/app_platform_provider.dart';
 import 'package:flutter_forge_app/app/router/app_router.dart';
+import 'package:flutter_forge_app/app/theme/app_theme_controller.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,7 +21,10 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [appPlatformProvider.overrideWithValue(platform)],
-        child: App(router: router),
+        child: App(
+          router: router,
+          themeController: AppThemeController.forTesting(),
+        ),
       ),
     );
     await tester.pump(const Duration(milliseconds: 500));

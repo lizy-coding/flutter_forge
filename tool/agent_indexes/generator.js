@@ -116,8 +116,8 @@ function validateModules(modules, categories, appRoot) {
         !Array.isArray(module.concepts) || !module.concepts.length || !Array.isArray(module.depends)) {
       throw new Error(`Incomplete learning metadata: ${module.id}`);
     }
-    if (module.category === 'platform' && (!Array.isArray(module.excludedPlatforms) || !module.platformSupportComment)) {
-      throw new Error(`Platform module must declare exclusions and rationale: ${module.id}`);
+    if (module.category === 'platform' && !module.platformPolicy) {
+      throw new Error(`Platform module must have a derived capability policy: ${module.id}`);
     }
     const excluded = module.excludedPlatforms ?? [];
     if (!Array.isArray(excluded) || new Set(excluded).size !== excluded.length ||

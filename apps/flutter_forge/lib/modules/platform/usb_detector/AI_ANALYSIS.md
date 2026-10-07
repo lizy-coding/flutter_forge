@@ -24,7 +24,20 @@
       "macOS",
       "web",
       "windows"
-    ]
+    ],
+    "required_capabilities": [],
+    "unreviewed_dependencies": [
+      "device_info_plus"
+    ],
+    "optional_capabilities": [],
+    "reasons": [],
+    "restriction": {
+      "reason": "usb_otg_learning_workflow_deferred",
+      "sources": [
+        "tool/agent_indexes/plan.js"
+      ]
+    },
+    "features": {}
   },
   "entrypoints": [
     "module_entry.dart",

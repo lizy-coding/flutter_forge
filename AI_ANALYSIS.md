@@ -24,6 +24,7 @@
   "depends": [
     "git:https://github.com/lizy-coding/gcode_core.git#v0.2.1",
     "lib/shared/learning",
+    "packages/flutter_battery",
     "packages/file_picker_bridge",
     "packages/flutter_ioc_core",
     "packages/desktop_multi_window",
@@ -35,6 +36,7 @@
     "lib/module_registry/AI_ANALYSIS.md",
     "lib/shared/AI_ANALYSIS.md",
     "lib/modules/AI_ANALYSIS.md",
+    "packages/flutter_battery/AI_ANALYSIS.md",
     "packages/file_picker_bridge/AI_ANALYSIS.md",
     "packages/flutter_ioc_core/AI_ANALYSIS.md",
     "packages/desktop_multi_window/AI_ANALYSIS.md"

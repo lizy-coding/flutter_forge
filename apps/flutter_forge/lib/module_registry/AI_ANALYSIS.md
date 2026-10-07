@@ -13,6 +13,7 @@
     "module_entry.dart",
     "module_category.dart",
     "module_platform_support.dart",
+    "module_platform_policies.dart",
     "module_catalog_utils.dart"
   ],
   "owns": [
@@ -23,6 +24,7 @@
     "difficulty_enum",
     "module_status_enum",
     "excluded_platform_availability",
+    "capability_derived_feature_policy",
     "module_catalog_filtering",
     "category_route_rebasing",
     "shared_guarded_route_composition",

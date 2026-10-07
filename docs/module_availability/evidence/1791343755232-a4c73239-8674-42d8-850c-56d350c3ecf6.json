@@ -1,0 +1,37 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "execution",
+  "module": "battery_monitor",
+  "platform": "macOS",
+  "status": "fail",
+  "recorded_at": "2026-10-07T03:29:15.202Z",
+  "fingerprint": "1420dbb7e9ed2b09f849fac4b8c22cb25a622d00efdbfd584bf2ea9c14fbba39",
+  "revision": {
+    "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git; device=macos",
+  "command": [
+    "flutter",
+    "test",
+    "integration_test/battery_monitor_flow_test.dart",
+    "-d",
+    "macos",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 1,
+  "test_summary": {
+    "completed": 0,
+    "skipped": 0,
+    "failed": 1,
+    "success": false
+  },
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791343754958-d51c5fa9-038d-411d-bf40-5a3908518036.log",
+      "sha256": "5fd8abfbd22413c10f8beb811debd67511943f062f4bf725f308244ff0d91a30"
+    }
+  ]
+}

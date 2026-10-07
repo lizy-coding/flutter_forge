@@ -91,6 +91,10 @@ function writeProjectDocuments({ writeJson, workspacePackages, facts }) {
         web_release_build: 'bash tool/build_web_release.sh',
         web_startup_shell: 'web/index.html + web/flutter_bootstrap.js',
         platform_capability_contract: 'business_neutral_interface',
+        availability_source: 'tool/agent_indexes/availability.js',
+        verification_semantics: 'independent_labels_never_admission',
+        maintenance_matrix: 'docs/module_availability/matrix.json',
+        acceptance_cases: 'docs/module_availability/acceptance-cases.md',
       },
       change_protocol: {
         branch_policy: {
@@ -106,7 +110,7 @@ function writeProjectDocuments({ writeJson, workspacePackages, facts }) {
           sync_after_merge: 'merge_master_topology_back_into_dev',
         },
         pre_read: ['AI_PROJECT_CONTEXT.md', 'REFACTOR_PLAN.md', '{target}/AI_ANALYSIS.md'],
-        update_source: ['tool/generate_agent_indexes.js', 'tool/agent_indexes/catalog.js', 'tool/agent_indexes/project.js', 'tool/agent_indexes/plan.js', 'tool/agent_indexes/generator.js', 'tool/agent_indexes/contracts.js', 'tool/agent_indexes/routes.js'],
+        update_source: ['tool/generate_agent_indexes.js', 'tool/agent_indexes/catalog.js', 'tool/agent_indexes/project.js', 'tool/agent_indexes/plan.js', 'tool/agent_indexes/generator.js', 'tool/agent_indexes/contracts.js', 'tool/agent_indexes/routes.js', 'tool/agent_indexes/availability.js', 'tool/agent_indexes/verification.js', 'tool/agent_indexes/acceptance_cases.js', 'tool/agent_indexes/visual_flows.js'],
         generate: 'bash tool/generate_harness_ai_analysis.sh',
         validate: [
           'bash tool/generate_harness_ai_analysis.sh + git diff --exit-code',

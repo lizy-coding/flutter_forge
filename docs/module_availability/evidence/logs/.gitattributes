@@ -1,0 +1,2 @@
+# Evidence SHA-256 hashes cover raw bytes on every checkout.
+*.log -text -diff

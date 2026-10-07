@@ -1,0 +1,36 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "logic",
+  "platform": "any",
+  "recorded_at": "2026-10-04T09:39:08.680Z",
+  "revision": {
+    "commit": "f7996632559bcfb72243b831863d069ab9abfd71",
+    "dirty": true
+  },
+  "command": [
+    "flutter",
+    "test",
+    "test/modules",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791106748459-91435e1f-ea9d-444b-bf5f-344c6b8fb377.log",
+      "sha256": "7f0ef3e78f8e7df068eb95f1d6316ce2469a31954c12b8aba6e7ba4dfe4d95cf"
+    }
+  ],
+  "module": "overlay_follow_compare",
+  "fingerprint": "da6db1cfc808e4afbd8947cd9c2bfefe8dee237f44860af0eb80d0be9f3c80a6",
+  "status": "pass",
+  "test_summary": {
+    "completed": 1,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "test_scope": "apps/flutter_forge/test/modules/popup_table/overlay_follow_compare"
+}

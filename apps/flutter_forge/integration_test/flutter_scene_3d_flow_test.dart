@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/app/app.dart';
 import 'package:flutter_forge_app/app/app_platform_provider.dart';
 import 'package:flutter_forge_app/app/router/app_router.dart';
+import 'package:flutter_forge_app/app/theme/app_theme_controller.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,17 +34,28 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [appPlatformProvider.overrideWithValue(platform)],
-        child: App(router: router),
+        child: App(
+          router: router,
+          themeController: AppThemeController.forTesting(),
+        ),
       ),
     );
     await _pumpFrames(tester, const Duration(milliseconds: 600));
-    expect(find.text('Flutter 学习实验室'), findsOneWidget);
+    expect(find.byKey(const ValueKey('creator-home-scroll')), findsOneWidget);
+
+    final category = find.byKey(const ValueKey('home-category:ui'));
+    await tester.ensureVisible(category);
+    await tester.tap(category);
+    final categoryPage = find.byKey(const ValueKey('category-page:ui'));
+    await _pumpUntil(tester, categoryPage);
 
     final moduleTile = find.byKey(const ValueKey('module:/flutter-scene-3d'));
     await tester.scrollUntilVisible(
       moduleTile,
       500,
-      scrollable: find.byType(Scrollable).first,
+      scrollable: find
+          .descendant(of: categoryPage, matching: find.byType(Scrollable))
+          .first,
     );
     await tester.ensureVisible(moduleTile);
     await _pumpFrames(tester, const Duration(milliseconds: 200));
@@ -97,7 +109,10 @@ void main() {
 
     await tester.pageBack();
     await _pumpFrames(tester, const Duration(milliseconds: 400));
-    expect(find.text('Flutter 学习实验室'), findsOneWidget);
+    expect(categoryPage, findsOneWidget);
+    router.go('/');
+    await _pumpFrames(tester, const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('creator-home-scroll')), findsOneWidget);
   });
 }
 

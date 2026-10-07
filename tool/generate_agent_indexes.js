@@ -1,3 +1,5 @@
+const { resolveModules, writePolicies } = require('./agent_indexes/availability');
+const { writeAvailability } = require('./agent_indexes/verification');
 const path = require('path');
 const { categoryComments, categoryEnumNames, workspacePackages, catalogFor } = require('./agent_indexes/catalog');
 const { loadFacts, validateModules, generate } = require('./agent_indexes/generator');
@@ -15,6 +17,20 @@ const contracts = {
 
 // Keep the declaration here for existing validator and module admission consumers.
 const modules = [
+  {
+    category: 'basic',
+    id: 'constraint_layout',
+    route: '/constraint-layout',
+    status: 'ready',
+    depends: ['shared_learning', 'module_registry'],
+    title: '约束与声明式布局',
+    subtitle: '拖动父容器约束，实时观察子组件尺寸与 Row、Column、Wrap 布局变化',
+    difficulty: 'beginner',
+    concepts: ['BoxConstraints', 'LayoutBuilder', 'SizedBox', 'Row', 'Column', 'Wrap', '声明式 UI'],
+    estimatedMinutes: 25,
+    entry: 'ConstraintLayoutEntry',
+    validation: ['flutter analyze', 'flutter test test/modules/basic/constraint_layout'],
+  },
   {
     category: 'basic',
     id: 'tree_state',
@@ -83,8 +99,6 @@ const modules = [
     estimatedMinutes: 20,
     entry: 'IsolateTestEntry',
     routes: 'IsolateTestRoutes',
-    excludedPlatforms: ['web'],
-    platformSupportComment: '// Safari Web validation showed no usable progress lifecycle for Isolate.spawn.',
   },
   {
     category: 'async',
@@ -98,8 +112,6 @@ const modules = [
     concepts: ['Isolate.spawn', '多任务', '进度上报', '暂停/恢复'],
     estimatedMinutes: 35,
     entry: 'IsolateStreamEntry',
-    excludedPlatforms: ['web'],
-    platformSupportComment: '// Safari Web validation showed tasks stalled at zero progress.',
   },
   {
     category: 'state',
@@ -147,8 +159,6 @@ const modules = [
     id: 'gcode_visualizer',
     route: '/gcode-visualizer',
     status: 'ready',
-    excludedPlatforms: ['android', 'iOS', 'web', 'windows'],
-    platformSupportComment: '// The G-code learning module opens only its macOS entry; device evidence is separate.',
     depends: ['shared_learning', 'gcode_core', 'file_picker_bridge', 'module_registry'],
     title: 'G-code 解析与轨迹动画',
     subtitle: '解析 G-code 指令，绘制刀路轨迹并用动画展示执行过程',
@@ -189,6 +199,7 @@ const modules = [
     id: 'font_picker',
     route: '/font-picker',
     status: 'ready',
+    optionalCapabilities: ['font_file_import'],
     depends: ['shared_learning', 'file_picker_bridge', 'module_registry', 'go_router'],
     title: '字体选择器',
     subtitle: '命名列表中直观对比不同字体族与字重样式，并通过文件选择器加载本地字体',
@@ -210,8 +221,6 @@ const modules = [
     concepts: ['轨道相机', 'Scene Raycast', '部件聚焦', 'Reduced Motion'],
     estimatedMinutes: 35,
     entry: 'FlutterScene3dEntry',
-    excludedPlatforms: ['iOS', 'web'],
-    platformSupportComment: '// Android is view-only; Windows and Android host evidence remains pending.',
   },
   {
     category: 'popup_table',
@@ -285,14 +294,16 @@ const modules = [
     estimatedMinutes: 35,
     entry: 'InterceptorTestEntry',
     routes: 'InterceptorTestRoutes',
-    excludedPlatforms: [],
-    platformSupportComment: '// Web uses an in-memory Dio adapter; native hosts keep the localhost mock server.',
   },
   {
     category: 'platform',
     id: 'usb_detector',
     route: '/usb-detector',
     status: 'ready',
+    entryRestriction: {
+      reason: 'usb_otg_learning_workflow_deferred',
+      sources: ['tool/agent_indexes/plan.js'],
+    },
     depends: ['shared_learning', 'device_info_plus', 'module_registry'],
     title: 'USB 设备检测',
     subtitle: 'Android USB 设备检测与状态监控',
@@ -300,8 +311,15 @@ const modules = [
     concepts: ['Android USB', 'MethodChannel', 'Stream 广播', '设备扫描'],
     estimatedMinutes: 25,
     entry: 'UsbDetectorEntry',
-    excludedPlatforms: ['android', 'iOS', 'macOS', 'web', 'windows'],
-    platformSupportComment: '// Disabled on every target until the module is reframed as a concrete OTG workflow.',
+  },
+  {
+    category: 'platform', id: 'battery_monitor', route: '/battery-monitor',
+    status: 'ready', depends: ['shared_learning', 'flutter_battery', 'module_registry'],
+    owns: ['module_entry', 'module_ui', 'battery_session_lifecycle'],
+    validation: ['flutter analyze', 'flutter test test/modules/platform/battery_monitor'],
+    title: '电池状态与事件监听', subtitle: '插件依赖、平台能力与电池事件生命周期',
+    difficulty: 'intermediate', concepts: ['MethodChannel', 'EventChannel', '平台能力', '资源释放'],
+    estimatedMinutes: 25, entry: 'BatteryMonitorEntry',
   },
   {
     category: 'platform',
@@ -309,14 +327,14 @@ const modules = [
     route: '/bluetooth-ble',
     status: 'ready',
     depends: ['shared_learning', 'universal_ble', 'url_launcher', 'module_registry'],
+    owns: ['module_entry', 'module_ui', 'module_docs', 'scan_lifecycle', 'gatt_lifecycle', 'advertisement_history'],
+    validation: ['flutter analyze', 'flutter test test/modules/platform/bluetooth_ble'],
     title: 'BLE 连接生命周期',
     subtitle: '观察扫描、连接、服务发现、读取与订阅、断开',
     difficulty: 'intermediate',
     concepts: ['BLE Central', 'GATT', '特征值属性', '通知订阅', '资源释放'],
     estimatedMinutes: 30,
     entry: 'BluetoothBleEntry',
-    excludedPlatforms: ['iOS', 'web'],
-    platformSupportComment: '// Android, macOS and Windows expose the BLE learning flow; host build and GATT acceptance are tracked separately.',
   },
   {
     category: 'platform',
@@ -330,8 +348,6 @@ const modules = [
     concepts: ['FilePickerService', 'MethodChannel', '平台桥接', '扩展名过滤', '取消分支'],
     estimatedMinutes: 20,
     entry: 'FilePickerEntry',
-    excludedPlatforms: ['iOS'],
-    platformSupportComment: '// Android uses file_selector; Web exposes only the selected filename.',
   },
   {
     category: 'platform',
@@ -345,8 +361,6 @@ const modules = [
     concepts: ['video_player', '平台播放器', 'HTTP 流', '播放控制', '倍速', 'Controller 生命周期'],
     estimatedMinutes: 35,
     entry: 'OnlineVideoPlayerEntry',
-    excludedPlatforms: ['iOS'],
-    platformSupportComment: '// Web uses same-origin media; native targets use their registered backends.',
   },
   {
     category: 'platform',
@@ -360,22 +374,23 @@ const modules = [
     concepts: ['WebView', 'WebView2', '加载进度', '生命周期'],
     estimatedMinutes: 30,
     entry: 'WebViewEntry',
-    excludedPlatforms: ['iOS', 'web'],
-    platformSupportComment: '// Android/macOS use webview_flutter; Windows uses WebView2.',
   },
 
 ];
 
 
 function run({ check = false } = {}) {
-  const facts = loadFacts(root, modules, workspacePackages);
-  validateModules(modules, categoryComments, appRoot);
+  const resolvedModules = resolveModules(root, modules);
+  const facts = loadFacts(root, resolvedModules, workspacePackages);
+  validateModules(resolvedModules, categoryComments, appRoot);
   return generate({ root, appRoot, check }, ({ writeJson, writeText }) => {
-    const context = { root, appRoot, modules, contracts, workspacePackages, facts,
+    const context = { root, appRoot, modules: resolvedModules, contracts, workspacePackages, facts,
       categoryComments, categoryEnumNames, categoryMeta: catalogFor(modules), writeJson, writeText };
     writeProjectDocuments(context);
     writeContracts(context);
     writeRoutes(context);
+    writePolicies(context);
+    writeAvailability(context);
   });
 }
 
@@ -387,4 +402,4 @@ if (require.main === module) {
   const result = run({ check: args.includes('--check') });
   console.log(`agent_indexes:${args.includes('--check') ? 'checked' : 'generated'}:${result.outputs}:changed:${result.changed}`);
 }
-module.exports = { modules, run };
+module.exports = { modules: resolveModules(root, modules), run };

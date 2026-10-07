@@ -1,0 +1,18 @@
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":95680,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":0}
+{"count":1,"time":1,"type":"allSuites"}
+✓ Built build/macos/Build/Products/Debug/Flutter Forge.app
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:64513/sXLTghshZAQ=/"}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":17195}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":17196}
+{"test":{"id":3,"name":"3D viewer desktop interaction flow","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":27,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart"},"type":"testStart","time":17196}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":22304}
+{"test":{"id":4,"name":"(tearDownAll)","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":50,"column":5,"url":"package:integration_test/integration_test.dart"},"type":"testStart","time":22305}
+{"testID":4,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":22308}
+{"success":true,"type":"done","time":22317}
+The following plugins do not support Swift Package Manager for macos:
+  - desktop_multi_window
+  - device_info_plus
+This will become an error in a future version of Flutter. Please contact the plugin maintainers to request Swift Package Manager adoption.

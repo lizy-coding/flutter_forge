@@ -1,0 +1,40 @@
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":94315,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":0}
+{"count":1,"time":2,"type":"allSuites"}
+✓ Built build/macos/Build/Products/Debug/Flutter Forge.app
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:63404/zi5kh5c2ey8=/"}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":16242}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":16242}
+{"test":{"id":3,"name":"3D viewer desktop interaction flow","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":27,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart"},"type":"testStart","time":16243}
+{"testID":3,"messageType":"print","message":"══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"The following TestFailure was thrown running a test:","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"Expected: exactly one matching candidate","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"  Actual: _TextWidgetFinder:<Found 0 widgets with text \"Flutter 学习实验室\": []>","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"   Which: means none were found but one was expected","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"When the exception was thrown, this was the stack:","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"#4      main.<anonymous closure> (file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart:44:5)","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"<asynchronous suspension>","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"<asynchronous suspension>","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"<asynchronous suspension>","type":"print","time":17711}
+{"testID":3,"messageType":"print","message":"<asynchronous suspension>","type":"print","time":17712}
+{"testID":3,"messageType":"print","message":"(elided one frame from package:stack_trace)","type":"print","time":17712}
+{"testID":3,"messageType":"print","message":"","type":"print","time":17712}
+{"testID":3,"messageType":"print","message":"This was caught by the test expectation on the following line:","type":"print","time":17712}
+{"testID":3,"messageType":"print","message":"  file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/flutter_scene_3d_flow_test.dart line 44","type":"print","time":17712}
+{"testID":3,"messageType":"print","message":"The test description was:","type":"print","time":17712}
+{"testID":3,"messageType":"print","message":"  3D viewer desktop interaction flow","type":"print","time":17712}
+{"testID":3,"messageType":"print","message":"════════════════════════════════════════════════════════════════════════════════════════════════════","type":"print","time":17712}
+{"testID":3,"error":"Test failed. See exception logs above.\nThe test description was: 3D viewer desktop interaction flow","stackTrace":"","isFailure":false,"type":"error","time":17713}
+{"testID":3,"result":"error","skipped":false,"hidden":false,"type":"testDone","time":17713}
+{"test":{"id":4,"name":"(tearDownAll)","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":50,"column":5,"url":"package:integration_test/integration_test.dart"},"type":"testStart","time":17713}
+{"testID":4,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":17716}
+{"success":false,"type":"done","time":17722}
+The following plugins do not support Swift Package Manager for macos:
+  - desktop_multi_window
+  - device_info_plus
+This will become an error in a future version of Flutter. Please contact the plugin maintainers to request Swift Package Manager adoption.
