@@ -35,6 +35,7 @@ import '../modules/popup_table/overlay_follow_compare/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_routes.dart';
 import '../modules/platform/usb_detector/module_entry.dart';
+import '../modules/platform/battery_monitor/module_entry.dart';
 import '../modules/platform/bluetooth_ble/module_entry.dart';
 import '../modules/platform/file_picker/module_entry.dart';
 import '../modules/platform/online_video_player/module_entry.dart';
@@ -350,6 +351,18 @@ final List<ModuleEntry> moduleManifest = [
     status: ModuleStatus.ready,
     platformSupport: modulePlatformPolicies['usb_detector']!,
     builder: (context) => const UsbDetectorEntry(),
+  ),
+  ModuleEntry(
+    title: '电池状态与事件监听',
+    path: '/battery-monitor',
+    subtitle: '插件依赖、平台能力与电池事件生命周期',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['MethodChannel', 'EventChannel', '平台能力', '资源释放'],
+    estimatedMinutes: 25,
+    status: ModuleStatus.ready,
+    platformSupport: modulePlatformPolicies['battery_monitor']!,
+    builder: (context) => const BatteryMonitorEntry(),
   ),
   ModuleEntry(
     title: 'BLE 连接生命周期',

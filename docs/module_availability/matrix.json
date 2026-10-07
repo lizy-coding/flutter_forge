@@ -8423,6 +8423,202 @@
       ]
     },
     {
+      "id": "battery_monitor",
+      "title": "电池状态与事件监听",
+      "route": "/battery-monitor",
+      "policy": {
+        "required_capabilities": [
+          "battery_monitor"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "battery_monitor",
+            "reason": "battery_android_macos_native_adapters",
+            "sources": [
+              "packages/flutter_battery/pubspec.yaml",
+              "apps/flutter_forge/lib/modules/platform/battery_monitor/module_entry.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "tests": {
+        "directory": "apps/flutter_forge/test/modules/platform/battery_monitor",
+        "files": [
+          "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+        ],
+        "behaviors": [
+          {
+            "name": "session releases events and ignores late async reads",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "unavailable event is not a zero battery reading and errors recover",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "compact page shows capabilities and refreshes real adapter",
+            "kind": "widget",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          }
+        ]
+      },
+      "platforms": {
+        "android": {
+          "entry_open": true,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "pending"
+            },
+            "compile": {
+              "status": "pending"
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        },
+        "iOS": {
+          "entry_open": false,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "pending"
+            },
+            "compile": {
+              "status": "pending"
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        },
+        "macOS": {
+          "entry_open": true,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "pending"
+            },
+            "compile": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "macOS",
+                "status": "pass",
+                "recorded_at": "2026-10-04T09:54:54.624Z",
+                "fingerprint": "27963de292b6ae171222f7d78774a212c7809c1f08408ea4d9b35d2b51f261ce",
+                "revision": {
+                  "commit": "f7996632559bcfb72243b831863d069ab9abfd71",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "flutter",
+                  "build",
+                  "macos",
+                  "--debug",
+                  "--no-pub"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791107694244-293d924c-92aa-450e-be29-5f10910656f9.log",
+                    "sha256": "3eb76ed39105d86274049bcca245389ba0a73f4c2526a854d6c99ca9030948c5"
+                  }
+                ]
+              }
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        },
+        "web": {
+          "entry_open": false,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "pending"
+            },
+            "compile": {
+              "status": "pending"
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        },
+        "windows": {
+          "entry_open": false,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "pending"
+            },
+            "compile": {
+              "status": "pending"
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        }
+      },
+      "cases": [
+        {
+          "id": "entry_navigation",
+          "platforms": [
+            "android",
+            "iOS",
+            "macOS",
+            "web",
+            "windows"
+          ],
+          "preconditions": "使用本次构建的应用；记录平台、设备、窗口尺寸及文字缩放。",
+          "steps": "从目录进入「电池状态与事件监听」，再通过稳定路径 /battery-monitor 进入；返回目录并再次进入。",
+          "expected": "开放平台进入教学页面；关闭平台展示统一不可用说明。返回与重进正确，无残留弹窗或错误页面。",
+          "evidence": "目录、页面或不可用说明截图；操作记录。"
+        },
+        {
+          "id": "layout_and_readability",
+          "platforms": [
+            "android",
+            "macOS"
+          ],
+          "preconditions": "移动或紧凑窗口使用 360dp；桌面另测宽窗口；使用系统大字体。",
+          "steps": "进入页面，滚动到末尾；展开页面已有说明、菜单或弹窗；调整窗口宽度后重复。",
+          "expected": "文字与关键控件可读可操作；无溢出、遮挡或截断；滚动及关闭弹窗正常。",
+          "evidence": "紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。"
+        }
+      ]
+    },
+    {
       "id": "bluetooth_ble",
       "title": "BLE 连接生命周期",
       "route": "/bluetooth-ble",

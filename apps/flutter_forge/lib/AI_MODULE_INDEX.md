@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 25,
+  "count": 26,
   "modules": [
     {
       "id": "constraint_layout",
@@ -748,6 +748,50 @@
         "features": {}
       },
       "analysis": "lib/modules/platform/usb_detector/AI_ANALYSIS.md"
+    },
+    {
+      "id": "battery_monitor",
+      "category": "platform",
+      "path": "lib/modules/platform/battery_monitor",
+      "route": "/battery-monitor",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "flutter_battery",
+        "module_registry"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web",
+          "windows"
+        ],
+        "required_capabilities": [
+          "battery_monitor"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "battery_monitor",
+            "reason": "battery_android_macos_native_adapters",
+            "sources": [
+              "packages/flutter_battery/pubspec.yaml",
+              "apps/flutter_forge/lib/modules/platform/battery_monitor/module_entry.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/platform/battery_monitor/AI_ANALYSIS.md"
     },
     {
       "id": "bluetooth_ble",

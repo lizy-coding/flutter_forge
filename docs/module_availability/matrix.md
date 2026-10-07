@@ -113,6 +113,11 @@
 | USB 设备检测 | macOS | 关闭 | — | STALE | STALE | PENDING | PENDING |
 | USB 设备检测 | web | 关闭 | — | STALE | PENDING | PENDING | PENDING |
 | USB 设备检测 | windows | 关闭 | — | STALE | PENDING | PENDING | PENDING |
+| 电池状态与事件监听 | android | 开放 | — | PENDING | PENDING | PENDING | PENDING |
+| 电池状态与事件监听 | iOS | 关闭 | — | PENDING | PENDING | PENDING | PENDING |
+| 电池状态与事件监听 | macOS | 开放 | — | PENDING | STALE | PENDING | PENDING |
+| 电池状态与事件监听 | web | 关闭 | — | PENDING | PENDING | PENDING | PENDING |
+| 电池状态与事件监听 | windows | 关闭 | — | PENDING | PENDING | PENDING | PENDING |
 | BLE 连接生命周期 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | BLE 连接生命周期 | iOS | 关闭 | — | STALE | PENDING | PENDING | PENDING |
 | BLE 连接生命周期 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |

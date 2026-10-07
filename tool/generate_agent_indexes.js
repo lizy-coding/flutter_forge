@@ -313,6 +313,15 @@ const modules = [
     entry: 'UsbDetectorEntry',
   },
   {
+    category: 'platform', id: 'battery_monitor', route: '/battery-monitor',
+    status: 'ready', depends: ['shared_learning', 'flutter_battery', 'module_registry'],
+    owns: ['module_entry', 'module_ui', 'battery_session_lifecycle'],
+    validation: ['flutter analyze', 'flutter test test/modules/platform/battery_monitor'],
+    title: '电池状态与事件监听', subtitle: '插件依赖、平台能力与电池事件生命周期',
+    difficulty: 'intermediate', concepts: ['MethodChannel', 'EventChannel', '平台能力', '资源释放'],
+    estimatedMinutes: 25, entry: 'BatteryMonitorEntry',
+  },
+  {
     category: 'platform',
     id: 'bluetooth_ble',
     route: '/bluetooth-ble',

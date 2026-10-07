@@ -1073,6 +1073,40 @@
 - catalog keeps USB visible but blocks every platform route（`apps/flutter_forge/test/modules/platform/usb_detector/usb_detector_test.dart`）
 - USB detector fits a compact Android viewport（`apps/flutter_forge/test/modules/platform/usb_detector/usb_detector_test.dart`）
 
+## 电池状态与事件监听（battery_monitor）
+
+路径：`/battery-monitor`；逻辑测试：`flutter test test/modules/platform/battery_monitor`（在 apps/flutter_forge 执行）。
+
+### entry_navigation
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：使用本次构建的应用；记录平台、设备、窗口尺寸及文字缩放。
+
+操作：从目录进入「电池状态与事件监听」，再通过稳定路径 /battery-monitor 进入；返回目录并再次进入。
+
+预期：开放平台进入教学页面；关闭平台展示统一不可用说明。返回与重进正确，无残留弹窗或错误页面。
+
+证据：目录、页面或不可用说明截图；操作记录。
+
+### layout_and_readability
+
+平台：android、macOS。
+
+前置条件：移动或紧凑窗口使用 360dp；桌面另测宽窗口；使用系统大字体。
+
+操作：进入页面，滚动到末尾；展开页面已有说明、菜单或弹窗；调整窗口宽度后重复。
+
+预期：文字与关键控件可读可操作；无溢出、遮挡或截断；滚动及关闭弹窗正常。
+
+证据：紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。
+
+行为测试来源（待审阅补充模块专属视觉预期）：
+
+- session releases events and ignores late async reads（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- unavailable event is not a zero battery reading and errors recover（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- compact page shows capabilities and refreshes real adapter（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+
 ## BLE 连接生命周期（bluetooth_ble）
 
 路径：`/bluetooth-ble`；逻辑测试：`flutter test test/modules/platform/bluetooth_ble`（在 apps/flutter_forge 执行）。

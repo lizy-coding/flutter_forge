@@ -11,6 +11,7 @@
   "entrypoints": [
     "dio_interceptor",
     "usb_detector",
+    "battery_monitor",
     "bluetooth_ble",
     "file_picker",
     "online_video_player",
@@ -25,6 +26,7 @@
     "module_registry",
     "go_router",
     "device_info_plus",
+    "flutter_battery",
     "universal_ble",
     "url_launcher",
     "file_picker_bridge",
@@ -37,6 +39,7 @@
   "children": [
     "dio_interceptor/AI_ANALYSIS.md",
     "usb_detector/AI_ANALYSIS.md",
+    "battery_monitor/AI_ANALYSIS.md",
     "bluetooth_ble/AI_ANALYSIS.md",
     "file_picker/AI_ANALYSIS.md",
     "online_video_player/AI_ANALYSIS.md",

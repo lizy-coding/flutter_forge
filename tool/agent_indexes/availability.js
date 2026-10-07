@@ -7,6 +7,11 @@ const targets = ['android', 'iOS', 'macOS', 'web', 'windows'];
 // or acceptance results. A dependency discovers a requirement; optional features
 // and product restrictions remain explicit module intent.
 const capabilities = {
+  battery_monitor: {
+    dependencies: ['flutter_battery'], platforms: ['android', 'macOS'],
+    reason: 'battery_android_macos_native_adapters',
+    sources: ['packages/flutter_battery/pubspec.yaml', 'apps/flutter_forge/lib/modules/platform/battery_monitor/module_entry.dart'],
+  },
   isolates: {
     imports: ['dart:isolate'], platforms: ['android', 'iOS', 'macOS', 'windows'],
     reason: 'safari_isolate_progress_unreliable',

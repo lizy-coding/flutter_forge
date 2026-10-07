@@ -63,6 +63,13 @@ const modulePlatformPolicies = <String, ModulePlatformSupport>{
       AppTargetPlatform.windows,
     },
   ),
+  'battery_monitor': ModulePlatformSupport(
+    excludedPlatforms: {
+      AppTargetPlatform.iOS,
+      AppTargetPlatform.web,
+      AppTargetPlatform.windows,
+    },
+  ),
   'bluetooth_ble': ModulePlatformSupport(
     excludedPlatforms: {AppTargetPlatform.iOS, AppTargetPlatform.web},
   ),
