@@ -1,0 +1,35 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "logic",
+  "module": "battery_monitor",
+  "platform": "any",
+  "status": "pass",
+  "recorded_at": "2026-10-07T02:34:52.351Z",
+  "fingerprint": "57291f4710b1be42e041a3a733b33a92e2208857098e4dfc629c360c1452148b",
+  "revision": {
+    "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "command": [
+    "flutter",
+    "test",
+    "test/modules/platform/battery_monitor",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "test_summary": {
+    "completed": 3,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791340492065-a5fce491-3408-41e4-96d3-f5d08efd1491.log",
+      "sha256": "cde162837298c3d6e4364ee3aa6a6bb4e5da781a8b66c85dafa4a4d478b1428e"
+    }
+  ]
+}

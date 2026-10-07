@@ -1,0 +1,46 @@
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":22935,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"/Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/battery_monitor_flow_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading /Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/battery_monitor_flow_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":0}
+{"count":1,"time":1,"type":"allSuites"}
+✓ Built build/macos/Build/Products/Debug/Flutter Forge.app
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":"http://127.0.0.1:65412/pUEfSVzyWWo=/"}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":13920}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":13921}
+{"test":{"id":3,"name":"native battery query, events and module reentry","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":10,"root_column":3,"root_url":"file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/battery_monitor_flow_test.dart"},"type":"testStart","time":13921}
+{"testID":3,"messageType":"print","message":"BATTERY_NATIVE_EVIDENCE level=80 charging=false event={timestamp: 1791340073851, batteryLevel: 80, type: BATTERY_LEVEL, level: 80} capabilities=[BatteryFeature.batteryLevel, BatteryFeature.batteryInfo, BatteryFeature.batteryHealth, BatteryFeature.batteryLevelStream, BatteryFeature.batteryHealthStream, BatteryFeature.batteryInfoStream, BatteryFeature.lowBatteryMonitoring]","type":"print","time":15044}
+{"testID":3,"messageType":"print","message":"══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════","type":"print","time":16196}
+{"testID":3,"messageType":"print","message":"The following TestFailure was thrown running a test:","type":"print","time":16196}
+{"testID":3,"messageType":"print","message":"Expected: no matching candidates","type":"print","time":16196}
+{"testID":3,"messageType":"print","message":"  Actual: _TextContainingWidgetFinder:<Found 1 widget with text containing 读取失败: [","type":"print","time":16196}
+{"testID":3,"messageType":"print","message":"            Text(\"能力表示平台接口可用；没有电池或读取失败时仍需呈现明确状态。多个消费者共享原生事件监听。\", inherit: true, size: 12.0,","type":"print","time":16196}
+{"testID":3,"messageType":"print","message":"dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),","type":"print","time":16196}
+{"testID":3,"messageType":"print","message":"          ]>","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"   Which: means one was found but none were expected","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"When the exception was thrown, this was the stack:","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"#4      main.<anonymous closure> (file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/battery_monitor_flow_test.dart:38:7)","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"<asynchronous suspension>","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"<asynchronous suspension>","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"<asynchronous suspension>","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"<asynchronous suspension>","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"(elided one frame from package:stack_trace)","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"This was caught by the test expectation on the following line:","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"  file:///Users/forest/code/langGraph/flutter_forge/apps/flutter_forge/integration_test/battery_monitor_flow_test.dart line 38","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"The test description was:","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"  native battery query, events and module reentry","type":"print","time":16197}
+{"testID":3,"messageType":"print","message":"════════════════════════════════════════════════════════════════════════════════════════════════════","type":"print","time":16197}
+{"testID":3,"error":"Test failed. See exception logs above.\nThe test description was: native battery query, events and module reentry","stackTrace":"","isFailure":false,"type":"error","time":16198}
+{"testID":3,"result":"error","skipped":false,"hidden":false,"type":"testDone","time":16198}
+{"test":{"id":4,"name":"(tearDownAll)","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":50,"column":5,"url":"package:integration_test/integration_test.dart"},"type":"testStart","time":16198}
+{"testID":4,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":16199}
+{"success":false,"type":"done","time":16205}
+The following plugins do not support Swift Package Manager for macos:
+  - desktop_multi_window
+  - device_info_plus
+  - flutter_battery
+This will become an error in a future version of Flutter. Please contact the plugin maintainers to request Swift Package Manager adoption.
+Failed to foreground app; open returned 1

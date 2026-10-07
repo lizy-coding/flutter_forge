@@ -8,134 +8,134 @@
 
 | 模块 | 平台 | 入口 | 功能差异 | 逻辑 | 编译 | 执行 | 界面 |
 |---|---|---|---|---|---|---|---|
-| 约束与声明式布局 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 约束与声明式布局 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 约束与声明式布局 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 约束与声明式布局 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 约束与声明式布局 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 约束与声明式布局 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 约束与声明式布局 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 三棵树与生命周期 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 三棵树与生命周期 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 三棵树与生命周期 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 三棵树与生命周期 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 三棵树与生命周期 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 三棵树与生命周期 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 三棵树与生命周期 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 事件循环与微任务 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 事件循环与微任务 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 事件循环与微任务 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 事件循环与微任务 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 事件循环与微任务 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 事件循环与微任务 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 事件循环与微任务 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 防抖与节流 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 防抖与节流 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 防抖与节流 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 防抖与节流 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 防抖与节流 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 防抖与节流 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 防抖与节流 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Stream 订阅机制 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| Stream 订阅机制 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Stream 订阅机制 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Stream 订阅机制 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| Stream 订阅机制 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Stream 订阅机制 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | Stream 订阅机制 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Isolate 并发对比 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| Isolate 并发对比 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Isolate 并发对比 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Isolate 并发对比 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| Isolate 并发对比 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Isolate 并发对比 | web | 关闭 | — | STALE | PENDING | PENDING | PENDING |
 | Isolate 并发对比 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 多任务 Isolate 管理器 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 多任务 Isolate 管理器 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 多任务 Isolate 管理器 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 多任务 Isolate 管理器 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 多任务 Isolate 管理器 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 多任务 Isolate 管理器 | web | 关闭 | — | STALE | PENDING | PENDING | PENDING |
 | 多任务 Isolate 管理器 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 状态管理演进 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 状态管理演进 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 状态管理演进 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 状态管理演进 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 状态管理演进 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 状态管理演进 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 状态管理演进 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Flutter IoC 容器 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| Flutter IoC 容器 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Flutter IoC 容器 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Flutter IoC 容器 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| Flutter IoC 容器 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Flutter IoC 容器 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | Flutter IoC 容器 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 本地持久化 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 本地持久化 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 本地持久化 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 本地持久化 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 本地持久化 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 本地持久化 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 本地持久化 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| G-code 解析与轨迹动画 | android | 关闭 | — | STALE | PENDING | PENDING | PENDING |
+| G-code 解析与轨迹动画 | android | 关闭 | — | STALE | PASS | PENDING | PENDING |
 | G-code 解析与轨迹动画 | iOS | 关闭 | — | STALE | PENDING | PENDING | PENDING |
-| G-code 解析与轨迹动画 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| G-code 解析与轨迹动画 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | G-code 解析与轨迹动画 | web | 关闭 | — | STALE | PENDING | PENDING | PENDING |
 | G-code 解析与轨迹动画 | windows | 关闭 | — | STALE | PENDING | PENDING | PENDING |
-| 智能吸附线画板 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 智能吸附线画板 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 智能吸附线画板 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 智能吸附线画板 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 智能吸附线画板 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 智能吸附线画板 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 智能吸附线画板 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 下载飞入动效 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 下载飞入动效 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 下载飞入动效 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 下载飞入动效 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 下载飞入动效 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 下载飞入动效 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 下载飞入动效 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 字体选择器 | android | 开放 | font_file_import: 开放；font_preview: 开放 | STALE | PENDING | PENDING | PENDING |
+| 字体选择器 | android | 开放 | font_file_import: 开放；font_preview: 开放 | STALE | PASS | PENDING | PENDING |
 | 字体选择器 | iOS | 开放 | font_file_import: 关闭；font_preview: 开放 | STALE | PENDING | PENDING | PENDING |
-| 字体选择器 | macOS | 开放 | font_file_import: 开放；font_preview: 开放 | STALE | STALE | PENDING | PENDING |
+| 字体选择器 | macOS | 开放 | font_file_import: 开放；font_preview: 开放 | STALE | PASS | PENDING | PENDING |
 | 字体选择器 | web | 开放 | font_file_import: 关闭；font_preview: 关闭 | STALE | PENDING | PENDING | PENDING |
 | 字体选择器 | windows | 开放 | font_file_import: 开放；font_preview: 开放 | STALE | PENDING | PENDING | PENDING |
-| 教学型 3D 查看器 | android | 开放 | scene_controls: 关闭 | STALE | PENDING | PENDING | PENDING |
+| 教学型 3D 查看器 | android | 开放 | scene_controls: 关闭 | STALE | PASS | PENDING | PENDING |
 | 教学型 3D 查看器 | iOS | 关闭 | scene_controls: 关闭 | STALE | PENDING | PENDING | PENDING |
-| 教学型 3D 查看器 | macOS | 开放 | scene_controls: 开放 | STALE | STALE | STALE | PENDING |
+| 教学型 3D 查看器 | macOS | 开放 | scene_controls: 开放 | STALE | PASS | STALE | PENDING |
 | 教学型 3D 查看器 | web | 关闭 | scene_controls: 关闭 | STALE | PENDING | PENDING | PENDING |
 | 教学型 3D 查看器 | windows | 开放 | scene_controls: 开放 | STALE | PENDING | PENDING | PENDING |
-| 弹窗合集 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 弹窗合集 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 弹窗合集 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 弹窗合集 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 弹窗合集 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 弹窗合集 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 弹窗合集 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 弹窗与列表交互 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 弹窗与列表交互 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 弹窗与列表交互 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 弹窗与列表交互 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 弹窗与列表交互 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 弹窗与列表交互 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 弹窗与列表交互 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 二维滚动表格 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 二维滚动表格 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 二维滚动表格 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 二维滚动表格 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 二维滚动表格 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 二维滚动表格 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 二维滚动表格 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Overlay 跟随方案对照组 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| Overlay 跟随方案对照组 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Overlay 跟随方案对照组 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Overlay 跟随方案对照组 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| Overlay 跟随方案对照组 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Overlay 跟随方案对照组 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | Overlay 跟随方案对照组 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Dio 拦截器链路 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| Dio 拦截器链路 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Dio 拦截器链路 | iOS | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| Dio 拦截器链路 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| Dio 拦截器链路 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | Dio 拦截器链路 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | Dio 拦截器链路 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| USB 设备检测 | android | 关闭 | — | STALE | PENDING | PENDING | PENDING |
+| USB 设备检测 | android | 关闭 | — | STALE | PASS | PENDING | PENDING |
 | USB 设备检测 | iOS | 关闭 | — | STALE | PENDING | PENDING | PENDING |
-| USB 设备检测 | macOS | 关闭 | — | STALE | STALE | PENDING | PENDING |
+| USB 设备检测 | macOS | 关闭 | — | STALE | PASS | PENDING | PENDING |
 | USB 设备检测 | web | 关闭 | — | STALE | PENDING | PENDING | PENDING |
 | USB 设备检测 | windows | 关闭 | — | STALE | PENDING | PENDING | PENDING |
-| 电池状态与事件监听 | android | 开放 | — | PENDING | PENDING | PENDING | PENDING |
-| 电池状态与事件监听 | iOS | 关闭 | — | PENDING | PENDING | PENDING | PENDING |
-| 电池状态与事件监听 | macOS | 开放 | — | PENDING | STALE | PENDING | PENDING |
-| 电池状态与事件监听 | web | 关闭 | — | PENDING | PENDING | PENDING | PENDING |
-| 电池状态与事件监听 | windows | 关闭 | — | PENDING | PENDING | PENDING | PENDING |
-| BLE 连接生命周期 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 电池状态与事件监听 | android | 开放 | — | PASS | PASS | PENDING | PENDING |
+| 电池状态与事件监听 | iOS | 关闭 | — | PASS | PENDING | PENDING | PENDING |
+| 电池状态与事件监听 | macOS | 开放 | — | PASS | PASS | PASS | PENDING |
+| 电池状态与事件监听 | web | 关闭 | — | PASS | PENDING | PENDING | PENDING |
+| 电池状态与事件监听 | windows | 关闭 | — | PASS | PENDING | PENDING | PENDING |
+| BLE 连接生命周期 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | BLE 连接生命周期 | iOS | 关闭 | — | STALE | PENDING | PENDING | PENDING |
-| BLE 连接生命周期 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| BLE 连接生命周期 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | BLE 连接生命周期 | web | 关闭 | — | STALE | PENDING | PENDING | PENDING |
 | BLE 连接生命周期 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 文件选择器 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 文件选择器 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 文件选择器 | iOS | 关闭 | — | STALE | PENDING | PENDING | PENDING |
-| 文件选择器 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 文件选择器 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 文件选择器 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 文件选择器 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 在线视频播放 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 在线视频播放 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 在线视频播放 | iOS | 关闭 | — | STALE | PENDING | PENDING | PENDING |
-| 在线视频播放 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 在线视频播放 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 在线视频播放 | web | 开放 | — | STALE | PENDING | PENDING | PENDING |
 | 在线视频播放 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
-| 网页容器与跨平台导航 | android | 开放 | — | STALE | PENDING | PENDING | PENDING |
+| 网页容器与跨平台导航 | android | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 网页容器与跨平台导航 | iOS | 关闭 | — | STALE | PENDING | PENDING | PENDING |
-| 网页容器与跨平台导航 | macOS | 开放 | — | STALE | STALE | PENDING | PENDING |
+| 网页容器与跨平台导航 | macOS | 开放 | — | STALE | PASS | PENDING | PENDING |
 | 网页容器与跨平台导航 | web | 关闭 | — | STALE | PENDING | PENDING | PENDING |
 | 网页容器与跨平台导航 | windows | 开放 | — | STALE | PENDING | PENDING | PENDING |
 
