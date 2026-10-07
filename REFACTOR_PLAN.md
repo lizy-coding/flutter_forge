@@ -20,6 +20,7 @@
   "dependency_migration": {
     "layout": "pub_workspace",
     "internal_packages": [
+      "packages/flutter_battery",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
       "packages/desktop_multi_window"

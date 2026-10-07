@@ -40,12 +40,19 @@
       "apps/flutter_forge",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
-      "packages/desktop_multi_window"
+      "packages/desktop_multi_window",
+      "packages/flutter_battery"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "flutter_battery",
+      "type": "flutter_plugin_package",
+      "path": "packages/flutter_battery",
+      "entrypoint": "lib/flutter_battery.dart"
+    },
     {
       "name": "file_picker_bridge",
       "type": "flutter_bridge_package",

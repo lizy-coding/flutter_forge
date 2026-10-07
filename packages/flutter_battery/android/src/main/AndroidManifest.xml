@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.flutter_battery">
+
+    <application>
+        <!-- 通知闹钟接收器 -->
+        <receiver
+            android:name="com.example.push_notification.receiver.NotificationAlarmReceiver"
+            android:exported="false" />
+    </application>
+</manifest> 

@@ -15,6 +15,7 @@
       "AI_ANALYSIS.md"
     ],
     "package_contract": [
+      "packages/flutter_battery/AI_ANALYSIS.md",
       "packages/file_picker_bridge/AI_ANALYSIS.md",
       "packages/flutter_ioc_core/AI_ANALYSIS.md",
       "packages/desktop_multi_window/AI_ANALYSIS.md"
