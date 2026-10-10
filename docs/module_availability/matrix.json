@@ -115,7 +115,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -123,10 +123,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -143,8 +143,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -255,7 +255,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -263,10 +263,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -281,8 +281,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -339,7 +339,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -527,7 +554,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -535,10 +562,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -555,8 +582,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -667,7 +694,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -675,10 +702,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -693,8 +720,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -751,7 +778,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -939,7 +993,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -947,10 +1001,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -967,8 +1021,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -1079,7 +1133,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -1087,10 +1141,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -1105,8 +1159,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -1163,7 +1217,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -1361,7 +1442,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -1369,10 +1450,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -1389,8 +1470,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -1501,7 +1582,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -1509,10 +1590,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -1527,8 +1608,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -1585,7 +1666,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -1768,7 +1876,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -1776,10 +1884,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -1796,8 +1904,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -1908,7 +2016,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -1916,10 +2024,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -1934,8 +2042,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -1992,7 +2100,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -2191,7 +2326,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -2199,10 +2334,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -2219,8 +2354,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -2331,7 +2466,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -2339,10 +2474,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -2357,8 +2492,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -2415,7 +2550,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -2609,7 +2771,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -2617,10 +2779,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -2637,8 +2799,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -2749,7 +2911,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -2757,10 +2919,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -2775,8 +2937,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -2833,7 +2995,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -3026,7 +3215,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -3034,10 +3223,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -3054,8 +3243,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -3166,7 +3355,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -3174,10 +3363,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -3192,8 +3381,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -3250,7 +3439,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -3433,7 +3649,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -3441,10 +3657,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -3461,8 +3677,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -3573,7 +3789,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -3581,10 +3797,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -3599,8 +3815,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -3657,7 +3873,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -3887,7 +4130,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -3895,10 +4138,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -3915,8 +4158,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -4027,7 +4270,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -4035,10 +4278,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -4053,8 +4296,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -4111,7 +4354,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -4313,7 +4583,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -4321,10 +4591,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -4341,8 +4611,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -4453,7 +4723,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -4461,10 +4731,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -4479,8 +4749,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -4537,7 +4807,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -4738,7 +5035,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -4746,10 +5043,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -4766,8 +5063,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -4878,7 +5175,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -4886,10 +5183,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -4904,8 +5201,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -4962,7 +5259,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -5147,7 +5471,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -5155,10 +5479,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -5175,8 +5499,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -5287,7 +5611,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -5295,10 +5619,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -5313,8 +5637,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -5371,7 +5695,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -5613,7 +5964,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -5621,10 +5972,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -5641,8 +5992,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -5759,7 +6110,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -5767,10 +6118,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -5785,8 +6136,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -5846,7 +6197,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -6179,7 +6557,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -6187,10 +6565,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -6207,8 +6585,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -6323,7 +6701,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -6331,10 +6709,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -6349,8 +6727,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -6446,7 +6824,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -6672,7 +7077,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -6680,10 +7085,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -6700,8 +7105,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -6812,7 +7217,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -6820,10 +7225,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -6838,8 +7243,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -6896,7 +7301,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -7110,7 +7542,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -7118,10 +7550,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -7138,8 +7570,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -7250,7 +7682,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -7258,10 +7690,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -7276,8 +7708,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -7334,7 +7766,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -7517,7 +7976,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -7525,10 +7984,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -7545,8 +8004,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -7657,7 +8116,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -7665,10 +8124,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -7683,8 +8142,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -7741,7 +8200,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -7924,7 +8410,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -7932,10 +8418,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -7952,8 +8438,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -8064,7 +8550,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -8072,10 +8558,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -8090,8 +8576,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -8148,7 +8634,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -8353,7 +8866,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -8361,10 +8874,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -8381,8 +8894,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -8493,7 +9006,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -8501,10 +9014,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -8519,8 +9032,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -8577,7 +9090,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -8691,6 +9231,477 @@
       ]
     },
     {
+      "id": "usb_network",
+      "title": "USB 网络连接基础",
+      "route": "/usb-network",
+      "policy": {
+        "required_capabilities": [
+          "usb_network"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "usb_network",
+            "reason": "desktop_system_ncm_interface_bound_tcp",
+            "sources": [
+              "packages/usb_network_bridge/pubspec.yaml",
+              "packages/usb_network_bridge/lib/src/backend_native.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "tests": {
+        "directory": "apps/flutter_forge/test/modules/platform/usb_network",
+        "files": [
+          "apps/flutter_forge/test/modules/platform/usb_network/fake_usb_network.dart",
+          "apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart",
+          "apps/flutter_forge/test/modules/platform/usb_network/usb_network_test.dart"
+        ],
+        "behaviors": [
+          {
+            "name": "selected route, target and bytes pass through without device protocol",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart"
+          },
+          {
+            "name": "empty scan, native error and invalid input remain observable",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart"
+          },
+          {
+            "name": "disconnect during opening awaits and closes the late connection",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart"
+          },
+          {
+            "name": "dispose suppresses late callbacks and releases an opening connection",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart"
+          },
+          {
+            "name": "peer loss disconnects and never schedules reconnect",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart"
+          },
+          {
+            "name": "sending and log history have bounded size",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart"
+          },
+          {
+            "name": "scan, connect, exchange and disconnect through the page",
+            "kind": "widget",
+            "source": "apps/flutter_forge/test/modules/platform/usb_network/usb_network_test.dart"
+          },
+          {
+            "name": "compact layout, large text and empty interface state",
+            "kind": "widget",
+            "source": "apps/flutter_forge/test/modules/platform/usb_network/usb_network_test.dart"
+          }
+        ]
+      },
+      "platforms": {
+        "android": {
+          "entry_open": false,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "logic",
+                "module": "usb_network",
+                "platform": "any",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:39:44.283Z",
+                "fingerprint": "17ecf95a29dc65e78f77da62372a5f8f0920fbaa5bc582bed60c51554b3c0c14",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "flutter",
+                  "test",
+                  "test/modules/platform/usb_network",
+                  "--no-pub",
+                  "--machine"
+                ],
+                "exit_code": 0,
+                "test_summary": {
+                  "completed": 8,
+                  "skipped": 0,
+                  "failed": 0,
+                  "success": true
+                },
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373184000-73db00b7-c031-4076-a4d4-8d153fe2171b.log",
+                    "sha256": "123266fe7eeb38bb0f837dcc263208097e49abe4815613aa1fb57f5f4559c4f9"
+                  }
+                ]
+              }
+            },
+            "compile": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "android",
+                "status": "pass",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "flutter",
+                  "build",
+                  "apk",
+                  "--debug",
+                  "--no-pub",
+                  "--target-platform",
+                  "android-arm64"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
+                  }
+                ]
+              }
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        },
+        "iOS": {
+          "entry_open": false,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "logic",
+                "module": "usb_network",
+                "platform": "any",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:39:44.283Z",
+                "fingerprint": "17ecf95a29dc65e78f77da62372a5f8f0920fbaa5bc582bed60c51554b3c0c14",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "flutter",
+                  "test",
+                  "test/modules/platform/usb_network",
+                  "--no-pub",
+                  "--machine"
+                ],
+                "exit_code": 0,
+                "test_summary": {
+                  "completed": 8,
+                  "skipped": 0,
+                  "failed": 0,
+                  "success": true
+                },
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373184000-73db00b7-c031-4076-a4d4-8d153fe2171b.log",
+                    "sha256": "123266fe7eeb38bb0f837dcc263208097e49abe4815613aa1fb57f5f4559c4f9"
+                  }
+                ]
+              }
+            },
+            "compile": {
+              "status": "pending"
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        },
+        "macOS": {
+          "entry_open": true,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "logic",
+                "module": "usb_network",
+                "platform": "any",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:39:44.283Z",
+                "fingerprint": "17ecf95a29dc65e78f77da62372a5f8f0920fbaa5bc582bed60c51554b3c0c14",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "flutter",
+                  "test",
+                  "test/modules/platform/usb_network",
+                  "--no-pub",
+                  "--machine"
+                ],
+                "exit_code": 0,
+                "test_summary": {
+                  "completed": 8,
+                  "skipped": 0,
+                  "failed": 0,
+                  "success": true
+                },
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373184000-73db00b7-c031-4076-a4d4-8d153fe2171b.log",
+                    "sha256": "123266fe7eeb38bb0f837dcc263208097e49abe4815613aa1fb57f5f4559c4f9"
+                  }
+                ]
+              }
+            },
+            "compile": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "macOS",
+                "status": "pass",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "flutter",
+                  "build",
+                  "macos",
+                  "--debug",
+                  "--no-pub"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
+                  }
+                ]
+              }
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        },
+        "web": {
+          "entry_open": false,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "logic",
+                "module": "usb_network",
+                "platform": "any",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:39:44.283Z",
+                "fingerprint": "17ecf95a29dc65e78f77da62372a5f8f0920fbaa5bc582bed60c51554b3c0c14",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "flutter",
+                  "test",
+                  "test/modules/platform/usb_network",
+                  "--no-pub",
+                  "--machine"
+                ],
+                "exit_code": 0,
+                "test_summary": {
+                  "completed": 8,
+                  "skipped": 0,
+                  "failed": 0,
+                  "success": true
+                },
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373184000-73db00b7-c031-4076-a4d4-8d153fe2171b.log",
+                    "sha256": "123266fe7eeb38bb0f837dcc263208097e49abe4815613aa1fb57f5f4559c4f9"
+                  }
+                ]
+              }
+            },
+            "compile": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        },
+        "windows": {
+          "entry_open": true,
+          "features": {},
+          "verification": {
+            "logic": {
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "logic",
+                "module": "usb_network",
+                "platform": "any",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:39:44.283Z",
+                "fingerprint": "17ecf95a29dc65e78f77da62372a5f8f0920fbaa5bc582bed60c51554b3c0c14",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "flutter",
+                  "test",
+                  "test/modules/platform/usb_network",
+                  "--no-pub",
+                  "--machine"
+                ],
+                "exit_code": 0,
+                "test_summary": {
+                  "completed": 8,
+                  "skipped": 0,
+                  "failed": 0,
+                  "success": true
+                },
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373184000-73db00b7-c031-4076-a4d4-8d153fe2171b.log",
+                    "sha256": "123266fe7eeb38bb0f837dcc263208097e49abe4815613aa1fb57f5f4559c4f9"
+                  }
+                ]
+              }
+            },
+            "compile": {
+              "status": "pending"
+            },
+            "execution": {
+              "status": "pending"
+            },
+            "ui": {
+              "status": "pending"
+            }
+          }
+        }
+      },
+      "cases": [
+        {
+          "id": "entry_navigation",
+          "platforms": [
+            "android",
+            "iOS",
+            "macOS",
+            "web",
+            "windows"
+          ],
+          "preconditions": "使用本次构建的应用；记录平台、设备、窗口尺寸及文字缩放。",
+          "steps": "从目录进入「USB 网络连接基础」，再通过稳定路径 /usb-network 进入；返回目录并再次进入。",
+          "expected": "开放平台进入教学页面；关闭平台展示统一不可用说明。返回与重进正确，无残留弹窗或错误页面。",
+          "evidence": "目录、页面或不可用说明截图；操作记录。"
+        },
+        {
+          "id": "layout_and_readability",
+          "platforms": [
+            "macOS",
+            "windows"
+          ],
+          "preconditions": "移动或紧凑窗口使用 360dp；桌面另测宽窗口；使用系统大字体。",
+          "steps": "进入页面，滚动到末尾；展开页面已有说明、菜单或弹窗；调整窗口宽度后重复。",
+          "expected": "文字与关键控件可读可操作；无溢出、遮挡或截断；滚动及关闭弹窗正常。",
+          "evidence": "紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。"
+        },
+        {
+          "id": "core_visual_flow",
+          "platforms": [
+            "macOS",
+            "windows"
+          ],
+          "preconditions": "进入本次构建的教学页面；使用页面要求的样本或网络，记录初始状态。",
+          "steps": "插入 NCM 设备，扫描并选择接口；填写设备 USB IPv4 和测试 TCP 端口，连接并发送 hello；拔线、断开并手动重连。",
+          "expected": "接口与源地址真实可见；测试服务响应出现在日志；断开后不能发送，重进无旧连接。9001 上的设备 WebSocket 服务不作为原始 TCP 回显服务。",
+          "sources": [
+            "apps/flutter_forge/test/modules/platform/usb_network/usb_network_test.dart"
+          ],
+          "evidence": "关键操作录屏、结果截图与异常日志；缺少自动行为测试时保留该缺口。"
+        }
+      ]
+    },
+    {
       "id": "usb_detector",
       "title": "USB 设备检测",
       "route": "/usb-detector",
@@ -8788,7 +9799,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -8796,10 +9807,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -8816,8 +9827,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -8928,7 +9939,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -8936,10 +9947,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -8954,8 +9965,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -9012,7 +10023,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -9124,17 +10162,62 @@
         ],
         "behaviors": [
           {
-            "name": "session releases events and ignores late async reads",
+            "name": "late read does not update disposed session",
             "kind": "logic",
             "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
           },
           {
-            "name": "unavailable event is not a zero battery reading and errors recover",
+            "name": "typed no-battery event and failed read remain distinct and recover",
             "kind": "logic",
             "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
           },
           {
-            "name": "compact page shows capabilities and refreshes real adapter",
+            "name": "level updates preserve info metrics and show AC not charging",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "default changes, mode replacement, interval and stop do not leak owners",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "unsupported changes falls back to periodic sampling",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "stream failure refresh reopens observation and clears error",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "failed open can retry; failed close is visible and prevents automatic replacement",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "late open is closed on dispose and parallel start is ignored",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "history keeps 20 changes with unknown timestamps and ignores stopped events",
+            "kind": "logic",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "controls switch modes, select samples, stop and restart",
+            "kind": "widget",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "capacity diagnostics and controls at $width dp",
+            "kind": "widget",
+            "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          },
+          {
+            "name": "compact typed page refreshes and closes observation",
             "kind": "widget",
             "source": "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
           }
@@ -9146,7 +10229,7 @@
           "features": {},
           "verification": {
             "logic": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9154,10 +10237,10 @@
                 "module": "battery_monitor",
                 "platform": "any",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:18.022Z",
-                "fingerprint": "358250901acda875c155e5bb7de2efaa51eb47d0d97eef67947a472b6b208d3b",
+                "recorded_at": "2026-10-08T05:52:39.959Z",
+                "fingerprint": "23d1a7afd695b1e3e3563b895eee9a8ece90b5b76eef723f32521efc700fe572",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9170,21 +10253,21 @@
                 ],
                 "exit_code": 0,
                 "test_summary": {
-                  "completed": 3,
+                  "completed": 4,
                   "skipped": 0,
                   "failed": 0,
                   "success": true
                 },
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791343997812-40574799-1239-460e-9309-f7d23e30d6bc.log",
-                    "sha256": "5ed4d68e170108c4c942b612ac556beeb0d527fe632959ab9d0c15e31fd649e6"
+                    "path": "docs/module_availability/evidence/logs/1791438759578-c5b0fe3a-1be0-4661-85b8-fcab4c4ac44f.log",
+                    "sha256": "3105d5265a8fd019c8452de91922dfc222113dfcf6b60fa45e39874147e841ce"
                   }
                 ]
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9192,10 +10275,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9212,8 +10295,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -9231,7 +10314,7 @@
           "features": {},
           "verification": {
             "logic": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9239,10 +10322,10 @@
                 "module": "battery_monitor",
                 "platform": "any",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:18.022Z",
-                "fingerprint": "358250901acda875c155e5bb7de2efaa51eb47d0d97eef67947a472b6b208d3b",
+                "recorded_at": "2026-10-08T05:52:39.959Z",
+                "fingerprint": "23d1a7afd695b1e3e3563b895eee9a8ece90b5b76eef723f32521efc700fe572",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9255,15 +10338,15 @@
                 ],
                 "exit_code": 0,
                 "test_summary": {
-                  "completed": 3,
+                  "completed": 4,
                   "skipped": 0,
                   "failed": 0,
                   "success": true
                 },
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791343997812-40574799-1239-460e-9309-f7d23e30d6bc.log",
-                    "sha256": "5ed4d68e170108c4c942b612ac556beeb0d527fe632959ab9d0c15e31fd649e6"
+                    "path": "docs/module_availability/evidence/logs/1791438759578-c5b0fe3a-1be0-4661-85b8-fcab4c4ac44f.log",
+                    "sha256": "3105d5265a8fd019c8452de91922dfc222113dfcf6b60fa45e39874147e841ce"
                   }
                 ]
               }
@@ -9284,7 +10367,7 @@
           "features": {},
           "verification": {
             "logic": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9292,10 +10375,10 @@
                 "module": "battery_monitor",
                 "platform": "any",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:18.022Z",
-                "fingerprint": "358250901acda875c155e5bb7de2efaa51eb47d0d97eef67947a472b6b208d3b",
+                "recorded_at": "2026-10-08T05:52:39.959Z",
+                "fingerprint": "23d1a7afd695b1e3e3563b895eee9a8ece90b5b76eef723f32521efc700fe572",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9308,21 +10391,21 @@
                 ],
                 "exit_code": 0,
                 "test_summary": {
-                  "completed": 3,
+                  "completed": 4,
                   "skipped": 0,
                   "failed": 0,
                   "success": true
                 },
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791343997812-40574799-1239-460e-9309-f7d23e30d6bc.log",
-                    "sha256": "5ed4d68e170108c4c942b612ac556beeb0d527fe632959ab9d0c15e31fd649e6"
+                    "path": "docs/module_availability/evidence/logs/1791438759578-c5b0fe3a-1be0-4661-85b8-fcab4c4ac44f.log",
+                    "sha256": "3105d5265a8fd019c8452de91922dfc222113dfcf6b60fa45e39874147e841ce"
                   }
                 ]
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9330,10 +10413,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9348,14 +10431,14 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
             },
             "execution": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9363,10 +10446,10 @@
                 "module": "battery_monitor",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:34:02.115Z",
-                "fingerprint": "016223f87f3b99e22667e39ed8320a0bdb6a957dc5cc16da84064f8d480126d2",
+                "recorded_at": "2026-10-08T08:32:21.090Z",
+                "fingerprint": "7d1d358d959865524b236fe168707c5ec17439447bb9099e0de1f008be7c130b",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git; device=macos",
@@ -9388,8 +10471,8 @@
                 },
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344041734-d3ed6a9d-79ca-47ba-b157-7d68aef4bf06.log",
-                    "sha256": "fedc6a0c5abdf1905151535a9fff9b70794d97868aeec2433dfc4563bed4cf9e"
+                    "path": "docs/module_availability/evidence/logs/1791448340721-526ebea2-7640-4209-895c-63d72e270727.log",
+                    "sha256": "a6c8f97ca547a2ca4ccee94232bf69a6d5c4ebac104b1755a3abf30260908cee"
                   }
                 ]
               }
@@ -9404,7 +10487,7 @@
           "features": {},
           "verification": {
             "logic": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9412,10 +10495,10 @@
                 "module": "battery_monitor",
                 "platform": "any",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:18.022Z",
-                "fingerprint": "358250901acda875c155e5bb7de2efaa51eb47d0d97eef67947a472b6b208d3b",
+                "recorded_at": "2026-10-08T05:52:39.959Z",
+                "fingerprint": "23d1a7afd695b1e3e3563b895eee9a8ece90b5b76eef723f32521efc700fe572",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9428,21 +10511,48 @@
                 ],
                 "exit_code": 0,
                 "test_summary": {
-                  "completed": 3,
+                  "completed": 4,
                   "skipped": 0,
                   "failed": 0,
                   "success": true
                 },
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791343997812-40574799-1239-460e-9309-f7d23e30d6bc.log",
-                    "sha256": "5ed4d68e170108c4c942b612ac556beeb0d527fe632959ab9d0c15e31fd649e6"
+                    "path": "docs/module_availability/evidence/logs/1791438759578-c5b0fe3a-1be0-4661-85b8-fcab4c4ac44f.log",
+                    "sha256": "3105d5265a8fd019c8452de91922dfc222113dfcf6b60fa45e39874147e841ce"
                   }
                 ]
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -9457,7 +10567,7 @@
           "features": {},
           "verification": {
             "logic": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9465,10 +10575,10 @@
                 "module": "battery_monitor",
                 "platform": "any",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:18.022Z",
-                "fingerprint": "358250901acda875c155e5bb7de2efaa51eb47d0d97eef67947a472b6b208d3b",
+                "recorded_at": "2026-10-08T05:52:39.959Z",
+                "fingerprint": "23d1a7afd695b1e3e3563b895eee9a8ece90b5b76eef723f32521efc700fe572",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9481,15 +10591,15 @@
                 ],
                 "exit_code": 0,
                 "test_summary": {
-                  "completed": 3,
+                  "completed": 4,
                   "skipped": 0,
                   "failed": 0,
                   "success": true
                 },
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791343997812-40574799-1239-460e-9309-f7d23e30d6bc.log",
-                    "sha256": "5ed4d68e170108c4c942b612ac556beeb0d527fe632959ab9d0c15e31fd649e6"
+                    "path": "docs/module_availability/evidence/logs/1791438759578-c5b0fe3a-1be0-4661-85b8-fcab4c4ac44f.log",
+                    "sha256": "3105d5265a8fd019c8452de91922dfc222113dfcf6b60fa45e39874147e841ce"
                   }
                 ]
               }
@@ -9531,6 +10641,20 @@
           "steps": "进入页面，滚动到末尾；展开页面已有说明、菜单或弹窗；调整窗口宽度后重复。",
           "expected": "文字与关键控件可读可操作；无溢出、遮挡或截断；滚动及关闭弹窗正常。",
           "evidence": "紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。"
+        },
+        {
+          "id": "core_visual_flow",
+          "platforms": [
+            "android",
+            "macOS"
+          ],
+          "preconditions": "进入本次构建的教学页面；使用页面要求的样本或网络，记录初始状态。",
+          "steps": "读取电池状态；切换系统变化与定期采样，选择样本和间隔；停止、开始或重试；检查容量诊断与最近事件，清空记录后退出并重进。",
+          "expected": "模式、启停与异常状态明确；变化通知与同值采样可区分；供电变化选择 info；未知容量单位不计算比例，真实零值保留；窄窗口可操作，退出无残留会话。真实电源切换、前后台和无电池宿主另行验收。",
+          "sources": [
+            "apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart"
+          ],
+          "evidence": "关键操作录屏、结果截图与异常日志；缺少自动行为测试时保留该缺口。"
         }
       ]
     },
@@ -9793,7 +10917,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9801,10 +10925,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9821,8 +10945,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -9933,7 +11057,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -9941,10 +11065,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -9959,8 +11083,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -10017,7 +11141,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -10240,7 +11391,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -10248,10 +11399,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -10268,8 +11419,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -10380,7 +11531,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -10388,10 +11539,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -10406,8 +11557,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -10464,7 +11615,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -10730,7 +11908,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -10738,10 +11916,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -10758,8 +11936,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -10870,7 +12048,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -10878,10 +12056,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -10896,8 +12074,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -10954,7 +12132,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"
@@ -11171,7 +12376,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -11179,10 +12384,10 @@
                 "module": "*",
                 "platform": "android",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:33:57.255Z",
-                "fingerprint": "ac4b4927e183de9e586fb92f7239f613778aa88785e3f9441631f60d65764365",
+                "recorded_at": "2026-10-08T08:32:28.851Z",
+                "fingerprint": "aa4c375722104a063a4c4db938955cbf4a67c0bebac5a570281bb8fd7f0d790e",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -11199,8 +12404,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344036874-fa465bf3-e745-4650-bb64-80b45f784127.log",
-                    "sha256": "229bcc150753cf2bae3b158230fe5dd61edf62092363fb7f0cfbfcf228aac732"
+                    "path": "docs/module_availability/evidence/logs/1791448348484-64b2de14-28cd-445c-9dcb-849f7e6ab6e9.log",
+                    "sha256": "ddfe1224f848b7848a4d69331a08901fff46214fe4fc439ec53608d328aa844a"
                   }
                 ]
               }
@@ -11311,7 +12516,7 @@
               }
             },
             "compile": {
-              "status": "pass",
+              "status": "stale",
               "evidence": {
                 "schema": "flutter_forge.module_evidence.v1",
                 "source": "automated_command",
@@ -11319,10 +12524,10 @@
                 "module": "*",
                 "platform": "macOS",
                 "status": "pass",
-                "recorded_at": "2026-10-07T03:36:39.476Z",
-                "fingerprint": "6aac190c48f1c15390c99c82ac7ebcb1795d177587ec5ae5fbf91382f9f80e7b",
+                "recorded_at": "2026-10-08T05:54:54.630Z",
+                "fingerprint": "e3fdc445fc21fb50faea13cf9b07c18db26e849f4341a91deeb97df6f68400c5",
                 "revision": {
-                  "commit": "4b0b15cd10568466209b2d448369c1f6ca65f9bb",
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
                   "dirty": true
                 },
                 "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
@@ -11337,8 +12542,8 @@
                 "test_summary": null,
                 "artifacts": [
                   {
-                    "path": "docs/module_availability/evidence/logs/1791344199255-d25803ac-fa3a-4cb7-beee-1a75059347d1.log",
-                    "sha256": "3d23c6e6c4fccb2d6cf78f9a4eb47141f4a451016e5750999f539322dcde3e03"
+                    "path": "docs/module_availability/evidence/logs/1791438894258-bed306a8-43e0-492e-80f1-b4f929726771.log",
+                    "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
                   }
                 ]
               }
@@ -11395,7 +12600,34 @@
               }
             },
             "compile": {
-              "status": "pending"
+              "status": "stale",
+              "evidence": {
+                "schema": "flutter_forge.module_evidence.v1",
+                "source": "automated_command",
+                "kind": "compile",
+                "module": "*",
+                "platform": "web",
+                "status": "pass",
+                "recorded_at": "2026-10-07T11:43:04.274Z",
+                "fingerprint": "4daab285191b2f5a359bfed2f69c3aace85e625d3510ffc3c9a074907886acf8",
+                "revision": {
+                  "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+                  "dirty": true
+                },
+                "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+                "command": [
+                  "bash",
+                  "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+                ],
+                "exit_code": 0,
+                "test_summary": null,
+                "artifacts": [
+                  {
+                    "path": "docs/module_availability/evidence/logs/1791373383915-b5483217-45df-4889-989c-b4bb17a2bff4.log",
+                    "sha256": "652e48f9567e7c97f0fd0b09c146f2c051e20d4c3e13ee53a6d83bedab7fa397"
+                  }
+                ]
+              }
             },
             "execution": {
               "status": "pending"

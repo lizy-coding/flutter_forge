@@ -1,0 +1,32 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "compile",
+  "module": "*",
+  "platform": "android",
+  "status": "pass",
+  "recorded_at": "2026-10-08T07:17:51.235Z",
+  "fingerprint": "a16aa7589b32e64611a8c92e863505157913f4517b6a1a37b992401fbf307198",
+  "revision": {
+    "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "command": [
+    "flutter",
+    "build",
+    "apk",
+    "--debug",
+    "--no-pub",
+    "--target-platform",
+    "android-arm64"
+  ],
+  "exit_code": 0,
+  "test_summary": null,
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791443870863-1e28a9d9-e99e-4248-8380-e2843315fe1f.log",
+      "sha256": "b567c5b7e1dbcd780e7aafa4cbc8f145eccca0c1a4e814a650090a7aed6505f5"
+    }
+  ]
+}

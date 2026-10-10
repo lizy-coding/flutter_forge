@@ -1049,6 +1049,59 @@
 - Web adapter preserves login, auth and article workflow（`apps/flutter_forge/test/modules/platform/dio_interceptor/web_mock_http_adapter_test.dart`）
 - Web adapter rejects article requests without a token（`apps/flutter_forge/test/modules/platform/dio_interceptor/web_mock_http_adapter_test.dart`）
 
+## USB 网络连接基础（usb_network）
+
+路径：`/usb-network`；逻辑测试：`flutter test test/modules/platform/usb_network`（在 apps/flutter_forge 执行）。
+
+### entry_navigation
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：使用本次构建的应用；记录平台、设备、窗口尺寸及文字缩放。
+
+操作：从目录进入「USB 网络连接基础」，再通过稳定路径 /usb-network 进入；返回目录并再次进入。
+
+预期：开放平台进入教学页面；关闭平台展示统一不可用说明。返回与重进正确，无残留弹窗或错误页面。
+
+证据：目录、页面或不可用说明截图；操作记录。
+
+### layout_and_readability
+
+平台：macOS、windows。
+
+前置条件：移动或紧凑窗口使用 360dp；桌面另测宽窗口；使用系统大字体。
+
+操作：进入页面，滚动到末尾；展开页面已有说明、菜单或弹窗；调整窗口宽度后重复。
+
+预期：文字与关键控件可读可操作；无溢出、遮挡或截断；滚动及关闭弹窗正常。
+
+证据：紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。
+
+### core_visual_flow
+
+平台：macOS、windows。
+
+前置条件：进入本次构建的教学页面；使用页面要求的样本或网络，记录初始状态。
+
+操作：插入 NCM 设备，扫描并选择接口；填写设备 USB IPv4 和测试 TCP 端口，连接并发送 hello；拔线、断开并手动重连。
+
+预期：接口与源地址真实可见；测试服务响应出现在日志；断开后不能发送，重进无旧连接。9001 上的设备 WebSocket 服务不作为原始 TCP 回显服务。
+
+证据：关键操作录屏、结果截图与异常日志；缺少自动行为测试时保留该缺口。
+
+依据：`apps/flutter_forge/test/modules/platform/usb_network/usb_network_test.dart`
+
+行为测试来源（待审阅补充模块专属视觉预期）：
+
+- selected route, target and bytes pass through without device protocol（`apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart`）
+- empty scan, native error and invalid input remain observable（`apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart`）
+- disconnect during opening awaits and closes the late connection（`apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart`）
+- dispose suppresses late callbacks and releases an opening connection（`apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart`）
+- peer loss disconnects and never schedules reconnect（`apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart`）
+- sending and log history have bounded size（`apps/flutter_forge/test/modules/platform/usb_network/usb_network_session_test.dart`）
+- scan, connect, exchange and disconnect through the page（`apps/flutter_forge/test/modules/platform/usb_network/usb_network_test.dart`）
+- compact layout, large text and empty interface state（`apps/flutter_forge/test/modules/platform/usb_network/usb_network_test.dart`）
+
 ## USB 设备检测（usb_detector）
 
 路径：`/usb-detector`；逻辑测试：`flutter test test/modules/platform/usb_detector`（在 apps/flutter_forge 执行）。
@@ -1101,11 +1154,34 @@
 
 证据：紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。
 
+### core_visual_flow
+
+平台：android、macOS。
+
+前置条件：进入本次构建的教学页面；使用页面要求的样本或网络，记录初始状态。
+
+操作：读取电池状态；切换系统变化与定期采样，选择样本和间隔；停止、开始或重试；检查容量诊断与最近事件，清空记录后退出并重进。
+
+预期：模式、启停与异常状态明确；变化通知与同值采样可区分；供电变化选择 info；未知容量单位不计算比例，真实零值保留；窄窗口可操作，退出无残留会话。真实电源切换、前后台和无电池宿主另行验收。
+
+证据：关键操作录屏、结果截图与异常日志；缺少自动行为测试时保留该缺口。
+
+依据：`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`
+
 行为测试来源（待审阅补充模块专属视觉预期）：
 
-- session releases events and ignores late async reads（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
-- unavailable event is not a zero battery reading and errors recover（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
-- compact page shows capabilities and refreshes real adapter（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- late read does not update disposed session（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- typed no-battery event and failed read remain distinct and recover（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- level updates preserve info metrics and show AC not charging（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- default changes, mode replacement, interval and stop do not leak owners（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- unsupported changes falls back to periodic sampling（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- stream failure refresh reopens observation and clears error（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- failed open can retry; failed close is visible and prevents automatic replacement（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- late open is closed on dispose and parallel start is ignored（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- history keeps 20 changes with unknown timestamps and ignores stopped events（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- controls switch modes, select samples, stop and restart（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- capacity diagnostics and controls at $width dp（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
+- compact typed page refreshes and closes observation（`apps/flutter_forge/test/modules/platform/battery_monitor/battery_monitor_test.dart`）
 
 ## BLE 连接生命周期（bluetooth_ble）
 
