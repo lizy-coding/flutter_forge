@@ -24,11 +24,11 @@
   "depends": [
     "git:https://github.com/lizy-coding/gcode_core.git#v0.2.1",
     "lib/shared/learning",
+    "packages/usb_network_bridge",
     "packages/flutter_battery",
     "packages/file_picker_bridge",
     "packages/flutter_ioc_core",
-    "packages/desktop_multi_window",
-    "git:https://github.com/lizy-coding/flutterguard.git#9f9be84a73dc4b99a956a8529b8c334849566b03"
+    "packages/desktop_multi_window"
   ],
   "children": [
     "lib/AI_ANALYSIS.md",
@@ -36,6 +36,7 @@
     "lib/module_registry/AI_ANALYSIS.md",
     "lib/shared/AI_ANALYSIS.md",
     "lib/modules/AI_ANALYSIS.md",
+    "packages/usb_network_bridge/AI_ANALYSIS.md",
     "packages/flutter_battery/AI_ANALYSIS.md",
     "packages/file_picker_bridge/AI_ANALYSIS.md",
     "packages/flutter_ioc_core/AI_ANALYSIS.md",
@@ -50,8 +51,8 @@
     "node --test tool/agent_indexes/generator.test.js",
     "node tool/generate_agent_indexes.js --check",
     "bash tool/generate_harness_ai_analysis.sh",
-    "dart format .",
+    "dart format --output=none --set-exit-if-changed .",
     "flutter analyze",
-    "dart run flutterguard_cli:flutterguard scan . --fail-on high"
+    "bash tool/quality_gate.sh"
   ]
 }

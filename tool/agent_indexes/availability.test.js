@@ -21,6 +21,7 @@ test('existing entry policy is preserved while shared requirements are discovere
     gcode_visualizer: ['android', 'iOS', 'web', 'windows'],
     flutter_scene_3d: ['iOS', 'web'], usb_detector: targets,
     battery_monitor: ['iOS', 'web', 'windows'],
+    usb_network: ['android', 'iOS', 'web'],
     bluetooth_ble: ['iOS', 'web'], file_picker: ['iOS'], online_video_player: ['iOS'], webview: ['iOS', 'web'],
   };
   for (const module of modules) assert.deepEqual(module.excludedPlatforms, expected[module.id] ?? [], module.id);

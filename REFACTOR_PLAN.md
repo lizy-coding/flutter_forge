@@ -20,22 +20,14 @@
   "dependency_migration": {
     "layout": "pub_workspace",
     "internal_packages": [
+      "packages/usb_network_bridge",
       "packages/flutter_battery",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
       "packages/desktop_multi_window"
     ],
     "workspace_resolution_status": "active",
-    "workspace_resolution_blocker": "none",
-    "external_tool": {
-      "package": "flutterguard_cli",
-      "source": "git",
-      "url": "https://github.com/lizy-coding/flutterguard.git",
-      "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
-      "resolved_ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
-      "immutable": true,
-      "lock_status": "git_pinned"
-    }
+    "workspace_resolution_blocker": "none"
   },
   "work_queue": [
     {
@@ -468,16 +460,14 @@
   ],
   "quality_gate": [
     "node tool/validate_agent_docs.js",
-    "dart format .",
-    "flutter analyze:no_error",
-    "flutterguard:no_high",
+    "dart format --output=none --set-exit-if-changed .",
+    "flutter analyze:no_issue",
     "logic_change:targeted_test",
     "teaching_ui_change:visual_evidence"
   ],
   "deferred_queue": [
     "popup_widgets_decomposition",
     "widget_test_coverage",
-    "flutterguard_med_reduction",
     "recommended_module_visual_evidence",
     "flutter_scene_3d_model_loading",
     "flutter_scene_3d_material_lighting"

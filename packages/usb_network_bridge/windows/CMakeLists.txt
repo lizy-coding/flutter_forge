@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.14)
+project(usb_network_bridge LANGUAGES CXX)
+set(PLUGIN_NAME usb_network_bridge)
+add_library(${PLUGIN_NAME} SHARED bound_tcp.cpp net_interfaces.cpp)
+apply_standard_settings(${PLUGIN_NAME})
+set_target_properties(${PLUGIN_NAME} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+target_link_libraries(${PLUGIN_NAME} PRIVATE ws2_32 iphlpapi ole32 setupapi advapi32)
+set(usb_network_bridge_bundled_libraries "$<TARGET_FILE:${PLUGIN_NAME}>" PARENT_SCOPE)

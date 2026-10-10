@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 26,
+  "count": 27,
   "modules": [
     {
       "id": "constraint_layout",
@@ -706,6 +706,49 @@
         "features": {}
       },
       "analysis": "lib/modules/platform/dio_interceptor/AI_ANALYSIS.md"
+    },
+    {
+      "id": "usb_network",
+      "category": "platform",
+      "path": "lib/modules/platform/usb_network",
+      "route": "/usb-network",
+      "status": "pending",
+      "depends": [
+        "shared_learning",
+        "usb_network_bridge"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "android",
+          "iOS",
+          "web"
+        ],
+        "required_capabilities": [
+          "usb_network"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "usb_network",
+            "reason": "desktop_system_ncm_interface_bound_tcp",
+            "sources": [
+              "packages/usb_network_bridge/pubspec.yaml",
+              "packages/usb_network_bridge/lib/src/backend_native.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/platform/usb_network/AI_ANALYSIS.md"
     },
     {
       "id": "usb_detector",

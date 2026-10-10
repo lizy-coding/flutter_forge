@@ -7,6 +7,11 @@ const targets = ['android', 'iOS', 'macOS', 'web', 'windows'];
 // or acceptance results. A dependency discovers a requirement; optional features
 // and product restrictions remain explicit module intent.
 const capabilities = {
+  usb_network: {
+    dependencies: ['usb_network_bridge'], platforms: ['macOS', 'windows'],
+    reason: 'desktop_system_ncm_interface_bound_tcp',
+    sources: ['packages/usb_network_bridge/pubspec.yaml', 'packages/usb_network_bridge/lib/src/backend_native.dart'],
+  },
   battery_monitor: {
     dependencies: ['flutter_battery'], platforms: ['android', 'macOS'],
     reason: 'battery_android_macos_native_adapters',

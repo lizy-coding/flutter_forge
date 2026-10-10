@@ -12,6 +12,7 @@ import flutter_battery
 import shared_preferences_foundation
 import universal_ble
 import url_launcher_macos
+import usb_network_bridge
 import video_player_avfoundation
 import webview_flutter_wkwebview
 
@@ -23,6 +24,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   SharedPreferencesPlugin.register(with: registry.registrar(forPlugin: "SharedPreferencesPlugin"))
   UniversalBlePlugin.register(with: registry.registrar(forPlugin: "UniversalBlePlugin"))
   UrlLauncherPlugin.register(with: registry.registrar(forPlugin: "UrlLauncherPlugin"))
+  UsbNetworkBridgePlugin.register(with: registry.registrar(forPlugin: "UsbNetworkBridgePlugin"))
   VideoPlayerPlugin.register(with: registry.registrar(forPlugin: "VideoPlayerPlugin"))
   WebViewFlutterPlugin.register(with: registry.registrar(forPlugin: "WebViewFlutterPlugin"))
 }

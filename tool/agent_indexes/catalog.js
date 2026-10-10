@@ -27,6 +27,13 @@ const categoryOwnership = {
 
 const workspacePackages = [
   {
+    name: 'usb_network_bridge', kind: 'flutter_plugin_package',
+    path: 'packages/usb_network_bridge', entrypoints: ['lib/usb_network_bridge.dart'],
+    owns: ['ncm_interface_enumeration', 'interface_bound_tcp', 'native_relay_lifecycle'],
+    depends: ['flutter_sdk', 'ffi'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'flutter_battery', kind: 'flutter_plugin_package',
     path: 'packages/flutter_battery', entrypoints: ['lib/flutter_battery.dart'],
     owns: ['battery_api', 'battery_native_adapters', 'battery_event_lifecycle'],

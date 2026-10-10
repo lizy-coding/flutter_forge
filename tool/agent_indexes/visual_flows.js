@@ -1,6 +1,8 @@
 // Human visual expectations, grounded in the referenced behavior test or UI.
 // This is optional acceptance content, not a module/platform registration table.
 const flows = {
+  battery_monitor: ['读取电池状态；切换系统变化与定期采样，选择样本和间隔；停止、开始或重试；检查容量诊断与最近事件，清空记录后退出并重进。', '模式、启停与异常状态明确；变化通知与同值采样可区分；供电变化选择 info；未知容量单位不计算比例，真实零值保留；窄窗口可操作，退出无残留会话。真实电源切换、前后台和无电池宿主另行验收。', 'test/modules/platform/battery_monitor/battery_monitor_test.dart'],
+  usb_network: ['插入 NCM 设备，扫描并选择接口；填写设备 USB IPv4 和测试 TCP 端口，连接并发送 hello；拔线、断开并手动重连。', '接口与源地址真实可见；测试服务响应出现在日志；断开后不能发送，重进无旧连接。9001 上的设备 WebSocket 服务不作为原始 TCP 回显服务。', 'test/modules/platform/usb_network/usb_network_test.dart'],
   constraint_layout: ['拖动父约束手柄；切换松/紧约束与 Row、Column、Wrap；最后重置。', '尺寸连续反馈；紧约束使子尺寸跟随父尺寸；Wrap 在变窄时换行；重置恢复初始状态。', 'test/modules/basic/constraint_layout/constraint_layout_test.dart'],
   tree_state: ['进入“State 生命周期”，点击“setState +1”。', 'Counter 增加 1，日志出现对应的新状态；核心交互缺自动行为测试。', 'lib/modules/basic/tree_state/pages/state_lifecycle_page.dart'],
   microtask: ['进入“微任务队列”，点击“基础微任务测试”。', '日志按顺序执行微任务 1、2、3，随后出现微任务队列测试结束；核心交互缺自动行为测试。', 'lib/modules/basic/microtask/pages/microtask_queue_page.dart'],

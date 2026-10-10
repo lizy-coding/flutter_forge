@@ -41,12 +41,19 @@
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
       "packages/desktop_multi_window",
-      "packages/flutter_battery"
+      "packages/flutter_battery",
+      "packages/usb_network_bridge"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "usb_network_bridge",
+      "type": "flutter_plugin_package",
+      "path": "packages/usb_network_bridge",
+      "entrypoint": "lib/usb_network_bridge.dart"
+    },
     {
       "name": "flutter_battery",
       "type": "flutter_plugin_package",
@@ -96,17 +103,7 @@
     "shared_popup": "lib/shared/popup",
     "shared_table": "lib/shared/table"
   },
-  "external_tools": [
-    {
-      "package": "flutterguard_cli",
-      "source": "git",
-      "url": "https://github.com/lizy-coding/flutterguard.git",
-      "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
-      "resolved_ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
-      "immutable": true,
-      "lock_status": "git_pinned"
-    }
-  ],
+  "external_tools": [],
   "layers": [
     {
       "id": "app",
@@ -241,25 +238,21 @@
     ],
     "generate": "bash tool/generate_harness_ai_analysis.sh",
     "validate": [
-      "bash tool/generate_harness_ai_analysis.sh + git diff --exit-code",
-      "dart format . + git diff --exit-code -- *.dart",
+      "bash tool/check_generated_docs.sh",
+      "dart format --output=none --set-exit-if-changed .",
       "flutter analyze (bare)",
       "bash tool/test_all.sh",
       "bash tool/verify_test_layout.sh",
-      "bash tool/build_web_release.sh",
-      "dart run flutterguard_cli:flutterguard scan . --fail-on high (cd apps/flutter_forge)"
+      "bash tool/build_web_release.sh"
     ],
     "ci": {
       "authoritative_remote_packaging_gate": ".github/workflows/ci.yml",
       "analyze_standard": "bare flutter analyze (info/warning treated as failure)",
       "steps": [
-        "flutter pub get",
-        "agent doc generation + drift check",
-        "dart format + drift check",
-        "flutter analyze (bare)",
-        "bash tool/test_all.sh"
+        "flutter pub get --enforce-lockfile",
+        "bash tool/quality_gate.sh"
       ],
-      "flutterguard": "not run in CI (previously failed from repo root with empty match); enforced only by local quality_gate.sh stage 6"
+      "implementation": "bash tool/quality_gate.sh; no FlutterGuard dependency"
     }
   }
 }

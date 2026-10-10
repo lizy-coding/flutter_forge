@@ -50,6 +50,8 @@ function fingerprint(root, modules, moduleId, kind, platform) {
     'apps/flutter_forge/lib/shared', 'apps/flutter_forge/lib/module_registry',
     'packages/file_picker_bridge/lib', 'packages/flutter_ioc_core/lib', 'packages/desktop_multi_window/lib',
     'packages/flutter_battery/lib', 'packages/flutter_battery/test',
+    'packages/usb_network_bridge/lib', 'packages/usb_network_bridge/test',
+    'packages/usb_network_bridge/windows', 'packages/usb_network_bridge/macos',
     ...(global ? ['apps/flutter_forge/lib/app', 'apps/flutter_forge/integration_test', 'apps/flutter_forge/assets',
       `apps/flutter_forge/${({ macOS: 'macos', iOS: 'ios' })[platform] ?? platform}`,
       ...['file_picker_bridge', 'desktop_multi_window', 'flutter_battery'].flatMap((name) => ['android', 'ios', 'macos', 'windows', 'web'].map((host) => `packages/${name}/${host}`))] : []),
@@ -58,7 +60,7 @@ function fingerprint(root, modules, moduleId, kind, platform) {
     ...['pubspec.yaml', 'pubspec.lock', 'apps/flutter_forge/pubspec.yaml', 'apps/flutter_forge/lib/main.dart', 'tool/generate_agent_indexes.js', 'tool/module_availability.js',
       'tool/agent_indexes/availability.js', 'tool/agent_indexes/routes.js', 'tool/agent_indexes/catalog.js', 'tool/agent_indexes/verification.js',
       ...(kind === 'ui' ? ['tool/agent_indexes/acceptance_cases.js', 'tool/agent_indexes/visual_flows.js'] : []),
-      'packages/flutter_battery/pubspec.yaml', 'tool/build_web_release.sh', 'packages/file_picker_bridge/pubspec.yaml', 'packages/flutter_ioc_core/pubspec.yaml', 'packages/desktop_multi_window/pubspec.yaml']
+      'packages/usb_network_bridge/pubspec.yaml', 'packages/flutter_battery/pubspec.yaml', 'tool/build_web_release.sh', 'packages/file_picker_bridge/pubspec.yaml', 'packages/flutter_ioc_core/pubspec.yaml', 'packages/desktop_multi_window/pubspec.yaml']
       .map((rel) => path.join(root, rel)).filter((file) => fs.existsSync(file))])].sort();
   return sha256(JSON.stringify({ moduleId, kind, platform, policy: selected.map((module) => [module.id, module.excludedPlatforms, module.platformPolicy]),
     files: files.map((file) => [path.relative(root, file), sha256(fs.readFileSync(file))]) }));

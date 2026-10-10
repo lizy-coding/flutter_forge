@@ -10,6 +10,8 @@ environment:
 resolution: workspace
 
 dependencies:
+  usb_network_bridge:
+    path: ../../packages/usb_network_bridge
   flutter_battery:
     path: ../../packages/flutter_battery
   gcode_core:

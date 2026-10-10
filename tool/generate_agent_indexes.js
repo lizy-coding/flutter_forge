@@ -296,6 +296,15 @@ const modules = [
     routes: 'InterceptorTestRoutes',
   },
   {
+    category: 'platform', id: 'usb_network', route: '/usb-network',
+    status: 'pending', depends: ['shared_learning', 'usb_network_bridge'],
+    owns: ['module_entry', 'module_ui', 'module_docs', 'tcp_session_lifecycle'],
+    validation: ['flutter analyze', 'flutter test test/modules/platform/usb_network'],
+    title: 'USB 网络连接基础', subtitle: 'CDC-NCM 网卡、绑定 TCP 与文本收发',
+    difficulty: 'intermediate', concepts: ['CDC-NCM', 'IPv4', '接口绑定', 'TCP 字节流', '资源释放'],
+    estimatedMinutes: 20, entry: 'UsbNetworkEntry',
+  },
+  {
     category: 'platform',
     id: 'usb_detector',
     route: '/usb-detector',
@@ -317,9 +326,9 @@ const modules = [
     status: 'ready', depends: ['shared_learning', 'flutter_battery', 'module_registry'],
     owns: ['module_entry', 'module_ui', 'battery_session_lifecycle'],
     validation: ['flutter analyze', 'flutter test test/modules/platform/battery_monitor'],
-    title: '电池状态与事件监听', subtitle: '插件依赖、平台能力与电池事件生命周期',
-    difficulty: 'intermediate', concepts: ['MethodChannel', 'EventChannel', '平台能力', '资源释放'],
-    estimatedMinutes: 25, entry: 'BatteryMonitorEntry',
+    title: '电池状态与事件监听', subtitle: '系统变化、定期采样、会话恢复与容量诊断',
+    difficulty: 'intermediate', concepts: ['MethodChannel', 'EventChannel', '系统变化', '定期采样', '资源释放'],
+    estimatedMinutes: 30, entry: 'BatteryMonitorEntry',
   },
   {
     category: 'platform',

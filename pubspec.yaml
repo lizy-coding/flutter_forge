@@ -11,3 +11,4 @@ workspace:
   - packages/flutter_ioc_core
   - packages/desktop_multi_window
   - packages/flutter_battery
+  - packages/usb_network_bridge
