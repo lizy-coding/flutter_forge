@@ -176,8 +176,8 @@ class UsbDetectionService {
 
   void dispose() {
     _periodicTimer?.cancel();
-    _deviceStreamController.close();
-    _statusStreamController.close();
+    unawaited(_deviceStreamController.close());
+    unawaited(_statusStreamController.close());
 
     // USB Serial 不需要显式退出
   }

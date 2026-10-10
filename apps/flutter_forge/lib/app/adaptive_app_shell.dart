@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -330,7 +332,7 @@ class _ModuleSearchDelegate extends SearchDelegate<void> {
           subtitle: Text(module.category.label),
           onTap: () {
             close(context, null);
-            context.push(module.path);
+            unawaited(context.push(module.path));
           },
         );
       },

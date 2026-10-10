@@ -36,7 +36,7 @@ class Task {
 
   void dispose() {
     isolate?.kill(priority: Isolate.immediate);
-    subscription?.cancel();
+    unawaited(subscription?.cancel());
     receivePort?.close();
   }
 

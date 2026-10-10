@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -114,7 +116,7 @@ class CodeSnippetCard extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.copy, size: 18),
                 onPressed: () {
-                  Clipboard.setData(ClipboardData(text: code));
+                  unawaited(Clipboard.setData(ClipboardData(text: code)));
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('已复制到剪贴板'),

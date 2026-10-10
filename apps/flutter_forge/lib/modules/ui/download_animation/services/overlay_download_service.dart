@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
@@ -112,7 +114,7 @@ class OverlayDownloadService {
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _removeItem(item.id);
-        HapticFeedback.lightImpact();
+        unawaited(HapticFeedback.lightImpact());
         onComplete?.call();
       }
     });

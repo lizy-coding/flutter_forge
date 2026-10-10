@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:gcode_core/gcode_core.dart';
@@ -22,7 +24,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
   void initState() {
     super.initState();
     _controller = GcodePlayerController(vsync: this);
-    _controller.parse();
+    unawaited(_controller.parse());
   }
 
   @override
@@ -33,11 +35,11 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
 
   void _onParse() {
     _controller.updateSource(_editorKey.currentState!.text);
-    _controller.parse();
+    unawaited(_controller.parse());
   }
 
   void _onLoadFilePath(String path) {
-    _controller.loadFilePath(path);
+    unawaited(_controller.loadFilePath(path));
   }
 
   Future<String?> _onPickFilePath() {
@@ -47,7 +49,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
   void _onResetSample() {
     _controller.loadSample();
     _editorKey.currentState!.text = _controller.source;
-    _controller.parse();
+    unawaited(_controller.parse());
   }
 
   @override

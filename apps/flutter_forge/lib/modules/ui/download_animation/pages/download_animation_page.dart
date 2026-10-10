@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -120,7 +122,7 @@ class _DownloadAnimationPageState extends State<DownloadAnimationPage>
         });
         animationController.dispose();
 
-        HapticFeedback.lightImpact();
+        unawaited(HapticFeedback.lightImpact());
         _showDownloadComplete(item);
       }
     });

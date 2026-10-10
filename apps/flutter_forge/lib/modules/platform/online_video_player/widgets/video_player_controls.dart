@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../state/video_player_adapter.dart';
@@ -49,7 +51,7 @@ class VideoPlayerControls extends StatelessWidget {
                       key: const Key('video-rate'),
                       value: rate,
                       onChanged: (value) {
-                        if (value != null) adapter.setRate(value);
+                        if (value != null) unawaited(adapter.setRate(value));
                       },
                       items: const [0.5, 1.0, 1.5, 2.0]
                           .map(

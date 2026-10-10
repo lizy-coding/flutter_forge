@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'mock_server/mock_server.dart'
@@ -23,7 +25,7 @@ class _InterceptorTestEntryState extends State<InterceptorTestEntry> {
 
   @override
   void dispose() {
-    _server.stop();
+    unawaited(_server.stop());
     super.dispose();
   }
 

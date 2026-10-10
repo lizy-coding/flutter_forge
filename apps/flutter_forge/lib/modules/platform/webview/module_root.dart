@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/learning/learning_scaffold.dart';
@@ -31,7 +33,7 @@ class _WebViewPageState extends State<WebViewPage> {
               });
     if (backend != null) {
       _session = WebViewSession(backend);
-      _session!.start();
+      unawaited(_session!.start());
     }
   }
 

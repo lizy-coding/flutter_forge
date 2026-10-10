@@ -86,7 +86,7 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
 
   void _removeSubscriber(int id) {
     final subscriber = _subscribers.firstWhere((s) => s.id == id);
-    subscriber.subscription.cancel();
+    unawaited(subscriber.subscription.cancel());
     setState(() => _subscribers.remove(subscriber));
     _showMessage('移除了订阅者: ${subscriber.name}');
   }
@@ -108,7 +108,7 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
       return;
     }
     _stopPushing();
-    _broadcastController.close();
+    unawaited(_broadcastController.close());
     _initBroadcastStream();
     setState(() => _subscribers.clear());
     _showMessage('Stream已关闭，所有订阅已移除');
@@ -134,10 +134,10 @@ class _BroadcastDemoPageState extends State<BroadcastDemoPage> {
   void dispose() {
     _timer?.cancel();
     for (var subscriber in _subscribers) {
-      subscriber.subscription.cancel();
+      unawaited(subscriber.subscription.cancel());
     }
     if (!_broadcastController.isClosed) {
-      _broadcastController.close();
+      unawaited(_broadcastController.close());
     }
     super.dispose();
   }

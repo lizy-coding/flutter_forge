@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadArticles();
+    unawaited(_loadArticles());
   }
 
   @override
@@ -95,7 +97,7 @@ class _HomePageState extends State<HomePage> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('已退出登录')));
-    _refreshArticles();
+    unawaited(_refreshArticles());
   }
 
   bool get isLoggedIn => AuthInterceptor.getToken() != null;
@@ -264,73 +266,78 @@ class _HomePageState extends State<HomePage> {
     final titleController = TextEditingController();
     final contentController = TextEditingController();
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('添加文章'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: '标题',
-                hintText: '请输入文章标题',
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('添加文章'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: '标题',
+                  hintText: '请输入文章标题',
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: contentController,
-              decoration: const InputDecoration(
-                labelText: '内容',
-                hintText: '请输入文章内容',
+              const SizedBox(height: 16),
+              TextField(
+                controller: contentController,
+                decoration: const InputDecoration(
+                  labelText: '内容',
+                  hintText: '请输入文章内容',
+                ),
+                maxLines: 3,
               ),
-              maxLines: 3,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('取消'),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              final title = titleController.text.trim();
-              final content = contentController.text.trim();
-              if (title.isEmpty || content.isEmpty) {
-                scaffoldMessenger.showSnackBar(
-                  const SnackBar(content: Text('标题和内容不能为空')),
-                );
-                return;
-              }
-              Navigator.pop(dialogContext);
-              setState(() => _isLoading = true);
-              try {
-                final result = await _apiService.createArticle(title, content);
-                if (!mounted) return;
-                if (result['success'] == true) {
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final title = titleController.text.trim();
+                final content = contentController.text.trim();
+                if (title.isEmpty || content.isEmpty) {
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(content: Text('文章创建成功')),
+                    const SnackBar(content: Text('标题和内容不能为空')),
                   );
-                  await _refreshArticles();
-                } else {
+                  return;
+                }
+                Navigator.pop(dialogContext);
+                setState(() => _isLoading = true);
+                try {
+                  final result = await _apiService.createArticle(
+                    title,
+                    content,
+                  );
+                  if (!mounted) return;
+                  if (result['success'] == true) {
+                    scaffoldMessenger.showSnackBar(
+                      const SnackBar(content: Text('文章创建成功')),
+                    );
+                    await _refreshArticles();
+                  } else {
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(content: Text(result['message'] ?? '文章创建失败')),
+                    );
+                    setState(() => _isLoading = false);
+                  }
+                } catch (e) {
+                  if (!mounted) return;
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(content: Text(result['message'] ?? '文章创建失败')),
+                    SnackBar(content: Text('创建失败: $e')),
                   );
                   setState(() => _isLoading = false);
                 }
-              } catch (e) {
-                if (!mounted) return;
-                scaffoldMessenger.showSnackBar(
-                  SnackBar(content: Text('创建失败: $e')),
-                );
-                setState(() => _isLoading = false);
-              }
-            },
-            child: const Text('添加'),
-          ),
-        ],
+              },
+              child: const Text('添加'),
+            ),
+          ],
+        ),
       ),
     );
   }

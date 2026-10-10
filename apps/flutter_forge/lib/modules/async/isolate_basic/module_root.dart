@@ -1,3 +1,5 @@
+import 'dart:async';
+
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
@@ -61,7 +63,7 @@ class HomePage extends StatelessWidget {
                     backgroundColor: Colors.red[100],
                   ),
                   onPressed: () {
-                    context.push('$_baseRoute/without-isolate');
+                    unawaited(context.push('$_baseRoute/without-isolate'));
                   },
                   child: const Text('不使用 Isolate (卡顿示例)'),
                 ),
@@ -75,7 +77,7 @@ class HomePage extends StatelessWidget {
                     backgroundColor: Colors.green[100],
                   ),
                   onPressed: () {
-                    context.push('$_baseRoute/with-isolate');
+                    unawaited(context.push('$_baseRoute/with-isolate'));
                   },
                   child: const Text('使用 Isolate (流畅示例)'),
                 ),

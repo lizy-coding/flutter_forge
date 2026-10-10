@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:video_player/video_player.dart';
@@ -22,7 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _adapter.openAndPlay();
+    unawaited(_adapter.openAndPlay());
   }
 
   @override

@@ -27,6 +27,8 @@ class MultiWindowManager {
   final Map<ModuleCategory, String> _categoryWindows = {};
   final MultiWindowPlatform _platform;
   final MultiWindowDiagnosticSink _diagnosticSink;
+  // The singleton observes windows for the process lifetime.
+  // ignore: cancel_subscriptions
   StreamSubscription<void>? _windowCloseListener;
   String _themeSelectionPayload = 'system';
 

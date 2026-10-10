@@ -34,6 +34,7 @@ import '../modules/popup_table/scroll_table/module_entry.dart';
 import '../modules/popup_table/overlay_follow_compare/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_routes.dart';
+import '../modules/platform/usb_network/module_entry.dart';
 import '../modules/platform/usb_detector/module_entry.dart';
 import '../modules/platform/battery_monitor/module_entry.dart';
 import '../modules/platform/bluetooth_ble/module_entry.dart';
@@ -341,6 +342,18 @@ final List<ModuleEntry> moduleManifest = [
     routes: InterceptorTestRoutes.routes,
   ),
   ModuleEntry(
+    title: 'USB 网络连接基础',
+    path: '/usb-network',
+    subtitle: 'CDC-NCM 网卡、绑定 TCP 与文本收发',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['CDC-NCM', 'IPv4', '接口绑定', 'TCP 字节流', '资源释放'],
+    estimatedMinutes: 20,
+    status: ModuleStatus.pending,
+    platformSupport: modulePlatformPolicies['usb_network']!,
+    builder: (context) => const UsbNetworkEntry(),
+  ),
+  ModuleEntry(
     title: 'USB 设备检测',
     path: '/usb-detector',
     subtitle: 'Android USB 设备检测与状态监控',
@@ -355,11 +368,11 @@ final List<ModuleEntry> moduleManifest = [
   ModuleEntry(
     title: '电池状态与事件监听',
     path: '/battery-monitor',
-    subtitle: '插件依赖、平台能力与电池事件生命周期',
+    subtitle: '系统变化、定期采样、会话恢复与容量诊断',
     category: ModuleCategory.platform,
     difficulty: Difficulty.intermediate,
-    concepts: ['MethodChannel', 'EventChannel', '平台能力', '资源释放'],
-    estimatedMinutes: 25,
+    concepts: ['MethodChannel', 'EventChannel', '系统变化', '定期采样', '资源释放'],
+    estimatedMinutes: 30,
     status: ModuleStatus.ready,
     platformSupport: modulePlatformPolicies['battery_monitor']!,
     builder: (context) => const BatteryMonitorEntry(),

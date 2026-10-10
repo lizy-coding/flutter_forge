@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -138,7 +140,7 @@ class _DownloadComparisonPageState extends State<DownloadComparisonPage>
         });
         animationController.dispose();
 
-        HapticFeedback.lightImpact();
+        unawaited(HapticFeedback.lightImpact());
         _showDownloadComplete(item.fileName, 'Custom View');
       }
     });

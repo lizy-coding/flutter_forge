@@ -294,6 +294,8 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Future<int?> _doCreate() async {
     final id = _nextId++;
     createdIds.add(id);
+    // Ownership is released through a local alias or the owner teardown; covered by lifecycle tests.
+    // ignore: close_sinks
     final controller = StreamController<VideoEvent>();
     _events[id] = controller;
     if (!haltInitializedEvents) {

@@ -71,10 +71,10 @@ class StreamService {
   /// 关闭Stream控制器
   void dispose() {
     if (!_singleController.isClosed) {
-      _singleController.close();
+      unawaited(_singleController.close());
     }
     if (!_broadcastController.isClosed) {
-      _broadcastController.close();
+      unawaited(_broadcastController.close());
     }
   }
 

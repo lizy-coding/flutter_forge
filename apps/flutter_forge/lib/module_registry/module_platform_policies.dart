@@ -54,6 +54,13 @@ const modulePlatformPolicies = <String, ModulePlatformSupport>{
   'scroll_table': ModulePlatformSupport(),
   'overlay_follow_compare': ModulePlatformSupport(),
   'dio_interceptor': ModulePlatformSupport(),
+  'usb_network': ModulePlatformSupport(
+    excludedPlatforms: {
+      AppTargetPlatform.android,
+      AppTargetPlatform.iOS,
+      AppTargetPlatform.web,
+    },
+  ),
   'usb_detector': ModulePlatformSupport(
     excludedPlatforms: {
       AppTargetPlatform.android,

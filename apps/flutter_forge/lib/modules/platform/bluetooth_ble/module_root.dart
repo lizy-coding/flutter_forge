@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_ble/universal_ble.dart';
@@ -71,7 +73,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
     WidgetsBinding.instance.addObserver(this);
     session = BleSession(widget.client ?? UniversalBleClient());
     session.addListener(_changed);
-    session.refreshStatus();
+    unawaited(session.refreshStatus());
   }
 
   void _changed() {
@@ -82,7 +84,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       session.setActive(true);
-      session.refreshStatus();
+      unawaited(session.refreshStatus());
     } else if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden ||
         state == AppLifecycleState.detached) {
@@ -94,7 +96,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     session.removeListener(_changed);
-    session.close();
+    unawaited(session.close());
     _deviceScrollController.dispose();
     _detailsScrollController.dispose();
     super.dispose();
@@ -548,7 +550,7 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
 
   void _connect(BleDevice device) {
     setState(() => selectedId = device.deviceId);
-    session.connect(device);
+    unawaited(session.connect(device));
     final controller = _detailsScrollController.hasClients
         ? _detailsScrollController
         : _deviceScrollController;

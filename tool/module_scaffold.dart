@@ -84,20 +84,25 @@ Map<String, String> _spec(Map<String, String> options) {
   final subtitle = required('subtitle');
   final difficulty = options['difficulty'] ?? 'beginner';
   final minutes = int.tryParse(options['minutes'] ?? '15');
-  if (!_categories.contains(category))
+  if (!_categories.contains(category)) {
     throw ArgumentError('invalid category: $category');
-  if (!RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(name))
+  }
+  if (!RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(name)) {
     throw ArgumentError('name must be snake_case: $name');
-  if (!_difficulties.contains(difficulty))
+  }
+  if (!_difficulties.contains(difficulty)) {
     throw ArgumentError('invalid difficulty: $difficulty');
-  if (minutes == null || minutes <= 0)
+  }
+  if (minutes == null || minutes <= 0) {
     throw ArgumentError('minutes must be a positive integer');
+  }
   final platforms = (options['platforms'] ?? '')
       .split(',')
       .where((item) => item.isNotEmpty)
       .toSet();
-  if (platforms.any((platform) => !_platforms.contains(platform)))
+  if (platforms.any((platform) => !_platforms.contains(platform))) {
     throw ArgumentError('invalid platform in: $platforms');
+  }
   final concepts = (options['concepts'] ?? 'Flutter,实践')
       .split(',')
       .map((item) => item.trim())
