@@ -1,7 +1,6 @@
 const { writePlan } = require('./plan');
 
 function writeProjectDocuments({ writeJson, workspacePackages, facts }) {
-  const flutterGuardDependency = facts.flutterGuardDependency;
   function writeProjectContext() {
     writeJson('AI_PROJECT_CONTEXT.md', {
       schema: 'flutter_forge.agent_docs.project_context.v1',
@@ -39,7 +38,7 @@ function writeProjectDocuments({ writeJson, workspacePackages, facts }) {
       })),
       external_packages: [{ ...facts.gcodeDependency, entrypoint: 'lib/gcode_core.dart', flutter_min: '3.47.2', entry_platforms: facts.gcodeEntryPlatforms, requires: ['impeller', 'flutter_gpu'], macos_deployment_target_min: '12.0' }],
       capability_aliases: { shared_learning: 'lib/shared/learning', shared_popup: 'lib/shared/popup', shared_table: 'lib/shared/table' },
-      external_tools: [flutterGuardDependency],
+      external_tools: [],
       layers: [
         {
           id: 'app',
@@ -113,25 +112,18 @@ function writeProjectDocuments({ writeJson, workspacePackages, facts }) {
         update_source: ['tool/generate_agent_indexes.js', 'tool/agent_indexes/catalog.js', 'tool/agent_indexes/project.js', 'tool/agent_indexes/plan.js', 'tool/agent_indexes/generator.js', 'tool/agent_indexes/contracts.js', 'tool/agent_indexes/routes.js', 'tool/agent_indexes/availability.js', 'tool/agent_indexes/verification.js', 'tool/agent_indexes/acceptance_cases.js', 'tool/agent_indexes/visual_flows.js'],
         generate: 'bash tool/generate_harness_ai_analysis.sh',
         validate: [
-          'bash tool/generate_harness_ai_analysis.sh + git diff --exit-code',
-          'dart format . + git diff --exit-code -- *.dart',
+          'bash tool/check_generated_docs.sh',
+          'dart format --output=none --set-exit-if-changed .',
           'flutter analyze (bare)',
           'bash tool/test_all.sh',
           'bash tool/verify_test_layout.sh',
           'bash tool/build_web_release.sh',
-          'dart run flutterguard_cli:flutterguard scan . --fail-on high (cd apps/flutter_forge)',
         ],
         ci: {
           authoritative_remote_packaging_gate: '.github/workflows/ci.yml',
           analyze_standard: 'bare flutter analyze (info/warning treated as failure)',
-          steps: [
-            'flutter pub get',
-            'agent doc generation + drift check',
-            'dart format + drift check',
-            'flutter analyze (bare)',
-            'bash tool/test_all.sh',
-          ],
-          flutterguard: 'not run in CI (previously failed from repo root with empty match); enforced only by local quality_gate.sh stage 6',
+          steps: ['flutter pub get --enforce-lockfile', 'bash tool/quality_gate.sh'],
+          implementation: 'bash tool/quality_gate.sh; no FlutterGuard dependency',
         },
       },
     });

@@ -6,7 +6,7 @@
 
 ## 不变量
 
-- manifest 与 lock 不一致必须失败；外部 Git 依赖记录 requested ref 和 resolved ref，不能把 FlutterGuard 当前 checkout 替代 Forge 锁定的工具版本。
+- manifest 与 lock 不一致必须失败；外部 Git 依赖记录 requested ref 和 resolved ref，不得把未锁定依赖或工作区改动当作发布验收。
 - workspace members、module dependencies 与稳定 route 通过注册来源生成；excludedPlatforms 与功能差异由 availability.js 的共用适配规则推导，不新增第二份逐模块平台注册表。
 - schema、别名和依赖映射与实际 imports 一致；输出路径必须位于项目内且不重复，render 失败不得部分覆盖旧生成物。
 - `lib/...` 是主应用内路径，真实根目录为 `apps/flutter_forge`；内部 package 路径相对 workspace。

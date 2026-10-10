@@ -1,5 +1,4 @@
-function writePlan({ writeJson, workspacePackages, facts }) {
-  const flutterGuardDependency = facts.flutterGuardDependency;
+function writePlan({ writeJson, workspacePackages }) {
   function writeRefactorPlan() {
     writeJson('REFACTOR_PLAN.md', {
       schema: 'flutter_forge.agent_docs.refactor_plan.v1',
@@ -25,7 +24,6 @@ function writePlan({ writeJson, workspacePackages, facts }) {
         internal_packages: workspacePackages.map(({ path: packagePath }) => packagePath),
         workspace_resolution_status: 'active',
         workspace_resolution_blocker: 'none',
-        external_tool: flutterGuardDependency,
       },
       work_queue: [
         {
@@ -377,16 +375,14 @@ function writePlan({ writeJson, workspacePackages, facts }) {
       ],
       quality_gate: [
         'node tool/validate_agent_docs.js',
-        'dart format .',
-        'flutter analyze:no_error',
-        'flutterguard:no_high',
+        'dart format --output=none --set-exit-if-changed .',
+        'flutter analyze:no_issue',
         'logic_change:targeted_test',
         'teaching_ui_change:visual_evidence',
       ],
       deferred_queue: [
         'popup_widgets_decomposition',
         'widget_test_coverage',
-        'flutterguard_med_reduction',
         'recommended_module_visual_evidence',
         'flutter_scene_3d_model_loading',
         'flutter_scene_3d_material_lighting',

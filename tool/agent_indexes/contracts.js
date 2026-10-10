@@ -125,7 +125,6 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
         `git:${facts.gcodeDependency.url}#${facts.gcodeDependency.ref}`,
         'lib/shared/learning',
         ...workspacePackages.map(({ path: packagePath }) => packagePath),
-        `git:${facts.flutterGuardDependency.url}#${facts.flutterGuardDependency.ref}`,
       ],
       children: [
         'lib/AI_ANALYSIS.md',
@@ -135,7 +134,7 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
         'lib/modules/AI_ANALYSIS.md',
         ...workspacePackages.map(({ path: packagePath }) => `${packagePath}/AI_ANALYSIS.md`),
       ],
-      validation: ['node --test tool/agent_indexes/generator.test.js', 'node tool/generate_agent_indexes.js --check', 'bash tool/generate_harness_ai_analysis.sh', 'dart format .', 'flutter analyze', 'dart run flutterguard_cli:flutterguard scan . --fail-on high'],
+      validation: ['node --test tool/agent_indexes/generator.test.js', 'node tool/generate_agent_indexes.js --check', 'bash tool/generate_harness_ai_analysis.sh', 'dart format --output=none --set-exit-if-changed .', 'flutter analyze', 'bash tool/quality_gate.sh'],
     });
     writeIndex({
       rel: 'lib/AI_ANALYSIS.md',

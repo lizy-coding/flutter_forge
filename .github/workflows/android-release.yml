@@ -6,51 +6,64 @@ on:
       release_tag:
         description: Existing release tag to update
         required: true
-        default: v1.2.6
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   FLUTTER_VERSION: "3.47.2"
 
 jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
+    with:
+      ref: ${{ inputs.release_tag }}
   android:
+    needs: quality
     name: Build Android ARM64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ needs.quality.outputs.source-sha }}
+          fetch-depth: 0
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
       - name: Bootstrap
         shell: bash
         run: |
-          flutter pub get
+          flutter pub get --enforce-lockfile
           (cd packages/video_player_win/example && flutter pub get)
-      - name: Analyze
-        run: flutter analyze
-      - name: Tests
-        shell: bash
-        run: bash tool/test_all.sh
-      - name: Build AAB
+      - name: Verify source and release version
+        env:
+          EXPECTED_SHA: ${{ needs.quality.outputs.source-sha }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: node tool/release_metadata.js verify
+      - name: Build ARM64 debug APK
         working-directory: apps/flutter_forge
-        run: flutter build appbundle --release
-      - name: Build ARM64 APK
-        working-directory: apps/flutter_forge
-        run: flutter build apk --release --target-platform android-arm64 --split-per-abi
-      - name: Stage artifacts
+        run: flutter build apk --debug --target-platform android-arm64 --split-per-abi
+      - name: Stage artifact
         shell: bash
         run: |
           mkdir -p release-assets
-          cp "$GITHUB_WORKSPACE/apps/flutter_forge/build/app/outputs/bundle/release/app-release.aab" release-assets/flutter_forge-android-arm64.aab
-          cp "$GITHUB_WORKSPACE/apps/flutter_forge/build/app/outputs/apk/release/app-arm64-v8a-release.apk" release-assets/flutter_forge-android-arm64.apk
+          APP_VERSION="$(node tool/release_metadata.js version)"
+          unzip -l apps/flutter_forge/build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk | grep -q "lib/arm64-v8a/"
+          cp apps/flutter_forge/build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk "release-assets/FlutterForge-${APP_VERSION}-android-arm64-v8a-debug.apk"
+      - name: Verify artifact and record provenance
+        env:
+          RELEASE_PLATFORM: android
+          EXPECTED_SHA: ${{ needs.quality.outputs.source-sha }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: node tool/release_metadata.js stage release-assets
       # Agent Hub owns GitHub Release publication. CI only exposes build output
       # for the frozen release program to verify and upload.
       - uses: actions/upload-artifact@v4
         with:
           name: flutter_forge-android-arm64-${{ inputs.release_tag }}
           path: release-assets/*
+          if-no-files-found: error

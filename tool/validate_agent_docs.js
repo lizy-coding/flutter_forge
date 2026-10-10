@@ -7,10 +7,7 @@ const failures = [];
 const documents = new Map();
 
 const VALID_CATEGORIES = ['basic', 'async', 'state', 'ui', 'popup_table', 'platform'];
-const workspacePackages = [
-  ['file_picker_bridge', 'packages/file_picker_bridge'],
-  ['flutter_ioc_core', 'packages/flutter_ioc_core'],
-];
+const workspacePackages = require('./agent_indexes/catalog').workspacePackages.map(({name, path}) => [name, path]);
 
 // ── helpers ──────────────────────────────────────────────────────
 
@@ -191,16 +188,9 @@ if (moduleIndex) {
     }
   }
 
-  // ── phase 4: naming conventions ─────────────────────────────────
+  // ── phase 4: stable route contract ──────────────────────────────
 
-  const SNAKE_CASE = /^[a-z][a-z0-9_]*$/;
   const KEBAB_ROUTE = /^\/[a-z][a-z0-9-]*$/;
-
-  for (const dirMod of dirModules) {
-    if (!SNAKE_CASE.test(dirMod.module)) {
-      failures.push(`${dirMod.path}:naming_convention:dir must be snake_case, got "${dirMod.module}"`);
-    }
-  }
 
   for (const mod of moduleIndex.modules ?? []) {
     if (!KEBAB_ROUTE.test(mod.route)) {
@@ -263,17 +253,6 @@ if (moduleIndex) {
   const manifestContent = fileExists('lib/module_registry/module_manifest.dart')
     ? fs.readFileSync(resolveProjectPath('lib/module_registry/module_manifest.dart'), 'utf8')
     : '';
-  const routeTableContent = fileExists('lib/app/router/app_route_table.dart')
-    ? fs.readFileSync(resolveProjectPath('lib/app/router/app_route_table.dart'), 'utf8')
-    : '';
-
-  if (routeTableContent.includes("../../modules/")) {
-    failures.push('app_route_table.dart:must_not_import_feature_modules');
-  }
-  if (routeTableContent && !routeTableContent.includes('moduleManifest')) {
-    failures.push('app_route_table.dart:missing_module_manifest_composition');
-  }
-
   for (const mod of moduleIndex.modules ?? []) {
     const gen = generateById.get(mod.id);
     if (!gen) {
@@ -352,6 +331,14 @@ if (schema) {
         declared.add(f);
       }
     }
+  }
+  for (const rel of documents.keys()) {
+    if (path.basename(rel) !== 'AI_ANALYSIS.md') continue;
+    const matched = [...declared].some((pattern) => {
+      const re = new RegExp('^' + pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]+') + '$');
+      return re.test(rel);
+    });
+    if (!matched) failures.push(`${rel}:not_declared_in_schema`);
   }
 }
 

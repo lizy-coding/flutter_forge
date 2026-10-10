@@ -6,34 +6,36 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   FLUTTER_VERSION: "3.47.2"
   NODE_VERSION: "24"
 
 jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
   build:
+    needs: quality
     name: Build ${{ matrix.os }} installer
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
+          - os: macos-15-intel
             platform: macos
-            artifact: flutter_forge-macos-x64.dmg
           - os: windows-latest
             platform: windows
-            artifact: flutter_forge-windows-x64.zip
           - os: ubuntu-latest
             platform: android
-            artifact: flutter_forge-android-arm64-debug
           - os: ubuntu-latest
             platform: web
-            artifact: flutter_forge-web
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.quality.outputs.source-sha }}
+          fetch-depth: 0
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -44,15 +46,12 @@ jobs:
       - name: Bootstrap
         shell: bash
         run: |
-          flutter pub get
+          flutter pub get --enforce-lockfile
           (cd packages/video_player_win/example && flutter pub get)
-      - name: Analyze
-        if: matrix.platform == 'android'
-        run: flutter analyze
-      - name: Tests
-        if: matrix.platform == 'android'
-        shell: bash
-        run: bash tool/test_all.sh
+      - name: Verify source and release version
+        env:
+          EXPECTED_SHA: ${{ needs.quality.outputs.source-sha }}
+        run: node tool/release_metadata.js verify
       - name: Build macOS
         if: matrix.platform == 'macos'
         working-directory: apps/flutter_forge
@@ -68,6 +67,8 @@ jobs:
           app_version="$(sed -n 's/^version: *//p' "$GITHUB_WORKSPACE/apps/flutter_forge/pubspec.yaml" | head -1 | tr -d "'\"" | cut -d+ -f1)"
           dmg_path="$GITHUB_WORKSPACE/release-assets/FlutterForge-${app_version}-macos-x64.dmg"
           test -d "$app_path"
+          binary="$(/usr/libexec/PlistBuddy -c 'Print CFBundleExecutable' "$app_path/Contents/Info.plist")"
+          lipo -archs "$app_path/Contents/MacOS/$binary" | grep -qw x86_64
           test -n "$app_version"
           mkdir -p "$dmg_root"
           mkdir -p "$(dirname "$dmg_path")"
@@ -111,6 +112,11 @@ jobs:
           $manifest = Get-Content pubspec.yaml -Raw
           $appVersion = [regex]::Match($manifest, '(?m)^version:\s*(\d+\.\d+\.\d+)').Groups[1].Value
           if (-not $appVersion) { throw 'Missing application version' }
+          $runnerExe = Get-ChildItem build/windows/x64/runner/Release/*.exe | Select-Object -First 1
+          if (-not $runnerExe) { throw 'Missing Windows runner executable' }
+          $runnerBytes = [System.IO.File]::ReadAllBytes($runnerExe.FullName)
+          $peOffset = [BitConverter]::ToInt32($runnerBytes, 0x3c)
+          if ([BitConverter]::ToUInt16($runnerBytes, $peOffset + 4) -ne 0x8664) { throw 'Windows runner is not x64' }
           iscc "/DMyAppVersion=$appVersion" windows/installer/setup.iss
           if ($LASTEXITCODE -ne 0) { throw 'Inno Setup compilation failed' }
           $installer = Get-Item "$env:GITHUB_WORKSPACE/flutter_forge-setup-x64.exe"
@@ -118,96 +124,24 @@ jobs:
             throw "Installer version mismatch: $($installer.VersionInfo.ProductVersion)"
           }
           Write-Output "Installer version verified: $($installer.VersionInfo.ProductVersion)"
-      - uses: actions/upload-artifact@v4
-        if: matrix.platform == 'macos'
-        with:
-          name: ${{ matrix.artifact }}
-          path: release-assets/*.dmg
-          retention-days: 14
-      - name: Upload Windows installer
-        if: matrix.platform == 'windows'
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter_forge-setup-x64.exe
-          path: flutter_forge-setup-x64.exe
-          retention-days: 14
-      - name: Upload Android ARM64 artifacts
-        if: matrix.platform == 'android'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact }}
-          path: apps/flutter_forge/release-assets/*
-          retention-days: 14
-      - name: Upload Web release
-        if: matrix.platform == 'web'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact }}
-          path: apps/flutter_forge/build/web
-          retention-days: 14
-
-  release:
-    name: Create GitHub release
-    # Publication is owned by Agent Hub's release_hosting graph. Keep this
-    # job disabled so CI can never bypass the frozen ReleaseProgram.
-    if: ${{ false }}
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: actions/download-artifact@v4
-        with:
-          path: release-assets
-          merge-multiple: true
-      - name: Build release notes
+      - name: Stage verified platform artifacts
         shell: bash
-        run: |
-          TAG="${{ github.ref_name }}"
-          PREV_TAG="$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || true)"
-          RANGE="$TAG"
-          if [[ -n "$PREV_TAG" ]]; then
-            RANGE="$PREV_TAG..$TAG"
-          fi
-
-          write_group() {
-            local heading="$1"
-            local pattern="$2"
-            local commits
-            commits="$(git log "$RANGE" --pretty='- %s (%h)' --extended-regexp --grep="$pattern" || true)"
-            printf '## %s\n\n' "$heading" >> release-notes.md
-            if [[ -n "$commits" ]]; then
-              printf '%s\n\n' "$commits" >> release-notes.md
-            else
-              printf '%s\n\n' '- 无' >> release-notes.md
-            fi
-          }
-
-          printf '%s\n' 'Flutter Forge 多平台发布。macOS 使用 DMG 安装镜像，macOS 和 Windows 产物未签名；首次运行时，macOS 请右键选择“打开”（或执行 `xattr -dr com.apple.quarantine`），Windows SmartScreen 请点击“更多信息（More info）”后选择“仍要运行（Run anyway）”。Android 产物使用工作流构建签名，仅用于项目当前发布轨道。' > release-notes.md
-          printf '\n' >> release-notes.md
-          write_group "Features" '^feat(\(.+\))?!?:'
-          write_group "Fixes" '^fix(\(.+\))?!?:'
-          write_group "Chores" '^(chore|build|ci|docs|refactor|perf|test|style)(\(.+\))?!?:'
-
-          cat >> release-notes.md <<'EOF'
-          ## Artifacts
-
-          | 文件 | 大小 | 签名状态 |
-          | --- | ---: | --- |
-          EOF
-          for asset in release-assets/*; do
-            size="$(du -h "$asset" | cut -f1)"
-            printf '| `%s` | %s | 未签名 |\n' "$(basename "$asset")" "$size" >> release-notes.md
-          done
-      - name: Publish release
         env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
+          RELEASE_PLATFORM: ${{ matrix.platform }}
+          EXPECTED_SHA: ${{ needs.quality.outputs.source-sha }}
         run: |
-          if gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
-            gh release upload "${{ github.ref_name }}" release-assets/* --clobber
-            gh release edit "${{ github.ref_name }}" --title "Flutter Forge ${{ github.ref_name }}" --notes-file release-notes.md
-          else
-            gh release create "${{ github.ref_name }}" release-assets/* --title "Flutter Forge ${{ github.ref_name }}" --notes-file release-notes.md
-          fi
+          mkdir -p verified-release
+          APP_VERSION="$(node tool/release_metadata.js version)"
+          case "$RELEASE_PLATFORM" in
+            macos) cp release-assets/*.dmg "verified-release/FlutterForge-${APP_VERSION}-macos-x64.dmg" ;;
+            windows) cp flutter_forge-setup-x64.exe "verified-release/FlutterForge-${APP_VERSION}-windows-x64.exe" ;;
+            android) unzip -l apps/flutter_forge/release-assets/*.apk | grep -q "lib/arm64-v8a/"; cp apps/flutter_forge/release-assets/*.apk "verified-release/FlutterForge-${APP_VERSION}-android-arm64-v8a-debug.apk" ;;
+            web) (cd apps/flutter_forge/build/web && zip -qr "$GITHUB_WORKSPACE/verified-release/FlutterForge-${APP_VERSION}-web.zip" .) ;;
+          esac
+          node tool/release_metadata.js stage verified-release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flutter_forge-${{ matrix.platform }}-${{ github.sha }}
+          path: verified-release/*
+          if-no-files-found: error
+          retention-days: 14

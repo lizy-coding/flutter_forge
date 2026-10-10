@@ -60,7 +60,9 @@
 4. 逻辑变化补定向测试；教学 UI 变化补人工验收或截图说明。
 5. 执行 `bash tool/quality_gate.sh`。
 
-质量门禁必须通过：Agent 文档无漂移、Dart 格式无漂移、bare `flutter analyze` 无 issue、全量测试通过、测试布局合规、FlutterGuard 无 HIGH。
+质量门禁必须通过：全部生成物无漂移、Dart 格式合规、bare `flutter analyze` 无 issue、workspace 全量测试和工具测试通过、模块测试存在性合规。通用目录命名、测试顶层目录与源码依赖扫描不属于本仓库门禁；
+FlutterGuard 独立安装，后续仅通过外部插件或工具集按需使用，不属于依赖解析、提交、CI 或发布的强制要求。
+`tool/verify_test_layout.sh` 仅保留模块测试存在性检查；稳定路由、教学组件、注册一致性和平台证据仍是业务契约。
 
 ## Git 与发布
 

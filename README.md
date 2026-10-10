@@ -113,7 +113,7 @@ flutter run -d <device>
 在仓库根目录执行：
 
 ```bash
-bash tool/quality_gate.sh       # 契约、格式、分析、全量测试、布局与 FlutterGuard
+bash tool/quality_gate.sh       # 契约、只读格式、官方分析、workspace 与工具测试、布局
 bash tool/build_web_release.sh  # Web Release 与资源检查
 ```
 
