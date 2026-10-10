@@ -42,11 +42,16 @@ public class BatteryMonitor {
     private func hasBattery() -> Bool {
         let snapshot = IOPSCopyPowerSourcesInfo().takeRetainedValue()
         let sources = IOPSCopyPowerSourcesList(snapshot).takeRetainedValue() as [CFTypeRef]
-        return !sources.isEmpty
+        return sources.contains { source in
+            let description = IOPSGetPowerSourceDescription(snapshot, source).takeUnretainedValue() as! [String: Any]
+            return description[kIOPSTypeKey] as? String == kIOPSInternalBatteryType
+        }
     }
 
     private struct HardwareMetrics {
         var temperature: Double = 0.0
+        var hasTemperature = false
+        var hasVoltage = false
         var voltage: Double = 0.0
         var maxCapacity: Int = -1
         var designCapacity: Int = -1
@@ -69,8 +74,12 @@ public class BatteryMonitor {
         metrics.maxCapacity = readIntProperty(service: service, key: "AppleRawMaxCapacity")
             ?? readIntProperty(service: service, key: "MaxCapacity")
             ?? -1
-        metrics.temperature = normalizeTemperature(readIntProperty(service: service, key: "Temperature"))
-        metrics.voltage = normalizeVoltage(readIntProperty(service: service, key: "Voltage"))
+        let rawTemperature = readIntProperty(service: service, key: "Temperature")
+        let rawVoltage = readIntProperty(service: service, key: "Voltage")
+        metrics.hasTemperature = rawTemperature != nil
+        metrics.hasVoltage = rawVoltage != nil
+        metrics.temperature = normalizeTemperature(rawTemperature)
+        metrics.voltage = normalizeVoltage(rawVoltage)
 
         if let manufacturerData = IORegistryEntryCreateCFProperty(service, "Manufacturer" as CFString, kCFAllocatorDefault, 0) {
             metrics.manufacturer = manufacturerData.takeRetainedValue() as? String ?? ""
@@ -118,6 +127,7 @@ public class BatteryMonitor {
 
         for ps in sources {
             let description = IOPSGetPowerSourceDescription(snapshot, ps).takeUnretainedValue() as! [String: Any]
+            guard description[kIOPSTypeKey] as? String == kIOPSInternalBatteryType else { continue }
             if let currentCapacity = description[kIOPSCurrentCapacityKey] as? Int {
                 return currentCapacity
             }
@@ -138,6 +148,7 @@ public class BatteryMonitor {
 
         for ps in sources {
             let description = IOPSGetPowerSourceDescription(snapshot, ps).takeUnretainedValue() as! [String: Any]
+            guard description[kIOPSTypeKey] as? String == kIOPSInternalBatteryType else { continue }
 
             if let currentCapacity = description[kIOPSCurrentCapacityKey] as? Int {
                 level = currentCapacity
@@ -172,6 +183,63 @@ public class BatteryMonitor {
         ]
     }
 
+    public func readBattery(sample: String) -> [String: Any] {
+        let snapshot = IOPSCopyPowerSourcesInfo().takeRetainedValue()
+        let sources = IOPSCopyPowerSourcesList(snapshot).takeRetainedValue() as [CFTypeRef]
+        var source: [String: Any]?
+        for powerSource in sources {
+            let description = IOPSGetPowerSourceDescription(snapshot, powerSource).takeUnretainedValue() as! [String: Any]
+            if description[kIOPSTypeKey] as? String == kIOPSInternalBatteryType { source = description; break }
+        }
+        guard let description = source else { return ["availability": "noBattery", "sample": sample] }
+        guard let current = description[kIOPSCurrentCapacityKey] as? Int,
+              let maximum = description[kIOPSMaxCapacityKey] as? Int, maximum > 0 else {
+            return ["availability": "unknown", "sample": sample]
+        }
+        let level = Int((Double(current) / Double(maximum) * 100).rounded())
+        var payload: [String: Any]
+        switch sample {
+        case "level": payload = [:]
+        case "health":
+            payload = getBatteryHealth()
+            switch description[kIOPSBatteryHealthKey] as? String {
+            case kIOPSGoodValue: payload["state"] = "GOOD"
+            case kIOPSFairValue: payload["state"] = "DEGRADED"
+            case kIOPSPoorValue: payload["state"] = "DEAD"
+            default: payload["state"] = "UNKNOWN"
+            }
+        default: payload = getBatteryInfo()
+        }
+        payload["level"] = level
+        payload["batteryLevel"] = level
+        payload["availability"] = "available"
+        payload["sample"] = sample
+        payload["timestamp"] = Int(Date().timeIntervalSince1970 * 1000)
+        payload["isCharging"] = description[kIOPSIsChargingKey] as? Bool
+        payload["isCharged"] = description[kIOPSIsChargedKey] as? Bool
+        switch description[kIOPSPowerSourceStateKey] as? String {
+        case kIOPSACPowerValue: payload["powerSource"] = "external"
+        case kIOPSBatteryPowerValue: payload["powerSource"] = "battery"
+        default: payload["powerSource"] = "unknown"
+        }
+        let metrics = getHardwareMetrics()
+        if sample != "level" {
+            var capacity: [String: Any] = ["unit": "unspecified", "source": "AppleSmartBattery registry"]
+            let service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("AppleSmartBattery"))
+            if service != 0 {
+                defer { IOObjectRelease(service) }
+                if let value = readIntProperty(service: service, key: "AppleRawCurrentCapacity"), value >= 0 { capacity["remaining"] = value }
+                if let value = readIntProperty(service: service, key: "AppleRawMaxCapacity"), value > 0 { capacity["fullCharge"] = value }
+                if let value = readIntProperty(service: service, key: "DesignCapacity"), value > 0 { capacity["design"] = value }
+                if let value = readIntProperty(service: service, key: "CycleCount"), value >= 0 { capacity["cycleCount"] = value }
+            }
+            if capacity.count > 2 { payload["capacity"] = capacity }
+        }
+        if !metrics.hasTemperature { payload.removeValue(forKey: "temperature") }
+        if !metrics.hasVoltage { payload.removeValue(forKey: "voltage") }
+        return payload
+    }
+
     public func getBatteryHealth() -> [String: Any] {
         let snapshot = IOPSCopyPowerSourcesInfo().takeRetainedValue()
         let sources = IOPSCopyPowerSourcesList(snapshot).takeRetainedValue() as [CFTypeRef]
@@ -186,6 +254,7 @@ public class BatteryMonitor {
 
         for ps in sources {
             let description = IOPSGetPowerSourceDescription(snapshot, ps).takeUnretainedValue() as! [String: Any]
+            guard description[kIOPSTypeKey] as? String == kIOPSInternalBatteryType else { continue }
             _ = description["Technology"] as? String ?? ""
 
             if let capacity = description[kIOPSCurrentCapacityKey] as? Int {

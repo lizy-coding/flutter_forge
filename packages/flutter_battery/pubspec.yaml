@@ -1,6 +1,6 @@
 name: flutter_battery
-description: Flutter plugin for monitoring battery level and sending notifications.
-version: 0.0.3
+description: Typed battery readings and independently owned observations for Android and macOS.
+version: 0.1.0-dev.1
 homepage: https://github.com/lizy-coding/flutter_battery
 repository: https://github.com/lizy-coding/flutter_battery
 issue_tracker: https://github.com/lizy-coding/flutter_battery/issues
@@ -14,7 +14,7 @@ publish_to: 'none'
 resolution: workspace
 environment:
   sdk: ^3.11.5
-  flutter: ">=3.0.0"
+  flutter: ">=3.47.2"
 
 dependencies:
   flutter:

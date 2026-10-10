@@ -3,6 +3,8 @@ import Cocoa
 public class FlutterBatteryPlugin: NSObject, FlutterPlugin {
     private var methodChannel: FlutterMethodChannel?
     private var eventChannel: FlutterEventChannel?
+    private var changesChannel: FlutterEventChannel?
+    private var changesHandler: BatteryChangesHandler?
     private var batteryMonitor: BatteryMonitor?
     private var eventChannelHandler: BatteryStreamHandler?
 
@@ -31,6 +33,12 @@ public class FlutterBatteryPlugin: NSObject, FlutterPlugin {
         let eventHandler = BatteryStreamHandler(batteryMonitor: plugin.batteryMonitor!)
         eventChannel.setStreamHandler(eventHandler)
         plugin.eventChannelHandler = eventHandler
+
+        let changes = BatteryChangesHandler(monitor: plugin.batteryMonitor!)
+        let changesChannel = FlutterEventChannel(name: "flutter_battery/battery_changes", binaryMessenger: registrar.messenger)
+        changesChannel.setStreamHandler(changes)
+        plugin.changesChannel = changesChannel
+        plugin.changesHandler = changes
 
         // Wire callback bridge (R005)
         plugin.wireCallbackBridge()
@@ -70,6 +78,13 @@ public class FlutterBatteryPlugin: NSObject, FlutterPlugin {
         case "getPlatformCapabilities":
             result(getPlatformCapabilities())
 
+        case "configureBatteryChanges":
+            guard changesHandler?.configure(call.arguments) == true else {
+                result(FlutterError(code: "INVALID_ARGS", message: "Invalid change selection", details: nil))
+                return
+            }
+            result(true)
+
         case "configureBatteryStream":
             guard let config = BatteryStreamConfiguration.parse(call.arguments) else {
                 result(FlutterError(code: "INVALID_ARGS", message: "Invalid battery sampling configuration", details: nil))
@@ -77,6 +92,14 @@ public class FlutterBatteryPlugin: NSObject, FlutterPlugin {
             }
             eventChannelHandler?.configure(config)
             result(true)
+
+        case "readBattery":
+            let sample = (call.arguments as? [String: Any])?["sample"] as? String ?? "info"
+            guard ["level", "info", "health"].contains(sample) else {
+                result(FlutterError(code: "INVALID_ARGS", message: "Invalid sample", details: nil))
+                return
+            }
+            result(batteryMonitor.readBattery(sample: sample))
 
         case "getBatteryLevel":
             let level = batteryMonitor.getBatteryLevel()
@@ -159,6 +182,7 @@ public class FlutterBatteryPlugin: NSObject, FlutterPlugin {
 
     private func getPlatformCapabilities() -> [String: Bool] {
         return [
+            "changeNotifications": true,
             "scopedObservations": true,
             "batteryLevel": true,
             "batteryInfo": true,
@@ -176,6 +200,10 @@ public class FlutterBatteryPlugin: NSObject, FlutterPlugin {
     }
 
     public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+        changesHandler?.dispose()
+        changesChannel?.setStreamHandler(nil)
+        changesHandler = nil
+        changesChannel = nil
         eventChannelHandler?.dispose()
         batteryMonitor?.dispose()
         methodChannel = nil

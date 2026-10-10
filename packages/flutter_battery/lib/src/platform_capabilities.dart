@@ -1,4 +1,5 @@
 enum BatteryFeature {
+  changeNotifications,
   scopedObservations,
   batteryLevel,
   batteryInfo,
@@ -44,6 +45,8 @@ class BatteryPlatformCapabilities {
 
   static BatteryFeature? _featureFromString(String name) {
     switch (name) {
+      case 'changeNotifications':
+        return BatteryFeature.changeNotifications;
       case 'scopedObservations':
         return BatteryFeature.scopedObservations;
       case 'batteryLevel':
@@ -77,6 +80,8 @@ class BatteryPlatformCapabilities {
 
   static String _featureToString(BatteryFeature feature) {
     switch (feature) {
+      case BatteryFeature.changeNotifications:
+        return 'changeNotifications';
       case BatteryFeature.scopedObservations:
         return 'scopedObservations';
       case BatteryFeature.batteryLevel:

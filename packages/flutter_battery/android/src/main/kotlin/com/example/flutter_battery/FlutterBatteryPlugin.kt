@@ -20,6 +20,8 @@ import io.flutter.plugin.common.MethodChannel
 /** FlutterBatteryPlugin */
 class FlutterBatteryPlugin : FlutterPlugin {
     private lateinit var methodChannel: MethodChannel
+    private lateinit var changesChannel: EventChannel
+    private lateinit var changesHandler: com.example.flutter_battery.channel.BatteryChangesHandler
     private lateinit var eventChannel: EventChannel
     private lateinit var bleMethodChannel: MethodChannel
     private lateinit var bleScanEventChannel: EventChannel
@@ -74,6 +76,11 @@ class FlutterBatteryPlugin : FlutterPlugin {
             batteryMonitor
         )
 
+        changesHandler = com.example.flutter_battery.channel.BatteryChangesHandler(applicationContext, batteryMonitor)
+        changesChannel = EventChannel(flutterPluginBinding.binaryMessenger, "flutter_battery/battery_changes")
+        changesChannel.setStreamHandler(changesHandler)
+        methodChannelHandler.setChangesHandler(changesHandler)
+
         // 设置关联，让 MethodChannelHandler 可以访问 EventChannelHandler
         methodChannelHandler.setEventChannelHandler(eventChannelHandler)
 
@@ -111,6 +118,8 @@ class FlutterBatteryPlugin : FlutterPlugin {
         peerMethodChannel.setMethodCallHandler(null)
         peerEventChannel.setStreamHandler(null)
 
+        changesHandler.dispose()
+        changesChannel.setStreamHandler(null)
         batteryMonitor.dispose()
         notificationHelper.dispose()
         methodChannelHandler.dispose()

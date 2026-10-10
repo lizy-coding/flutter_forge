@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_battery'
-  s.version          = '0.0.3'
+  s.version          = '0.1.0'
   s.summary          = 'Flutter battery plugin macOS implementation'
   s.description      = 'A Flutter plugin for battery monitoring on macOS.'
   s.homepage         = 'https://github.com/lizy-coding/flutter_battery'

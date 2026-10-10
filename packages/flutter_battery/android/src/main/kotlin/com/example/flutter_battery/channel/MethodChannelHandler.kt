@@ -27,6 +27,8 @@ class MethodChannelHandler(
             peerHandler?.let { handler -> it.setPeerEventChannelHandler(handler) }
         }
     }
+    private var changes: BatteryChangesHandler? = null
+    fun setChangesHandler(handler: BatteryChangesHandler) { changes = handler }
     private var events: EventChannelHandler? = null
 
     fun setEventChannelHandler(handler: EventChannelHandler) { events = handler }
@@ -37,12 +39,16 @@ class MethodChannelHandler(
             when (call.method) {
                 "getPlatformVersion" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")
                 "getPlatformCapabilities" -> result.success(mapOf(
-                    "scopedObservations" to true, "batteryLevel" to true, "batteryInfo" to true, "batteryHealth" to true,
+                    "changeNotifications" to true, "scopedObservations" to true, "batteryLevel" to true, "batteryInfo" to true, "batteryHealth" to true,
                     "batteryLevelStream" to true, "batteryInfoStream" to true, "batteryHealthStream" to true,
                     "lowBatteryMonitoring" to true, "nativeNotifications" to true,
                     "scheduledNotifications" to true, "blePeerSync" to true,
                     "bleCharacteristicNotifications" to false, "iotExampleBridge" to false
                 ))
+                "configureBatteryChanges" -> {
+                    require(changes?.configure(call.arguments) == true) { "Invalid change selection" }
+                    result.success(true)
+                }
                 "configureBatteryStream" -> {
                     val config = BatteryStreamConfiguration.from(call.arguments)
                     val handler = events ?: throw IllegalStateException("Battery event handler unavailable")
