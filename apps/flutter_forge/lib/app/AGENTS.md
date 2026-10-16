@@ -7,6 +7,8 @@
 ## 当前工作边界
 
 - `theme/` 统一 AppTheme、ThemeExtension tokens、主题选择和持久化。主窗口与分类窗口使用同一主题来源；窗口参数和 method handler 的主题同步属于应用基础设施。
+- 默认使用 Liquid Glass 透明主题；Graphite Forge 保留为可选外观。固定导航使用 `liquid_glass_easy` 折射（Skia/Web 磨砂降级），滚动卡片使用 lite glass；不启用整屏实时捕获。背景必须在 Navigator 外保持稳定层级，主题切换不得重建路由。
+- 玻璃主题的纵向导航复用库公开的 `LiquidGlassMotionPill` 与 TabBar 弹簧参数；选中态由路由驱动，系统减少动态效果或高对比度时使用静态选中态。
 - 分类窗口的 router/controller/listener 绑定到窗口生命周期。关闭、重开、复用与主题同步必须释放旧对象，并区分单窗口移动/Web 与桌面分类窗口。
 - Shell 只编排导航、搜索与平台说明，不接管 BLE 会话、扫描或设备权限。
 - `shared/popup` 持有浮层归属与释放，`shared/table` 提供业务无关表格；页面通过现有边界复用，禁止复制底层生命周期实现。

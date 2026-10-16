@@ -156,9 +156,11 @@ class StateLogView extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: maxLines * 20),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
         ),
         child: ListView.builder(
           itemCount: logs.length,
@@ -229,7 +231,10 @@ class ExerciseCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               '提示: $hint',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ],

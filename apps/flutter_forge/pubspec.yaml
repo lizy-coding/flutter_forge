@@ -42,6 +42,7 @@ dependencies:
   video_player_win: ^3.2.2
   shared_preferences: ^2.5.5
   url_launcher: ^6.3.2
+  liquid_glass_easy: ^5.0.0
   webview_flutter: ^4.9.0
   webview_windows: ^0.4.0
   flutter_scene: 0.23.0

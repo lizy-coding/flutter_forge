@@ -4,6 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../module_registry/module_category.dart';
 import 'creator_profile.dart';
+import 'theme/forge_glass.dart';
+import 'theme/forge_theme_tokens.dart';
 
 class CreatorHomePage extends StatelessWidget {
   const CreatorHomePage({super.key});
@@ -13,15 +15,17 @@ class CreatorHomePage extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colors.primaryContainer.withValues(alpha: 0.42),
-            colors.surface,
-            colors.tertiaryContainer.withValues(alpha: 0.24),
-          ],
-        ),
+        gradient: context.forgeColors.glass
+            ? null
+            : LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colors.primaryContainer.withValues(alpha: 0.42),
+                  colors.surface,
+                  colors.tertiaryContainer.withValues(alpha: 0.24),
+                ],
+              ),
       ),
       child: SingleChildScrollView(
         key: const ValueKey('creator-home-scroll'),
@@ -136,6 +140,25 @@ class _HeroSection extends StatelessWidget {
     );
 
     const highlights = _HighlightPanel();
+    final content = wide
+        ? Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(flex: 6, child: introduction),
+              const SizedBox(width: 40),
+              const Expanded(flex: 4, child: highlights),
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [introduction, const SizedBox(height: 32), highlights],
+          );
+    if (context.forgeColors.glass) {
+      return ForgeGlassSurface(
+        radius: 28,
+        child: Padding(padding: EdgeInsets.all(wide ? 36 : 24), child: content),
+      );
+    }
     return Container(
       padding: EdgeInsets.all(wide ? 36 : 24),
       decoration: BoxDecoration(
@@ -150,19 +173,7 @@ class _HeroSection extends StatelessWidget {
           ),
         ],
       ),
-      child: wide
-          ? Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(flex: 6, child: introduction),
-                const SizedBox(width: 40),
-                const Expanded(flex: 4, child: highlights),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [introduction, const SizedBox(height: 32), highlights],
-            ),
+      child: content,
     );
   }
 }
@@ -278,9 +289,8 @@ class _CategoryCard extends StatelessWidget {
       colors.tertiary,
       colors.secondary,
     ][index % 3];
-    return Card(
+    return ForgeCard(
       margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
       child: InkWell(
         key: ValueKey('home-category:${category.name}'),
         onTap: () => context.go('/category/${category.name}'),
@@ -326,7 +336,9 @@ class _CreatorFooter extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
+        color: context.forgeColors.glass
+            ? colors.surfaceContainerLow.withValues(alpha: 0.58)
+            : colors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: colors.outlineVariant),
       ),

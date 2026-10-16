@@ -32,15 +32,17 @@ enum AppThemeModePreference {
 }
 
 enum AppThemePalette {
+  liquidGlass,
   graphiteForge;
 
   String get label => switch (this) {
     AppThemePalette.graphiteForge => 'Graphite Forge',
+    AppThemePalette.liquidGlass => 'Liquid Glass 透明主题',
   };
 
   static AppThemePalette parse(String? value) => values.firstWhere(
     (palette) => palette.name == value,
-    orElse: () => AppThemePalette.graphiteForge,
+    orElse: () => AppThemePalette.liquidGlass,
   );
 }
 
@@ -48,7 +50,7 @@ enum AppThemePalette {
 class AppThemeSelection {
   const AppThemeSelection({
     this.mode = AppThemeModePreference.system,
-    this.palette = AppThemePalette.graphiteForge,
+    this.palette = AppThemePalette.liquidGlass,
   });
 
   final AppThemeModePreference mode;

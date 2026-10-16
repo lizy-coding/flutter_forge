@@ -7,8 +7,10 @@ import 'package:go_router/go_router.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import 'navigation_policy.dart';
+import 'forge_bubble_navigation.dart';
 import 'theme/theme_mode_button.dart';
 import 'theme/forge_theme_tokens.dart';
+import 'theme/forge_glass.dart';
 
 class AdaptiveAppShell extends StatefulWidget {
   const AdaptiveAppShell({
@@ -82,6 +84,16 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                       (widget.location == '/' ||
                           widget.location.startsWith('/category/'))
                   ? AppBar(
+                      backgroundColor: context.forgeColors.glass
+                          ? Colors.transparent
+                          : null,
+                      flexibleSpace: context.forgeColors.glass
+                          ? const ForgeGlassSurface(
+                              radius: 0,
+                              refract: true,
+                              child: SizedBox.expand(),
+                            )
+                          : null,
                       title: const Text('Flutter Forge'),
                       actions: [
                         const ThemeModeButton(),
@@ -95,22 +107,38 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                   : null,
               drawer: compact
                   ? NavigationDrawer(
-                      selectedIndex: _selectedIndex(),
+                      selectedIndex: context.forgeColors.glass
+                          ? null
+                          : _selectedIndex(),
                       onDestinationSelected: (index) {
                         Navigator.of(context).pop();
                         _goTo(index);
                       },
-                      children: _destinations
-                          .map(
-                            (destination) => NavigationDrawerDestination(
-                              key: ValueKey(
-                                'category-drawer:${_destinations.indexOf(destination) == 0 ? 'home' : ModuleCategory.values[_destinations.indexOf(destination) - 1].name}',
+                      children: context.forgeColors.glass
+                          ? [
+                              ForgeBubbleNavigation(
+                                destinations: _destinations,
+                                selectedIndex: _selectedIndex(),
+                                destinationKey: (index) => ValueKey(
+                                  'category-drawer:${index == 0 ? 'home' : ModuleCategory.values[index - 1].name}',
+                                ),
+                                onDestinationSelected: (index) {
+                                  Navigator.of(context).pop();
+                                  _goTo(index);
+                                },
                               ),
-                              icon: Icon(destination.icon),
-                              label: Text(destination.label),
-                            ),
-                          )
-                          .toList(),
+                            ]
+                          : _destinations
+                                .map(
+                                  (destination) => NavigationDrawerDestination(
+                                    key: ValueKey(
+                                      'category-drawer:${_destinations.indexOf(destination) == 0 ? 'home' : ModuleCategory.values[_destinations.indexOf(destination) - 1].name}',
+                                    ),
+                                    icon: Icon(destination.icon),
+                                    label: Text(destination.label),
+                                  ),
+                                )
+                                .toList(),
                     )
                   : null,
               body: compact
@@ -126,34 +154,47 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                                 setState(() => _sidebarExpanded = false),
                           )
                         else
-                          NavigationRail(
-                            key: const ValueKey('navigation-rail'),
-                            selectedIndex: _selectedIndex(),
-                            onDestinationSelected: _goTo,
-                            leading: Column(
-                              children: [
-                                IconButton(
-                                  tooltip: '展开侧栏',
-                                  onPressed: () =>
-                                      setState(() => _sidebarExpanded = true),
-                                  icon: const Icon(Icons.menu_open),
-                                ),
-                                IconButton(
-                                  tooltip: '搜索模块',
-                                  onPressed: _showSearch,
-                                  icon: const Icon(Icons.search),
-                                ),
-                                const ThemeModeButton(),
-                              ],
-                            ),
-                            destinations: _destinations
-                                .map(
-                                  (destination) => NavigationRailDestination(
-                                    icon: Icon(destination.icon),
-                                    label: Text(destination.label),
+                          _navigationSurface(
+                            context,
+                            context.forgeColors.glass
+                                ? _BubbleRail(
+                                    selectedIndex: _selectedIndex(),
+                                    onDestinationSelected: _goTo,
+                                    onSearch: _showSearch,
+                                    onExpand: () =>
+                                        setState(() => _sidebarExpanded = true),
+                                  )
+                                : NavigationRail(
+                                    key: const ValueKey('navigation-rail'),
+                                    selectedIndex: _selectedIndex(),
+                                    onDestinationSelected: _goTo,
+                                    leading: Column(
+                                      children: [
+                                        IconButton(
+                                          tooltip: '展开侧栏',
+                                          onPressed: () => setState(
+                                            () => _sidebarExpanded = true,
+                                          ),
+                                          icon: const Icon(Icons.menu_open),
+                                        ),
+                                        IconButton(
+                                          tooltip: '搜索模块',
+                                          onPressed: _showSearch,
+                                          icon: const Icon(Icons.search),
+                                        ),
+                                        const ThemeModeButton(),
+                                      ],
+                                    ),
+                                    destinations: _destinations
+                                        .map(
+                                          (destination) =>
+                                              NavigationRailDestination(
+                                                icon: Icon(destination.icon),
+                                                label: Text(destination.label),
+                                              ),
+                                        )
+                                        .toList(),
                                   ),
-                                )
-                                .toList(),
                           ),
                         const VerticalDivider(width: 1),
                         Expanded(child: widget.child),
@@ -166,6 +207,11 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
     );
   }
 }
+
+Widget _navigationSurface(BuildContext context, Widget child) =>
+    context.forgeColors.glass
+    ? ForgeGlassSurface(radius: 0, refract: true, child: child)
+    : child;
 
 class _Sidebar extends StatelessWidget {
   const _Sidebar({
@@ -185,76 +231,92 @@ class _Sidebar extends StatelessWidget {
     return SizedBox(
       key: const ValueKey('expanded-sidebar'),
       width: 264,
-      child: Material(
-        color: context.forgeColors.sidebar,
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ListTile(
-                title: const Text('Flutter Forge'),
-                subtitle: const Text('可交互的 Flutter 学习现场'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const ThemeModeButton(),
-                    IconButton(
-                      tooltip: '收起侧栏',
-                      onPressed: onCollapse,
-                      icon: const Icon(Icons.menu_open),
-                    ),
-                  ],
+      child: _navigationSurface(
+        context,
+        Material(
+          color: context.forgeColors.sidebar,
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ListTile(
+                  title: const Text('Flutter Forge'),
+                  subtitle: const Text('可交互的 Flutter 学习现场'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const ThemeModeButton(),
+                      IconButton(
+                        tooltip: '收起侧栏',
+                        onPressed: onCollapse,
+                        icon: const Icon(Icons.menu_open),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-                child: TextField(
-                  key: const ValueKey('sidebar-search'),
-                  readOnly: true,
-                  onTap: onSearch,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search),
-                    hintText: '搜索模块标题',
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outlineVariant,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                  child: TextField(
+                    key: const ValueKey('sidebar-search'),
+                    readOnly: true,
+                    onTap: onSearch,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      hintText: '搜索模块标题',
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                            ),
                           ),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '/',
-                            style: TextStyle(fontWeight: FontWeight.w700),
+                          child: const Center(
+                            child: Text(
+                              '/',
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
                           ),
                         ),
                       ),
+                      border: const OutlineInputBorder(),
                     ),
-                    border: const OutlineInputBorder(),
                   ),
                 ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _destinations.length,
-                  itemBuilder: (context, index) {
-                    final destination = _destinations[index];
-                    return ListTile(
-                      key: ValueKey('sidebar-destination:$index'),
-                      selected: index == selectedIndex,
-                      leading: Icon(destination.icon),
-                      title: Text(destination.label),
-                      onTap: () => onDestinationSelected(index),
-                    );
-                  },
+                Expanded(
+                  child: context.forgeColors.glass
+                      ? SingleChildScrollView(
+                          primary: false,
+                          child: ForgeBubbleNavigation(
+                            destinations: _destinations,
+                            selectedIndex: selectedIndex,
+                            onDestinationSelected: onDestinationSelected,
+                            destinationKey: (index) =>
+                                ValueKey('sidebar-destination:$index'),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: _destinations.length,
+                          itemBuilder: (context, index) {
+                            final destination = _destinations[index];
+                            return ListTile(
+                              key: ValueKey('sidebar-destination:$index'),
+                              selected: index == selectedIndex,
+                              leading: Icon(destination.icon),
+                              title: Text(destination.label),
+                              onTap: () => onDestinationSelected(index),
+                            );
+                          },
+                        ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -262,18 +324,63 @@ class _Sidebar extends StatelessWidget {
   }
 }
 
-class _Destination {
-  const _Destination(this.label, this.icon);
-
-  final String label;
-  final IconData icon;
-}
-
-final List<_Destination> _destinations = [
-  const _Destination('创作者主页', Icons.home_outlined),
+final List<ForgeNavigationDestination> _destinations = [
+  const ForgeNavigationDestination('创作者主页', Icons.home_outlined),
   for (final category in ModuleCategory.values)
-    _Destination(category.label, category.icon),
+    ForgeNavigationDestination(category.label, category.icon),
 ];
+
+class _BubbleRail extends StatelessWidget {
+  const _BubbleRail({
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+    required this.onSearch,
+    required this.onExpand,
+  });
+
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+  final VoidCallback onSearch;
+  final VoidCallback onExpand;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      key: const ValueKey('navigation-rail'),
+      width: 80,
+      child: SafeArea(
+        child: Column(
+          children: [
+            IconButton(
+              tooltip: '展开侧栏',
+              onPressed: onExpand,
+              icon: const Icon(Icons.menu_open),
+            ),
+            IconButton(
+              tooltip: '搜索模块',
+              onPressed: onSearch,
+              icon: const Icon(Icons.search),
+            ),
+            const ThemeModeButton(),
+            Expanded(
+              child: SingleChildScrollView(
+                primary: false,
+                child: ForgeBubbleNavigation(
+                  destinations: _destinations,
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: onDestinationSelected,
+                  showLabels: false,
+                  destinationKey: (index) =>
+                      ValueKey('rail-destination:$index'),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _ModuleSearchDelegate extends SearchDelegate<void> {
   _ModuleSearchDelegate(this.modules);

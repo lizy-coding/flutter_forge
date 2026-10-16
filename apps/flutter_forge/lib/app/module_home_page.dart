@@ -9,6 +9,8 @@ import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import '../module_registry/module_catalog_utils.dart';
 import '../shared/multi_window/multi_window_manager.dart';
+import 'theme/forge_glass.dart';
+import 'theme/forge_theme_tokens.dart';
 
 class CategoryHomePage extends StatelessWidget {
   const CategoryHomePage({
@@ -32,7 +34,9 @@ class CategoryHomePage extends StatelessWidget {
         .where((module) => module.category == category)
         .toList(growable: false);
     return ColoredBox(
-      color: Theme.of(context).colorScheme.surface,
+      color: context.forgeColors.glass
+          ? Colors.transparent
+          : Theme.of(context).colorScheme.surface,
       child: CustomScrollView(
         key: ValueKey('category-page:${category.name}'),
         slivers: [
@@ -60,7 +64,23 @@ class CategoryHomePage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
             sliver: SliverLayoutBuilder(
               builder: (context, constraints) {
-                final columns = constraints.crossAxisExtent >= 820 ? 2 : 1;
+                final columns =
+                    constraints.crossAxisExtent >= 820 &&
+                        MediaQuery.textScalerOf(context).scale(14) <= 17
+                    ? 2
+                    : 1;
+                if (columns == 1) {
+                  return SliverList.builder(
+                    itemCount: categoryModules.length,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: ModuleCard(
+                        module: categoryModules[index],
+                        platform: platform,
+                      ),
+                    ),
+                  );
+                }
                 return SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: columns,
@@ -135,7 +155,9 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
         gradient: LinearGradient(
           colors: [
             colors.primaryContainer.withValues(alpha: 0.72),
-            colors.surfaceContainerHigh,
+            context.forgeColors.glass
+                ? colors.surfaceContainerHigh.withValues(alpha: 0.5)
+                : colors.surfaceContainerHigh,
           ],
         ),
         borderRadius: BorderRadius.circular(24),
@@ -220,7 +242,7 @@ class ModuleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final available = isModuleAvailable(module, platform);
     final concepts = module.concepts.take(3);
-    return Card(
+    return ForgeCard(
       child: InkWell(
         key: ValueKey('module:${module.path}'),
         borderRadius: BorderRadius.circular(12),

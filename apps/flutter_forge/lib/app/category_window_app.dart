@@ -9,6 +9,7 @@ import 'unsupported_module_page.dart';
 import 'router/app_route_table.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_theme_controller.dart';
+import 'theme/forge_glass.dart';
 
 class CategoryWindowApp extends StatefulWidget {
   const CategoryWindowApp({
@@ -96,6 +97,7 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
           theme: AppTheme.light(widget.themeController.palette),
           darkTheme: AppTheme.dark(widget.themeController.palette),
           themeMode: widget.themeController.themeMode,
+          builder: (context, child) => ForgeThemeBackdrop(child: child!),
         ),
       ),
     );

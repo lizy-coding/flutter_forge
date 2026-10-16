@@ -13,6 +13,7 @@
     "app_bootstrap.dart",
     "app_platform_provider.dart",
     "adaptive_app_shell.dart",
+    "forge_bubble_navigation.dart",
     "creator_home_page.dart",
     "creator_profile.dart",
     "module_home_page.dart",
@@ -24,6 +25,7 @@
     "theme/app_theme_selection.dart",
     "theme/app_theme_controller.dart",
     "theme/forge_theme_tokens.dart",
+    "theme/forge_glass.dart",
     "theme/theme_mode_button.dart",
     "router/app_router.dart",
     "router/app_route_table.dart"
@@ -51,6 +53,7 @@
     "go_router",
     "flutter_riverpod",
     "url_launcher",
+    "liquid_glass_easy",
     "module_registry",
     "shared/multi_window",
     "modules"

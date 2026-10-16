@@ -29,6 +29,21 @@ abstract final class AppThemeCatalog {
       lightTokens: ForgeThemeTokens.light,
       darkTokens: ForgeThemeTokens.dark,
     ),
+    AppThemePalette.liquidGlass: AppThemeDefinition(
+      palette: AppThemePalette.liquidGlass,
+      lightScheme: _glassLight,
+      darkScheme: _glassDark,
+      lightTokens: ForgeThemeTokens.light.copyWith(
+        canvas: const Color(0xFFEFF3FF),
+        sidebar: Colors.transparent,
+        glass: true,
+      ),
+      darkTokens: ForgeThemeTokens.dark.copyWith(
+        canvas: const Color(0xFF101426),
+        sidebar: Colors.transparent,
+        glass: true,
+      ),
+    ),
   };
 
   static AppThemeDefinition definition(AppThemePalette palette) =>
@@ -54,10 +69,15 @@ abstract final class AppTheme {
       colorScheme: colors,
       extensions: [tokens],
       useMaterial3: true,
-      scaffoldBackgroundColor: tokens.canvas,
+      scaffoldBackgroundColor: tokens.glass
+          ? Colors.transparent
+          : tokens.canvas,
       cardTheme: CardThemeData(
         elevation: 0,
-        color: colors.surfaceContainer,
+        color: tokens.glass
+            ? colors.surfaceContainer.withValues(alpha: 0.68)
+            : colors.surfaceContainer,
+        surfaceTintColor: tokens.glass ? Colors.transparent : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: colors.outlineVariant),
@@ -67,11 +87,15 @@ abstract final class AppTheme {
         centerTitle: false,
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: colors.surface,
+        backgroundColor: tokens.glass
+            ? colors.surface.withValues(alpha: 0.72)
+            : colors.surface,
         foregroundColor: colors.onSurface,
       ),
       navigationDrawerTheme: NavigationDrawerThemeData(
-        backgroundColor: tokens.sidebar,
+        backgroundColor: tokens.glass
+            ? colors.surface.withValues(alpha: 0.94)
+            : tokens.sidebar,
         indicatorColor: colors.primaryContainer,
       ),
       navigationRailTheme: NavigationRailThemeData(
@@ -80,7 +104,9 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colors.surfaceContainerHighest,
+        fillColor: tokens.glass
+            ? colors.surfaceContainerHighest.withValues(alpha: 0.65)
+            : colors.surfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colors.outlineVariant),
@@ -95,6 +121,37 @@ abstract final class AppTheme {
         ),
       ),
       dividerTheme: DividerThemeData(color: colors.outlineVariant),
+      menuTheme: tokens.glass
+          ? MenuThemeData(
+              style: MenuStyle(
+                backgroundColor: WidgetStatePropertyAll(
+                  colors.surface.withValues(alpha: 0.94),
+                ),
+                surfaceTintColor: const WidgetStatePropertyAll(
+                  Colors.transparent,
+                ),
+              ),
+            )
+          : null,
+      popupMenuTheme: tokens.glass
+          ? PopupMenuThemeData(
+              color: colors.surface.withValues(alpha: 0.94),
+              surfaceTintColor: Colors.transparent,
+            )
+          : null,
+      dialogTheme: tokens.glass
+          ? DialogThemeData(
+              backgroundColor: colors.surface.withValues(alpha: 0.94),
+              surfaceTintColor: Colors.transparent,
+            )
+          : null,
+      bottomSheetTheme: tokens.glass
+          ? BottomSheetThemeData(
+              backgroundColor: colors.surface.withValues(alpha: 0.94),
+              modalBackgroundColor: colors.surface.withValues(alpha: 0.94),
+              surfaceTintColor: Colors.transparent,
+            )
+          : null,
     );
   }
 }
@@ -145,4 +202,26 @@ final _graphiteDark =
       onSurfaceVariant: const Color(0xFFA8B3BF),
       outline: const Color(0xFF405367),
       outlineVariant: const Color(0xFF2A3948),
+    );
+
+final _glassLight =
+    ColorScheme.fromSeed(
+      seedColor: const Color(0xFF5655C8),
+      brightness: Brightness.light,
+    ).copyWith(
+      surface: const Color(0xFFF8FAFF),
+      surfaceContainer: const Color(0xFFF3F5FF),
+      onSurface: const Color(0xFF1B2340),
+      onSurfaceVariant: const Color(0xFF46516B),
+    );
+
+final _glassDark =
+    ColorScheme.fromSeed(
+      seedColor: const Color(0xFFB8B7FF),
+      brightness: Brightness.dark,
+    ).copyWith(
+      surface: const Color(0xFF1A2038),
+      surfaceContainer: const Color(0xFF222B45),
+      onSurface: const Color(0xFFF0F2FF),
+      onSurfaceVariant: const Color(0xFFC2CAE3),
     );
