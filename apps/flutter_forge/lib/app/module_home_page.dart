@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,12 +17,14 @@ class CategoryHomePage extends StatelessWidget {
     required this.modules,
     required this.platform,
     this.focusedWindow = false,
+    this.openCategoryWindow,
   });
 
   final ModuleCategory category;
   final List<ModuleEntry> modules;
   final AppPlatformSnapshot platform;
   final bool focusedWindow;
+  final Future<String?> Function(ModuleCategory)? openCategoryWindow;
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +43,10 @@ class CategoryHomePage extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1200),
                   child: _CategoryHeader(
+                    key: ValueKey('category-window-action:${category.name}'),
                     category: category,
                     moduleCount: categoryModules.length,
+                    openCategoryWindow: openCategoryWindow,
                     showWindowAction:
                         !focusedWindow &&
                         platform.hostFamily == AppHostFamily.desktop &&
@@ -79,22 +85,52 @@ class CategoryHomePage extends StatelessWidget {
   }
 }
 
-class _CategoryHeader extends StatelessWidget {
+class _CategoryHeader extends StatefulWidget {
   const _CategoryHeader({
+    super.key,
     required this.category,
     required this.moduleCount,
     required this.showWindowAction,
+    this.openCategoryWindow,
   });
 
   final ModuleCategory category;
   final int moduleCount;
   final bool showWindowAction;
+  final Future<String?> Function(ModuleCategory)? openCategoryWindow;
+
+  @override
+  State<_CategoryHeader> createState() => _CategoryHeaderState();
+}
+
+class _CategoryHeaderState extends State<_CategoryHeader> {
+  bool _opening = false;
+
+  Future<void> _openWindow() async {
+    if (_opening) return;
+    setState(() => _opening = true);
+    try {
+      final open =
+          widget.openCategoryWindow ??
+          MultiWindowManager.instance.createCategoryWindow;
+      await open(widget.category);
+    } catch (error) {
+      debugPrint('[category-window] open failed: $error');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('打开分类窗口失败，请重试。')));
+      }
+    } finally {
+      if (mounted) setState(() => _opening = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
-      key: ValueKey('category-header:${category.name}'),
+      key: ValueKey('category-header:${widget.category.name}'),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -116,7 +152,11 @@ class _CategoryHeader extends StatelessWidget {
                 color: colors.primary,
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Icon(category.icon, color: colors.onPrimary, size: 28),
+              child: Icon(
+                widget.category.icon,
+                color: colors.onPrimary,
+                size: 28,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -124,14 +164,14 @@ class _CategoryHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    category.label,
+                    widget.category.label,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '$moduleCount 个学习模块',
+                    '${widget.moduleCount} 个学习模块',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colors.onSurfaceVariant,
                     ),
@@ -139,22 +179,27 @@ class _CategoryHeader extends StatelessWidget {
                 ],
               ),
             ),
-            if (showWindowAction) ...[
+            if (widget.showWindowAction) ...[
               const SizedBox(width: 16),
               Tooltip(
                 message: '在独立窗口中专注学习这个分类',
                 child: FilledButton.tonalIcon(
-                  key: ValueKey('open-window:${category.name}'),
-                  onPressed: () => MultiWindowManager.instance
-                      .createCategoryWindow(category),
+                  key: ValueKey('open-window:${widget.category.name}'),
+                  onPressed: _opening ? null : () => unawaited(_openWindow()),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 18,
                       vertical: 16,
                     ),
                   ),
-                  icon: const Icon(Icons.open_in_new_rounded, size: 19),
-                  label: const Text('在新窗口打开'),
+                  icon: _opening
+                      ? const SizedBox(
+                          width: 19,
+                          height: 19,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.open_in_new_rounded, size: 19),
+                  label: Text(_opening ? '正在打开…' : '在新窗口打开'),
                 ),
               ),
             ],
