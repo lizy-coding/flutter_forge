@@ -6,6 +6,112 @@
 
 通用用例覆盖入口、布局与重进；存在平台能力差异的模块附专用流程。下列测试名称仅供补充审阅，未自动转成可执行人工步骤；未列出的业务视觉预期仍需补充。
 
+## 图形绘制背景：认识 GPU、纹理与 Shader（graphics_background）
+
+路径：`/graphics-background`；逻辑测试：`flutter test test/modules/basic/graphics_background`（在 apps/flutter_forge 执行）。
+
+### entry_navigation
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：使用本次构建的应用；记录平台、设备、窗口尺寸及文字缩放。
+
+操作：从目录进入「图形绘制背景：认识 GPU、纹理与 Shader」，再通过稳定路径 /graphics-background 进入；返回目录并再次进入。
+
+预期：开放平台进入教学页面；关闭平台展示统一不可用说明。返回与重进正确，无残留弹窗或错误页面。
+
+证据：目录、页面或不可用说明截图；操作记录。
+
+### layout_and_readability
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：移动或紧凑窗口使用 360dp；桌面另测宽窗口；使用系统大字体。
+
+操作：进入页面，滚动到末尾；展开页面已有说明、菜单或弹窗；调整窗口宽度后重复。
+
+预期：文字与关键控件可读可操作；无溢出、遮挡或截断；滚动及关闭弹窗正常。
+
+证据：紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。
+
+### core_visual_flow
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：进入本次构建的教学页面；使用页面要求的样本或网络，记录初始状态。
+
+操作：依次阅读四节技术背景；在 UV 节选择不同色块并放大显示；在 Shader 节切换灰度规则，再重新学习或进入绘制入门。
+
+预期：名词定义先于操作；UV、纹理颜色和选中位置的输出对应；放大显示不改变 UV 和取色；灰度仅改变输出，不改变源图；回到章节开头和课程衔接正常；明确教学模拟不执行自定义 Shader；紧凑大字体可操作。
+
+证据：关键操作录屏、结果截图与异常日志；缺少自动行为测试时保留该缺口。
+
+依据：`apps/flutter_forge/test/modules/basic/graphics_background/graphics_background_test.dart`
+
+行为测试来源（待审阅补充模块专属视觉预期）：
+
+- sample centers identify four colors and grayscale leaves source intact（`apps/flutter_forge/test/modules/basic/graphics_background/graphics_background_test.dart`）
+- definitions precede UV and shader controls（`apps/flutter_forge/test/modules/basic/graphics_background/graphics_background_test.dart`）
+- UV selection and display size preserve the sampled color（`apps/flutter_forge/test/modules/basic/graphics_background/graphics_background_test.dart`）
+- grayscale changes only output and lesson reset restores state（`apps/flutter_forge/test/modules/basic/graphics_background/graphics_background_test.dart`）
+- chapters remain readable and usable at $size with large text（`apps/flutter_forge/test/modules/basic/graphics_background/graphics_background_test.dart`）
+- background entry belongs to basic and continues to drawing lesson（`apps/flutter_forge/test/modules/basic/graphics_background/graphics_background_test.dart`）
+
+## 绘制入门：从画形状到算颜色（pixel_shader_intro）
+
+路径：`/pixel-shader-intro`；逻辑测试：`flutter test test/modules/basic/pixel_shader_intro`（在 apps/flutter_forge 执行）。
+
+### entry_navigation
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：使用本次构建的应用；记录平台、设备、窗口尺寸及文字缩放。
+
+操作：从目录进入「绘制入门：从画形状到算颜色」，再通过稳定路径 /pixel-shader-intro 进入；返回目录并再次进入。
+
+预期：开放平台进入教学页面；关闭平台展示统一不可用说明。返回与重进正确，无残留弹窗或错误页面。
+
+证据：目录、页面或不可用说明截图；操作记录。
+
+### layout_and_readability
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：移动或紧凑窗口使用 360dp；桌面另测宽窗口；使用系统大字体。
+
+操作：进入页面，滚动到末尾；展开页面已有说明、菜单或弹窗；调整窗口宽度后重复。
+
+预期：文字与关键控件可读可操作；无溢出、遮挡或截断；滚动及关闭弹窗正常。
+
+证据：紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。
+
+### core_visual_flow
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：进入本次构建的教学页面；使用页面要求的样本或网络，记录初始状态。
+
+操作：按三步学习：画蓝色矩形、切换逐位置算颜色、加宽画布至 400；比较固定坐标与宽度比例，点击和拖动位置，最后复位并重新学习。
+
+预期：前两步的蓝色范围相同，网格仅为放大采样示意；宽 400 时固定 100 占四分之一，U < 0.5 占一半；位置、UV 和颜色读数一致；复位恢复本步起点；窄窗口、大字体可滚动操作；不将教学网格称为实际 Shader 执行。
+
+证据：关键操作录屏、结果截图与异常日志；缺少自动行为测试时保留该缺口。
+
+依据：`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`
+
+行为测试来源（待审阅补充模块专属视觉预期）：
+
+- fixed coordinates and UV differ when the canvas becomes wider（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- boundary is white and positions outside the canvas stay bounded（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- display scaling preserves lesson coordinates and UV（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- three steps reveal concepts progressively and reset the current step（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- click and drag report the canvas position rather than screen position（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- switching descriptions keeps the blue region and selection unchanged（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- all steps fit $viewport with large text（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- actual painted colors agree for rectangle and teaching grid（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- entry belongs to basic and has a stable route on product targets（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+- stable route starts at the first lesson and reentry resets progress（`apps/flutter_forge/test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart`）
+
 ## 约束与声明式布局（constraint_layout）
 
 路径：`/constraint-layout`；逻辑测试：`flutter test test/modules/basic/constraint_layout`（在 apps/flutter_forge 执行）。
@@ -716,6 +822,60 @@
 - loading a local font inserts and selects a custom option（`apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart`）
 - cancelled local font selection leaves list unchanged（`apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart`）
 - weight comparison exposes controls and toggles italic（`apps/flutter_forge/test/modules/ui/font_picker/font_picker_test.dart`）
+
+## Shader 像素绘制与交互动效（shader_playground）
+
+路径：`/shader-playground`；逻辑测试：`flutter test test/modules/ui/shader_playground`（在 apps/flutter_forge 执行）。
+
+### entry_navigation
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：使用本次构建的应用；记录平台、设备、窗口尺寸及文字缩放。
+
+操作：从目录进入「Shader 像素绘制与交互动效」，再通过稳定路径 /shader-playground 进入；返回目录并再次进入。
+
+预期：开放平台进入教学页面；关闭平台展示统一不可用说明。返回与重进正确，无残留弹窗或错误页面。
+
+证据：目录、页面或不可用说明截图；操作记录。
+
+### layout_and_readability
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：移动或紧凑窗口使用 360dp；桌面另测宽窗口；使用系统大字体。
+
+操作：进入页面，滚动到末尾；展开页面已有说明、菜单或弹窗；调整窗口宽度后重复。
+
+预期：文字与关键控件可读可操作；无溢出、遮挡或截断；滚动及关闭弹窗正常。
+
+证据：紧凑、大字体与宽窗口截图；异常时附尺寸与复现步骤。
+
+### core_visual_flow
+
+平台：android、iOS、macOS、web、windows。
+
+前置条件：进入本次构建的教学页面；使用页面要求的样本或网络，记录初始状态。
+
+操作：等待 UV 双色渐变首帧；切换横向、纵向，调节偏移并交换颜色；显示 UV 四角，复位；缩放窗口，返回并重新进入。
+
+预期：真实渐变可见，方向、偏移和颜色变化对应参数；UV 左上为黑、右上为红、左下为绿、右下为黄；UV 模式禁用渐变控件；复位恢复横向蓝橙渐变；宽高变化无拉伸错位；退出重进无已释放资源错误。加载失败与重试由行为测试覆盖，像素输出仍需真实宿主验收。
+
+证据：关键操作录屏、结果截图与异常日志；缺少自动行为测试时保留该缺口。
+
+依据：`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`
+
+行为测试来源（待审阅补充模块专属视觉预期）：
+
+- loads real shader and controls update and reset parameters（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
+- UV mode disables gradient controls and reset restores them（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
+- loading failure can retry with the real shader（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
+- late load completion releases shader after leaving the page（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
+- late load error does not update an unmounted page（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
+- compact large text layout scrolls to all controls and teaching（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
+- compiled GLSL outputs gradient, UV, and premultiplied alpha（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
+- module has a stable route on all product targets（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
+- stable route builds the shader entry（`apps/flutter_forge/test/modules/ui/shader_playground/shader_playground_test.dart`）
 
 ## 教学型 3D 查看器（flutter_scene_3d）
 

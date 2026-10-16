@@ -17,4 +17,4 @@
 
 本目录行为测试入口：`node --test tool/agent_indexes/generator.test.js tool/agent_indexes/availability.test.js`。
 
-可用性与证据：availability.js 识别注册模块能力；verification.js 生成维护矩阵并校验证据；acceptance_cases.js 维护视觉预期；tool/module_availability.js 执行检查或登记人工证据。验证结果不参与应用准入，未执行或跳过不得记为 PASS，历史报告不得隐式升级为当前验收。生成后检查目标契约差异并运行对应定向测试；根质量门禁保持原语义。
+支持声明：availability.js 识别注册模块能力并推导策略；support.js 只从同源策略生成简明支持矩阵。默认生成不读取历史报告、测试结果或源码指纹；不聚合验收状态或人工用例。tool/module_availability.js 提供只读 list 和显式 generate，旧 check/record 已停用。历史资料独立归档，专项确认按需执行。生成后检查目标契约差异并运行对应定向测试；根质量门禁与 CI 测试执行保持原语义。

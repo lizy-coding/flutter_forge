@@ -9,6 +9,9 @@ const { modules } = require('../generate_agent_indexes');
 const root = path.resolve(__dirname, '../..');
 const appRoot = path.join(root, 'apps/flutter_forge');
 
+// Keep candidate/source consistency checks in the existing quality-gate entry.
+require('./module_spec.test');
+
 function fixture(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-generator-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));

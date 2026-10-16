@@ -11,6 +11,8 @@
 | Agent 契约输出 | `contracts.js` |
 | Dart 模块清单与路由输出 | `routes.js` |
 | manifest 事实读取、输入校验和写入 | `generator.js` |
+| 简明支持声明输出 | `support.js` |
+| 脚手架候选声明校验与预览 | `module_spec.js` |
 
 分类成员、分类依赖和 Dart 导入从模块声明推导，不维护第二份模块列表。Git 依赖的 URL、ref 和 resolved-ref 来自应用 pubspec 与 workspace lock；不在文档模板重复固定版本。新增内部包时，应同时更新 workspace manifest 和 `catalog.js` 中的责任契约，否则生成会失败。
 
@@ -25,6 +27,19 @@ node tool/generate_agent_indexes.js --check
 bash tool/quality_gate.sh
 ```
 
-`--check` 只比较内容，不写文件，也不依赖 Git 提交状态。质量门禁中的 Git diff 检查仍要求生成物和 Dart 改动已进入提交基线；工作树有待提交变化时，该阶段会失败，即使只读检查没有漂移。
+`--check` 只比较当前工作区内容，不写文件，也不依赖 Git 提交或暂存状态。质量门禁通过它检查生成漂移，再执行契约校验；待提交改动只要与生成源一致即可通过这一阶段。
 
-宿主目录存在只表示接入文件存在。模块入口开放、教学质量状态、构建结果和平台验收分别表达；历史计划中的 evidence 不代表当前 revision 已通过验收。
+宿主目录存在只表示接入文件存在。日常维护使用入口支持范围、必要功能差异与限制依据；教学完成度独立表达，历史计划中的 evidence 保留原版本范围。默认生成不读取历史报告或测试结果，不计算源码指纹、不生成验收状态或人工用例；专项确认资料见 `docs/module_availability/archive/README.md`。CI 测试继续作为开发反馈。
+
+模块脚手架使用同一份分类、能力策略与单模块契约渲染函数。默认仅预览，不读取全部模块源码或写入文件：
+
+```bash
+dart run tool/module_scaffold.dart --category popup_table --name candidate_lesson \
+  --title '候选学习模块' --subtitle '待补充的学习练习'
+```
+
+`--apply` 在候选输出目录写入教学与测试骨架、正式生成器同源的 `AI_ANALYSIS.md`、`module_spec.json` 和可审阅的 `module_registration.js.txt`。候选状态始终为 `pending`；注册片段须显式评审后加入 `tool/generate_agent_indexes.js`，再执行完整生成和校验。脚手架不会自动修改模块清单或路由。
+
+普通候选默认开放五个目标平台。`--depends file_picker_bridge` 按共用规则发现文件能力；配合 `--optional-capabilities file_selection` 将其表达为可选功能，而不关闭普通入口。候选依赖只是待实现意图，不证明能力代码或平台验收已经完成。产品级整体禁用使用 `--restriction-reason` 和 `--restriction-sources`，须提供仓库内已存在的依据；它关闭全部目标平台入口。旧 `--platforms` 与 `supportedPlatforms` 参数不再接受。
+
+脚手架需要 Node.js 运行纯候选辅助函数；默认输出位置仍为 `build/module_scaffold/{name}`。`node --test tool/agent_indexes/module_spec.test.js` 可独立检查候选，既有 `generator.test.js` 入口也包含这些检查；`dart run tool/module_scaffold_test.dart` 验证预览、应用、参数错误、真实 Dart 解析与文字转义。

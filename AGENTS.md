@@ -43,7 +43,7 @@
 
 - 平台限制用 `ModulePlatformSupport.excludedPlatforms` 表达；普通模块使用空排除集合。
 - 平台限制由 `tool/agent_indexes/availability.js` 的共用能力适配规则推导；模块仅声明可选能力或带依据的产品级禁用例外，禁止重复手填平台名单。
-- 逻辑、编译、执行与人工界面验收只做标识；通过 `tool/module_availability.js` 记录一次，生成矩阵与用例，证据来源变化标为 STALE。
+- 日常维护仅生成入口支持范围、必要功能差异与限制依据；`tool/module_availability.js list` 只读查看支持声明。测试结果、源码指纹和历史验收状态不进入维护矩阵，也不作为日常健康判定标准；专项报告按需保留，CI 测试继续作为开发反馈。
 - 目录和路由统一通过 `module_registry` 判定；模块页面不得自行决定目录可见性。
 - 不支持的平台保留稳定模块路径，并进入统一不可用说明页。
 - 平台可用性与 `ModuleStatus.pending/ready/recommended` 相互独立。
@@ -62,7 +62,7 @@
 
 质量门禁必须通过：全部生成物无漂移、Dart 格式合规、bare `flutter analyze` 无 issue、workspace 全量测试和工具测试通过、模块测试存在性合规。通用目录命名、测试顶层目录与源码依赖扫描不属于本仓库门禁；
 FlutterGuard 独立安装，后续仅通过外部插件或工具集按需使用，不属于依赖解析、提交、CI 或发布的强制要求。
-`tool/verify_test_layout.sh` 仅保留模块测试存在性检查；稳定路由、教学组件、注册一致性和平台证据仍是业务契约。
+`tool/verify_test_layout.sh` 仅保留模块测试存在性检查；稳定路由、教学组件、注册一致性和支持声明仍是业务契约。
 
 ## Git 与发布
 

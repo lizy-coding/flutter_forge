@@ -3,6 +3,8 @@
   "objective": "configuration_truth_and_generator_maintainability",
   "active_phase": "configuration_convergence",
   "evidence_semantics": "historical_records_not_current_revision_acceptance",
+  "maintenance_standard": "support_declarations_and_known_runtime_constraints",
+  "verification_tracking": "not_part_of_daily_maintenance",
   "completed_milestones": [
     "directory_layers",
     "shared_package_extraction",

@@ -2,6 +2,37 @@ const { platformContract } = require('./availability');
 const fs = require('fs');
 const path = require('path');
 
+const machineContracts = {
+  no_natural_language: true,
+  doc_consumer: 'coding_agent',
+  doc_mode: 'machine_contract',
+};
+
+function moduleContract(declaration, entrypoints, contracts = machineContracts) {
+  const { category, id, route, status, depends, owns = ['module_entry', 'module_ui', 'module_docs'], validation = ['flutter analyze'] } = declaration;
+  return {
+    schema: 'vibecoding.harness.ai_analysis.v2',
+    mode: 'module_contract',
+    node: {
+      id: `flutter_forge_app.modules.${category}.${id}`,
+      kind: 'learning_module',
+      package: 'flutter_forge_app',
+      path: `lib/modules/${category}/${id}`,
+      status,
+    },
+    route,
+    category,
+    platform_support: platformContract(declaration),
+    entrypoints: entrypoints.length ? entrypoints : ['module_entry.dart'],
+    owns,
+    depends,
+    children: [],
+    analysis_parent: `lib/modules/${category}/AI_ANALYSIS.md`,
+    contracts,
+    validation,
+  };
+}
+
 function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, contracts, facts, writeJson }) {
   function nodePath(rel) {
     return rel.replace(/\/?AI_ANALYSIS\.md$/, '') || '.';
@@ -245,7 +276,7 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
 
   function writeModuleContracts() {
     for (const declaration of modules) {
-      const { category, id: module, route, status, depends, owns = ['module_entry', 'module_ui', 'module_docs'], validation = ['flutter analyze'] } = declaration;
+      const { category, id: module } = declaration;
       const dir = path.join(appRoot, 'lib/modules', category, module);
       const entrypoints = [];
       for (const item of ['module_entry.dart', 'module_root.dart', 'module_routes.dart']) {
@@ -254,27 +285,7 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       for (const item of ['pages', 'widgets', 'state']) {
         if (fs.existsSync(path.join(dir, item))) entrypoints.push(item);
       }
-      writeJson(`lib/modules/${category}/${module}/AI_ANALYSIS.md`, {
-        schema: 'vibecoding.harness.ai_analysis.v2',
-        mode: 'module_contract',
-        node: {
-          id: `flutter_forge_app.modules.${category}.${module}`,
-          kind: 'learning_module',
-          package: 'flutter_forge_app',
-          path: `lib/modules/${category}/${module}`,
-          status,
-        },
-        route,
-        category,
-        platform_support: platformContract(declaration),
-        entrypoints: entrypoints.length ? entrypoints : ['module_entry.dart'],
-        owns,
-        depends,
-        children: [],
-        analysis_parent: `lib/modules/${category}/AI_ANALYSIS.md`,
-        contracts,
-        validation,
-      });
+      writeJson(`lib/modules/${category}/${module}/AI_ANALYSIS.md`, moduleContract(declaration, entrypoints, contracts));
     }
   }
 
@@ -315,4 +326,4 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
   writeModuleContracts();
   writePackageContracts();
 }
-module.exports = { writeContracts };
+module.exports = { machineContracts, moduleContract, writeContracts };

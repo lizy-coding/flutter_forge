@@ -1,6 +1,9 @@
 // Human visual expectations, grounded in the referenced behavior test or UI.
 // This is optional acceptance content, not a module/platform registration table.
 const flows = {
+  graphics_background: ['依次阅读四节技术背景；在 UV 节选择不同色块并放大显示；在 Shader 节切换灰度规则，再重新学习或进入绘制入门。', '名词定义先于操作；UV、纹理颜色和选中位置的输出对应；放大显示不改变 UV 和取色；灰度仅改变输出，不改变源图；回到章节开头和课程衔接正常；明确教学模拟不执行自定义 Shader；紧凑大字体可操作。', 'test/modules/basic/graphics_background/graphics_background_test.dart'],
+  pixel_shader_intro: ['按三步学习：画蓝色矩形、切换逐位置算颜色、加宽画布至 400；比较固定坐标与宽度比例，点击和拖动位置，最后复位并重新学习。', '前两步的蓝色范围相同，网格仅为放大采样示意；宽 400 时固定 100 占四分之一，U < 0.5 占一半；位置、UV 和颜色读数一致；复位恢复本步起点；窄窗口、大字体可滚动操作；不将教学网格称为实际 Shader 执行。', 'test/modules/basic/pixel_shader_intro/pixel_shader_intro_test.dart'],
+  shader_playground: ['等待 UV 双色渐变首帧；切换横向、纵向，调节偏移并交换颜色；显示 UV 四角，复位；缩放窗口，返回并重新进入。', '真实渐变可见，方向、偏移和颜色变化对应参数；UV 左上为黑、右上为红、左下为绿、右下为黄；UV 模式禁用渐变控件；复位恢复横向蓝橙渐变；宽高变化无拉伸错位；退出重进无已释放资源错误。加载失败与重试由行为测试覆盖，像素输出仍需真实宿主验收。', 'test/modules/ui/shader_playground/shader_playground_test.dart'],
   battery_monitor: ['读取电池状态；切换系统变化与定期采样，选择样本和间隔；停止、开始或重试；检查容量诊断与最近事件，清空记录后退出并重进。', '模式、启停与异常状态明确；变化通知与同值采样可区分；供电变化选择 info；未知容量单位不计算比例，真实零值保留；窄窗口可操作，退出无残留会话。真实电源切换、前后台和无电池宿主另行验收。', 'test/modules/platform/battery_monitor/battery_monitor_test.dart'],
   usb_network: ['插入 NCM 设备，扫描并选择接口；填写设备 USB IPv4 和测试 TCP 端口，连接并发送 hello；拔线、断开并手动重连。', '接口与源地址真实可见；测试服务响应出现在日志；断开后不能发送，重进无旧连接。9001 上的设备 WebSocket 服务不作为原始 TCP 回显服务。', 'test/modules/platform/usb_network/usb_network_test.dart'],
   constraint_layout: ['拖动父约束手柄；切换松/紧约束与 Row、Column、Wrap；最后重置。', '尺寸连续反馈；紧约束使子尺寸跟随父尺寸；Wrap 在变窄时换行；重置恢复初始状态。', 'test/modules/basic/constraint_layout/constraint_layout_test.dart'],

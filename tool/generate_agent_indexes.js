@@ -1,19 +1,15 @@
 const { resolveModules, writePolicies } = require('./agent_indexes/availability');
-const { writeAvailability } = require('./agent_indexes/verification');
+const { writeSupport } = require('./agent_indexes/support');
 const path = require('path');
 const { categoryComments, categoryEnumNames, workspacePackages, catalogFor } = require('./agent_indexes/catalog');
 const { loadFacts, validateModules, generate } = require('./agent_indexes/generator');
 const { writeProjectDocuments } = require('./agent_indexes/project');
-const { writeContracts } = require('./agent_indexes/contracts');
+const { machineContracts, writeContracts } = require('./agent_indexes/contracts');
 const { writeRoutes } = require('./agent_indexes/routes');
 
 const root = path.resolve(__dirname, '..');
 const appRoot = path.join(root, 'apps/flutter_forge');
-const contracts = {
-  no_natural_language: true,
-  doc_consumer: 'coding_agent',
-  doc_mode: 'machine_contract',
-};
+const contracts = machineContracts;
 
 // Keep the declaration here for existing validator and module admission consumers.
 const modules = [
@@ -399,7 +395,7 @@ function run({ check = false } = {}) {
     writeContracts(context);
     writeRoutes(context);
     writePolicies(context);
-    writeAvailability(context);
+    writeSupport(context);
   });
 }
 

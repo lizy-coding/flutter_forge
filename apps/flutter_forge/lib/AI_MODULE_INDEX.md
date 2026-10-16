@@ -553,7 +553,7 @@
             ],
             "reason": "desktop_scene_controls_android_view_only",
             "sources": [
-              "apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"
+              "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/scene_interaction_mode.dart"
             ]
           }
         }
