@@ -1,0 +1,6 @@
+Command: flutter run -d macos --no-pub
+Scope: four chapters, texture sampling, resized preview, grayscale output, next-lesson route, return, restart lesson
+✓ Built build/macos/Build/Products/Debug/Flutter Forge.app
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+Restarted application in 334ms.
+Observed AXTree/engine exception lines: 0

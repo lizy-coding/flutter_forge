@@ -1,0 +1,35 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "logic",
+  "module": "pixel_shader_intro",
+  "platform": "any",
+  "status": "pass",
+  "recorded_at": "2026-10-12T01:50:05.597Z",
+  "fingerprint": "2c3306deda44a66b1d2a53854bd2ccc868024ee5d5acc282abe502ac5975d20d",
+  "revision": {
+    "commit": "b90d5971a8af6de4a6eaedf979344a9e53ef0cac",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.6.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "command": [
+    "flutter",
+    "test",
+    "test/modules/basic/pixel_shader_intro",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "test_summary": {
+    "completed": 11,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791769805220-279282e5-a136-4b40-b1b8-caa9e1f9a269.log",
+      "sha256": "d3340057095e250c79fa12abc4c2efda611741cfec5e1fbca75b1664c5b9d271"
+    }
+  ]
+}

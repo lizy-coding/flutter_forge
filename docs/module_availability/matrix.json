@@ -10,6 +10,30 @@
   ],
   "modules": [
     {
+      "id": "graphics_background",
+      "title": "图形绘制背景：认识 GPU、纹理与 Shader",
+      "route": "/graphics-background",
+      "supported_platforms": [
+        "android",
+        "iOS",
+        "macOS",
+        "web",
+        "windows"
+      ]
+    },
+    {
+      "id": "pixel_shader_intro",
+      "title": "绘制入门：从画形状到算颜色",
+      "route": "/pixel-shader-intro",
+      "supported_platforms": [
+        "android",
+        "iOS",
+        "macOS",
+        "web",
+        "windows"
+      ]
+    },
+    {
       "id": "constraint_layout",
       "title": "约束与声明式布局",
       "route": "/constraint-layout",
@@ -236,6 +260,18 @@
             "apps/flutter_forge/lib/modules/ui/font_picker/pages/font_picker_web_page.dart"
           ]
         }
+      ]
+    },
+    {
+      "id": "shader_playground",
+      "title": "Shader 像素绘制与交互动效",
+      "route": "/shader-playground",
+      "supported_platforms": [
+        "android",
+        "iOS",
+        "macOS",
+        "web",
+        "windows"
       ]
     },
     {

@@ -1,0 +1,27 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "compile",
+  "module": "*",
+  "platform": "web",
+  "status": "pass",
+  "recorded_at": "2026-10-10T10:09:03.386Z",
+  "fingerprint": "b553915877445cd1378c2afe69510528e37886915b2456d77fb9f947a967a41e",
+  "revision": {
+    "commit": "b90d5971a8af6de4a6eaedf979344a9e53ef0cac",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.6.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "command": [
+    "bash",
+    "/Users/forest/code/langGraph/flutter_forge/tool/build_web_release.sh"
+  ],
+  "exit_code": 0,
+  "test_summary": null,
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791626942977-577994f8-c2d2-44fa-8b16-df3d10ccf467.log",
+      "sha256": "1cbe61fadea28918a1b571d286f24e1eae05aa9223addadc3dda0e5757338beb"
+    }
+  ]
+}

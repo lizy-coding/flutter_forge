@@ -1,0 +1,35 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "logic",
+  "module": "graphics_background",
+  "platform": "any",
+  "status": "pass",
+  "recorded_at": "2026-10-12T06:37:11.175Z",
+  "fingerprint": "d0ae2a7e3a4feb625fcfb1dd1497285e66e8ac8c31c18b0348f5200edfd4803e",
+  "revision": {
+    "commit": "b90d5971a8af6de4a6eaedf979344a9e53ef0cac",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.6.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "command": [
+    "flutter",
+    "test",
+    "test/modules/basic/graphics_background",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "test_summary": {
+    "completed": 7,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791787030783-fab1c196-009e-4c25-bc07-1a76324ef479.log",
+      "sha256": "da0f717922ea8244d756541c33d01cc6b35121e6a32f6ed5c99e32d348e41f0a"
+    }
+  ]
+}

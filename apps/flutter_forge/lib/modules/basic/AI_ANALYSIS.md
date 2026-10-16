@@ -9,6 +9,8 @@
     "status": "active"
   },
   "entrypoints": [
+    "graphics_background",
+    "pixel_shader_intro",
     "constraint_layout",
     "tree_state",
     "microtask",
@@ -19,10 +21,12 @@
   ],
   "depends": [
     "shared_learning",
-    "module_registry",
-    "go_router"
+    "go_router",
+    "module_registry"
   ],
   "children": [
+    "graphics_background/AI_ANALYSIS.md",
+    "pixel_shader_intro/AI_ANALYSIS.md",
     "constraint_layout/AI_ANALYSIS.md",
     "tree_state/AI_ANALYSIS.md",
     "microtask/AI_ANALYSIS.md",

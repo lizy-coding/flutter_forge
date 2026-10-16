@@ -1,0 +1,35 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "logic",
+  "module": "shader_playground",
+  "platform": "any",
+  "status": "pass",
+  "recorded_at": "2026-10-10T10:07:26.967Z",
+  "fingerprint": "896d31d4800bde0f1f538033d74a8b570cd4f9debafa2a4fd0965fb551b9fdfd",
+  "revision": {
+    "commit": "b90d5971a8af6de4a6eaedf979344a9e53ef0cac",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.6.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "command": [
+    "flutter",
+    "test",
+    "test/modules/ui/shader_playground",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "test_summary": {
+    "completed": 9,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791626846552-345c7e17-0f38-4bdc-8fa2-62e545cf1a0f.log",
+      "sha256": "50644dca856fa5a874a9a498911bbb8646ff3eaa74eb57708c7f84bf998e7878"
+    }
+  ]
+}

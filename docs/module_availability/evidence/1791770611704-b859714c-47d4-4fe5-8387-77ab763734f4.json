@@ -1,0 +1,46 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "kind": "execution",
+  "module": "pixel_shader_intro",
+  "platform": "macOS",
+  "status": "pass",
+  "environment": "macOS arm64; Flutter 3.47.2; Debug; native three-step lesson smoke only",
+  "recorded_at": "2026-10-12T02:03:31.637Z",
+  "fingerprint": "6dfc77f5144da29e7954598409c51453c2b3e2b93ab5b4a02d896dbc5cbe2116",
+  "revision": {
+    "commit": "b90d5971a8af6de4a6eaedf979344a9e53ef0cac",
+    "dirty": true
+  },
+  "case_ids": [],
+  "artifacts": [
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/README.md",
+      "sha256": "6cf11744a375c7bdcb2aaa517e2998c2cbba1ed7ffc77c28416b517cb2e61d90"
+    },
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/macos-step-1.png",
+      "sha256": "31cf192413f94b29cfc0060ed6d871f91f0ed5799da37f5e4b0c5041f7d8fdb2"
+    },
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/macos-step-2.png",
+      "sha256": "ca352a40211f63fa2b629d33828f16a2043bf690abaa976607597b0c3dffba7b"
+    },
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/macos-fixed-width.png",
+      "sha256": "bbf7dce6e36a721b8acaf9ec56ae9ca545750555dacd8c52ec157f40bfc21f8b"
+    },
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/macos-uv-width.png",
+      "sha256": "ea265f86f69f57b024a624a466d7fe529c33b68cefd35d76ff30e65896ad199d"
+    },
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/macos-uv-readout.png",
+      "sha256": "d0c5f12c89fb7d76529e0801b5dd06dcc8700ee9006b6dcb85e5a1a67819430d"
+    },
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/macos-restart.png",
+      "sha256": "e7d21c17bc57ea15b753570c6c58560b0c33879a35ce2ec0d020c373e8799677"
+    }
+  ],
+  "source": "manual_operator_record"
+}

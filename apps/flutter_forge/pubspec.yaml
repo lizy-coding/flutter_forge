@@ -64,3 +64,6 @@ flutter:
   uses-material-design: true
   assets:
     - flutter_scene_generated/
+    - lib/modules/ui/shader_playground/shaders/uv_gradient.glsl
+  shaders:
+    - lib/modules/ui/shader_playground/shaders/uv_gradient.frag

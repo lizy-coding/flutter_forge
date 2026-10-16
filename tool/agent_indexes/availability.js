@@ -7,6 +7,11 @@ const targets = ['android', 'iOS', 'macOS', 'web', 'windows'];
 // or acceptance results. A dependency discovers a requirement; optional features
 // and product restrictions remain explicit module intent.
 const capabilities = {
+  fragment_shader_canvas: {
+    fileNames: ['shader_preview.dart'], platforms: targets,
+    reason: 'sdk_fragment_program_canvas_skia_impeller',
+    sources: ['apps/flutter_forge/lib/modules/ui/shader_playground/shader_preview.dart', 'apps/flutter_forge/pubspec.yaml'],
+  },
   usb_network: {
     dependencies: ['usb_network_bridge'], platforms: ['macOS', 'windows'],
     reason: 'desktop_system_ncm_interface_bound_tcp',

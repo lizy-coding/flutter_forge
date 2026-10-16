@@ -8,6 +8,8 @@
 
 | 模块 | 支持的目标平台 | 功能差异 | 限制依据 |
 |---|---|---|---|
+| 图形绘制背景：认识 GPU、纹理与 Shader（`/graphics-background`） | android、iOS、macOS、web、windows | — | — |
+| 绘制入门：从画形状到算颜色（`/pixel-shader-intro`） | android、iOS、macOS、web、windows | — | — |
 | 约束与声明式布局（`/constraint-layout`） | android、iOS、macOS、web、windows | — | — |
 | 三棵树与生命周期（`/tree-state`） | android、iOS、macOS、web、windows | — | — |
 | 事件循环与微任务（`/microtask`） | android、iOS、macOS、web、windows | — | — |
@@ -22,6 +24,7 @@
 | 智能吸附线画板（`/adsorption-line`） | android、iOS、macOS、web、windows | — | — |
 | 下载飞入动效（`/download-animation`） | android、iOS、macOS、web、windows | — | — |
 | 字体选择器（`/font-picker`） | android、iOS、macOS、web、windows | font_file_import: android、macOS、windows；font_preview: android、iOS、macOS、windows | font_file_import: font_import_requires_native_bytes_and_file_bridge；font_preview: web_font_page_has_no_native_preview_controls |
+| Shader 像素绘制与交互动效（`/shader-playground`） | android、iOS、macOS、web、windows | — | — |
 | 教学型 3D 查看器（`/flutter-scene-3d`） | android、macOS、windows | scene_controls: macOS、windows | scene_render: scene_gpu_adapters；scene_controls: desktop_scene_controls_android_view_only |
 | 弹窗合集（`/popup-widgets`） | android、iOS、macOS、web、windows | — | — |
 | 弹窗与列表交互（`/popup-list-interaction`） | android、iOS、macOS、web、windows | — | — |

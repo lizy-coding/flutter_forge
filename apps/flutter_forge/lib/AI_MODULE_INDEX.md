@@ -1,8 +1,63 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 27,
+  "count": 30,
   "modules": [
+    {
+      "id": "graphics_background",
+      "category": "basic",
+      "path": "lib/modules/basic/graphics_background",
+      "route": "/graphics-background",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "go_router"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [],
+        "required_capabilities": [],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/basic/graphics_background/AI_ANALYSIS.md"
+    },
+    {
+      "id": "pixel_shader_intro",
+      "category": "basic",
+      "path": "lib/modules/basic/pixel_shader_intro",
+      "route": "/pixel-shader-intro",
+      "status": "ready",
+      "depends": [
+        "shared_learning"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [],
+        "required_capabilities": [],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/basic/pixel_shader_intro/AI_ANALYSIS.md"
+    },
     {
       "id": "constraint_layout",
       "category": "basic",
@@ -503,6 +558,44 @@
         }
       },
       "analysis": "lib/modules/ui/font_picker/AI_ANALYSIS.md"
+    },
+    {
+      "id": "shader_playground",
+      "category": "ui",
+      "path": "lib/modules/ui/shader_playground",
+      "route": "/shader-playground",
+      "status": "ready",
+      "depends": [
+        "shared_learning"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [],
+        "required_capabilities": [
+          "fragment_shader_canvas"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "fragment_shader_canvas",
+            "reason": "sdk_fragment_program_canvas_skia_impeller",
+            "sources": [
+              "apps/flutter_forge/lib/modules/ui/shader_playground/shader_preview.dart",
+              "apps/flutter_forge/pubspec.yaml"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/ui/shader_playground/AI_ANALYSIS.md"
     },
     {
       "id": "flutter_scene_3d",
