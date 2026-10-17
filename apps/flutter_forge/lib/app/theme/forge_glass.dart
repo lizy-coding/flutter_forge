@@ -20,7 +20,7 @@ class ForgeThemeBackdrop extends StatelessWidget {
           child: DecoratedBox(
             key: const ValueKey('theme-backdrop'),
             decoration: BoxDecoration(
-              color: tokens.canvas,
+              color: tokens.nativeDesktop ? Colors.transparent : tokens.canvas,
               gradient: tokens.glass
                   ? LinearGradient(
                       begin: Alignment.topLeft,

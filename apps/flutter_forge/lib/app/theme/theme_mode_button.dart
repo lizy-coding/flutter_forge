@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_theme_controller.dart';
 import 'app_theme_selection.dart';
+import 'forge_theme_tokens.dart';
 
 class ThemeModeButton extends StatelessWidget {
   const ThemeModeButton({super.key});
@@ -20,21 +21,23 @@ class ThemeModeButton extends StatelessWidget {
         icon: Icon(controller.mode.icon),
       ),
       menuChildren: [
-        for (final palette in AppThemePalette.values)
-          MenuItemButton(
-            key: ValueKey('theme-palette:${palette.name}'),
-            leadingIcon: Icon(
-              palette == AppThemePalette.liquidGlass
-                  ? Icons.blur_on_rounded
-                  : Icons.palette_outlined,
+        if (!context.forgeColors.nativeDesktop) ...[
+          for (final palette in AppThemePalette.values)
+            MenuItemButton(
+              key: ValueKey('theme-palette:${palette.name}'),
+              leadingIcon: Icon(
+                palette == AppThemePalette.liquidGlass
+                    ? Icons.blur_on_rounded
+                    : Icons.palette_outlined,
+              ),
+              trailingIcon: controller.palette == palette
+                  ? const Icon(Icons.check_rounded)
+                  : null,
+              onPressed: () => controller.setPalette(palette),
+              child: Text(palette.label),
             ),
-            trailingIcon: controller.palette == palette
-                ? const Icon(Icons.check_rounded)
-                : null,
-            onPressed: () => controller.setPalette(palette),
-            child: Text(palette.label),
-          ),
-        const Divider(),
+          const Divider(),
+        ],
         for (final mode in AppThemeModePreference.values)
           MenuItemButton(
             key: ValueKey('theme-mode:${mode.name}'),

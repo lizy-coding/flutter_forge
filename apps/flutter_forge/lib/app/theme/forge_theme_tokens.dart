@@ -11,6 +11,7 @@ class ForgeThemeTokens extends ThemeExtension<ForgeThemeTokens> {
     required this.aiAccent,
     required this.textMuted,
     this.glass = false,
+    this.nativeDesktop = false,
   });
 
   final Color canvas;
@@ -21,6 +22,7 @@ class ForgeThemeTokens extends ThemeExtension<ForgeThemeTokens> {
   final Color aiAccent;
   final Color textMuted;
   final bool glass;
+  final bool nativeDesktop;
 
   static const light = ForgeThemeTokens(
     canvas: Color(0xFFF3F6F9),
@@ -52,6 +54,7 @@ class ForgeThemeTokens extends ThemeExtension<ForgeThemeTokens> {
     Color? aiAccent,
     Color? textMuted,
     bool? glass,
+    bool? nativeDesktop,
   }) => ForgeThemeTokens(
     canvas: canvas ?? this.canvas,
     sidebar: sidebar ?? this.sidebar,
@@ -61,6 +64,7 @@ class ForgeThemeTokens extends ThemeExtension<ForgeThemeTokens> {
     aiAccent: aiAccent ?? this.aiAccent,
     textMuted: textMuted ?? this.textMuted,
     glass: glass ?? this.glass,
+    nativeDesktop: nativeDesktop ?? this.nativeDesktop,
   );
 
   @override
@@ -75,6 +79,7 @@ class ForgeThemeTokens extends ThemeExtension<ForgeThemeTokens> {
       aiAccent: Color.lerp(aiAccent, other.aiAccent, t)!,
       textMuted: Color.lerp(textMuted, other.textMuted, t)!,
       glass: t < 0.5 ? glass : other.glass,
+      nativeDesktop: t < 0.5 ? nativeDesktop : other.nativeDesktop,
     );
   }
 }

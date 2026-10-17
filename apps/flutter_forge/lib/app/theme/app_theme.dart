@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import 'app_theme_selection.dart';
 import 'forge_theme_tokens.dart';
@@ -62,6 +63,86 @@ abstract final class AppTheme {
     Brightness brightness,
   ) {
     final dark = brightness == Brightness.dark;
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
+      final scheme =
+          ColorScheme.fromSeed(
+            seedColor: const Color(0xFF007AFF),
+            brightness: brightness,
+          ).copyWith(
+            primary: dark ? const Color(0xFF64A9FF) : const Color(0xFF0064D2),
+            surface: dark ? const Color(0xFF252525) : const Color(0xFFFFFFFF),
+            surfaceContainer: dark
+                ? const Color(0xFF2C2C2C)
+                : const Color(0xFFFFFFFF),
+            surfaceContainerHighest: dark
+                ? const Color(0xFF353535)
+                : const Color(0xFFECECEC),
+            onSurface: dark ? const Color(0xFFF1F1F1) : const Color(0xFF202020),
+            onSurfaceVariant: dark
+                ? const Color(0xFFBBBBBB)
+                : const Color(0xFF606060),
+            outlineVariant: dark
+                ? const Color(0xFF414141)
+                : const Color(0xFFDDDDDD),
+          );
+      final tokens = (dark ? ForgeThemeTokens.dark : ForgeThemeTokens.light)
+          .copyWith(
+            canvas: dark ? const Color(0xFF202020) : const Color(0xFFF5F5F5),
+            sidebar: Colors.transparent,
+            glass: false,
+            nativeDesktop: true,
+          );
+      return ThemeData(
+        platform: TargetPlatform.macOS,
+        brightness: brightness,
+        colorScheme: scheme,
+        extensions: [tokens],
+        useMaterial3: true,
+        visualDensity: VisualDensity.compact,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        typography: Typography.material2021(platform: TargetPlatform.macOS),
+        scaffoldBackgroundColor: tokens.canvas,
+        cardTheme: CardThemeData(
+          color: scheme.surface,
+          elevation: 0,
+          margin: const EdgeInsets.all(4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: scheme.outlineVariant),
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          toolbarHeight: 44,
+          backgroundColor: tokens.canvas,
+          foregroundColor: scheme.onSurface,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          titleTextStyle: TextStyle(
+            color: scheme.onSurface,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        navigationRailTheme: NavigationRailThemeData(
+          backgroundColor: Colors.transparent,
+          indicatorColor: scheme.primary.withValues(alpha: 0.12),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          isDense: true,
+          filled: true,
+          fillColor: scheme.surface.withValues(alpha: 0.8),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 10,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6),
+            borderSide: BorderSide(color: scheme.outlineVariant),
+          ),
+        ),
+        dividerTheme: DividerThemeData(color: scheme.outlineVariant),
+      );
+    }
     final colors = dark ? definition.darkScheme : definition.lightScheme;
     final tokens = dark ? definition.darkTokens : definition.lightTokens;
     return ThemeData(
