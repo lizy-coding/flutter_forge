@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_theme_controller.dart';
 import 'theme/forge_glass.dart';
+import 'mac_desktop_host.dart';
+import 'router/app_route_table.dart';
 
 class App extends StatelessWidget {
   const App({super.key, required this.router, required this.themeController});
@@ -23,7 +25,12 @@ class App extends StatelessWidget {
           theme: AppTheme.light(themeController.palette),
           darkTheme: AppTheme.dark(themeController.palette),
           themeMode: themeController.themeMode,
-          builder: (context, child) => ForgeThemeBackdrop(child: child!),
+          builder: (context, child) => MacDesktopHost(
+            router: router,
+            modules: AppRouteTable.modules,
+            themeMode: themeController.themeMode,
+            child: ForgeThemeBackdrop(child: child!),
+          ),
         ),
       ),
     );

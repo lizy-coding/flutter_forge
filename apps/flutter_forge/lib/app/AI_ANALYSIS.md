@@ -14,6 +14,8 @@
     "app_platform_provider.dart",
     "adaptive_app_shell.dart",
     "forge_bubble_navigation.dart",
+    "mac_desktop_host.dart",
+    "module_search.dart",
     "creator_home_page.dart",
     "creator_profile.dart",
     "module_home_page.dart",
@@ -47,7 +49,8 @@
     "theme_palette_catalog",
     "theme_semantic_tokens",
     "theme_preference_persistence",
-    "cross_window_theme_sync"
+    "cross_window_theme_sync",
+    "macos_desktop_host_commands"
   ],
   "depends": [
     "go_router",

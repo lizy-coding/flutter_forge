@@ -69,7 +69,7 @@ class CategoryHomePage extends StatelessWidget {
                         MediaQuery.textScalerOf(context).scale(14) <= 17
                     ? 2
                     : 1;
-                if (columns == 1) {
+                if (columns == 1 || context.forgeColors.nativeDesktop) {
                   return SliverList.builder(
                     itemCount: categoryModules.length,
                     itemBuilder: (context, index) => Padding(
@@ -152,15 +152,20 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
     return DecoratedBox(
       key: ValueKey('category-header:${widget.category.name}'),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            colors.primaryContainer.withValues(alpha: 0.72),
-            context.forgeColors.glass
-                ? colors.surfaceContainerHigh.withValues(alpha: 0.5)
-                : colors.surfaceContainerHigh,
-          ],
+        color: context.forgeColors.nativeDesktop ? colors.surface : null,
+        gradient: context.forgeColors.nativeDesktop
+            ? null
+            : LinearGradient(
+                colors: [
+                  colors.primaryContainer.withValues(alpha: 0.72),
+                  context.forgeColors.glass
+                      ? colors.surfaceContainerHigh.withValues(alpha: 0.5)
+                      : colors.surfaceContainerHigh,
+                ],
+              ),
+        borderRadius: BorderRadius.circular(
+          context.forgeColors.nativeDesktop ? 8 : 24,
         ),
-        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: colors.outlineVariant),
       ),
       child: Padding(
@@ -168,11 +173,13 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
         child: Row(
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: context.forgeColors.nativeDesktop ? 36 : 56,
+              height: context.forgeColors.nativeDesktop ? 36 : 56,
               decoration: BoxDecoration(
                 color: colors.primary,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(
+                  context.forgeColors.nativeDesktop ? 8 : 18,
+                ),
               ),
               child: Icon(
                 widget.category.icon,
@@ -187,9 +194,11 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
                 children: [
                   Text(
                     widget.category.label,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style:
+                        (context.forgeColors.nativeDesktop
+                                ? Theme.of(context).textTheme.titleLarge
+                                : Theme.of(context).textTheme.headlineSmall)
+                            ?.copyWith(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 4),
                   Text(

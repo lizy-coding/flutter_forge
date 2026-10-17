@@ -15,7 +15,7 @@ class CreatorHomePage extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: context.forgeColors.glass
+        gradient: context.forgeColors.glass || context.forgeColors.nativeDesktop
             ? null
             : LinearGradient(
                 begin: Alignment.topLeft,
@@ -99,11 +99,17 @@ class _HeroSection extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           '把 Flutter 学习\n变成一次次实践',
-          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-            fontWeight: FontWeight.w800,
-            height: 1.12,
-            letterSpacing: -1.2,
-          ),
+          style:
+              (context.forgeColors.nativeDesktop
+                      ? Theme.of(context).textTheme.headlineMedium
+                      : Theme.of(context).textTheme.displaySmall)
+                  ?.copyWith(
+                    fontWeight: context.forgeColors.nativeDesktop
+                        ? FontWeight.w600
+                        : FontWeight.w800,
+                    height: 1.12,
+                    letterSpacing: -1.2,
+                  ),
         ),
         const SizedBox(height: 16),
         Text(
@@ -160,18 +166,28 @@ class _HeroSection extends StatelessWidget {
       );
     }
     return Container(
-      padding: EdgeInsets.all(wide ? 36 : 24),
+      padding: EdgeInsets.all(
+        context.forgeColors.nativeDesktop
+            ? 20
+            : wide
+            ? 36
+            : 24,
+      ),
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(
+          context.forgeColors.nativeDesktop ? 8 : 28,
+        ),
         border: Border.all(color: colors.outlineVariant),
-        boxShadow: [
-          BoxShadow(
-            color: colors.shadow.withValues(alpha: 0.08),
-            blurRadius: 30,
-            offset: const Offset(0, 12),
-          ),
-        ],
+        boxShadow: context.forgeColors.nativeDesktop
+            ? []
+            : [
+                BoxShadow(
+                  color: colors.shadow.withValues(alpha: 0.08),
+                  blurRadius: 30,
+                  offset: const Offset(0, 12),
+                ),
+              ],
       ),
       child: content,
     );

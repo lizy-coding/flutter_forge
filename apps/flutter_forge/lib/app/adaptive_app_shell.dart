@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import 'navigation_policy.dart';
+import 'module_search.dart';
+import 'mac_desktop_host.dart';
 import 'forge_bubble_navigation.dart';
 import 'theme/theme_mode_button.dart';
 import 'theme/forge_theme_tokens.dart';
@@ -30,6 +32,25 @@ class AdaptiveAppShell extends StatefulWidget {
 
 class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
   bool _sidebarExpanded = true;
+  ChangeNotifier? _nativeSidebar;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final sidebar = MacDesktopScope.sidebarOf(context);
+    if (sidebar == _nativeSidebar) return;
+    _nativeSidebar?.removeListener(_toggleSidebar);
+    _nativeSidebar = sidebar;
+    _nativeSidebar?.addListener(_toggleSidebar);
+  }
+
+  void _toggleSidebar() => setState(() => _sidebarExpanded = !_sidebarExpanded);
+
+  @override
+  void dispose() {
+    _nativeSidebar?.removeListener(_toggleSidebar);
+    super.dispose();
+  }
 
   int _selectedIndex() {
     if (widget.location == '/') return 0;
@@ -58,7 +79,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
   Future<void> _showSearch() async {
     await showSearch<void>(
       context: context,
-      delegate: _ModuleSearchDelegate(widget.modules),
+      delegate: ModuleSearchDelegate(widget.modules),
     );
   }
 
@@ -74,11 +95,17 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
         return CallbackShortcuts(
           bindings: {
             const SingleActivator(LogicalKeyboardKey.slash): _showSearch,
+            if (context.forgeColors.nativeDesktop)
+              const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
+                  _showSearch,
           },
           child: Focus(
             autofocus: true,
             child: Scaffold(
               key: const ValueKey('adaptive-app-shell'),
+              backgroundColor: context.forgeColors.nativeDesktop
+                  ? Colors.transparent
+                  : null,
               appBar:
                   compact &&
                       (widget.location == '/' ||
@@ -197,7 +224,14 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                                   ),
                           ),
                         const VerticalDivider(width: 1),
-                        Expanded(child: widget.child),
+                        Expanded(
+                          child: ColoredBox(
+                            color: context.forgeColors.nativeDesktop
+                                ? context.forgeColors.canvas
+                                : Colors.transparent,
+                            child: widget.child,
+                          ),
+                        ),
                       ],
                     ),
             ),
@@ -230,7 +264,7 @@ class _Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       key: const ValueKey('expanded-sidebar'),
-      width: 264,
+      width: context.forgeColors.nativeDesktop ? 224 : 264,
       child: _navigationSurface(
         context,
         Material(
@@ -239,21 +273,37 @@ class _Sidebar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ListTile(
-                  title: const Text('Flutter Forge'),
-                  subtitle: const Text('可交互的 Flutter 学习现场'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const ThemeModeButton(),
-                      IconButton(
-                        tooltip: '收起侧栏',
-                        onPressed: onCollapse,
-                        icon: const Icon(Icons.menu_open),
-                      ),
-                    ],
+                if (context.forgeColors.nativeDesktop)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 4, 4),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Flutter Forge',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                        const ThemeModeButton(),
+                      ],
+                    ),
+                  )
+                else
+                  ListTile(
+                    title: const Text('Flutter Forge'),
+                    subtitle: const Text('可交互的 Flutter 学习现场'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const ThemeModeButton(),
+                        IconButton(
+                          tooltip: '收起侧栏',
+                          onPressed: onCollapse,
+                          icon: const Icon(Icons.menu_open),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
                   child: TextField(
@@ -263,6 +313,10 @@ class _Sidebar extends StatelessWidget {
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.search),
                       hintText: '搜索模块标题',
+                      suffixIconConstraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 36,
+                      ),
                       suffixIcon: Padding(
                         padding: const EdgeInsets.all(10),
                         child: DecoratedBox(
@@ -305,12 +359,35 @@ class _Sidebar extends StatelessWidget {
                           itemCount: _destinations.length,
                           itemBuilder: (context, index) {
                             final destination = _destinations[index];
-                            return ListTile(
-                              key: ValueKey('sidebar-destination:$index'),
-                              selected: index == selectedIndex,
-                              leading: Icon(destination.icon),
-                              title: Text(destination.label),
-                              onTap: () => onDestinationSelected(index),
+                            final native = context.forgeColors.nativeDesktop;
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: native ? 8 : 0,
+                                vertical: native ? 2 : 0,
+                              ),
+                              child: ListTile(
+                                key: ValueKey('sidebar-destination:$index'),
+                                dense: native,
+                                minTileHeight: native ? 32 : null,
+                                minLeadingWidth: native ? 18 : null,
+                                horizontalTitleGap: native ? 8 : null,
+                                shape: native
+                                    ? RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                      )
+                                    : null,
+                                selectedTileColor: native
+                                    ? Theme.of(context).colorScheme.primary
+                                          .withValues(alpha: 0.12)
+                                    : null,
+                                selected: index == selectedIndex,
+                                leading: Icon(
+                                  destination.icon,
+                                  size: native ? 18 : null,
+                                ),
+                                title: Text(destination.label),
+                                onTap: () => onDestinationSelected(index),
+                              ),
                             );
                           },
                         ),
@@ -378,71 +455,6 @@ class _BubbleRail extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ModuleSearchDelegate extends SearchDelegate<void> {
-  _ModuleSearchDelegate(this.modules);
-
-  final List<ModuleEntry> modules;
-
-  @override
-  String get searchFieldLabel => '搜索模块标题';
-
-  @override
-  List<Widget> buildActions(BuildContext context) => [
-    if (query.isNotEmpty)
-      IconButton(
-        tooltip: '清空搜索',
-        onPressed: () => query = '',
-        icon: const Icon(Icons.clear),
-      ),
-  ];
-
-  @override
-  Widget buildLeading(BuildContext context) => IconButton(
-    tooltip: '返回',
-    onPressed: () => close(context, null),
-    icon: const Icon(Icons.arrow_back),
-  );
-
-  @override
-  Widget buildResults(BuildContext context) => _results(context);
-
-  @override
-  Widget buildSuggestions(BuildContext context) => _results(context);
-
-  Widget _results(BuildContext context) {
-    final normalized = query.trim().toLowerCase();
-    final matches = normalized.isEmpty
-        ? const <ModuleEntry>[]
-        : modules
-              .where(
-                (module) => module.title.toLowerCase().contains(normalized),
-              )
-              .toList(growable: false);
-    if (normalized.isNotEmpty && matches.isEmpty) {
-      return Center(
-        child: TextButton(
-          onPressed: () => query = '',
-          child: const Text('没有匹配模块，清空搜索'),
-        ),
-      );
-    }
-    return ListView.builder(
-      itemCount: matches.length,
-      itemBuilder: (context, index) {
-        final module = matches[index];
-        return ListTile(
-          title: Text(module.title),
-          subtitle: Text(module.category.label),
-          onTap: () {
-            close(context, null);
-            unawaited(context.push(module.path));
-          },
-        );
-      },
     );
   }
 }
