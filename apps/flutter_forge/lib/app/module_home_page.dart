@@ -69,7 +69,7 @@ class CategoryHomePage extends StatelessWidget {
                         MediaQuery.textScalerOf(context).scale(14) <= 17
                     ? 2
                     : 1;
-                if (columns == 1 || context.forgeColors.nativeDesktop) {
+                if (columns == 1 || context.forgeColors.desktop) {
                   return SliverList.builder(
                     itemCount: categoryModules.length,
                     itemBuilder: (context, index) => Padding(
@@ -152,8 +152,12 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
     return DecoratedBox(
       key: ValueKey('category-header:${widget.category.name}'),
       decoration: BoxDecoration(
-        color: context.forgeColors.nativeDesktop ? colors.surface : null,
-        gradient: context.forgeColors.nativeDesktop
+        color: context.forgeColors.desktop
+            ? colors.surface.withValues(
+                alpha: context.forgeColors.glass ? 0.72 : 1,
+              )
+            : null,
+        gradient: context.forgeColors.desktop
             ? null
             : LinearGradient(
                 colors: [
@@ -164,7 +168,7 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
                 ],
               ),
         borderRadius: BorderRadius.circular(
-          context.forgeColors.nativeDesktop ? 8 : 24,
+          context.forgeColors.desktop ? 8 : 24,
         ),
         border: Border.all(color: colors.outlineVariant),
       ),
@@ -173,12 +177,12 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
         child: Row(
           children: [
             Container(
-              width: context.forgeColors.nativeDesktop ? 36 : 56,
-              height: context.forgeColors.nativeDesktop ? 36 : 56,
+              width: context.forgeColors.desktop ? 36 : 56,
+              height: context.forgeColors.desktop ? 36 : 56,
               decoration: BoxDecoration(
                 color: colors.primary,
                 borderRadius: BorderRadius.circular(
-                  context.forgeColors.nativeDesktop ? 8 : 18,
+                  context.forgeColors.desktop ? 8 : 18,
                 ),
               ),
               child: Icon(
@@ -195,7 +199,7 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
                   Text(
                     widget.category.label,
                     style:
-                        (context.forgeColors.nativeDesktop
+                        (context.forgeColors.desktop
                                 ? Theme.of(context).textTheme.titleLarge
                                 : Theme.of(context).textTheme.headlineSmall)
                             ?.copyWith(fontWeight: FontWeight.w700),
@@ -251,11 +255,37 @@ class ModuleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final available = isModuleAvailable(module, platform);
     final concepts = module.concepts.take(3);
+    if (platform.hostFamily == AppHostFamily.desktop) {
+      return ForgeShellSurface(
+        radius: 8,
+        child: ListTile(
+          key: ValueKey('module:${module.path}'),
+          minVerticalPadding: 12,
+          leading: Icon(module.category.icon, size: 20),
+          title: Text(module.title),
+          subtitle: Text(
+            available ? module.subtitle : '当前平台暂不支持此模块',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: Text(
+            '${module.difficulty.label} · ${module.estimatedMinutes} 分钟',
+          ),
+          onTap: () => context.go(module.path),
+        ),
+      );
+    }
     return ForgeCard(
       child: InkWell(
         key: ValueKey('module:${module.path}'),
         borderRadius: BorderRadius.circular(12),
-        onTap: () => context.push(module.path),
+        onTap: () {
+          if (platform.hostFamily == AppHostFamily.desktop) {
+            context.go(module.path);
+          } else {
+            unawaited(context.push(module.path));
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(

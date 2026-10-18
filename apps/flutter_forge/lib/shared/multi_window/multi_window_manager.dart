@@ -105,7 +105,11 @@ class MultiWindowManager {
       'themeSelection': _themeSelectionPayload,
     });
 
-    final config = WindowConfiguration(hiddenAtLaunch: false, arguments: args);
+    final config = WindowConfiguration(
+      hiddenAtLaunch: false,
+      arguments: args,
+      enableFlutterGpu: true,
+    );
 
     final controller = await _platform.createWindow(config);
 

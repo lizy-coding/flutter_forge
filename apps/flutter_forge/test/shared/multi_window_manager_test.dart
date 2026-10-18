@@ -229,6 +229,7 @@ void main() {
       );
 
     await manager.createCategoryWindow(ModuleCategory.ui);
+    expect(platform.createRequests.single.enableFlutterGpu, isTrue);
 
     final arguments = MultiWindowManager.parseArguments(
       platform.windows.single.arguments,

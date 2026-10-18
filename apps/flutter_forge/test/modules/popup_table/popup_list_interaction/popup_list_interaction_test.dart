@@ -95,7 +95,7 @@ void main() {
     router.go('/');
     await tester.pumpAndSettle();
     expect(find.text('编辑单元格'), findsNothing);
-    expect(find.text('Lizy'), findsOneWidget);
+    expect(find.byKey(const ValueKey('workbench-home')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

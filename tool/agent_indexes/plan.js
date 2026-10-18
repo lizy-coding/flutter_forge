@@ -206,6 +206,30 @@ function writePlan({ writeJson, workspacePackages }) {
           ],
         },
         {
+          id: 'scene_viewer_package_and_p0_diagnostics',
+          priority: 21,
+          status: 'completed',
+          targets: [
+            'packages/forge_scene_viewer',
+            'apps/flutter_forge/lib/modules/ui/flutter_scene_3d',
+            'apps/flutter_forge/integration_test/flutter_scene_3d_diagnostics_test.dart',
+          ],
+          acceptance: [
+            'workspace_viewer_package_with_app_owned_teaching_and_platform_policy',
+            'render_call_cpu_and_window_timing_metrics_with_explicit_scope',
+            'demand_continuous_manual_and_single_frame_controls',
+            'bounded_sampling_and_metadata_only_pass_capture',
+            'idle_repaint_isolation_and_lifecycle_cleanup',
+            'macos_profile_real_gpu_flow',
+            'quality_gate',
+          ],
+          evidence: [
+            'Package and app targeted tests cover sampling, render scheduling, UI isolation, visibility, and disposal',
+            'macOS Profile flow verifies five-second idle stability, one-call redraw, fixed-pose continuous mode, and two captured render passes',
+            'GPU time, memory, backend identity, and draw calls remain unmeasured; no Windows or Android host acceptance is inferred',
+          ],
+        },
+        {
           id: 'flutter_scene_3d_camera_motion',
           priority: 14,
           status: 'pending',

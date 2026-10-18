@@ -41,6 +41,21 @@ class SceneCameraController extends ChangeNotifier {
   bool get reducedMotion => _reducedMotion;
   SceneMotionState get motionState => _motionState;
 
+  bool get hasMotion => switch (_motionState) {
+    SceneMotionState.autoTour => !_reducedMotion,
+    SceneMotionState.coasting || SceneMotionState.transitioning => true,
+    SceneMotionState.manual || SceneMotionState.paused => false,
+  };
+
+  void resetClock() => _previousElapsed = null;
+
+  void pauseMotion() {
+    _cancelMotion();
+    _motionState = SceneMotionState.paused;
+    resetClock();
+    notifyListeners();
+  }
+
   void tick(Duration elapsed) {
     final previous = _previousElapsed;
     _previousElapsed = elapsed;
@@ -66,6 +81,7 @@ class SceneCameraController extends ChangeNotifier {
         _motionState = transition.resumeAuto && !_reducedMotion
             ? SceneMotionState.autoTour
             : SceneMotionState.manual;
+        notifyListeners();
       }
       return;
     }
@@ -81,6 +97,7 @@ class SceneCameraController extends ChangeNotifier {
         _motionState = SceneMotionState.manual;
         _coastYawVelocity = 0;
         _coastPitchVelocity = 0;
+        notifyListeners();
       } else {
         final strength = (1 - progress) * (1 - progress);
         _yaw += _coastYawVelocity * seconds * strength;

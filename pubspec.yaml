@@ -12,3 +12,4 @@ workspace:
   - packages/desktop_multi_window
   - packages/flutter_battery
   - packages/usb_network_bridge
+  - packages/forge_scene_viewer

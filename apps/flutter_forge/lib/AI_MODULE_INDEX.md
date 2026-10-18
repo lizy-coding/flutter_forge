@@ -605,8 +605,7 @@
       "status": "ready",
       "depends": [
         "shared_learning",
-        "flutter_scene",
-        "vector_math",
+        "forge_scene_viewer",
         "module_registry"
       ],
       "platform_support": {
@@ -631,6 +630,7 @@
             "capability": "scene_render",
             "reason": "scene_gpu_adapters",
             "sources": [
+              "packages/forge_scene_viewer/lib/src/scene_runtime.dart",
               "apps/flutter_forge/android/app/src/main/AndroidManifest.xml",
               "apps/flutter_forge/windows/runner/main.cpp",
               "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart"

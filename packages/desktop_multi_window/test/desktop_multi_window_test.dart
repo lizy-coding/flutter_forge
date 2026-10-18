@@ -10,6 +10,30 @@ void main() {
 
   tearDown(() => messenger.setMockMethodCallHandler(channel, null));
 
+  test(
+    'child GPU configuration is opt-in and reaches native creation',
+    () async {
+      expect(WindowConfiguration.fromJson({}).enableFlutterGpu, isFalse);
+      const config = WindowConfiguration(
+        arguments: 'category:ui',
+        enableFlutterGpu: true,
+      );
+      expect(WindowConfiguration.fromJson(config.toJson()), config);
+      expect(
+        config,
+        isNot(const WindowConfiguration(arguments: 'category:ui')),
+      );
+      MethodCall? created;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        created = call;
+        return 'gpu-window';
+      });
+      await WindowController.create(config);
+      expect(created!.method, 'createWindow');
+      expect((created!.arguments as Map)['enableFlutterGpu'], isTrue);
+    },
+  );
+
   test('missing native window inventory yields an empty list', () async {
     messenger.setMockMethodCallHandler(channel, (_) async => null);
     expect(await WindowController.getAll(), isEmpty);

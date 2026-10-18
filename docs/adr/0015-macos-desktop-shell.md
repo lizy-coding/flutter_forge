@@ -1,6 +1,6 @@
 # macOS 基础桌面外壳
 
-状态：accepted
+状态：superseded by [ADR 0016](0016-shared-desktop-workbench.md)
 
 macOS 以 Finder／系统设置式的桌面工具体验为方向，采用少量 AppKit 宿主接入与 Flutter 内容组合：保留根 FlutterViewController、GoRouter 和模块边界，由系统承担普通窗口材质、工具栏与菜单，Flutter 提供紧凑侧栏、目录和教学内容。这样可复用主窗口与分类窗口的生命周期，而无需重写原生导航控制器。
 

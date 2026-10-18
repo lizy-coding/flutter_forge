@@ -246,7 +246,7 @@ const modules = [
     id: 'flutter_scene_3d',
     route: '/flutter-scene-3d',
     status: 'ready',
-    depends: ['shared_learning', 'flutter_scene', 'vector_math', 'module_registry'],
+    depends: ['shared_learning', 'forge_scene_viewer', 'module_registry'],
     title: '教学型 3D 查看器',
     subtitle: '用轨道相机、部件选取与聚焦反馈理解 3D 查看器交互',
     difficulty: 'intermediate',

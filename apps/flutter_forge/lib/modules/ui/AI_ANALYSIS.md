@@ -26,8 +26,7 @@
     "module_registry",
     "provider",
     "go_router",
-    "flutter_scene",
-    "vector_math"
+    "forge_scene_viewer"
   ],
   "children": [
     "gcode_visualizer/AI_ANALYSIS.md",

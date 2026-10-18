@@ -63,91 +63,21 @@ abstract final class AppTheme {
     Brightness brightness,
   ) {
     final dark = brightness == Brightness.dark;
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
-      final scheme =
-          ColorScheme.fromSeed(
-            seedColor: const Color(0xFF007AFF),
-            brightness: brightness,
-          ).copyWith(
-            primary: dark ? const Color(0xFF64A9FF) : const Color(0xFF0064D2),
-            surface: dark ? const Color(0xFF252525) : const Color(0xFFFFFFFF),
-            surfaceContainer: dark
-                ? const Color(0xFF2C2C2C)
-                : const Color(0xFFFFFFFF),
-            surfaceContainerHighest: dark
-                ? const Color(0xFF353535)
-                : const Color(0xFFECECEC),
-            onSurface: dark ? const Color(0xFFF1F1F1) : const Color(0xFF202020),
-            onSurfaceVariant: dark
-                ? const Color(0xFFBBBBBB)
-                : const Color(0xFF606060),
-            outlineVariant: dark
-                ? const Color(0xFF414141)
-                : const Color(0xFFDDDDDD),
-          );
-      final tokens = (dark ? ForgeThemeTokens.dark : ForgeThemeTokens.light)
-          .copyWith(
-            canvas: dark ? const Color(0xFF202020) : const Color(0xFFF5F5F5),
-            sidebar: Colors.transparent,
-            glass: false,
-            nativeDesktop: true,
-          );
-      return ThemeData(
-        platform: TargetPlatform.macOS,
-        brightness: brightness,
-        colorScheme: scheme,
-        extensions: [tokens],
-        useMaterial3: true,
-        visualDensity: VisualDensity.compact,
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        typography: Typography.material2021(platform: TargetPlatform.macOS),
-        scaffoldBackgroundColor: tokens.canvas,
-        cardTheme: CardThemeData(
-          color: scheme.surface,
-          elevation: 0,
-          margin: const EdgeInsets.all(4),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: scheme.outlineVariant),
-          ),
-        ),
-        appBarTheme: AppBarTheme(
-          toolbarHeight: 44,
-          backgroundColor: tokens.canvas,
-          foregroundColor: scheme.onSurface,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          titleTextStyle: TextStyle(
-            color: scheme.onSurface,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        navigationRailTheme: NavigationRailThemeData(
-          backgroundColor: Colors.transparent,
-          indicatorColor: scheme.primary.withValues(alpha: 0.12),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          isDense: true,
-          filled: true,
-          fillColor: scheme.surface.withValues(alpha: 0.8),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 10,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: scheme.outlineVariant),
-          ),
-        ),
-        dividerTheme: DividerThemeData(color: scheme.outlineVariant),
-      );
-    }
+    final desktop =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.macOS ||
+            defaultTargetPlatform == TargetPlatform.windows);
     final colors = dark ? definition.darkScheme : definition.lightScheme;
-    final tokens = dark ? definition.darkTokens : definition.lightTokens;
+    final tokens = (dark ? definition.darkTokens : definition.lightTokens)
+        .copyWith(desktop: desktop);
     return ThemeData(
+      platform: desktop ? TargetPlatform.windows : null,
       brightness: brightness,
       colorScheme: colors,
+      visualDensity: desktop ? VisualDensity.compact : VisualDensity.standard,
+      materialTapTargetSize: desktop
+          ? MaterialTapTargetSize.shrinkWrap
+          : MaterialTapTargetSize.padded,
       extensions: [tokens],
       useMaterial3: true,
       scaffoldBackgroundColor: tokens.glass
@@ -160,7 +90,7 @@ abstract final class AppTheme {
             : colors.surfaceContainer,
         surfaceTintColor: tokens.glass ? Colors.transparent : null,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(desktop ? 8 : 16),
           side: BorderSide(color: colors.outlineVariant),
         ),
       ),
@@ -184,20 +114,21 @@ abstract final class AppTheme {
         indicatorColor: colors.primaryContainer,
       ),
       inputDecorationTheme: InputDecorationTheme(
+        isDense: desktop,
         filled: true,
         fillColor: tokens.glass
             ? colors.surfaceContainerHighest.withValues(alpha: 0.65)
             : colors.surfaceContainerHighest,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(desktop ? 6 : 12),
           borderSide: BorderSide(color: colors.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(desktop ? 6 : 12),
           borderSide: BorderSide(color: colors.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(desktop ? 6 : 12),
           borderSide: BorderSide(color: colors.primary, width: 1.5),
         ),
       ),

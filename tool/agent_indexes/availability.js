@@ -33,9 +33,9 @@ const capabilities = {
     sources: ['apps/flutter_forge/lib/modules/ui/gcode_visualizer/module_entry.dart', 'apps/flutter_forge/pubspec.yaml'],
   },
   scene_render: {
-    dependencies: ['flutter_scene'], platforms: ['android', 'macOS', 'windows'],
+    dependencies: ['forge_scene_viewer'], platforms: ['android', 'macOS', 'windows'],
     reason: 'scene_gpu_adapters',
-    sources: ['apps/flutter_forge/android/app/src/main/AndroidManifest.xml', 'apps/flutter_forge/windows/runner/main.cpp', 'apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart'],
+    sources: ['packages/forge_scene_viewer/lib/src/scene_runtime.dart', 'apps/flutter_forge/android/app/src/main/AndroidManifest.xml', 'apps/flutter_forge/windows/runner/main.cpp', 'apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart'],
     features: ['scene_controls'],
   },
   scene_controls: {

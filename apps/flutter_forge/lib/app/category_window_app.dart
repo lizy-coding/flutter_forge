@@ -10,7 +10,9 @@ import 'router/app_route_table.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_theme_controller.dart';
 import 'theme/forge_glass.dart';
-import 'mac_desktop_host.dart';
+import 'desktop_window_host.dart';
+import 'desktop_workbench_shell.dart';
+import 'theme/app_theme_selection.dart';
 
 class CategoryWindowApp extends StatefulWidget {
   const CategoryWindowApp({
@@ -36,20 +38,34 @@ class CategoryWindowApp extends StatefulWidget {
           UnsupportedModulePage(module: module, platform: platform),
     );
 
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/',
+        builder: (context, state) => CategoryHomePage(
+          category: category,
+          modules: modules,
+          platform: platform,
+          focusedWindow: true,
+        ),
+        routes: childRoutes,
+      ),
+    ];
     return GoRouter(
       initialLocation: '/',
-      routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => CategoryHomePage(
-            category: category,
-            modules: modules,
-            platform: platform,
-            focusedWindow: true,
-          ),
-          routes: childRoutes,
-        ),
-      ],
+      routes: platform.hostFamily == AppHostFamily.desktop
+          ? [
+              ShellRoute(
+                builder: (context, state, child) => DesktopWorkbenchShell(
+                  modules: modules,
+                  location: state.uri.path,
+                  platform: platform,
+                  focusedCategory: category,
+                  child: child,
+                ),
+                routes: routes,
+              ),
+            ]
+          : routes,
     );
   }
 
@@ -93,13 +109,17 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
       child: ListenableBuilder(
         listenable: widget.themeController,
         builder: (context, _) => MaterialApp.router(
+          debugShowCheckedModeBanner: false,
           routerConfig: _router,
           title: widget.category.label,
           theme: AppTheme.light(widget.themeController.palette),
           darkTheme: AppTheme.dark(widget.themeController.palette),
+          highContrastTheme: AppTheme.light(AppThemePalette.graphiteForge),
+          highContrastDarkTheme: AppTheme.dark(AppThemePalette.graphiteForge),
           themeMode: widget.themeController.themeMode,
-          builder: (context, child) => MacDesktopHost(
-            hasSidebar: false,
+          builder: (context, child) => DesktopWindowHost(
+            platform: widget.platform,
+            mainWindow: false,
             title: widget.category.label,
             router: _router,
             modules: filterModulesByCategory(

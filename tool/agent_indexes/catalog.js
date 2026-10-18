@@ -27,6 +27,13 @@ const categoryOwnership = {
 
 const workspacePackages = [
   {
+    name: 'forge_scene_viewer', kind: 'flutter_package',
+    path: 'packages/forge_scene_viewer', entrypoints: ['lib/forge_scene_viewer.dart', 'lib/build_hooks.dart'],
+    owns: ['scene_runtime', 'orbit_camera', 'scene_selection', 'render_scheduling', 'render_diagnostics'],
+    depends: ['flutter_sdk', 'flutter_scene', 'vector_math'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'usb_network_bridge', kind: 'flutter_plugin_package',
     path: 'packages/usb_network_bridge', entrypoints: ['lib/usb_network_bridge.dart'],
     owns: ['ncm_interface_enumeration', 'interface_bound_tcp', 'native_relay_lifecycle'],

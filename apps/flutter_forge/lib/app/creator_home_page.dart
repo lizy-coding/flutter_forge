@@ -15,7 +15,7 @@ class CreatorHomePage extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: context.forgeColors.glass || context.forgeColors.nativeDesktop
+        gradient: context.forgeColors.glass || context.forgeColors.desktop
             ? null
             : LinearGradient(
                 begin: Alignment.topLeft,
@@ -100,11 +100,11 @@ class _HeroSection extends StatelessWidget {
         Text(
           '把 Flutter 学习\n变成一次次实践',
           style:
-              (context.forgeColors.nativeDesktop
+              (context.forgeColors.desktop
                       ? Theme.of(context).textTheme.headlineMedium
                       : Theme.of(context).textTheme.displaySmall)
                   ?.copyWith(
-                    fontWeight: context.forgeColors.nativeDesktop
+                    fontWeight: context.forgeColors.desktop
                         ? FontWeight.w600
                         : FontWeight.w800,
                     height: 1.12,
@@ -167,7 +167,7 @@ class _HeroSection extends StatelessWidget {
     }
     return Container(
       padding: EdgeInsets.all(
-        context.forgeColors.nativeDesktop
+        context.forgeColors.desktop
             ? 20
             : wide
             ? 36
@@ -176,10 +176,10 @@ class _HeroSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(
-          context.forgeColors.nativeDesktop ? 8 : 28,
+          context.forgeColors.desktop ? 8 : 28,
         ),
         border: Border.all(color: colors.outlineVariant),
-        boxShadow: context.forgeColors.nativeDesktop
+        boxShadow: context.forgeColors.desktop
             ? []
             : [
                 BoxShadow(

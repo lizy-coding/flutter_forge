@@ -8,7 +8,8 @@ import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import 'navigation_policy.dart';
 import 'module_search.dart';
-import 'mac_desktop_host.dart';
+import '../module_registry/app_platform_snapshot.dart';
+import 'desktop_workbench_shell.dart';
 import 'forge_bubble_navigation.dart';
 import 'theme/theme_mode_button.dart';
 import 'theme/forge_theme_tokens.dart';
@@ -20,11 +21,13 @@ class AdaptiveAppShell extends StatefulWidget {
     required this.modules,
     required this.child,
     required this.location,
+    this.platform,
   });
 
   final List<ModuleEntry> modules;
   final Widget child;
   final String location;
+  final AppPlatformSnapshot? platform;
 
   @override
   State<AdaptiveAppShell> createState() => _AdaptiveAppShellState();
@@ -32,26 +35,6 @@ class AdaptiveAppShell extends StatefulWidget {
 
 class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
   bool _sidebarExpanded = true;
-  ChangeNotifier? _nativeSidebar;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final sidebar = MacDesktopScope.sidebarOf(context);
-    if (sidebar == _nativeSidebar) return;
-    _nativeSidebar?.removeListener(_toggleSidebar);
-    _nativeSidebar = sidebar;
-    _nativeSidebar?.addListener(_toggleSidebar);
-  }
-
-  void _toggleSidebar() => setState(() => _sidebarExpanded = !_sidebarExpanded);
-
-  @override
-  void dispose() {
-    _nativeSidebar?.removeListener(_toggleSidebar);
-    super.dispose();
-  }
-
   int _selectedIndex() {
     if (widget.location == '/') return 0;
     for (var index = 0; index < ModuleCategory.values.length; index++) {
@@ -85,6 +68,15 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final platform = widget.platform ?? AppPlatformSnapshot.detect();
+    if (platform.hostFamily == AppHostFamily.desktop) {
+      return DesktopWorkbenchShell(
+        modules: widget.modules,
+        location: widget.location,
+        platform: platform,
+        child: widget.child,
+      );
+    }
     return LayoutBuilder(
       builder: (context, constraints) {
         final layout = NavigationPolicy.layoutFor(
@@ -95,7 +87,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
         return CallbackShortcuts(
           bindings: {
             const SingleActivator(LogicalKeyboardKey.slash): _showSearch,
-            if (context.forgeColors.nativeDesktop)
+            if (context.forgeColors.desktop)
               const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
                   _showSearch,
           },
@@ -103,7 +95,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
             autofocus: true,
             child: Scaffold(
               key: const ValueKey('adaptive-app-shell'),
-              backgroundColor: context.forgeColors.nativeDesktop
+              backgroundColor: context.forgeColors.desktop
                   ? Colors.transparent
                   : null,
               appBar:
@@ -226,7 +218,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                         const VerticalDivider(width: 1),
                         Expanded(
                           child: ColoredBox(
-                            color: context.forgeColors.nativeDesktop
+                            color: context.forgeColors.desktop
                                 ? context.forgeColors.canvas
                                 : Colors.transparent,
                             child: widget.child,
@@ -264,7 +256,7 @@ class _Sidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       key: const ValueKey('expanded-sidebar'),
-      width: context.forgeColors.nativeDesktop ? 224 : 264,
+      width: context.forgeColors.desktop ? 224 : 264,
       child: _navigationSurface(
         context,
         Material(
@@ -273,7 +265,7 @@ class _Sidebar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (context.forgeColors.nativeDesktop)
+                if (context.forgeColors.desktop)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 4, 4),
                     child: Row(
@@ -359,7 +351,7 @@ class _Sidebar extends StatelessWidget {
                           itemCount: _destinations.length,
                           itemBuilder: (context, index) {
                             final destination = _destinations[index];
-                            final native = context.forgeColors.nativeDesktop;
+                            final native = context.forgeColors.desktop;
                             return Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: native ? 8 : 0,

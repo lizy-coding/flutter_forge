@@ -9,16 +9,15 @@ import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/module_root.dart';
-import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_camera_controller.dart';
+import 'package:forge_scene_viewer/forge_scene_viewer.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_interaction_mode.dart';
-import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_runtime.dart';
-import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_selection_controller.dart';
 
 void main() {
   testWidgets('shows title, learning content, and semantic controls', (
     tester,
   ) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(home: FlutterScene3dPage(runtime: runtime)),
     );
@@ -41,6 +40,7 @@ void main() {
     tester,
   ) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(home: FlutterScene3dPage(runtime: runtime)),
     );
@@ -65,6 +65,7 @@ void main() {
     tester,
   ) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MediaQuery(
         data: const MediaQueryData(disableAnimations: true),
@@ -82,6 +83,7 @@ void main() {
     tester,
   ) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(
         home: FlutterScene3dPage(
@@ -103,6 +105,7 @@ void main() {
 
   testWidgets('basic mode blocks wheel zoom', (tester) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(home: FlutterScene3dPage(runtime: runtime)),
     );
@@ -127,6 +130,7 @@ void main() {
     tester,
   ) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(home: FlutterScene3dPage(runtime: runtime)),
     );
@@ -144,6 +148,7 @@ void main() {
     tester,
   ) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     var escapedArrowRepeats = 0;
     await tester.pumpWidget(
       MaterialApp(
@@ -176,6 +181,7 @@ void main() {
     tester,
   ) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(home: FlutterScene3dPage(runtime: runtime)),
     );
@@ -201,6 +207,7 @@ void main() {
     tester,
   ) async {
     final runtime = FakeSceneRuntime();
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(home: FlutterScene3dPage(runtime: runtime)),
     );
@@ -222,6 +229,7 @@ void main() {
 
   testWidgets('shows loading state', (tester) async {
     final runtime = FakeSceneRuntime(initialization: Completer<void>().future);
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(home: FlutterScene3dPage(runtime: runtime)),
     );
@@ -233,6 +241,7 @@ void main() {
   testWidgets('shows initialization error state', (tester) async {
     final initialization = Completer<void>();
     final runtime = FakeSceneRuntime(initialization: initialization.future);
+    addTearDown(runtime.dispose);
     await tester.pumpWidget(
       MaterialApp(home: FlutterScene3dPage(runtime: runtime)),
     );
@@ -272,13 +281,24 @@ void main() {
   });
 }
 
-class FakeSceneRuntime implements SceneDemoRuntime {
+class FakeSceneRuntime implements SceneViewerRuntime {
+  @override
+  void dispose() {
+    rendering.dispose();
+    camera.dispose();
+    selection.dispose();
+  }
+
   FakeSceneRuntime({Future<void>? initialization})
     : _initialization = initialization ?? Future<void>.value();
 
   final Future<void> _initialization;
   @override
   final SceneCameraController camera = SceneCameraController();
+  @override
+  late final SceneRenderController rendering = SceneRenderController(
+    camera: camera,
+  );
   @override
   final SceneSelectionController selection = SceneSelectionController();
 
@@ -287,7 +307,10 @@ class FakeSceneRuntime implements SceneDemoRuntime {
       const ColoredBox(key: Key('fake-scene-view'), color: Colors.black);
 
   @override
-  Future<void> initialize() => _initialization;
+  Future<void> initialize() async {
+    await _initialization;
+    if (!rendering.isDisposed) rendering.markReady();
+  }
 
   @override
   void clearSelection() => selection.clear();

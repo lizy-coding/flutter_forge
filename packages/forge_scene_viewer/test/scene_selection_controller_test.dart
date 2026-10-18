@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_selection_controller.dart';
+import 'package:forge_scene_viewer/forge_scene_viewer.dart';
 
 void main() {
   test('selection can be replaced and cleared', () {

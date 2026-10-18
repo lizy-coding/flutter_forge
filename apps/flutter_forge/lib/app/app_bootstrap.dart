@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import '../module_registry/app_platform_snapshot.dart';
@@ -9,6 +10,8 @@ import 'app_platform_provider.dart';
 import 'category_window_app.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme_controller.dart';
+import 'theme/app_theme_selection.dart';
+import 'workbench_history.dart';
 
 /// Resolves the host-specific application shell before mounting Flutter.
 Future<void> bootstrapFlutterForgeApp() async {
@@ -23,7 +26,15 @@ Future<void> bootstrapFlutterForgeApp() async {
     arguments = MultiWindowManager.parseArguments(currentWindow.arguments);
   }
 
+  final history = WorkbenchHistory(
+    preferences: await SharedPreferences.getInstance(),
+  );
   final themeController = await AppThemeController.load(
+    defaultSelection: AppThemeSelection(
+      palette: platform.hostFamily == AppHostFamily.desktop
+          ? AppThemePalette.graphiteForge
+          : AppThemePalette.liquidGlass,
+    ),
     initialSelectionPayload: arguments.type == WindowType.category
         ? arguments.themeSelectionPayload
         : null,
@@ -53,14 +64,17 @@ Future<void> bootstrapFlutterForgeApp() async {
   }
 
   runApp(
-    ProviderScope(
-      overrides: [appPlatformProvider.overrideWithValue(platform)],
-      child:
-          root ??
-          App(
-            router: AppRouter.create(platform),
-            themeController: themeController,
-          ),
+    WorkbenchHistoryScope(
+      history: history,
+      child: ProviderScope(
+        overrides: [appPlatformProvider.overrideWithValue(platform)],
+        child:
+            root ??
+            App(
+              router: AppRouter.create(platform),
+              themeController: themeController,
+            ),
+      ),
     ),
   );
 }

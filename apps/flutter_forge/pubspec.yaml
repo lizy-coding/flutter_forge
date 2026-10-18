@@ -45,9 +45,9 @@ dependencies:
   liquid_glass_easy: ^5.0.0
   webview_flutter: ^4.9.0
   webview_windows: ^0.4.0
-  flutter_scene: 0.23.0
+  forge_scene_viewer:
+    path: ../../packages/forge_scene_viewer
   hooks: ^2.0.0
-  vector_math: ^2.1.4
   universal_ble: ^2.3.0
 
 dev_dependencies:

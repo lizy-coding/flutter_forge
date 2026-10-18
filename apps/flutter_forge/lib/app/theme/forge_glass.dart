@@ -1,7 +1,35 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 
 import 'forge_theme_tokens.dart';
+
+class ForgeShellSurface extends StatelessWidget {
+  const ForgeShellSurface({super.key, required this.child, this.radius = 0});
+  final Widget child;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final glass =
+        context.forgeColors.glass && !MediaQuery.highContrastOf(context);
+    final surface = Material(
+      color: glass ? colors.surface.withValues(alpha: 0.72) : colors.surface,
+      child: child,
+    );
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: glass
+          ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: surface,
+            )
+          : surface,
+    );
+  }
+}
 
 class ForgeThemeBackdrop extends StatelessWidget {
   const ForgeThemeBackdrop({super.key, required this.child});
@@ -20,7 +48,7 @@ class ForgeThemeBackdrop extends StatelessWidget {
           child: DecoratedBox(
             key: const ValueKey('theme-backdrop'),
             decoration: BoxDecoration(
-              color: tokens.nativeDesktop ? Colors.transparent : tokens.canvas,
+              color: tokens.canvas,
               gradient: tokens.glass
                   ? LinearGradient(
                       begin: Alignment.topLeft,

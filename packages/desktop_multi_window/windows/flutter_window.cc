@@ -11,13 +11,16 @@
 
 FlutterWindow::FlutterWindow(const std::string& id,
                              const WindowConfiguration config)
-    : id_(id), window_argument_(config.arguments) {}
+    : id_(id),
+      window_argument_(config.arguments),
+      enable_flutter_gpu_(config.enable_flutter_gpu) {}
 
 bool FlutterWindow::OnCreate() {
   // Called when the window is created
   RECT frame = GetClientArea();
 
   flutter::DartProject project(L"data");
+  project.set_enable_flutter_gpu(enable_flutter_gpu_);
   std::vector<std::string> entrypoint_args = {"multi_window", id_,
                                               window_argument_};
   project.set_dart_entrypoint_arguments(entrypoint_args);

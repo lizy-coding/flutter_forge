@@ -42,12 +42,19 @@
       "packages/flutter_ioc_core",
       "packages/desktop_multi_window",
       "packages/flutter_battery",
-      "packages/usb_network_bridge"
+      "packages/usb_network_bridge",
+      "packages/forge_scene_viewer"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "forge_scene_viewer",
+      "type": "flutter_package",
+      "path": "packages/forge_scene_viewer",
+      "entrypoint": "lib/forge_scene_viewer.dart"
+    },
     {
       "name": "usb_network_bridge",
       "type": "flutter_plugin_package",
@@ -184,6 +191,33 @@
     "desktop_window_policy": "lib/app/category_navigation.dart",
     "navigation_policy": "lib/app/navigation_policy.dart",
     "compact_width_breakpoint_dp": 600,
+    "desktop_shell": {
+      "targets": [
+        "macos",
+        "windows"
+      ],
+      "rendering": "shared_flutter_workbench",
+      "titlebar": "immersive_flutter_48dp_with_native_window_controls",
+      "titlebar_home": "main_workbench_or_focused_category_root",
+      "titlebar_double_click": "platform_system_preference",
+      "window_controls": "native_macos_leading_traffic_lights_windows_trailing_caption",
+      "fullscreen_entry": "separate_native_fullscreen_button_and_f11",
+      "native_control_layout": "host_reported_logical_insets",
+      "window_host": "lib/app/desktop_window_host.dart",
+      "native_hosts": [
+        "macos/Runner/AppDelegate.swift",
+        "windows/runner/desktop_window_host.cpp"
+      ],
+      "default_home": "workbench_recent_and_categories",
+      "navigation": "two_level_category_module_single_active_route",
+      "quick_open": "title_subtitle_category_concepts",
+      "recent_history": "bounded_module_entry_preferences_not_task_restore",
+      "default_palette": "graphiteForge_on_first_desktop_launch",
+      "glass_scope": "main_framework_over_application_background",
+      "main_window_close": "exit_application",
+      "category_window_close": "close_current_window",
+      "decision": "docs/adr/0016-shared-desktop-workbench.md"
+    },
     "mobile_window_policy": "in_app_navigation_only",
     "web_window_policy": "in_app_navigation_only",
     "platform_snapshot": "bootstrap_initialized_process_immutable",
