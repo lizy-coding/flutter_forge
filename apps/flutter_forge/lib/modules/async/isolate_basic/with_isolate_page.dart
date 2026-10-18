@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:isolate';
+import 'dart:async';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 class WithIsolatePage extends StatefulWidget {
-  const WithIsolatePage({super.key});
+  const WithIsolatePage({super.key, this.spawn});
+
+  final Future<Isolate> Function(SendPort output, SendPort errors)? spawn;
 
   @override
   State<WithIsolatePage> createState() => _WithIsolatePageState();
@@ -19,6 +22,26 @@ class _WithIsolatePageState extends State<WithIsolatePage>
   late AnimationController _animationController;
   late Animation<double> _animation;
   int _counter = 0;
+  Isolate? _isolate;
+  ReceivePort? _results;
+  ReceivePort? _errors;
+  StreamSubscription<dynamic>? _resultSubscription;
+  StreamSubscription<dynamic>? _errorSubscription;
+  int _generation = 0;
+
+  void _releaseCalculation() {
+    _generation++;
+    _isolate?.kill(priority: Isolate.immediate);
+    _isolate = null;
+    unawaited(_resultSubscription?.cancel());
+    unawaited(_errorSubscription?.cancel());
+    _resultSubscription = null;
+    _errorSubscription = null;
+    _results?.close();
+    _errors?.close();
+    _results = null;
+    _errors = null;
+  }
 
   @override
   void initState() {
@@ -32,6 +55,8 @@ class _WithIsolatePageState extends State<WithIsolatePage>
 
   @override
   void dispose() {
+    _releaseCalculation();
+    _stopwatch.stop();
     _animationController.dispose();
     super.dispose();
   }
@@ -156,6 +181,7 @@ class _WithIsolatePageState extends State<WithIsolatePage>
   }
 
   void _startHeavyCalculation() {
+    if (_isCalculating) return;
     setState(() {
       _isCalculating = true;
       _result = '计算中...\n';
@@ -163,30 +189,33 @@ class _WithIsolatePageState extends State<WithIsolatePage>
       _stopwatch.reset();
       _stopwatch.start();
     });
-    _findPrimesWithIsolate();
+    unawaited(_findPrimesWithIsolate());
   }
 
-  void _findPrimesWithIsolate() async {
+  Future<void> _findPrimesWithIsolate() async {
     const int iterations = 20;
     const int maxNumber = 500000;
+    final generation = ++_generation;
     final receivePort = ReceivePort();
     final errorPort = ReceivePort();
-    await Isolate.spawn(
-      _isolateEntryPoint,
-      _IsolateMessage(
-        sendPort: receivePort.sendPort,
-        iterations: iterations,
-        maxNumber: maxNumber,
-      ),
-      onError: errorPort.sendPort,
-    );
-    errorPort.listen((error) {
+    _results = receivePort;
+    _errors = errorPort;
+    bool current() => mounted && generation == _generation;
+    void fail(Object error) {
+      if (!current()) return;
+      _stopwatch.stop();
       setState(() {
         _isCalculating = false;
         _result += '\n发生错误: $error';
       });
-    });
-    await for (final message in receivePort) {
+      _releaseCalculation();
+    }
+
+    _errorSubscription = errorPort.listen(
+      (dynamic error) => fail(error as Object),
+    );
+    _resultSubscription = receivePort.listen((dynamic message) {
+      if (!current()) return;
       if (message is _ProgressMessage) {
         setState(() {
           _progress = message.progress;
@@ -200,10 +229,28 @@ class _WithIsolatePageState extends State<WithIsolatePage>
           _progress = 1.0;
           _result += '\n计算完成! 耗时: ${_stopwatch.elapsedMilliseconds / 1000} 秒';
         });
-        receivePort.close();
-        errorPort.close();
-        break;
+        _releaseCalculation();
       }
+    });
+    try {
+      final isolate =
+          await (widget.spawn?.call(receivePort.sendPort, errorPort.sendPort) ??
+              Isolate.spawn(
+                _isolateEntryPoint,
+                _IsolateMessage(
+                  sendPort: receivePort.sendPort,
+                  iterations: iterations,
+                  maxNumber: maxNumber,
+                ),
+                onError: errorPort.sendPort,
+              ));
+      if (!current()) {
+        isolate.kill(priority: Isolate.immediate);
+        return;
+      }
+      _isolate = isolate;
+    } catch (error) {
+      fail(error);
     }
   }
 }

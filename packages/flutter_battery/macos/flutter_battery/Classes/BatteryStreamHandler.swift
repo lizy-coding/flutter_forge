@@ -38,6 +38,7 @@ public class BatteryStreamHandler: NSObject, FlutterStreamHandler {
     private var lastPowerState: String?
 
     public init(batteryMonitor: BatteryMonitor) { monitor = batteryMonitor; super.init() }
+    deinit { dispose() }
 
     func configure(_ config: BatteryStreamConfiguration) {
         configuration = config

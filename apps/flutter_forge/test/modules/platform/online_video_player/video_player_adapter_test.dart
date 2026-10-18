@@ -36,6 +36,66 @@ void main() {
   });
 
   test(
+    'old open cannot replace the winner after asynchronous disposal',
+    () async {
+      final adapter = VideoPlayerPluginAdapter(
+        probeBeforeOpen: false,
+        startAutomatically: false,
+      );
+      await adapter.openAndPlay();
+      platform.disposeGate = Completer<void>();
+      final oldOpen = adapter.openAndPlay();
+      await platform.disposalStarted.future;
+      await adapter.openAndPlay();
+      final winner = adapter.videoController;
+      platform.disposeGate!.complete();
+      await oldOpen;
+      expect(adapter.videoController, same(winner));
+      expect(platform.createdIds, [0, 1]);
+      expect(platform.disposedIds, {0});
+      adapter.dispose();
+      await _waitUntil(
+        () => platform.disposedIds.contains(1),
+        timeout: const Duration(seconds: 1),
+      );
+    },
+  );
+
+  test(
+    'dispose during old controller release cannot create a new player',
+    () async {
+      final adapter = VideoPlayerPluginAdapter(
+        probeBeforeOpen: false,
+        startAutomatically: false,
+      );
+      await adapter.openAndPlay();
+      platform.disposeGate = Completer<void>();
+      final reopening = adapter.openAndPlay();
+      await platform.disposalStarted.future;
+      adapter.dispose();
+      platform.disposeGate!.complete();
+      await reopening;
+      expect(platform.createdIds, [0]);
+      expect(adapter.videoController, isNull);
+    },
+  );
+
+  test('a failed reload probe releases the previous player', () async {
+    var reachable = true;
+    final adapter = VideoPlayerPluginAdapter(
+      reachabilityProbe: (_) async => reachable,
+      startAutomatically: false,
+    );
+    await adapter.openAndPlay();
+    reachable = false;
+    await adapter.openAndPlay();
+    expect(adapter.videoController, isNull);
+    expect(adapter.uiState.value, PlayerUiState.error);
+    expect(platform.disposedIds, {0});
+    adapter.dispose();
+  });
+
+  test(
     'platform policy can let the player initialize without a probe',
     () async {
       var probeCalls = 0;
@@ -276,6 +336,8 @@ class _RecordingHttpClientAdapter implements HttpClientAdapter {
 /// A minimal [VideoPlayerPlatform] double that records lifecycle calls.
 class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   bool haltInitializedEvents = false;
+  Completer<void>? disposeGate;
+  final disposalStarted = Completer<void>();
 
   final List<int> createdIds = [];
   final Set<int> disposedIds = {};
@@ -320,6 +382,10 @@ class _FakeVideoPlayerPlatform extends VideoPlayerPlatform {
 
   @override
   Future<void> dispose(int textureId) async {
+    if (textureId == 0 && disposeGate != null) {
+      if (!disposalStarted.isCompleted) disposalStarted.complete();
+      await disposeGate!.future;
+    }
     disposedIds.add(textureId);
     final controller = _events.remove(textureId);
     await controller?.close();

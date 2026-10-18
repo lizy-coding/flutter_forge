@@ -199,15 +199,9 @@ public class FlutterBatteryPlugin: NSObject, FlutterPlugin {
         ]
     }
 
-    public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    deinit {
         changesHandler?.dispose()
-        changesChannel?.setStreamHandler(nil)
-        changesHandler = nil
-        changesChannel = nil
         eventChannelHandler?.dispose()
         batteryMonitor?.dispose()
-        methodChannel = nil
-        eventChannel = nil
-        eventChannelHandler = nil
     }
 }

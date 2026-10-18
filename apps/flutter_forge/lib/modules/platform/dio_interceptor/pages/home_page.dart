@@ -6,10 +6,10 @@ import 'package:go_router/go_router.dart';
 
 import '../models/article.dart';
 import '../network/api/api_service.dart';
-import '../network/interceptor/auth_interceptor.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.api});
+  final ApiService api;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   static const String _baseRoute = '/dio-interceptor';
 
-  final ApiService _apiService = ApiService();
+  ApiService get _apiService => widget.api;
   bool _isLoading = false;
   List<Article> _articles = [];
   int _currentPage = 1;
@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
     });
     try {
       final result = await _apiService.getArticles(page: _currentPage);
+      if (!mounted) return;
       if (result['success'] == true && result['data'] != null) {
         final articlesData = result['data']['articles'] as List;
         final articles = articlesData
@@ -61,6 +62,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = '加载失败: $e';
         _isLoading = false;
@@ -89,18 +91,18 @@ class _HomePageState extends State<HomePage> {
 
   void _openLoginPage() async {
     final result = await context.push<bool>('$_baseRoute/login');
-    if (result == true) await _refreshArticles();
+    if (mounted && result == true) await _refreshArticles();
   }
 
   void _logout() {
-    AuthInterceptor.clearToken();
+    _apiService.clearToken();
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('已退出登录')));
     unawaited(_refreshArticles());
   }
 
-  bool get isLoggedIn => AuthInterceptor.getToken() != null;
+  bool get isLoggedIn => _apiService.isLoggedIn;
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +160,7 @@ class _HomePageState extends State<HomePage> {
               'dio.interceptors.addAll([\n'
               '  AuthInterceptor(),\n'
               '  LoggingInterceptor(),\n'
-              '  RetryInterceptor(),\n'
+              '  RetryInterceptor(dio: dio),\n'
               '  ErrorInterceptor(),\n'
               ']);',
           explanation: '拦截器按添加顺序组成链路，请求从 Auth → Logging → Retry → Error 依次经过。',
@@ -319,6 +321,7 @@ class _HomePageState extends State<HomePage> {
                     scaffoldMessenger.showSnackBar(
                       const SnackBar(content: Text('文章创建成功')),
                     );
+                    setState(() => _isLoading = false);
                     await _refreshArticles();
                   } else {
                     scaffoldMessenger.showSnackBar(

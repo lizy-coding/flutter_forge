@@ -5,20 +5,20 @@ import 'package:flutter/foundation.dart';
 /// 用于在请求发出前为每个请求添加认证信息（如：token）
 class AuthInterceptor extends Interceptor {
   /// 模拟的本地存储token
-  static String? _token;
+  String? _token;
 
   /// 设置token
-  static void setToken(String token) {
+  void setToken(String token) {
     _token = token;
   }
 
   /// 清除token
-  static void clearToken() {
+  void clearToken() {
     _token = null;
   }
 
   /// 获取token
-  static String? getToken() {
+  String? getToken() {
     return _token;
   }
 

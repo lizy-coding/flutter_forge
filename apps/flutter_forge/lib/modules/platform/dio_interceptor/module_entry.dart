@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'mock_server/mock_server.dart'
-    if (dart.library.js_interop) 'mock_server/mock_server_web.dart';
+import 'lesson_session.dart';
 import 'pages/home_page.dart' as interceptor_test;
 
 class InterceptorTestEntry extends StatefulWidget {
@@ -14,30 +13,49 @@ class InterceptorTestEntry extends StatefulWidget {
 }
 
 class _InterceptorTestEntryState extends State<InterceptorTestEntry> {
-  final MockServer _server = MockServer();
-  late final Future<void> _startFuture;
+  late LessonLease _lease;
 
   @override
   void initState() {
     super.initState();
-    _startFuture = _server.start();
+    _lease = LessonSession.acquire();
   }
 
   @override
   void dispose() {
-    unawaited(_server.stop());
+    unawaited(_lease.close());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
-      future: _startFuture,
+      future: _lease.ready,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const _LoadingPage(title: 'Starting mock server');
         }
-        return const interceptor_test.HomePage();
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Dio 拦截器演示')),
+            body: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('模拟服务启动失败，请重试。'),
+                  TextButton(
+                    onPressed: () {
+                      unawaited(_lease.close());
+                      setState(() => _lease = LessonSession.acquire());
+                    },
+                    child: const Text('重试'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return interceptor_test.HomePage(api: _lease.api);
       },
     );
   }

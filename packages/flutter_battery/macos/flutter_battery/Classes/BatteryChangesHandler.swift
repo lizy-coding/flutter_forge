@@ -9,6 +9,7 @@ final class BatteryChangesHandler: NSObject, FlutterStreamHandler {
     private var runLoopSource: CFRunLoopSource?
     private var samples: [String] = []
     init(monitor: BatteryMonitor) { self.monitor = monitor }
+    deinit { dispose() }
 
     func configure(_ arguments: Any?) -> Bool {
         guard let args = arguments as? [String: Any],

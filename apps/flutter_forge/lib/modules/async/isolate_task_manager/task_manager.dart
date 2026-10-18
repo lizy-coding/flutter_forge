@@ -15,6 +15,8 @@ class Task {
   ReceivePort? receivePort;
   StreamSubscription<dynamic>? subscription;
   SendPort? isolateSendPort;
+  bool _disposed = false;
+  String? error;
   final Color color;
 
   Task({
@@ -35,9 +37,15 @@ class Task {
   }
 
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
     isolate?.kill(priority: Isolate.immediate);
     unawaited(subscription?.cancel());
     receivePort?.close();
+    isolate = null;
+    subscription = null;
+    receivePort = null;
+    isolateSendPort = null;
   }
 
   void pause() {
@@ -61,63 +69,89 @@ class TaskManager {
   int _nextTaskId = 1;
   final Function(Task)? onTaskUpdate;
   final Function(Task)? onTaskComplete;
+  final Future<Isolate> Function(void Function(dynamic), Map<String, dynamic>)
+  _spawn;
+  bool _disposed = false;
 
-  TaskManager({this.onTaskUpdate, this.onTaskComplete});
+  TaskManager({
+    this.onTaskUpdate,
+    this.onTaskComplete,
+    Future<Isolate> Function(void Function(dynamic), Map<String, dynamic>)?
+    spawn,
+  }) : _spawn = spawn ?? ((entry, message) => Isolate.spawn(entry, message));
 
   List<Task> get tasks => List.unmodifiable(_tasks);
 
   // 创建并启动新任务
   Task startNewTask() {
+    if (_disposed) throw StateError('任务管理器已关闭');
     final task = Task(id: _nextTaskId++, name: '任务 ${_nextTaskId - 1}');
 
     _tasks.add(task);
-    _startTaskInIsolate(task);
+    unawaited(_startTaskInIsolate(task));
 
     return task;
   }
 
   // 在Isolate中启动任务
-  void _startTaskInIsolate(Task task) async {
+  bool _owns(Task task) =>
+      !_disposed && !task._disposed && _tasks.contains(task);
+
+  Future<void> _startTaskInIsolate(Task task) async {
     task.receivePort = ReceivePort();
 
     // 启动Isolate，传递任务ID、初始进度和sendPort
-    task.isolate = await Isolate.spawn(_taskIsolate, {
-      'sendPort': task.receivePort!.sendPort,
-      'taskId': task.id,
-      'initialProgress': task.progress,
-    });
+    try {
+      final isolate = await _spawn(_taskIsolate, {
+        'sendPort': task.receivePort!.sendPort,
+        'taskId': task.id,
+        'initialProgress': task.progress,
+      });
+      if (!_owns(task)) {
+        isolate.kill(priority: Isolate.immediate);
+        return;
+      }
+      task.isolate = isolate;
 
-    // 监听任务进度更新和Isolate的SendPort
-    task.subscription = task.receivePort!.listen((dynamic data) {
-      if (data is SendPort) {
-        // 保存Isolate的SendPort，用于向Isolate发送命令
-        task.isolateSendPort = data;
-      } else if (data is Map<String, dynamic>) {
-        final int taskId = data['taskId'];
-        final Task? updatedTask = _tasks.firstWhereOrNull(
-          (t) => t.id == taskId,
-        );
+      // 监听任务进度更新和Isolate的SendPort
+      task.subscription = task.receivePort!.listen((dynamic data) {
+        if (!_owns(task)) return;
+        if (data is SendPort) {
+          // 保存Isolate的SendPort，用于向Isolate发送命令
+          task.isolateSendPort = data;
+        } else if (data is Map<String, dynamic>) {
+          final int taskId = data['taskId'];
+          final Task? updatedTask = _tasks.firstWhereOrNull(
+            (t) => t.id == taskId,
+          );
 
-        if (updatedTask != null) {
-          if (data.containsKey('progress')) {
-            updatedTask.progress = data['progress'];
-          }
-          if (data.containsKey('completed')) {
-            updatedTask.isCompleted = data['completed'];
-          }
+          if (updatedTask != null) {
+            if (data.containsKey('progress')) {
+              updatedTask.progress = data['progress'];
+            }
+            if (data.containsKey('completed')) {
+              updatedTask.isCompleted = data['completed'];
+            }
 
-          // 通知任务更新
-          if (onTaskUpdate != null) {
-            onTaskUpdate!(updatedTask);
-          }
+            // 通知任务更新
+            if (onTaskUpdate != null) {
+              onTaskUpdate!(updatedTask);
+            }
 
-          // 通知任务完成
-          if (updatedTask.isCompleted && onTaskComplete != null) {
-            onTaskComplete!(updatedTask);
+            // 通知任务完成
+            if (updatedTask.isCompleted && _owns(task)) {
+              task.dispose();
+              onTaskComplete?.call(updatedTask);
+            }
           }
         }
-      }
-    });
+      });
+    } catch (error) {
+      if (!_owns(task)) return;
+      task.error = '任务启动失败：$error';
+      task.dispose();
+      onTaskUpdate?.call(task);
+    }
   }
 
   // 暂停任务
@@ -146,6 +180,8 @@ class TaskManager {
 
   // 清理资源
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
     stopAllTasks();
   }
 }

@@ -7,10 +7,18 @@ import 'package:flutter/foundation.dart';
 /// 模拟服务器
 /// 用于模拟后端API响应，测试拦截器功能
 class MockServer {
-  static const int defaultPort = 8080;
+  static const int defaultPort = 0;
 
   HttpServer? _server;
   final int port;
+  Future<void>? _opening;
+  Future<void>? _closing;
+  bool _stopped = false;
+  String get baseUrl {
+    final server = _server;
+    if (server == null) throw StateError('模拟服务尚未启动或已关闭');
+    return 'http://127.0.0.1:${server.port}';
+  }
 
   // 模拟的用户数据库
   final Map<String, String> _users = {
@@ -52,111 +60,121 @@ class MockServer {
   }
 
   /// 启动服务器
-  Future<void> start() async {
-    try {
-      _server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
-
-      if (kDebugMode) {
-        print('模拟服务器已启动，监听端口: $port');
-      }
-
-      _handleRequests();
-    } catch (e) {
-      if (kDebugMode) {
-        print('启动模拟服务器失败: $e');
-      }
-    }
+  Future<void> start() {
+    if (_stopped) return Future.error(StateError('模拟服务已关闭'));
+    return _opening ??= _start();
   }
 
-  /// 停止服务器
-  Future<void> stop() async {
-    await _server?.close();
-    _server = null;
-
-    if (kDebugMode) {
-      print('模拟服务器已停止');
+  Future<void> _start() async {
+    final server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
+    if (_stopped) {
+      await server.close(force: true);
+      return;
     }
+    _server = server;
+    _handleRequests();
+  }
+
+  /// 停止服务器，同时回收晚到的绑定结果。
+  Future<void> stop() {
+    _stopped = true;
+    return _closing ??= _stop();
+  }
+
+  Future<void> _stop() async {
+    try {
+      await _opening;
+    } catch (_) {
+      /* 启动失败由 start 的调用方处理。 */
+    }
+    final server = _server;
+    _server = null;
+    await server?.close(force: true);
   }
 
   /// 处理请求
   void _handleRequests() {
     _server?.listen((request) async {
-      // 添加CORS头
-      request.response.headers.add('Access-Control-Allow-Origin', '*');
-      request.response.headers.add(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PUT, DELETE, OPTIONS',
-      );
-      request.response.headers.add(
-        'Access-Control-Allow-Headers',
-        'Origin, Content-Type, X-Auth-Token, Authorization',
-      );
-
-      // 处理预检请求
-      if (request.method == 'OPTIONS') {
-        request.response.statusCode = HttpStatus.ok;
-        await request.response.close();
-        return;
-      }
-
-      // 模拟网络延迟
-      await Future.delayed(Duration(milliseconds: networkDelay));
-
-      // 模拟随机失败（用于测试重试拦截器）
-      if (Random().nextDouble() < failureRate) {
-        request.response.statusCode = HttpStatus.internalServerError;
-        request.response.headers.contentType = ContentType.json;
-        request.response.write(
-          json.encode({'success': false, 'message': '模拟服务器随机错误，请重试'}),
-        );
-        await request.response.close();
-
-        if (kDebugMode) {
-          print('${request.method} ${request.uri.path} - 模拟随机失败');
-        }
-        return;
-      }
-
-      // 路由到对应的处理器
       try {
-        switch (request.uri.path) {
-          case '/api/login':
-            await _handleLogin(request);
-            break;
-          case '/api/refresh-token':
-            await _handleRefreshToken(request);
-            break;
-          case '/api/articles':
-            await _handleArticles(request);
-            break;
-          case '/api/articles/create':
-            await _handleCreateArticle(request);
-            break;
-          default:
-            // 404 Not Found
-            request.response.statusCode = HttpStatus.notFound;
-            request.response.headers.contentType = ContentType.json;
-            request.response.write(
-              json.encode({
-                'success': false,
-                'message': '404 Not Found: ${request.uri.path}',
-              }),
-            );
-            break;
-        }
-      } catch (e) {
-        // 处理过程中的错误
-        request.response.statusCode = HttpStatus.internalServerError;
-        request.response.headers.contentType = ContentType.json;
-        request.response.write(
-          json.encode({'success': false, 'message': '服务器内部错误: $e'}),
+        // 添加CORS头
+        request.response.headers.add('Access-Control-Allow-Origin', '*');
+        request.response.headers.add(
+          'Access-Control-Allow-Methods',
+          'GET, POST, PUT, DELETE, OPTIONS',
+        );
+        request.response.headers.add(
+          'Access-Control-Allow-Headers',
+          'Origin, Content-Type, X-Auth-Token, Authorization',
         );
 
-        if (kDebugMode) {
-          print('处理请求时出错: $e');
+        // 处理预检请求
+        if (request.method == 'OPTIONS') {
+          request.response.statusCode = HttpStatus.ok;
+          await request.response.close();
+          return;
         }
-      } finally {
-        await request.response.close();
+
+        // 模拟网络延迟
+        await Future.delayed(Duration(milliseconds: networkDelay));
+
+        // 模拟随机失败（用于测试重试拦截器）
+        if (Random().nextDouble() < failureRate) {
+          request.response.statusCode = HttpStatus.internalServerError;
+          request.response.headers.contentType = ContentType.json;
+          request.response.write(
+            json.encode({'success': false, 'message': '模拟服务器随机错误，请重试'}),
+          );
+          await request.response.close();
+
+          if (kDebugMode) {
+            print('${request.method} ${request.uri.path} - 模拟随机失败');
+          }
+          return;
+        }
+
+        // 路由到对应的处理器
+        try {
+          switch (request.uri.path) {
+            case '/api/login':
+              await _handleLogin(request);
+              break;
+            case '/api/refresh-token':
+              await _handleRefreshToken(request);
+              break;
+            case '/api/articles':
+              await _handleArticles(request);
+              break;
+            case '/api/articles/create':
+              await _handleCreateArticle(request);
+              break;
+            default:
+              // 404 Not Found
+              request.response.statusCode = HttpStatus.notFound;
+              request.response.headers.contentType = ContentType.json;
+              request.response.write(
+                json.encode({
+                  'success': false,
+                  'message': '404 Not Found: ${request.uri.path}',
+                }),
+              );
+              break;
+          }
+        } catch (e) {
+          // 处理过程中的错误
+          request.response.statusCode = HttpStatus.internalServerError;
+          request.response.headers.contentType = ContentType.json;
+          request.response.write(
+            json.encode({'success': false, 'message': '服务器内部错误: $e'}),
+          );
+
+          if (kDebugMode) {
+            print('处理请求时出错: $e');
+          }
+        } finally {
+          await request.response.close();
+        }
+      } catch (error) {
+        if (!_stopped) debugPrint('模拟请求处理失败：$error');
       }
     });
   }

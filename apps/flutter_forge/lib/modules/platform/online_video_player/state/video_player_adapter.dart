@@ -261,12 +261,16 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
       if (_disposed || generation != _openGeneration) return;
       if (!reachable) {
         _cancelLoadingWatchdog();
-        uiState.value = PlayerUiState.error;
+        await _releaseCurrent();
+        if (!_disposed && generation == _openGeneration) {
+          uiState.value = PlayerUiState.error;
+        }
         return;
       }
     }
 
     await _releaseCurrent();
+    if (_disposed || generation != _openGeneration) return;
 
     final controller = VideoPlayerController.networkUrl(url);
     controller.addListener(_synchronizeState);
@@ -278,11 +282,13 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
       _logDiagnostic('initialize-complete', initializeStopwatch, 'success');
       if (_disposed || generation != _openGeneration) {
         await _disposeQuietly(controller);
+        if (_controller == controller) _controller = null;
         return;
       }
       _cancelLoadingWatchdog();
       if (startAutomatically) {
         await controller.play();
+        if (_disposed || generation != _openGeneration) return;
         _startNoFrameMonitor(controller, generation);
       } else {
         uiState.value = PlayerUiState.paused;
@@ -322,8 +328,14 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   Future<void> play() async {
     final controller = _controller;
     if (controller == null) return;
+    final generation = _openGeneration;
     await controller.play();
-    _startNoFrameMonitor(controller, _openGeneration);
+    if (_disposed ||
+        generation != _openGeneration ||
+        _controller != controller) {
+      return;
+    }
+    _startNoFrameMonitor(controller, generation);
   }
 
   @override

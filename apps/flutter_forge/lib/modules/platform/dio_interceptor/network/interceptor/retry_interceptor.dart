@@ -8,6 +8,7 @@ import 'socket_error_io.dart'
 /// 重试拦截器
 /// 用于网络请求失败时自动重试
 class RetryInterceptor extends Interceptor {
+  final Dio dio;
   // 最大重试次数
   final int maxRetries;
   // 重试间隔（毫秒）
@@ -19,6 +20,7 @@ class RetryInterceptor extends Interceptor {
   final Map<String, int> _retryCountMap = {};
 
   RetryInterceptor({
+    required this.dio,
     this.maxRetries = 3,
     this.retryInterval = 1000,
     Set<DioExceptionType>? retryableErrors,
@@ -57,35 +59,17 @@ class RetryInterceptor extends Interceptor {
 
       // 等待指定的重试间隔
       await Future.delayed(Duration(milliseconds: retryInterval));
+      final token = err.requestOptions.cancelToken;
+      if (token?.isCancelled == true) {
+        _retryCountMap.remove(requestId);
+        handler.next(token!.cancelError ?? err);
+        return;
+      }
 
       try {
-        // 创建新的请求选项，继承原始请求的所有参数
-        final options = Options(
-          method: err.requestOptions.method,
-          headers: err.requestOptions.headers,
-          responseType: err.requestOptions.responseType,
-          contentType: err.requestOptions.contentType,
-          validateStatus: err.requestOptions.validateStatus,
-          receiveDataWhenStatusError:
-              err.requestOptions.receiveDataWhenStatusError,
-          followRedirects: err.requestOptions.followRedirects,
-          maxRedirects: err.requestOptions.maxRedirects,
-          requestEncoder: err.requestOptions.requestEncoder,
-          responseDecoder: err.requestOptions.responseDecoder,
-          listFormat: err.requestOptions.listFormat,
-        );
-
-        // 通过原始dio实例重新发送请求
-        final dio = Dio(); // 这里创建新的Dio实例只用于重试
-
-        // 执行重试请求
-        final response = await dio.request(
-          err.requestOptions.path,
-          data: err.requestOptions.data,
-          queryParameters: err.requestOptions.queryParameters,
-          options: options,
-          cancelToken: err.requestOptions.cancelToken,
-        );
+        // Reuse the owning client so URI, adapter, authentication and cancellation
+        // remain attached to the same lesson session.
+        final response = await dio.fetch<dynamic>(err.requestOptions);
 
         if (kDebugMode) {
           print('RetryInterceptor - 重试成功: ${response.statusCode}');
