@@ -103,9 +103,11 @@ Suggested starting path: **Three trees → Event loop → Streams → State mana
 
 Flutter `>=3.47.2` · Dart `^3.11.5`
 
+Lockfiles and CI use the official `pub.dev` source. These commands override local mirror settings to preserve the checked-in lockfiles.
+
 ```bash
 # Resolve workspace dependencies from the repository root
-flutter pub get
+PUB_HOSTED_URL=https://pub.dev flutter pub get --enforce-lockfile
 cd apps/flutter_forge
 flutter run -d <device>
 ```
@@ -113,7 +115,7 @@ flutter run -d <device>
 Run from the repository root:
 
 ```bash
-bash tool/quality_gate.sh       # Contracts, formatting, analysis, all tests, layout, FlutterGuard
+PUB_HOSTED_URL=https://pub.dev bash tool/quality_gate.sh  # Contracts, formatting, analysis, all tests, layout, FlutterGuard
 bash tool/build_web_release.sh  # Web Release and resource checks
 ```
 
