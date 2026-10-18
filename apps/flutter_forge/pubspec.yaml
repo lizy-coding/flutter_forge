@@ -10,6 +10,8 @@ environment:
 resolution: workspace
 
 dependencies:
+  usb_network_bridge:
+    path: ../../packages/usb_network_bridge
   flutter_battery:
     path: ../../packages/flutter_battery
   gcode_core:
@@ -40,11 +42,12 @@ dependencies:
   video_player_win: ^3.2.2
   shared_preferences: ^2.5.5
   url_launcher: ^6.3.2
+  liquid_glass_easy: ^5.0.0
   webview_flutter: ^4.9.0
   webview_windows: ^0.4.0
-  flutter_scene: 0.23.0
+  forge_scene_viewer:
+    path: ../../packages/forge_scene_viewer
   hooks: ^2.0.0
-  vector_math: ^2.1.4
   universal_ble: ^2.3.0
 
 dev_dependencies:
@@ -54,10 +57,6 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
   video_player_platform_interface: ^6.2.1
-  flutterguard_cli:
-    git:
-      url: https://github.com/lizy-coding/flutterguard.git
-      ref: 9f9be84a73dc4b99a956a8529b8c334849566b03
 
 flutter:
   config:
@@ -66,3 +65,6 @@ flutter:
   uses-material-design: true
   assets:
     - flutter_scene_generated/
+    - lib/modules/ui/shader_playground/shaders/uv_gradient.glsl
+  shaders:
+    - lib/modules/ui/shader_playground/shaders/uv_gradient.frag

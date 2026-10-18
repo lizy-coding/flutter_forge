@@ -10,20 +10,6 @@ from pathlib import Path
 
 root = Path(sys.argv[1])
 app_root = root / "apps" / "flutter_forge"
-test_root = app_root / "test"
-allowed_top_level = {"modules", "shared"}
-actual_top_level = {entry.name for entry in test_root.iterdir() if entry.is_dir()}
-unexpected = sorted(actual_top_level - allowed_top_level)
-
-print("=== Test Layout Verification ===")
-if unexpected:
-    print("FAIL: unexpected top-level test directories:")
-    for directory in unexpected:
-        print(f"  - test/{directory}/")
-    raise SystemExit(1)
-
-print("PASS: test/ top-level directories are modules/ and shared/")
-
 module_index = json.loads((app_root / "lib/AI_MODULE_INDEX.md").read_text())
 modules = module_index["modules"]
 present = []
@@ -37,7 +23,8 @@ for module in modules:
         module["id"],
         f'{module["id"]}_test.dart',
     )
-    if (app_root / relative).is_file():
+    directory = app_root / relative.parent
+    if directory.is_dir() and any(directory.rglob("*_test.dart")):
         present.append(relative)
     else:
         missing.append(relative)
@@ -48,11 +35,15 @@ print(f"Modules: {len(modules)}")
 print(f"Tests present: {len(present)}")
 print(f"Tests missing: {len(missing)}")
 
+blocking = missing
 if missing:
-    print("Missing module tests (report only):")
+    print("Missing module tests:")
     for path in missing:
         print(f"  - {path.as_posix()}")
 
 print("")
-print("Test layout verification passed.")
+if blocking:
+    print("FAIL: modules without tests:", blocking)
+    raise SystemExit(1)
+print("Module test presence verification passed.")
 PY

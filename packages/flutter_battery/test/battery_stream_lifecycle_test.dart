@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:flutter_battery/flutter_battery.dart';
+import 'package:flutter_battery/legacy_flutter_battery.dart';
 import 'package:flutter_battery/flutter_battery_method_channel.dart';
 import 'package:flutter_test/flutter_test.dart';
 

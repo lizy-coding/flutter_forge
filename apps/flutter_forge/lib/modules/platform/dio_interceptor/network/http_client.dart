@@ -10,17 +10,14 @@ import 'platform_adapter_io.dart'
 
 /// 网络请求客户端
 class HttpClient {
-  static final HttpClient _instance = HttpClient._internal();
-  factory HttpClient() => _instance;
-
   late Dio dio;
   final CancelToken _cancelToken = CancelToken();
+  final AuthInterceptor auth = AuthInterceptor();
 
-  /// 私有构造函数
-  HttpClient._internal() {
+  HttpClient({required String baseUrl}) {
     // 基础配置
     BaseOptions options = BaseOptions(
-      baseUrl: 'http://localhost:8080',
+      baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {},
@@ -32,9 +29,9 @@ class HttpClient {
     configurePlatformAdapter(dio);
 
     // 添加拦截器
-    dio.interceptors.add(AuthInterceptor());
+    dio.interceptors.add(auth);
     dio.interceptors.add(ErrorInterceptor());
-    dio.interceptors.add(RetryInterceptor());
+    dio.interceptors.add(RetryInterceptor(dio: dio));
 
     // 调试模式下启用日志拦截器
     if (kDebugMode) {
@@ -45,6 +42,11 @@ class HttpClient {
   /// 关闭dio
   void cancelRequests() {
     _cancelToken.cancel("应用关闭");
+  }
+
+  void dispose() {
+    cancelRequests();
+    dio.close(force: true);
   }
 
   /// GET请求

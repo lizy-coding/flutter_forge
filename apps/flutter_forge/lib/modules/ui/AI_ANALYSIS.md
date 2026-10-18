@@ -13,6 +13,7 @@
     "adsorption_line",
     "download_animation",
     "font_picker",
+    "shader_playground",
     "flutter_scene_3d"
   ],
   "owns": [
@@ -25,14 +26,14 @@
     "module_registry",
     "provider",
     "go_router",
-    "flutter_scene",
-    "vector_math"
+    "forge_scene_viewer"
   ],
   "children": [
     "gcode_visualizer/AI_ANALYSIS.md",
     "adsorption_line/AI_ANALYSIS.md",
     "download_animation/AI_ANALYSIS.md",
     "font_picker/AI_ANALYSIS.md",
+    "shader_playground/AI_ANALYSIS.md",
     "flutter_scene_3d/AI_ANALYSIS.md"
   ],
   "contracts": {

@@ -2,6 +2,37 @@ const { platformContract } = require('./availability');
 const fs = require('fs');
 const path = require('path');
 
+const machineContracts = {
+  no_natural_language: true,
+  doc_consumer: 'coding_agent',
+  doc_mode: 'machine_contract',
+};
+
+function moduleContract(declaration, entrypoints, contracts = machineContracts) {
+  const { category, id, route, status, depends, owns = ['module_entry', 'module_ui', 'module_docs'], validation = ['flutter analyze'] } = declaration;
+  return {
+    schema: 'vibecoding.harness.ai_analysis.v2',
+    mode: 'module_contract',
+    node: {
+      id: `flutter_forge_app.modules.${category}.${id}`,
+      kind: 'learning_module',
+      package: 'flutter_forge_app',
+      path: `lib/modules/${category}/${id}`,
+      status,
+    },
+    route,
+    category,
+    platform_support: platformContract(declaration),
+    entrypoints: entrypoints.length ? entrypoints : ['module_entry.dart'],
+    owns,
+    depends,
+    children: [],
+    analysis_parent: `lib/modules/${category}/AI_ANALYSIS.md`,
+    contracts,
+    validation,
+  };
+}
+
 function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, contracts, facts, writeJson }) {
   function nodePath(rel) {
     return rel.replace(/\/?AI_ANALYSIS\.md$/, '') || '.';
@@ -125,7 +156,6 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
         `git:${facts.gcodeDependency.url}#${facts.gcodeDependency.ref}`,
         'lib/shared/learning',
         ...workspacePackages.map(({ path: packagePath }) => packagePath),
-        `git:${facts.flutterGuardDependency.url}#${facts.flutterGuardDependency.ref}`,
       ],
       children: [
         'lib/AI_ANALYSIS.md',
@@ -135,7 +165,7 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
         'lib/modules/AI_ANALYSIS.md',
         ...workspacePackages.map(({ path: packagePath }) => `${packagePath}/AI_ANALYSIS.md`),
       ],
-      validation: ['node --test tool/agent_indexes/generator.test.js', 'node tool/generate_agent_indexes.js --check', 'bash tool/generate_harness_ai_analysis.sh', 'dart format .', 'flutter analyze', 'dart run flutterguard_cli:flutterguard scan . --fail-on high'],
+      validation: ['node --test tool/agent_indexes/generator.test.js', 'node tool/generate_agent_indexes.js --check', 'bash tool/generate_harness_ai_analysis.sh', 'dart format --output=none --set-exit-if-changed .', 'flutter analyze', 'bash tool/quality_gate.sh'],
     });
     writeIndex({
       rel: 'lib/AI_ANALYSIS.md',
@@ -153,9 +183,9 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       rel: 'lib/app/AI_ANALYSIS.md',
       id: 'flutter_forge_app.app',
       kind: 'app_index',
-      entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'theme/app_theme.dart', 'theme/app_theme_selection.dart', 'theme/app_theme_controller.dart', 'theme/forge_theme_tokens.dart', 'theme/theme_mode_button.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
-      owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'creator_home', 'module_catalog', 'title_search', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell', 'category_router_lifecycle', 'light_dark_theme', 'theme_palette_catalog', 'theme_semantic_tokens', 'theme_preference_persistence', 'cross_window_theme_sync'],
-      depends: ['go_router', 'flutter_riverpod', 'url_launcher', 'module_registry', 'shared/multi_window', 'modules'],
+      entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'forge_bubble_navigation.dart', 'desktop_window_host.dart', 'desktop_workbench_shell.dart', 'module_quick_open.dart', 'workbench_history.dart', 'workbench_home_page.dart', 'module_search.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'theme/app_theme.dart', 'theme/app_theme_selection.dart', 'theme/app_theme_controller.dart', 'theme/forge_theme_tokens.dart', 'theme/forge_glass.dart', 'theme/theme_mode_button.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
+      owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'mobile_creator_home', 'desktop_workbench_home', 'creator_about', 'module_catalog', 'mobile_title_search', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell', 'category_router_lifecycle', 'light_dark_theme', 'theme_palette_catalog', 'theme_semantic_tokens', 'theme_preference_persistence', 'cross_window_theme_sync', 'shared_desktop_window_commands', 'immersive_titlebar', 'native_fullscreen_toggle', 'titlebar_home_navigation', 'two_level_module_navigation', 'recent_module_history', 'desktop_quick_open'],
+      depends: ['go_router', 'flutter_riverpod', 'url_launcher', 'liquid_glass_easy', 'module_registry', 'shared/multi_window', 'modules'],
       children: ['router/AI_ANALYSIS.md'],
     });
     writeIndex({
@@ -163,8 +193,8 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       id: 'flutter_forge_app.app.router',
       kind: 'router_index',
       entrypoints: ['app_router.dart', 'app_route_table.dart'],
-      owns: ['go_router_root', 'adaptive_shell_route', 'creator_home_route', 'category_route', 'stable_guarded_module_routes', 'module_route_aggregation', 'module_catalog_composition'],
-      depends: ['app/adaptive_app_shell', 'app/creator_home_page', 'app/module_home_page', 'module_registry', 'modules'],
+      owns: ['go_router_root', 'adaptive_shell_route', 'workbench_home_route', 'mobile_creator_home_route', 'creator_about_route', 'category_route', 'stable_guarded_module_routes', 'module_route_aggregation', 'module_catalog_composition'],
+      depends: ['app/adaptive_app_shell', 'app/creator_home_page', 'app/workbench_home_page', 'app/module_home_page', 'module_registry', 'modules'],
     });
     writeIndex({
       rel: 'lib/module_registry/AI_ANALYSIS.md',
@@ -246,7 +276,7 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
 
   function writeModuleContracts() {
     for (const declaration of modules) {
-      const { category, id: module, route, status, depends, owns = ['module_entry', 'module_ui', 'module_docs'], validation = ['flutter analyze'] } = declaration;
+      const { category, id: module } = declaration;
       const dir = path.join(appRoot, 'lib/modules', category, module);
       const entrypoints = [];
       for (const item of ['module_entry.dart', 'module_root.dart', 'module_routes.dart']) {
@@ -255,27 +285,7 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       for (const item of ['pages', 'widgets', 'state']) {
         if (fs.existsSync(path.join(dir, item))) entrypoints.push(item);
       }
-      writeJson(`lib/modules/${category}/${module}/AI_ANALYSIS.md`, {
-        schema: 'vibecoding.harness.ai_analysis.v2',
-        mode: 'module_contract',
-        node: {
-          id: `flutter_forge_app.modules.${category}.${module}`,
-          kind: 'learning_module',
-          package: 'flutter_forge_app',
-          path: `lib/modules/${category}/${module}`,
-          status,
-        },
-        route,
-        category,
-        platform_support: platformContract(declaration),
-        entrypoints: entrypoints.length ? entrypoints : ['module_entry.dart'],
-        owns,
-        depends,
-        children: [],
-        analysis_parent: `lib/modules/${category}/AI_ANALYSIS.md`,
-        contracts,
-        validation,
-      });
+      writeJson(`lib/modules/${category}/${module}/AI_ANALYSIS.md`, moduleContract(declaration, entrypoints, contracts));
     }
   }
 
@@ -316,4 +326,4 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
   writeModuleContracts();
   writePackageContracts();
 }
-module.exports = { writeContracts };
+module.exports = { machineContracts, moduleContract, writeContracts };

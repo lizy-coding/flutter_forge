@@ -1,13 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:go_router/go_router.dart';
 
 import '../models/article.dart';
 import '../network/api/api_service.dart';
-import '../network/interceptor/auth_interceptor.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.api});
+  final ApiService api;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -16,7 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   static const String _baseRoute = '/dio-interceptor';
 
-  final ApiService _apiService = ApiService();
+  ApiService get _apiService => widget.api;
   bool _isLoading = false;
   List<Article> _articles = [];
   int _currentPage = 1;
@@ -26,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadArticles();
+    unawaited(_loadArticles());
   }
 
   @override
@@ -42,6 +44,7 @@ class _HomePageState extends State<HomePage> {
     });
     try {
       final result = await _apiService.getArticles(page: _currentPage);
+      if (!mounted) return;
       if (result['success'] == true && result['data'] != null) {
         final articlesData = result['data']['articles'] as List;
         final articles = articlesData
@@ -59,6 +62,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = '加载失败: $e';
         _isLoading = false;
@@ -87,18 +91,18 @@ class _HomePageState extends State<HomePage> {
 
   void _openLoginPage() async {
     final result = await context.push<bool>('$_baseRoute/login');
-    if (result == true) await _refreshArticles();
+    if (mounted && result == true) await _refreshArticles();
   }
 
   void _logout() {
-    AuthInterceptor.clearToken();
+    _apiService.clearToken();
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('已退出登录')));
-    _refreshArticles();
+    unawaited(_refreshArticles());
   }
 
-  bool get isLoggedIn => AuthInterceptor.getToken() != null;
+  bool get isLoggedIn => _apiService.isLoggedIn;
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +160,7 @@ class _HomePageState extends State<HomePage> {
               'dio.interceptors.addAll([\n'
               '  AuthInterceptor(),\n'
               '  LoggingInterceptor(),\n'
-              '  RetryInterceptor(),\n'
+              '  RetryInterceptor(dio: dio),\n'
               '  ErrorInterceptor(),\n'
               ']);',
           explanation: '拦截器按添加顺序组成链路，请求从 Auth → Logging → Retry → Error 依次经过。',
@@ -264,73 +268,79 @@ class _HomePageState extends State<HomePage> {
     final titleController = TextEditingController();
     final contentController = TextEditingController();
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('添加文章'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: '标题',
-                hintText: '请输入文章标题',
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('添加文章'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: '标题',
+                  hintText: '请输入文章标题',
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: contentController,
-              decoration: const InputDecoration(
-                labelText: '内容',
-                hintText: '请输入文章内容',
+              const SizedBox(height: 16),
+              TextField(
+                controller: contentController,
+                decoration: const InputDecoration(
+                  labelText: '内容',
+                  hintText: '请输入文章内容',
+                ),
+                maxLines: 3,
               ),
-              maxLines: 3,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('取消'),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              final title = titleController.text.trim();
-              final content = contentController.text.trim();
-              if (title.isEmpty || content.isEmpty) {
-                scaffoldMessenger.showSnackBar(
-                  const SnackBar(content: Text('标题和内容不能为空')),
-                );
-                return;
-              }
-              Navigator.pop(dialogContext);
-              setState(() => _isLoading = true);
-              try {
-                final result = await _apiService.createArticle(title, content);
-                if (!mounted) return;
-                if (result['success'] == true) {
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final title = titleController.text.trim();
+                final content = contentController.text.trim();
+                if (title.isEmpty || content.isEmpty) {
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(content: Text('文章创建成功')),
+                    const SnackBar(content: Text('标题和内容不能为空')),
                   );
-                  await _refreshArticles();
-                } else {
+                  return;
+                }
+                Navigator.pop(dialogContext);
+                setState(() => _isLoading = true);
+                try {
+                  final result = await _apiService.createArticle(
+                    title,
+                    content,
+                  );
+                  if (!mounted) return;
+                  if (result['success'] == true) {
+                    scaffoldMessenger.showSnackBar(
+                      const SnackBar(content: Text('文章创建成功')),
+                    );
+                    setState(() => _isLoading = false);
+                    await _refreshArticles();
+                  } else {
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(content: Text(result['message'] ?? '文章创建失败')),
+                    );
+                    setState(() => _isLoading = false);
+                  }
+                } catch (e) {
+                  if (!mounted) return;
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(content: Text(result['message'] ?? '文章创建失败')),
+                    SnackBar(content: Text('创建失败: $e')),
                   );
                   setState(() => _isLoading = false);
                 }
-              } catch (e) {
-                if (!mounted) return;
-                scaffoldMessenger.showSnackBar(
-                  SnackBar(content: Text('创建失败: $e')),
-                );
-                setState(() => _isLoading = false);
-              }
-            },
-            child: const Text('添加'),
-          ),
-        ],
+              },
+              child: const Text('添加'),
+            ),
+          ],
+        ),
       ),
     );
   }

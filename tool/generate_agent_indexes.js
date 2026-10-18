@@ -1,22 +1,41 @@
 const { resolveModules, writePolicies } = require('./agent_indexes/availability');
-const { writeAvailability } = require('./agent_indexes/verification');
+const { writeSupport } = require('./agent_indexes/support');
 const path = require('path');
 const { categoryComments, categoryEnumNames, workspacePackages, catalogFor } = require('./agent_indexes/catalog');
 const { loadFacts, validateModules, generate } = require('./agent_indexes/generator');
 const { writeProjectDocuments } = require('./agent_indexes/project');
-const { writeContracts } = require('./agent_indexes/contracts');
+const { machineContracts, writeContracts } = require('./agent_indexes/contracts');
 const { writeRoutes } = require('./agent_indexes/routes');
 
 const root = path.resolve(__dirname, '..');
 const appRoot = path.join(root, 'apps/flutter_forge');
-const contracts = {
-  no_natural_language: true,
-  doc_consumer: 'coding_agent',
-  doc_mode: 'machine_contract',
-};
+const contracts = machineContracts;
 
 // Keep the declaration here for existing validator and module admission consumers.
 const modules = [
+  {
+    category: 'basic', id: 'graphics_background', route: '/graphics-background',
+    status: 'ready', depends: ['shared_learning', 'go_router'],
+    title: '图形绘制背景：认识 GPU、纹理与 Shader',
+    subtitle: '从显示一张图片出发，分节认识像素、GPU、纹理、UV 与着色器的职责',
+    difficulty: 'beginner', concepts: ['像素', 'GPU', '纹理', 'UV', '片元着色器'],
+    estimatedMinutes: 20, entry: 'GraphicsBackgroundEntry',
+    validation: ['flutter analyze', 'flutter test test/modules/basic/graphics_background'],
+  },
+  {
+    category: 'basic',
+    id: 'pixel_shader_intro',
+    route: '/pixel-shader-intro',
+    status: 'ready',
+    depends: ['shared_learning'],
+    title: '绘制入门：从画形状到算颜色',
+    subtitle: '用左半边涂蓝的分步实验，理解直接绘制、颜色规则和 UV 位置比例',
+    difficulty: 'beginner',
+    concepts: ['Canvas', '局部坐标', '颜色规则', 'UV 比例'],
+    estimatedMinutes: 15,
+    entry: 'PixelShaderIntroEntry',
+    validation: ['flutter analyze', 'flutter test test/modules/basic/pixel_shader_intro'],
+  },
   {
     category: 'basic',
     id: 'constraint_layout',
@@ -211,10 +230,23 @@ const modules = [
   },
   {
     category: 'ui',
+    id: 'shader_playground',
+    route: '/shader-playground',
+    status: 'ready',
+    depends: ['shared_learning'],
+    title: 'Shader 像素绘制与交互动效',
+    subtitle: '从 UV 坐标与双色渐变入门，调节 uniform 观察像素颜色变化',
+    difficulty: 'intermediate',
+    concepts: ['FragmentProgram', 'FragmentShader', 'UV', 'uniform', 'CustomPainter'],
+    estimatedMinutes: 30,
+    entry: 'ShaderPlaygroundEntry',
+  },
+  {
+    category: 'ui',
     id: 'flutter_scene_3d',
     route: '/flutter-scene-3d',
     status: 'ready',
-    depends: ['shared_learning', 'flutter_scene', 'vector_math', 'module_registry'],
+    depends: ['shared_learning', 'forge_scene_viewer', 'module_registry'],
     title: '教学型 3D 查看器',
     subtitle: '用轨道相机、部件选取与聚焦反馈理解 3D 查看器交互',
     difficulty: 'intermediate',
@@ -296,6 +328,15 @@ const modules = [
     routes: 'InterceptorTestRoutes',
   },
   {
+    category: 'platform', id: 'usb_network', route: '/usb-network',
+    status: 'pending', depends: ['shared_learning', 'usb_network_bridge'],
+    owns: ['module_entry', 'module_ui', 'module_docs', 'tcp_session_lifecycle'],
+    validation: ['flutter analyze', 'flutter test test/modules/platform/usb_network'],
+    title: 'USB 网络连接基础', subtitle: 'CDC-NCM 网卡、绑定 TCP 与文本收发',
+    difficulty: 'intermediate', concepts: ['CDC-NCM', 'IPv4', '接口绑定', 'TCP 字节流', '资源释放'],
+    estimatedMinutes: 20, entry: 'UsbNetworkEntry',
+  },
+  {
     category: 'platform',
     id: 'usb_detector',
     route: '/usb-detector',
@@ -317,9 +358,9 @@ const modules = [
     status: 'ready', depends: ['shared_learning', 'flutter_battery', 'module_registry'],
     owns: ['module_entry', 'module_ui', 'battery_session_lifecycle'],
     validation: ['flutter analyze', 'flutter test test/modules/platform/battery_monitor'],
-    title: '电池状态与事件监听', subtitle: '插件依赖、平台能力与电池事件生命周期',
-    difficulty: 'intermediate', concepts: ['MethodChannel', 'EventChannel', '平台能力', '资源释放'],
-    estimatedMinutes: 25, entry: 'BatteryMonitorEntry',
+    title: '电池状态与事件监听', subtitle: '系统变化、定期采样、会话恢复与容量诊断',
+    difficulty: 'intermediate', concepts: ['MethodChannel', 'EventChannel', '系统变化', '定期采样', '资源释放'],
+    estimatedMinutes: 30, entry: 'BatteryMonitorEntry',
   },
   {
     category: 'platform',
@@ -390,7 +431,7 @@ function run({ check = false } = {}) {
     writeContracts(context);
     writeRoutes(context);
     writePolicies(context);
-    writeAvailability(context);
+    writeSupport(context);
   });
 }
 

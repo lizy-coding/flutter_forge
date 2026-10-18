@@ -34,6 +34,7 @@ class BatteryMethodHandler(private val channel: MethodChannel, private val batte
 
     fun handle(call: MethodCall, result: Result): Boolean {
         when (call.method) {
+            "readBattery" -> result.success(batteryMonitor.readBattery(call.argument<String>("sample") ?: "info"))
                 "getBatteryLevel" -> {
                     try {
                         val batteryLevel = batteryMonitor.getBatteryLevel()

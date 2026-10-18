@@ -35,15 +35,16 @@ public class BatteryStreamHandler: NSObject, FlutterStreamHandler {
     private var sink: FlutterEventSink?
     private var timers: [Timer] = []
     private var configuration = BatteryStreamConfiguration.initial
-    private var lastLevel: Int?
+    private var lastPowerState: String?
 
     public init(batteryMonitor: BatteryMonitor) { monitor = batteryMonitor; super.init() }
+    deinit { dispose() }
 
     func configure(_ config: BatteryStreamConfiguration) {
         configuration = config
         stopTimers()
         guard sink != nil else { return }
-        lastLevel = nil
+        lastPowerState = nil
         if config.level { start(interval: config.levelInterval, type: "BATTERY_LEVEL") }
         if config.info { start(interval: config.infoInterval, type: "BATTERY_INFO") }
         if config.health { start(interval: config.healthInterval, type: "BATTERY_HEALTH") }
@@ -58,23 +59,12 @@ public class BatteryStreamHandler: NSObject, FlutterStreamHandler {
 
     private func sample(_ type: String) {
         guard let monitor = monitor, let sink = sink else { return }
-        let level = monitor.getBatteryLevel()
-        if level < 0 {
-            sink(["type": "BATTERY_UNAVAILABLE", "level": -1, "batteryLevel": -1,
-                  "timestamp": Int(Date().timeIntervalSince1970 * 1000), "unavailableReason": "No battery present"])
-            return
-        }
-        if type == "BATTERY_LEVEL" && configuration.debounce && lastLevel == level { return }
-        var payload: [String: Any]
-        switch type {
-        case "BATTERY_INFO": payload = monitor.getBatteryInfo()
-        case "BATTERY_HEALTH": payload = monitor.getBatteryHealth()
-        default:
-            lastLevel = level
-            payload = ["level": level, "batteryLevel": level]
-        }
-        payload["type"] = type
-        payload["timestamp"] = Int(Date().timeIntervalSince1970 * 1000)
+        let sample = type == "BATTERY_INFO" ? "info" : type == "BATTERY_HEALTH" ? "health" : "level"
+        var payload = monitor.readBattery(sample: sample)
+        let signature = ["level", "powerSource", "isCharging", "isCharged"].map { String(describing: payload[$0]) }.joined(separator: "|")
+        if type == "BATTERY_LEVEL" && payload["availability"] as? String == "available" && configuration.debounce && lastPowerState == signature { return }
+        if type == "BATTERY_LEVEL" { lastPowerState = signature }
+        payload["type"] = payload["availability"] as? String == "available" ? type : "BATTERY_UNAVAILABLE"
         sink(payload)
     }
 
@@ -87,7 +77,7 @@ public class BatteryStreamHandler: NSObject, FlutterStreamHandler {
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
         stopTimers()
         sink = nil
-        lastLevel = nil
+        lastPowerState = nil
         return nil
     }
 

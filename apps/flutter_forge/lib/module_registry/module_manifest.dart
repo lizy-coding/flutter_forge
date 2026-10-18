@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'module_category.dart';
 import 'module_entry.dart';
 import 'module_platform_policies.dart';
+import '../modules/basic/graphics_background/module_entry.dart';
+import '../modules/basic/pixel_shader_intro/module_entry.dart';
 import '../modules/basic/constraint_layout/module_entry.dart';
 import '../modules/basic/tree_state/module_entry.dart';
 import '../modules/basic/tree_state/module_routes.dart';
@@ -26,6 +28,7 @@ import '../modules/ui/download_animation/module_entry.dart';
 import '../modules/ui/download_animation/module_routes.dart';
 import '../modules/ui/font_picker/module_entry.dart';
 import '../modules/ui/font_picker/module_routes.dart';
+import '../modules/ui/shader_playground/module_entry.dart';
 import '../modules/ui/flutter_scene_3d/module_entry.dart';
 import '../modules/popup_table/popup_widgets/module_entry.dart';
 import '../modules/popup_table/popup_list_interaction/module_entry.dart';
@@ -34,6 +37,7 @@ import '../modules/popup_table/scroll_table/module_entry.dart';
 import '../modules/popup_table/overlay_follow_compare/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_routes.dart';
+import '../modules/platform/usb_network/module_entry.dart';
 import '../modules/platform/usb_detector/module_entry.dart';
 import '../modules/platform/battery_monitor/module_entry.dart';
 import '../modules/platform/bluetooth_ble/module_entry.dart';
@@ -58,6 +62,30 @@ List<GoRoute> _buildStatusManageRoutes() => StatusManagementRoutes
 
 final List<ModuleEntry> moduleManifest = [
   // 基础机制
+  ModuleEntry(
+    title: '图形绘制背景：认识 GPU、纹理与 Shader',
+    path: '/graphics-background',
+    subtitle: '从显示一张图片出发，分节认识像素、GPU、纹理、UV 与着色器的职责',
+    category: ModuleCategory.basic,
+    difficulty: Difficulty.beginner,
+    concepts: ['像素', 'GPU', '纹理', 'UV', '片元着色器'],
+    estimatedMinutes: 20,
+    status: ModuleStatus.ready,
+    platformSupport: modulePlatformPolicies['graphics_background']!,
+    builder: (context) => const GraphicsBackgroundEntry(),
+  ),
+  ModuleEntry(
+    title: '绘制入门：从画形状到算颜色',
+    path: '/pixel-shader-intro',
+    subtitle: '用左半边涂蓝的分步实验，理解直接绘制、颜色规则和 UV 位置比例',
+    category: ModuleCategory.basic,
+    difficulty: Difficulty.beginner,
+    concepts: ['Canvas', '局部坐标', '颜色规则', 'UV 比例'],
+    estimatedMinutes: 15,
+    status: ModuleStatus.ready,
+    platformSupport: modulePlatformPolicies['pixel_shader_intro']!,
+    builder: (context) => const PixelShaderIntroEntry(),
+  ),
   ModuleEntry(
     title: '约束与声明式布局',
     path: '/constraint-layout',
@@ -257,6 +285,24 @@ final List<ModuleEntry> moduleManifest = [
     routes: FontPickerRoutes.routes,
   ),
   ModuleEntry(
+    title: 'Shader 像素绘制与交互动效',
+    path: '/shader-playground',
+    subtitle: '从 UV 坐标与双色渐变入门，调节 uniform 观察像素颜色变化',
+    category: ModuleCategory.ui,
+    difficulty: Difficulty.intermediate,
+    concepts: [
+      'FragmentProgram',
+      'FragmentShader',
+      'UV',
+      'uniform',
+      'CustomPainter',
+    ],
+    estimatedMinutes: 30,
+    status: ModuleStatus.ready,
+    platformSupport: modulePlatformPolicies['shader_playground']!,
+    builder: (context) => const ShaderPlaygroundEntry(),
+  ),
+  ModuleEntry(
     title: '教学型 3D 查看器',
     path: '/flutter-scene-3d',
     subtitle: '用轨道相机、部件选取与聚焦反馈理解 3D 查看器交互',
@@ -341,6 +387,18 @@ final List<ModuleEntry> moduleManifest = [
     routes: InterceptorTestRoutes.routes,
   ),
   ModuleEntry(
+    title: 'USB 网络连接基础',
+    path: '/usb-network',
+    subtitle: 'CDC-NCM 网卡、绑定 TCP 与文本收发',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['CDC-NCM', 'IPv4', '接口绑定', 'TCP 字节流', '资源释放'],
+    estimatedMinutes: 20,
+    status: ModuleStatus.pending,
+    platformSupport: modulePlatformPolicies['usb_network']!,
+    builder: (context) => const UsbNetworkEntry(),
+  ),
+  ModuleEntry(
     title: 'USB 设备检测',
     path: '/usb-detector',
     subtitle: 'Android USB 设备检测与状态监控',
@@ -355,11 +413,11 @@ final List<ModuleEntry> moduleManifest = [
   ModuleEntry(
     title: '电池状态与事件监听',
     path: '/battery-monitor',
-    subtitle: '插件依赖、平台能力与电池事件生命周期',
+    subtitle: '系统变化、定期采样、会话恢复与容量诊断',
     category: ModuleCategory.platform,
     difficulty: Difficulty.intermediate,
-    concepts: ['MethodChannel', 'EventChannel', '平台能力', '资源释放'],
-    estimatedMinutes: 25,
+    concepts: ['MethodChannel', 'EventChannel', '系统变化', '定期采样', '资源释放'],
+    estimatedMinutes: 30,
     status: ModuleStatus.ready,
     platformSupport: modulePlatformPolicies['battery_monitor']!,
     builder: (context) => const BatteryMonitorEntry(),

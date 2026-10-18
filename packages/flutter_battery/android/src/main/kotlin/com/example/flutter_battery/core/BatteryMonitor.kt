@@ -212,6 +212,47 @@ class BatteryMonitor(private val context: Context) {
      * 获取完整电池信息
      * @return 包含电池信息的Map
      */
+    fun readBattery(sample: String): Map<String, Any> {
+        require(sample in listOf("level", "info", "health")) { "Invalid sample" }
+        val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            ?: return mapOf("availability" to "unknown", "sample" to sample)
+        if (intent.hasExtra(BatteryManager.EXTRA_PRESENT) && !intent.getBooleanExtra(BatteryManager.EXTRA_PRESENT, false)) {
+            return mapOf("availability" to "noBattery", "sample" to sample)
+        }
+        val rawLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+        val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+        if (rawLevel < 0 || scale <= 0) return mapOf("availability" to "unknown", "sample" to sample)
+        val level = rawLevel * 100 / scale
+        val payload = mutableMapOf<String, Any>("availability" to "available", "sample" to sample,
+            "level" to level, "batteryLevel" to level, "timestamp" to System.currentTimeMillis())
+        val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN)
+        if (status != BatteryManager.BATTERY_STATUS_UNKNOWN) {
+            payload["isCharging"] = status == BatteryManager.BATTERY_STATUS_CHARGING
+            payload["isCharged"] = status == BatteryManager.BATTERY_STATUS_FULL
+        }
+        payload["powerSource"] = if (!intent.hasExtra(BatteryManager.EXTRA_PLUGGED)) "unknown" else if (intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0) "external" else "battery"
+        if (sample != "level") {
+            if (intent.hasExtra(BatteryManager.EXTRA_TEMPERATURE)) payload["temperature"] = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10.0
+            if (intent.hasExtra(BatteryManager.EXTRA_VOLTAGE)) payload["voltage"] = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0) / 1000.0
+        }
+        if (sample != "level") {
+            val manager = context.getSystemService(Context.BATTERY_SERVICE) as? BatteryManager
+            val microAmpHours = manager?.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+            if (microAmpHours != null && microAmpHours >= 0) payload["capacity"] = mapOf(
+                "remaining" to microAmpHours / 1000, "unit" to "milliampHours", "source" to "BatteryManager charge counter")
+        }
+        if (sample == "health") payload["state"] = when (intent.getIntExtra(BatteryManager.EXTRA_HEALTH, BatteryManager.BATTERY_HEALTH_UNKNOWN)) {
+            BatteryManager.BATTERY_HEALTH_GOOD -> "GOOD"
+            BatteryManager.BATTERY_HEALTH_OVERHEAT -> "OVERHEAT"
+            BatteryManager.BATTERY_HEALTH_DEAD -> "DEAD"
+            BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "OVER_VOLTAGE"
+            BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "FAILURE"
+            BatteryManager.BATTERY_HEALTH_COLD -> "COLD"
+            else -> "UNKNOWN"
+        }
+        return payload
+    }
+
     fun getBatteryInfo(): Map<String, Any> {
         val level = getBatteryLevel()
         val charging = isCharging()

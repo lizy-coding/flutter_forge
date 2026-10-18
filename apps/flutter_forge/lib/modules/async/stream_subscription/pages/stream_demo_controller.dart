@@ -85,10 +85,12 @@ class StreamDemoController extends ChangeNotifier {
 
   /// 取消订阅
   void unsubscribe() {
-    _subscription?.cancel().then((_) {
-      _subscription = null;
-      notifyListeners();
-    });
+    unawaited(
+      _subscription?.cancel().then((_) {
+        _subscription = null;
+        notifyListeners();
+      }),
+    );
   }
 
   /// 注入错误事件
@@ -101,7 +103,7 @@ class StreamDemoController extends ChangeNotifier {
   void closeStream() {
     if (_controller.isClosed) return;
     stop();
-    _controller.close().then((_) => _reset());
+    unawaited(_controller.close().then((_) => _reset()));
   }
 
   /// 修改推送间隔
@@ -118,8 +120,8 @@ class StreamDemoController extends ChangeNotifier {
   @override
   void dispose() {
     stop();
-    _subscription?.cancel();
-    _controller.close();
+    unawaited(_subscription?.cancel());
+    unawaited(_controller.close());
     super.dispose();
   }
 }

@@ -1,0 +1,30 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "compile",
+  "module": "*",
+  "platform": "macOS",
+  "status": "pass",
+  "recorded_at": "2026-10-08T04:00:27.439Z",
+  "fingerprint": "87664daa7c0938fb1e83912bd5d5dadaaa4b741eb3c37a062f228c0def21be44",
+  "revision": {
+    "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "command": [
+    "flutter",
+    "build",
+    "macos",
+    "--debug",
+    "--no-pub"
+  ],
+  "exit_code": 0,
+  "test_summary": null,
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791432027062-359a9174-e75a-47f0-8927-52f96e703036.log",
+      "sha256": "3499dfafca3d5b55bc3d3b6afdf2ac6c88f9a8d36e1864b0d51f846256982d1c"
+    }
+  ]
+}

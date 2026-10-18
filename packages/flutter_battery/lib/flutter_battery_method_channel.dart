@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'flutter_battery_platform_interface.dart';
 import 'battery_monitoring.dart';
+import 'src/native_battery_monitoring.dart';
 import 'src/battery_channel_contract.dart';
 import 'src/platform_capabilities.dart';
 
@@ -23,10 +24,12 @@ class MethodChannelFlutterBattery extends FlutterBatteryPlatform {
         configure: (args) async {
           final bool? result;
           try {
-            result = await methodChannel.invokeMethod<bool>(
-              BatteryMethodNames.configureBatteryStream,
-              args,
-            );
+            result = await methodChannel
+                .invokeMethod<bool>(
+                  BatteryMethodNames.configureBatteryStream,
+                  args,
+                )
+                .timeout(const Duration(seconds: 5));
           } on MissingPluginException {
             throw UnsupportedBatteryFeatureException(
               BatteryFeature.scopedObservations,
@@ -38,10 +41,30 @@ class MethodChannelFlutterBattery extends FlutterBatteryPlatform {
         },
       );
 
+  late final BatteryObservationCoordinator _changes =
+      BatteryObservationCoordinator(
+        source: const EventChannel(
+          BatteryChannelNames.changesChannel,
+        ).receiveBroadcastStream().map(_normalizeEvent),
+        configure: (args) async {
+          final success = await methodChannel
+              .invokeMethod<bool>(
+                BatteryMethodNames.configureBatteryChanges,
+                args,
+              )
+              .timeout(const Duration(seconds: 5));
+          if (success != true) {
+            throw PlatformException(code: 'BATTERY_CHANGES_CONFIG_FAILED');
+          }
+        },
+      );
+
   @override
-  Future<BatteryObservation> observeBattery(
+  Future<NativeBatteryObservation> observeBattery(
     BatteryObservationOptions options,
-  ) => _observations.open(options);
+  ) => options.mode == BatteryDeliveryMode.changes
+      ? _changes.open(options)
+      : _observations.open(options);
 
   @override
   void clearBatteryCallbacks() {
@@ -100,6 +123,27 @@ class MethodChannelFlutterBattery extends FlutterBatteryPlatform {
 
   Future<dynamic> _invoke(String method, [dynamic args]) {
     return methodChannel.invokeMethod(method, args);
+  }
+
+  @override
+  Future<BatteryPlatformCapabilities> queryCapabilities() async {
+    final result = await methodChannel.invokeMapMethod<String, bool>(
+      BatteryMethodNames.getPlatformCapabilities,
+    );
+    if (result == null) {
+      throw const FormatException('Empty capability response');
+    }
+    return BatteryPlatformCapabilities.fromMap(result);
+  }
+
+  @override
+  Future<Map<String, dynamic>> readBattery(BatterySample sample) async {
+    final result = await methodChannel.invokeMapMethod<String, dynamic>(
+      BatteryMethodNames.readBattery,
+      {BatteryPayloadKeys.sample: sample.name},
+    );
+    if (result == null) throw const FormatException('Empty battery response');
+    return result;
   }
 
   @override

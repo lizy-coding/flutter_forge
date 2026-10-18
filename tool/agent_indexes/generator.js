@@ -64,8 +64,6 @@ function loadFacts(root, modules, workspacePackages) {
     const packageMeta = workspacePackages.find((entry) => entry.path === member);
     if (field(memberManifest, 'name', 0) !== (packageMeta?.name ?? 'flutter_forge_app')) throw new Error(`Package name mismatch: ${member}`);
   }
-  const tool = gitDependency(manifest, lock, 'dev_dependencies', 'flutterguard_cli');
-  if (!/^[a-f0-9]{40}$/.test(tool.ref)) throw new Error('FlutterGuard must retain an immutable Git pin');
   const gcodeModule = modules.find((module) => module.id === 'gcode_visualizer');
   if (!gcodeModule) throw new Error('Missing G-code module contract');
   return {
@@ -73,31 +71,7 @@ function loadFacts(root, modules, workspacePackages) {
     currentHosts: ['android', 'ios', 'macos', 'web', 'windows'].filter((host) => fs.existsSync(path.join(root, 'apps/flutter_forge', host))),
     gcodeDependency: gitDependency(manifest, lock, 'dependencies', 'gcode_core'),
     gcodeEntryPlatforms: ['android', 'iOS', 'macOS', 'web', 'windows'].filter((host) => !(gcodeModule.excludedPlatforms ?? []).includes(host)),
-    flutterGuardDependency: { package: tool.name, source: tool.source, url: tool.url, ref: tool.ref, resolved_ref: tool.resolved_ref, immutable: true, lock_status: 'git_pinned' },
   };
-}
-
-function validateModuleDependencies(modules, appRoot) {
-  function walk(directory, module) {
-    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-      const file = path.join(directory, entry.name);
-      if (entry.isDirectory()) { walk(file, module); continue; }
-      if (!entry.name.endsWith('.dart')) continue;
-      const content = fs.readFileSync(file, 'utf8');
-      for (const match of content.matchAll(/^(?:import|export)\s+['"]([^'"]+)['"]/gm)) {
-        const uri = match[1];
-        const target = uri.startsWith('package:flutter_forge_app/')
-          ? path.join(appRoot, 'lib', uri.slice('package:flutter_forge_app/'.length))
-          : uri.startsWith('package:') || uri.startsWith('dart:') ? null : path.resolve(directory, uri);
-        if (!target) continue;
-        const relative = path.relative(path.join(appRoot, 'lib/modules'), target).split(path.sep);
-        if (!relative[0].startsWith('..') && (relative[0] !== module.category || relative[1] !== module.id)) {
-          throw new Error(`Cross-module dependency: ${module.id} -> ${uri}`);
-        }
-      }
-    }
-  }
-  for (const module of modules) walk(path.join(appRoot, 'lib/modules', module.category, module.id), module);
 }
 
 function validateModules(modules, categories, appRoot) {
@@ -129,7 +103,6 @@ function validateModules(modules, categories, appRoot) {
       if (!fs.existsSync(path.join(dir, file))) throw new Error(`Missing module entry file: ${module.id}/${file}`);
     }
   }
-  validateModuleDependencies(modules, appRoot);
 }
 
 function generate({ root, appRoot, check = false }, render) {

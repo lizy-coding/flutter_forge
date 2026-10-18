@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
@@ -6,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
-import 'scene_camera_controller.dart';
+import 'package:forge_scene_viewer/forge_scene_viewer.dart';
 import 'scene_interaction_mode.dart';
 import 'scene_runtime.dart';
-import 'scene_selection_controller.dart';
 
 class FlutterScene3dPage extends StatefulWidget {
   const FlutterScene3dPage({
@@ -18,7 +16,7 @@ class FlutterScene3dPage extends StatefulWidget {
     this.interactionMode = SceneInteractionMode.interactive,
   });
 
-  final SceneDemoRuntime? runtime;
+  final SceneViewerRuntime? runtime;
   final SceneInteractionMode interactionMode;
 
   @override
@@ -26,9 +24,15 @@ class FlutterScene3dPage extends StatefulWidget {
 }
 
 class _FlutterScene3dPageState extends State<FlutterScene3dPage> {
-  late final SceneDemoRuntime _runtime =
-      widget.runtime ?? FlutterSceneRuntime();
+  late final SceneViewerRuntime _runtime =
+      widget.runtime ?? createDeviceSceneRuntime();
   late final Future<void> _initialization = _runtime.initialize();
+
+  @override
+  void dispose() {
+    if (widget.runtime == null) _runtime.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +51,8 @@ class _FlutterScene3dPageState extends State<FlutterScene3dPage> {
             '使用方向缩略图、扩展缩放和实时状态保持空间定位感',
             '使用屏幕射线选择最近部件，并将镜头平滑聚焦到命中对象',
             '实现自动巡展、手动接管、惯性滑行与低动态观察模式',
-            '把快速演进的 flutter_scene API 隔离在模块本地运行时边界',
+            '区分绘制请求、实际渲染调用与窗口帧耗时，并控制按需或单帧绘制',
+            '把快速演进的 flutter_scene API 隔离在内部包运行时边界',
           ],
         ),
         ConceptChips(
@@ -55,16 +60,17 @@ class _FlutterScene3dPageState extends State<FlutterScene3dPage> {
         ),
         CodeSnippetCard(
           title: '一个长方体的最小场景',
-          code: '''final scene = Scene();
-scene.add(Node(
-  mesh: Mesh(
-    CuboidGeometry(Vector3(1.8, 1.2, 1)),
-    PhysicallyBasedMaterial(),
-  ),
-));
-
-SceneView(scene, cameraBuilder: buildOrbitCamera);''',
-          explanation: '几何体和材质只在初始化时创建；SceneView 负责渲染帧循环。',
+          code: '''final runtime = FlutterSceneViewerRuntime(
+  parts: const [
+    ScenePartDefinition(
+      id: 'body', label: '机身', shape: ScenePartShape.cuboid,
+      width: 1.8, height: 1.2, depth: 1,
+    ),
+  ],
+);
+await runtime.initialize();
+runtime.buildView(); // 退出时调用 runtime.dispose()''',
+          explanation: '几何体和材质只在初始化时创建；内部包通过 Scene.render 驱动可观测的绘制。',
         ),
         CommonPitfalls(
           pitfalls: [
@@ -87,7 +93,7 @@ class _SceneDemo extends StatefulWidget {
     required this.interactionMode,
   });
 
-  final SceneDemoRuntime runtime;
+  final SceneViewerRuntime runtime;
   final Future<void> initialization;
   final SceneInteractionMode interactionMode;
 
@@ -107,7 +113,9 @@ class _SceneDemoState extends State<_SceneDemo> {
   @override
   void initState() {
     super.initState();
+    _lastRenderMode = widget.runtime.rendering.mode;
     _camera.addListener(_onCameraChanged);
+    widget.runtime.rendering.addListener(_onRenderingChanged);
     widget.runtime.selection.addListener(_onCameraChanged);
   }
 
@@ -124,9 +132,20 @@ class _SceneDemoState extends State<_SceneDemo> {
   @override
   void dispose() {
     _camera.removeListener(_onCameraChanged);
+    widget.runtime.rendering.removeListener(_onRenderingChanged);
     widget.runtime.selection.removeListener(_onCameraChanged);
     _focusNode.dispose();
     super.dispose();
+  }
+
+  SceneRenderMode? _lastRenderMode;
+
+  void _onRenderingChanged() {
+    final mode = widget.runtime.rendering.mode;
+    if (mode != _lastRenderMode) {
+      _lastRenderMode = mode;
+      if (mounted) setState(() {});
+    }
   }
 
   void _onCameraChanged() {
@@ -138,7 +157,9 @@ class _SceneDemoState extends State<_SceneDemo> {
     return Focus(
       focusNode: _focusNode,
       autofocus: true,
-      onKeyEvent: _isInteractive ? _handleKeyEvent : null,
+      onKeyEvent: _isInteractive && widget.runtime.rendering.canManipulate
+          ? _handleKeyEvent
+          : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -168,65 +189,71 @@ class _SceneDemoState extends State<_SceneDemo> {
                     ),
                   );
                 }
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Listener(
-                        onPointerDown: _isInteractive
-                            ? (_) => _focusNode.requestFocus()
-                            : null,
-                        onPointerSignal: (event) {
-                          if (_isInteractive &&
-                              event is PointerScrollEvent &&
-                              _camera.enhancedMode) {
-                            _focusNode.requestFocus();
-                            _camera.beginInteraction();
-                            _camera.zoomBy(event.scrollDelta.dy * 0.004);
-                          }
-                        },
-                        child: KeyedSubtree(
-                          key: const Key('scene-interaction-surface'),
-                          child: GestureDetector(
-                            key: _sceneSurfaceKey,
-                            behavior: HitTestBehavior.opaque,
-                            onTapUp: _isInteractive
-                                ? (details) {
-                                    final box =
-                                        _sceneSurfaceKey.currentContext
-                                                ?.findRenderObject()
-                                            as RenderBox?;
-                                    if (box != null) {
-                                      widget.runtime.selectAt(
-                                        details.localPosition,
-                                        box.size,
-                                      );
+                return AbsorbPointer(
+                  absorbing: !widget.runtime.rendering.canManipulate,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Listener(
+                          onPointerDown: _isInteractive
+                              ? (_) => _focusNode.requestFocus()
+                              : null,
+                          onPointerSignal: (event) {
+                            if (_isInteractive &&
+                                event is PointerScrollEvent &&
+                                _camera.enhancedMode) {
+                              _focusNode.requestFocus();
+                              _camera.beginInteraction();
+                              _camera.zoomBy(event.scrollDelta.dy * 0.004);
+                            }
+                          },
+                          child: KeyedSubtree(
+                            key: const Key('scene-interaction-surface'),
+                            child: GestureDetector(
+                              key: _sceneSurfaceKey,
+                              behavior: HitTestBehavior.opaque,
+                              onTapUp: _isInteractive
+                                  ? (details) {
+                                      final box =
+                                          _sceneSurfaceKey.currentContext
+                                                  ?.findRenderObject()
+                                              as RenderBox?;
+                                      if (box != null) {
+                                        widget.runtime.selectAt(
+                                          details.localPosition,
+                                          box.size,
+                                        );
+                                      }
                                     }
-                                  }
-                                : null,
-                            onPanStart: _isInteractive
-                                ? (_) => _camera.beginInteraction()
-                                : null,
-                            onPanUpdate: _isInteractive
-                                ? (details) => _camera.dragBy(details.delta)
-                                : null,
-                            onPanEnd: _isInteractive
-                                ? (details) => _camera.endInteraction(
-                                    details.velocity.pixelsPerSecond,
-                                  )
-                                : null,
-                            child: widget.runtime.buildView(),
+                                  : null,
+                              onPanStart: _isInteractive
+                                  ? (_) => _camera.beginInteraction()
+                                  : null,
+                              onPanUpdate: _isInteractive
+                                  ? (details) => _camera.dragBy(details.delta)
+                                  : null,
+                              onPanEnd: _isInteractive
+                                  ? (details) => _camera.endInteraction(
+                                      details.velocity.pixelsPerSecond,
+                                    )
+                                  : null,
+                              child: widget.runtime.buildView(),
+                            ),
                           ),
                         ),
-                      ),
-                      if (_isInteractive)
-                        Positioned(
-                          top: 12,
-                          right: 12,
-                          child: _OrientationThumbnail(camera: _camera),
-                        ),
-                    ],
+                        if (_isInteractive)
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child: _OrientationThumbnail(
+                              camera: _camera,
+                              rendering: widget.runtime.rendering,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -245,23 +272,26 @@ class _SceneDemoState extends State<_SceneDemo> {
               ),
             ),
           if (_isInteractive)
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 8,
-              children: [
-                ChoiceChip(
-                  key: const Key('basic-mode'),
-                  label: const Text('基础模式'),
-                  selected: !_camera.enhancedMode,
-                  onSelected: (_) => _camera.setEnhancedMode(false),
-                ),
-                ChoiceChip(
-                  key: const Key('enhanced-mode'),
-                  label: const Text('增强模式'),
-                  selected: _camera.enhancedMode,
-                  onSelected: (_) => _camera.setEnhancedMode(true),
-                ),
-              ],
+            AbsorbPointer(
+              absorbing: !widget.runtime.rendering.canManipulate,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 8,
+                children: [
+                  ChoiceChip(
+                    key: const Key('basic-mode'),
+                    label: const Text('基础模式'),
+                    selected: !_camera.enhancedMode,
+                    onSelected: (_) => _camera.setEnhancedMode(false),
+                  ),
+                  ChoiceChip(
+                    key: const Key('enhanced-mode'),
+                    label: const Text('增强模式'),
+                    selected: _camera.enhancedMode,
+                    onSelected: (_) => _camera.setEnhancedMode(true),
+                  ),
+                ],
+              ),
             ),
           if (_isInteractive) const SizedBox(height: 8),
           if (_isInteractive)
@@ -273,39 +303,52 @@ class _SceneDemoState extends State<_SceneDemo> {
             ),
           if (_isInteractive) const SizedBox(height: 12),
           if (_isInteractive)
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final controls = _controls();
-                if (constraints.maxWidth >= 620) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: controls
-                        .map(
-                          (control) => Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: control,
-                          ),
-                        )
-                        .toList(),
+            AbsorbPointer(
+              absorbing: !widget.runtime.rendering.canManipulate,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final controls = _controls();
+                  if (constraints.maxWidth >= 620) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: controls
+                          .map(
+                            (control) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
+                              child: control,
+                            ),
+                          )
+                          .toList(),
+                    );
+                  }
+                  return Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: controls,
                   );
-                }
-                return Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: controls,
-                );
-              },
+                },
+              ),
             ),
           const SizedBox(height: 8),
-          _CameraStatus(camera: _camera),
+          _CameraStatus(camera: _camera, rendering: widget.runtime.rendering),
           if (_isInteractive) const SizedBox(height: 8),
           if (_isInteractive)
-            _SelectionPanel(
-              selection: widget.runtime.selection,
-              onFocus: widget.runtime.focusSelection,
-              onClear: widget.runtime.clearSelection,
+            AbsorbPointer(
+              absorbing: !widget.runtime.rendering.canManipulate,
+              child: _SelectionPanel(
+                selection: widget.runtime.selection,
+                onFocus: widget.runtime.focusSelection,
+                onClear: widget.runtime.clearSelection,
+              ),
             ),
+          const SizedBox(height: 8),
+          SceneDiagnosticsPanel(
+            controller: widget.runtime.rendering,
+            readOnly: !_isInteractive,
+          ),
         ],
       ),
     );
@@ -435,30 +478,30 @@ class _SelectionPanel extends StatelessWidget {
 }
 
 class _CameraStatus extends StatefulWidget {
-  const _CameraStatus({required this.camera});
+  const _CameraStatus({required this.camera, required this.rendering});
 
   final SceneCameraController camera;
+  final SceneRenderController rendering;
 
   @override
   State<_CameraStatus> createState() => _CameraStatusState();
 }
 
 class _CameraStatusState extends State<_CameraStatus> {
-  late final Timer _refreshTimer;
-
   @override
   void initState() {
     super.initState();
     widget.camera.addListener(_refresh);
-    _refreshTimer = Timer.periodic(
-      const Duration(milliseconds: 200),
-      (_) => _refresh(),
-    );
+    widget.rendering.addListener(_refresh);
   }
 
   @override
   void didUpdateWidget(covariant _CameraStatus oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.rendering != widget.rendering) {
+      oldWidget.rendering.removeListener(_refresh);
+      widget.rendering.addListener(_refresh);
+    }
     if (oldWidget.camera != widget.camera) {
       oldWidget.camera.removeListener(_refresh);
       widget.camera.addListener(_refresh);
@@ -467,7 +510,7 @@ class _CameraStatusState extends State<_CameraStatus> {
 
   @override
   void dispose() {
-    _refreshTimer.cancel();
+    widget.rendering.removeListener(_refresh);
     widget.camera.removeListener(_refresh);
     super.dispose();
   }
@@ -516,30 +559,30 @@ class _CameraStatusState extends State<_CameraStatus> {
 }
 
 class _OrientationThumbnail extends StatefulWidget {
-  const _OrientationThumbnail({required this.camera});
+  const _OrientationThumbnail({required this.camera, required this.rendering});
 
   final SceneCameraController camera;
+  final SceneRenderController rendering;
 
   @override
   State<_OrientationThumbnail> createState() => _OrientationThumbnailState();
 }
 
 class _OrientationThumbnailState extends State<_OrientationThumbnail> {
-  late final Timer _refreshTimer;
-
   @override
   void initState() {
     super.initState();
     widget.camera.addListener(_refresh);
-    _refreshTimer = Timer.periodic(
-      const Duration(milliseconds: 200),
-      (_) => _refresh(),
-    );
+    widget.rendering.addListener(_refresh);
   }
 
   @override
   void didUpdateWidget(covariant _OrientationThumbnail oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.rendering != widget.rendering) {
+      oldWidget.rendering.removeListener(_refresh);
+      widget.rendering.addListener(_refresh);
+    }
     if (oldWidget.camera != widget.camera) {
       oldWidget.camera.removeListener(_refresh);
       widget.camera.addListener(_refresh);
@@ -548,7 +591,7 @@ class _OrientationThumbnailState extends State<_OrientationThumbnail> {
 
   @override
   void dispose() {
-    _refreshTimer.cancel();
+    widget.rendering.removeListener(_refresh);
     widget.camera.removeListener(_refresh);
     super.dispose();
   }

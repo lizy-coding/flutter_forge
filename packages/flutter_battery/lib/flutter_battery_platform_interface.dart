@@ -2,6 +2,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'flutter_battery_method_channel.dart';
 import 'battery_monitoring.dart';
+import 'src/native_battery_monitoring.dart';
 import 'src/platform_capabilities.dart';
 
 abstract class FlutterBatteryPlatform extends PlatformInterface {
@@ -25,13 +26,22 @@ abstract class FlutterBatteryPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  Future<BatteryPlatformCapabilities> queryCapabilities() =>
+      getPlatformCapabilities();
+
+  Future<Map<String, dynamic>> readBattery(BatterySample sample) {
+    throw UnimplementedError('readBattery has not been implemented');
+  }
+
   Future<BatteryPlatformCapabilities> getPlatformCapabilities() {
     throw UnimplementedError(
       'getPlatformCapabilities() has not been implemented.',
     );
   }
 
-  Future<BatteryObservation> observeBattery(BatteryObservationOptions options) {
+  Future<NativeBatteryObservation> observeBattery(
+    BatteryObservationOptions options,
+  ) {
     throw UnimplementedError('observeBattery() has not been implemented.');
   }
 

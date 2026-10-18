@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/category_window_app.dart';
 import 'package:flutter_forge_app/app/theme/app_theme_controller.dart';
 import 'package:flutter_forge_app/app/theme/app_theme_selection.dart';
+import 'package:flutter_forge_app/app/theme/forge_theme_tokens.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,7 +15,10 @@ void main() {
     tester,
   ) async {
     final controller = AppThemeController.forTesting(
-      const AppThemeSelection(mode: AppThemeModePreference.dark),
+      const AppThemeSelection(
+        mode: AppThemeModePreference.dark,
+        palette: AppThemePalette.graphiteForge,
+      ),
     );
     await tester.pumpWidget(
       CategoryWindowApp(
@@ -29,12 +33,24 @@ void main() {
       ThemeMode.dark,
     );
 
-    await controller.setMode(AppThemeModePreference.light);
+    final previousRouter = tester
+        .widget<MaterialApp>(find.byType(MaterialApp))
+        .routerConfig;
+    controller.applyRemoteSelection(
+      const AppThemeSelection(
+        mode: AppThemeModePreference.light,
+        palette: AppThemePalette.liquidGlass,
+      ).encode(),
+    );
     await tester.pumpAndSettle();
     expect(
       tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
       ThemeMode.light,
     );
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.theme!.extension<ForgeThemeTokens>()!.glass, isTrue);
+    expect(app.routerConfig, same(previousRouter));
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets(

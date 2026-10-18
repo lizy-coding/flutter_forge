@@ -1,8 +1,63 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 26,
+  "count": 30,
   "modules": [
+    {
+      "id": "graphics_background",
+      "category": "basic",
+      "path": "lib/modules/basic/graphics_background",
+      "route": "/graphics-background",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "go_router"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [],
+        "required_capabilities": [],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/basic/graphics_background/AI_ANALYSIS.md"
+    },
+    {
+      "id": "pixel_shader_intro",
+      "category": "basic",
+      "path": "lib/modules/basic/pixel_shader_intro",
+      "route": "/pixel-shader-intro",
+      "status": "ready",
+      "depends": [
+        "shared_learning"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [],
+        "required_capabilities": [],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/basic/pixel_shader_intro/AI_ANALYSIS.md"
+    },
     {
       "id": "constraint_layout",
       "category": "basic",
@@ -505,6 +560,44 @@
       "analysis": "lib/modules/ui/font_picker/AI_ANALYSIS.md"
     },
     {
+      "id": "shader_playground",
+      "category": "ui",
+      "path": "lib/modules/ui/shader_playground",
+      "route": "/shader-playground",
+      "status": "ready",
+      "depends": [
+        "shared_learning"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [],
+        "required_capabilities": [
+          "fragment_shader_canvas"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "fragment_shader_canvas",
+            "reason": "sdk_fragment_program_canvas_skia_impeller",
+            "sources": [
+              "apps/flutter_forge/lib/modules/ui/shader_playground/shader_preview.dart",
+              "apps/flutter_forge/pubspec.yaml"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/ui/shader_playground/AI_ANALYSIS.md"
+    },
+    {
       "id": "flutter_scene_3d",
       "category": "ui",
       "path": "lib/modules/ui/flutter_scene_3d",
@@ -512,8 +605,7 @@
       "status": "ready",
       "depends": [
         "shared_learning",
-        "flutter_scene",
-        "vector_math",
+        "forge_scene_viewer",
         "module_registry"
       ],
       "platform_support": {
@@ -538,6 +630,7 @@
             "capability": "scene_render",
             "reason": "scene_gpu_adapters",
             "sources": [
+              "packages/forge_scene_viewer/lib/src/scene_runtime.dart",
               "apps/flutter_forge/android/app/src/main/AndroidManifest.xml",
               "apps/flutter_forge/windows/runner/main.cpp",
               "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart"
@@ -553,7 +646,7 @@
             ],
             "reason": "desktop_scene_controls_android_view_only",
             "sources": [
-              "apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"
+              "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/scene_interaction_mode.dart"
             ]
           }
         }
@@ -706,6 +799,49 @@
         "features": {}
       },
       "analysis": "lib/modules/platform/dio_interceptor/AI_ANALYSIS.md"
+    },
+    {
+      "id": "usb_network",
+      "category": "platform",
+      "path": "lib/modules/platform/usb_network",
+      "route": "/usb-network",
+      "status": "pending",
+      "depends": [
+        "shared_learning",
+        "usb_network_bridge"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "android",
+          "iOS",
+          "web"
+        ],
+        "required_capabilities": [
+          "usb_network"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "usb_network",
+            "reason": "desktop_system_ncm_interface_bound_tcp",
+            "sources": [
+              "packages/usb_network_bridge/pubspec.yaml",
+              "packages/usb_network_bridge/lib/src/backend_native.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/platform/usb_network/AI_ANALYSIS.md"
     },
     {
       "id": "usb_detector",

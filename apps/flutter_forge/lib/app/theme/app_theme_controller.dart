@@ -24,12 +24,15 @@ class AppThemeController extends ChangeNotifier {
 
   static Future<AppThemeController> load({
     String? initialSelectionPayload,
+    AppThemeSelection defaultSelection = const AppThemeSelection(),
     Future<void> Function(String payload)? onChanged,
   }) async {
     final preferences = await SharedPreferences.getInstance();
     final saved = preferences.getString(preferenceKey);
     return AppThemeController._(
-      AppThemeSelection.decode(initialSelectionPayload ?? saved),
+      initialSelectionPayload == null && saved == null
+          ? defaultSelection
+          : AppThemeSelection.decode(initialSelectionPayload ?? saved),
       preferences: preferences,
       onChanged: onChanged,
     );

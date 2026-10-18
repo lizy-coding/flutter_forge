@@ -1,4 +1,4 @@
-include: package:lints/recommended.yaml
+include: ../../analysis_options.yaml
 
 analyzer:
   exclude:
@@ -8,10 +8,8 @@ analyzer:
     - linux/**
   language:
     strict-raw-types: true
-  strong-mode:
-    implicit-casts: false
 
 linter:
   rules:
-    - prefer_relative_imports
-    - prefer_single_quotes
+    prefer_relative_imports: true
+    prefer_single_quotes: true

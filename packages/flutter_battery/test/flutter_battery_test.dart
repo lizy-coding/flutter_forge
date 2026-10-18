@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_battery/flutter_battery_platform_interface.dart';
-import 'package:flutter_battery/flutter_battery.dart';
+import 'package:flutter_battery/legacy_flutter_battery.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:flutter/widgets.dart';
@@ -372,15 +372,18 @@ void main() {
     expect(caps.isSupported(BatteryFeature.blePeerSync), true);
   });
 
-  test('FlutterBattery.getPlatformCapabilities delegates correctly', () async {
-    final plugin = FlutterBattery();
-    final caps = await plugin.getPlatformCapabilities();
-    expect(caps.isSupported(BatteryFeature.batteryLevel), true);
-    expect(caps.isSupported(BatteryFeature.batteryInfo), true);
-  });
+  test(
+    'LegacyFlutterBattery.getPlatformCapabilities delegates correctly',
+    () async {
+      final plugin = LegacyFlutterBattery();
+      final caps = await plugin.getPlatformCapabilities();
+      expect(caps.isSupported(BatteryFeature.batteryLevel), true);
+      expect(caps.isSupported(BatteryFeature.batteryInfo), true);
+    },
+  );
 
-  test('FlutterBattery.isFeatureSupported delegates correctly', () async {
-    final plugin = FlutterBattery();
+  test('LegacyFlutterBattery.isFeatureSupported delegates correctly', () async {
+    final plugin = LegacyFlutterBattery();
     expect(await plugin.isFeatureSupported(BatteryFeature.batteryLevel), true);
   });
 
@@ -494,7 +497,7 @@ void main() {
   });
 
   test('batteryHealthStream emits BatteryHealth', () async {
-    final plugin = FlutterBattery();
+    final plugin = LegacyFlutterBattery();
     final health = await plugin.batteryHealthStream.first;
     expect(health.state, BatteryHealthState.good);
     expect(health.recommendations, isNotEmpty);
@@ -512,7 +515,7 @@ void main() {
         BatteryPayloadKeys.timestamp: 123,
       },
     ]);
-    final plugin = FlutterBattery();
+    final plugin = LegacyFlutterBattery();
     final info = await plugin.batteryInfoStream.first;
     expect(info.level, 64);
   });
@@ -529,7 +532,7 @@ void main() {
         BatteryPayloadKeys.timestamp: 456,
       },
     ]);
-    final plugin = FlutterBattery();
+    final plugin = LegacyFlutterBattery();
     final info = await plugin.batteryInfoStream.first;
     expect(info.level, 72);
     expect(info.state, BatteryState.CHARGING);
@@ -550,7 +553,7 @@ void main() {
         BatteryPayloadKeys.timestamp: 789,
       },
     ]);
-    final plugin = FlutterBattery();
+    final plugin = LegacyFlutterBattery();
     final health = await plugin.batteryHealthStream.first;
     expect(health.state, BatteryHealthState.good);
     expect(health.level, 88);
@@ -576,7 +579,7 @@ void main() {
   });
 
   test('configureBattery aggregates results', () async {
-    final plugin = FlutterBattery();
+    final plugin = LegacyFlutterBattery();
     final result = await plugin.configureBattery(
       BatteryConfiguration(
         monitorConfig: BatteryMonitorConfig(
@@ -628,23 +631,23 @@ void main() {
   );
 
   test('normalizeLevel_returns_level_key_when_present', () {
-    expect(FlutterBattery.normalizeLevel({'level': 75}), 75);
+    expect(LegacyFlutterBattery.normalizeLevel({'level': 75}), 75);
   });
 
   test('normalizeLevel_returns_batteryLevel_key_when_no_level', () {
-    expect(FlutterBattery.normalizeLevel({'batteryLevel': 60}), 60);
+    expect(LegacyFlutterBattery.normalizeLevel({'batteryLevel': 60}), 60);
   });
 
   test('normalizeLevel_prefers_level_over_batteryLevel', () {
     expect(
-      FlutterBattery.normalizeLevel({'level': 80, 'batteryLevel': 70}),
+      LegacyFlutterBattery.normalizeLevel({'level': 80, 'batteryLevel': 70}),
       80,
     );
   });
 
   test('normalizeLevel_returns_unknown_for_unavailable_type', () {
     expect(
-      FlutterBattery.normalizeLevel({
+      LegacyFlutterBattery.normalizeLevel({
         'type': 'BATTERY_UNAVAILABLE',
         'level': -1,
       }),
@@ -653,13 +656,13 @@ void main() {
   });
 
   test('normalizeLevel_returns_unknown_when_no_valid_keys', () {
-    expect(FlutterBattery.normalizeLevel({'timestamp': 123}), -1);
+    expect(LegacyFlutterBattery.normalizeLevel({'timestamp': 123}), -1);
   });
 
   test('configureBatteryCallbacks_wires_typed_callbacks', () {
     final mock = CallbackCaptureMock();
     FlutterBatteryPlatform.instance = mock;
-    final plugin = FlutterBattery();
+    final plugin = LegacyFlutterBattery();
 
     BatteryInfo? capturedInfo;
     BatteryHealth? capturedHealth;

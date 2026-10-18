@@ -22,6 +22,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _controller = PersistenceDemoController(
       preferences: widget.preferences ?? SharedPreferencesPreferencesService(),
+      // Initialization starts in this synchronous Flutter lifecycle callback.
+      // ignore: discarded_futures
     )..load();
     _noteController = TextEditingController();
   }

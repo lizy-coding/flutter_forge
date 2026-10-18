@@ -124,9 +124,11 @@ class WindowController {
   }
 }
 
-final _channel = MethodChannel('mixin.one/desktop_multi_window');
+const _channel = MethodChannel('mixin.one/desktop_multi_window');
 
 Stream<MethodCall> _windowEventAsStream() {
+  // This process event stream remains reusable; onCancel removes the native handler.
+  // ignore: close_sinks
   late StreamController<MethodCall> controller;
   controller = StreamController<MethodCall>.broadcast(
     onListen: () {

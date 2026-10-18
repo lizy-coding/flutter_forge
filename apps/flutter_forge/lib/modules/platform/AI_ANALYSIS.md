@@ -10,6 +10,7 @@
   },
   "entrypoints": [
     "dio_interceptor",
+    "usb_network",
     "usb_detector",
     "battery_monitor",
     "bluetooth_ble",
@@ -25,6 +26,7 @@
     "dio",
     "module_registry",
     "go_router",
+    "usb_network_bridge",
     "device_info_plus",
     "flutter_battery",
     "universal_ble",
@@ -38,6 +40,7 @@
   ],
   "children": [
     "dio_interceptor/AI_ANALYSIS.md",
+    "usb_network/AI_ANALYSIS.md",
     "usb_detector/AI_ANALYSIS.md",
     "battery_monitor/AI_ANALYSIS.md",
     "bluetooth_ble/AI_ANALYSIS.md",

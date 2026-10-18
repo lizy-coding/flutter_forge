@@ -1,0 +1,38 @@
+name: Reusable quality gate
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: ""
+    outputs:
+      source-sha:
+        value: ${{ jobs.checks.outputs.source-sha }}
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    outputs:
+      source-sha: ${{ steps.identity.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.2"
+          channel: stable
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Bootstrap
+        shell: bash
+        run: |
+          flutter pub get --enforce-lockfile
+          (cd packages/video_player_win/example && flutter pub get)
+      - name: Quality gate
+        run: bash tool/quality_gate.sh
+      - name: Record validated source
+        id: identity
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"

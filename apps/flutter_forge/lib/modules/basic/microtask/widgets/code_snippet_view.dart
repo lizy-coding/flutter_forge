@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -44,7 +46,7 @@ class CodeSnippetView extends StatelessWidget {
                   icon: const Icon(Icons.copy, color: Colors.white),
                   tooltip: '复制代码',
                   onPressed: () {
-                    Clipboard.setData(ClipboardData(text: code));
+                    unawaited(Clipboard.setData(ClipboardData(text: code)));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('代码已复制到剪贴板'),

@@ -7,6 +7,16 @@ const targets = ['android', 'iOS', 'macOS', 'web', 'windows'];
 // or acceptance results. A dependency discovers a requirement; optional features
 // and product restrictions remain explicit module intent.
 const capabilities = {
+  fragment_shader_canvas: {
+    fileNames: ['shader_preview.dart'], platforms: targets,
+    reason: 'sdk_fragment_program_canvas_skia_impeller',
+    sources: ['apps/flutter_forge/lib/modules/ui/shader_playground/shader_preview.dart', 'apps/flutter_forge/pubspec.yaml'],
+  },
+  usb_network: {
+    dependencies: ['usb_network_bridge'], platforms: ['macOS', 'windows'],
+    reason: 'desktop_system_ncm_interface_bound_tcp',
+    sources: ['packages/usb_network_bridge/pubspec.yaml', 'packages/usb_network_bridge/lib/src/backend_native.dart'],
+  },
   battery_monitor: {
     dependencies: ['flutter_battery'], platforms: ['android', 'macOS'],
     reason: 'battery_android_macos_native_adapters',
@@ -23,15 +33,15 @@ const capabilities = {
     sources: ['apps/flutter_forge/lib/modules/ui/gcode_visualizer/module_entry.dart', 'apps/flutter_forge/pubspec.yaml'],
   },
   scene_render: {
-    dependencies: ['flutter_scene'], platforms: ['android', 'macOS', 'windows'],
+    dependencies: ['forge_scene_viewer'], platforms: ['android', 'macOS', 'windows'],
     reason: 'scene_gpu_adapters',
-    sources: ['apps/flutter_forge/android/app/src/main/AndroidManifest.xml', 'apps/flutter_forge/windows/runner/main.cpp', 'apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart'],
+    sources: ['packages/forge_scene_viewer/lib/src/scene_runtime.dart', 'apps/flutter_forge/android/app/src/main/AndroidManifest.xml', 'apps/flutter_forge/windows/runner/main.cpp', 'apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart'],
     features: ['scene_controls'],
   },
   scene_controls: {
     platforms: ['macOS', 'windows'],
     reason: 'desktop_scene_controls_android_view_only',
-    sources: ['apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart'],
+    sources: ['apps/flutter_forge/lib/modules/ui/flutter_scene_3d/scene_interaction_mode.dart'],
   },
   file_selection: {
     dependencies: ['file_picker_bridge'], platforms: ['android', 'macOS', 'web', 'windows'],
@@ -106,46 +116,61 @@ function supportedPlatforms(id, rules, visiting = new Set()) {
   return rules[id].platforms.filter((host) => prerequisites.every((platforms) => platforms.includes(host)));
 }
 
+function validateRestriction(root, module) {
+  const restriction = module.entryRestriction;
+  if (restriction && (typeof restriction.reason !== 'string' || !restriction.reason.trim() ||
+      !Array.isArray(restriction.sources) || !restriction.sources.length ||
+      restriction.sources.some((source) => typeof source !== 'string' || !source || path.isAbsolute(source) ||
+        source.split(/[\\/]/).includes('..') || (root && !fs.existsSync(path.join(root, source)))))) {
+    throw new Error(`Invalid product restriction: ${module.id}`);
+  }
+}
+
+// The same policy derivation serves real source inventories and in-memory scaffold
+// candidates. Reading implementation files and validating sources stays explicit.
+function resolvePolicy(module, { imports = [], names = [] } = {}, rules = capabilities) {
+  validateRestriction(null, module);
+  if (Object.hasOwn(module, 'excludedPlatforms') || Object.hasOwn(module, 'platformSupportComment')) {
+    throw new Error(`Module platform lists are derived; declare capability intent instead: ${module.id}`);
+  }
+  let discovered = Object.entries(rules).filter(([, rule]) =>
+    (rule.dependencies ?? []).some((dep) => module.depends.includes(dep) || imports.some((uri) => uri.startsWith(`package:${dep}/`))) ||
+    (rule.imports ?? []).some((uri) => imports.includes(uri)) ||
+    (rule.fileNames ?? []).some((name) => names.includes(name))).map(([id]) => id);
+  discovered = discovered.filter((id) => !discovered.some((other) => (rules[other].replaces ?? []).includes(id)));
+  const optional = module.optionalCapabilities ?? [];
+  if (!Array.isArray(optional) || new Set(optional).size !== optional.length || optional.some((id) => !discovered.includes(id))) {
+    throw new Error(`Optional capability is not discovered: ${module.id}`);
+  }
+  const required = discovered.filter((id) => !optional.includes(id));
+  const features = [...new Set([...optional, ...discovered.flatMap((id) => rules[id].features ?? [])])];
+  const restriction = module.entryRestriction;
+  const excludedPlatforms = targets.filter((host) => restriction || required.some((id) => !supportedPlatforms(id, rules).includes(host)));
+  const platformPolicy = {
+    required_capabilities: required,
+    unreviewed_dependencies: [...new Set(imports.filter((uri) => uri.startsWith('package:')).map((uri) => uri.slice(8).split('/')[0]))]
+      .filter((dep) => !['flutter', 'flutter_forge_app', 'go_router', 'provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core', 'shared_preferences', 'vector_math', 'dio'].includes(dep) &&
+        !Object.values(rules).some((rule) => (rule.dependencies ?? []).includes(dep)))
+      .sort(),
+    optional_capabilities: optional,
+    reasons: discovered.map((id) => ({ capability: id, reason: rules[id].reason, sources: rules[id].sources })),
+    restriction: restriction ?? null,
+    features: Object.fromEntries(features.map((id) => [id, {
+      platforms: targets.filter((host) => !excludedPlatforms.includes(host) && supportedPlatforms(id, rules).includes(host)),
+      reason: rules[id].reason, sources: rules[id].sources,
+    }])),
+  };
+  return { ...module, excludedPlatforms, platformPolicy };
+}
+
 function resolveModules(root, modules, rules = capabilities) {
   validateRules(root, rules);
   return modules.map((module) => {
-    if (Object.hasOwn(module, 'excludedPlatforms') || Object.hasOwn(module, 'platformSupportComment')) {
-      throw new Error(`Module platform lists are derived; declare capability intent instead: ${module.id}`);
-    }
-    const imports = sourceImports(root, module);
-    const names = dartFiles(path.join(root, 'apps/flutter_forge/lib/modules', module.category, module.id)).map((file) => path.basename(file));
-    let discovered = Object.entries(rules).filter(([, rule]) =>
-      (rule.dependencies ?? []).some((dep) => module.depends.includes(dep) || imports.some((uri) => uri.startsWith(`package:${dep}/`))) ||
-      (rule.imports ?? []).some((uri) => imports.includes(uri)) ||
-      (rule.fileNames ?? []).some((name) => names.includes(name))).map(([id]) => id);
-    discovered = discovered.filter((id) => !discovered.some((other) => (rules[other].replaces ?? []).includes(id)));
-    const optional = module.optionalCapabilities ?? [];
-    if (!Array.isArray(optional) || new Set(optional).size !== optional.length || optional.some((id) => !discovered.includes(id))) {
-      throw new Error(`Optional capability is not discovered: ${module.id}`);
-    }
-    const required = discovered.filter((id) => !optional.includes(id));
-    const features = [...new Set([...optional, ...discovered.flatMap((id) => rules[id].features ?? [])])];
-    const restriction = module.entryRestriction;
-    if (restriction && (!restriction.reason || !restriction.sources?.length ||
-        restriction.sources.some((source) => path.isAbsolute(source) || source.split('/').includes('..') || !fs.existsSync(path.join(root, source))))) {
-      throw new Error(`Invalid product restriction: ${module.id}`);
-    }
-    const excludedPlatforms = targets.filter((host) => restriction || required.some((id) => !supportedPlatforms(id, rules).includes(host)));
-    const platformPolicy = {
-      required_capabilities: required,
-      unreviewed_dependencies: [...new Set(imports.filter((uri) => uri.startsWith('package:')).map((uri) => uri.slice(8).split('/')[0]))]
-        .filter((dep) => !['flutter', 'flutter_forge_app', 'go_router', 'provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core', 'shared_preferences', 'vector_math', 'dio'].includes(dep) &&
-          !Object.values(rules).some((rule) => (rule.dependencies ?? []).includes(dep)))
-        .sort(),
-      optional_capabilities: optional,
-      reasons: discovered.map((id) => ({ capability: id, reason: rules[id].reason, sources: rules[id].sources })),
-      restriction: restriction ?? null,
-      features: Object.fromEntries(features.map((id) => [id, {
-        platforms: targets.filter((host) => !excludedPlatforms.includes(host) && supportedPlatforms(id, rules).includes(host)),
-        reason: rules[id].reason, sources: rules[id].sources,
-      }])),
-    };
-    return { ...module, excludedPlatforms, platformPolicy };
+    validateRestriction(root, module);
+    return resolvePolicy(module, {
+      imports: sourceImports(root, module),
+      names: dartFiles(path.join(root, 'apps/flutter_forge/lib/modules', module.category, module.id)).map((file) => path.basename(file)),
+    }, rules);
   });
 }
 
@@ -183,4 +208,4 @@ function writePolicies({ modules, writeText }) {
   writeText('lib/module_registry/module_platform_policies.dart', lines.join('\n'));
 }
 
-module.exports = { targets, capabilities, dartFiles, resolveModules, platformContract, writePolicies };
+module.exports = { targets, capabilities, dartFiles, resolvePolicy, resolveModules, validateRestriction, platformContract, writePolicies };

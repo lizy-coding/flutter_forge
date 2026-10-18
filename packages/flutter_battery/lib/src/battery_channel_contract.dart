@@ -1,4 +1,5 @@
 class BatteryChannelNames {
+  static const String changesChannel = 'flutter_battery/battery_changes';
   static const String methodChannel = 'flutter_battery';
   static const String eventChannel = 'flutter_battery/battery_stream';
   static const String bleMethods = 'flutter_battery/ble_methods';
@@ -10,9 +11,11 @@ class BatteryChannelNames {
 }
 
 class BatteryMethodNames {
+  static const String configureBatteryChanges = 'configureBatteryChanges';
   static const String getPlatformVersion = 'getPlatformVersion';
   static const String getPlatformCapabilities = 'getPlatformCapabilities';
   static const String configureBatteryStream = 'configureBatteryStream';
+  static const String readBattery = 'readBattery';
   static const String getBatteryLevel = 'getBatteryLevel';
   static const String getBatteryInfo = 'getBatteryInfo';
   static const String getBatteryHealth = 'getBatteryHealth';
@@ -58,6 +61,11 @@ class BatteryEventTypes {
 }
 
 class BatteryPayloadKeys {
+  static const String delivery = 'delivery';
+  static const String capacity = 'capacity';
+  static const String powerSource = 'powerSource';
+  static const String sample = 'sample';
+  static const String availability = 'availability';
   static const String serviceUuid = 'serviceUuid';
   static const String characteristicUuid = 'characteristicUuid';
   static const String deviceId = 'deviceId';

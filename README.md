@@ -103,9 +103,11 @@ flowchart LR
 
 Flutter `>=3.47.2` · Dart `^3.11.5`
 
+锁文件与 CI 统一使用官方 `pub.dev`。以下命令显式指定包源，避免本机镜像环境变量改写锁文件。
+
 ```bash
 # 仓库根目录解析工作区依赖
-flutter pub get
+PUB_HOSTED_URL=https://pub.dev flutter pub get --enforce-lockfile
 cd apps/flutter_forge
 flutter run -d <device>
 ```
@@ -113,7 +115,7 @@ flutter run -d <device>
 在仓库根目录执行：
 
 ```bash
-bash tool/quality_gate.sh       # 契约、格式、分析、全量测试、布局与 FlutterGuard
+PUB_HOSTED_URL=https://pub.dev bash tool/quality_gate.sh  # 契约、只读格式、官方分析、workspace 与工具测试、布局
 bash tool/build_web_release.sh  # Web Release 与资源检查
 ```
 

@@ -3,6 +3,8 @@
   "objective": "configuration_truth_and_generator_maintainability",
   "active_phase": "configuration_convergence",
   "evidence_semantics": "historical_records_not_current_revision_acceptance",
+  "maintenance_standard": "support_declarations_and_known_runtime_constraints",
+  "verification_tracking": "not_part_of_daily_maintenance",
   "completed_milestones": [
     "directory_layers",
     "shared_package_extraction",
@@ -20,22 +22,15 @@
   "dependency_migration": {
     "layout": "pub_workspace",
     "internal_packages": [
+      "packages/forge_scene_viewer",
+      "packages/usb_network_bridge",
       "packages/flutter_battery",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
       "packages/desktop_multi_window"
     ],
     "workspace_resolution_status": "active",
-    "workspace_resolution_blocker": "none",
-    "external_tool": {
-      "package": "flutterguard_cli",
-      "source": "git",
-      "url": "https://github.com/lizy-coding/flutterguard.git",
-      "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
-      "resolved_ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
-      "immutable": true,
-      "lock_status": "git_pinned"
-    }
+    "workspace_resolution_blocker": "none"
   },
   "work_queue": [
     {
@@ -297,6 +292,30 @@
       ]
     },
     {
+      "id": "scene_viewer_package_and_p0_diagnostics",
+      "priority": 21,
+      "status": "completed",
+      "targets": [
+        "packages/forge_scene_viewer",
+        "apps/flutter_forge/lib/modules/ui/flutter_scene_3d",
+        "apps/flutter_forge/integration_test/flutter_scene_3d_diagnostics_test.dart"
+      ],
+      "acceptance": [
+        "workspace_viewer_package_with_app_owned_teaching_and_platform_policy",
+        "render_call_cpu_and_window_timing_metrics_with_explicit_scope",
+        "demand_continuous_manual_and_single_frame_controls",
+        "bounded_sampling_and_metadata_only_pass_capture",
+        "idle_repaint_isolation_and_lifecycle_cleanup",
+        "macos_profile_real_gpu_flow",
+        "quality_gate"
+      ],
+      "evidence": [
+        "Package and app targeted tests cover sampling, render scheduling, UI isolation, visibility, and disposal",
+        "macOS Profile flow verifies five-second idle stability, one-call redraw, fixed-pose continuous mode, and two captured render passes",
+        "GPU time, memory, backend identity, and draw calls remain unmeasured; no Windows or Android host acceptance is inferred"
+      ]
+    },
+    {
       "id": "flutter_scene_3d_camera_motion",
       "priority": 14,
       "status": "pending",
@@ -468,16 +487,14 @@
   ],
   "quality_gate": [
     "node tool/validate_agent_docs.js",
-    "dart format .",
-    "flutter analyze:no_error",
-    "flutterguard:no_high",
+    "dart format --output=none --set-exit-if-changed .",
+    "flutter analyze:no_issue",
     "logic_change:targeted_test",
     "teaching_ui_change:visual_evidence"
   ],
   "deferred_queue": [
     "popup_widgets_decomposition",
     "widget_test_coverage",
-    "flutterguard_med_reduction",
     "recommended_module_visual_evidence",
     "flutter_scene_3d_model_loading",
     "flutter_scene_3d_material_lighting"

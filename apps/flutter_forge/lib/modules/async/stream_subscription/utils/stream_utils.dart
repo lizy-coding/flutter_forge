@@ -19,7 +19,7 @@ class StreamUtils {
       if (controller.isClosed) return;
 
       if (count != null && counter >= count) {
-        controller.close();
+        unawaited(controller.close());
         return;
       }
 
@@ -52,7 +52,7 @@ class StreamUtils {
     );
 
     controller.onCancel = () {
-      subscription.cancel();
+      unawaited(subscription.cancel());
     };
 
     return controller.stream;
@@ -81,16 +81,18 @@ class StreamUtils {
             onDone: () {
               completedCount++;
               if (completedCount == streams.length) {
-                controller.close();
+                unawaited(controller.close());
               }
             },
           )
+          // The demonstration deliberately cancels this auxiliary listener immediately.
+          // ignore: discarded_futures
           .cancel(); // 立即取消这个监听，因为我们只关心完成事件
     }
 
     controller.onCancel = () {
       for (var subscription in subscriptions) {
-        subscription.cancel();
+        unawaited(subscription.cancel());
       }
     };
 
@@ -117,7 +119,7 @@ class StreamUtils {
     );
 
     controller.onCancel = () {
-      subscription?.cancel();
+      unawaited(subscription?.cancel());
     };
 
     return controller.stream;
@@ -142,12 +144,12 @@ class StreamUtils {
         if (buffer.isNotEmpty) {
           controller.add(List<T>.from(buffer));
         }
-        controller.close();
+        unawaited(controller.close());
       },
     );
 
     controller.onCancel = () {
-      subscription?.cancel();
+      unawaited(subscription?.cancel());
     };
 
     return controller.stream;
@@ -175,7 +177,7 @@ class StreamUtils {
     );
 
     controller.onCancel = () {
-      subscription?.cancel();
+      unawaited(subscription?.cancel());
     };
 
     return controller.stream;
@@ -213,7 +215,7 @@ class StreamUtils {
     );
 
     controller.onCancel = () {
-      subscription?.cancel();
+      unawaited(subscription?.cancel());
     };
 
     return controller.stream;

@@ -1,53 +1,29 @@
 name: CI
-
 on:
   push:
     branches: [master, dev]
   pull_request:
     branches: [master, dev]
-
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   quality-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.47.2"
           channel: stable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
-
       - name: Bootstrap
         run: |
-          flutter pub get
+          flutter pub get --enforce-lockfile
           (cd packages/video_player_win/example && flutter pub get)
-          git config core.hooksPath .githooks
-
-      - name: Agent doc generation + drift check
-        run: |
-          bash tool/generate_harness_ai_analysis.sh
-          git diff --exit-code -- \
-            AI_ANALYSIS_SCHEMA.json \
-            AI_PROJECT_CONTEXT.md \
-            REFACTOR_PLAN.md \
-            AI_ANALYSIS.md \
-            'apps/flutter_forge/lib/**/AI_ANALYSIS.md' \
-            'apps/flutter_forge/lib/AI_MODULE_INDEX.md' \
-            'packages/**/AI_ANALYSIS.md'
-
-      - name: Dart format
-        run: |
-          dart format .
-          git diff --exit-code -- '*.dart'
-
-      - name: Flutter analyze
-        run: flutter analyze
-
-      - name: Tests
-        run: bash tool/test_all.sh
+      - name: Quality gate
+        run: bash tool/quality_gate.sh

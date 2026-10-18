@@ -1,0 +1,42 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "kind": "execution",
+  "module": "graphics_background",
+  "platform": "macOS",
+  "status": "pass",
+  "environment": "macOS arm64; Flutter 3.47.2; Debug; native four-chapter teaching smoke only",
+  "recorded_at": "2026-10-12T06:53:04.593Z",
+  "fingerprint": "d110436b122e7ce2310c663e6241f807cfb61d7030e5917abf343ffe4acf59d6",
+  "revision": {
+    "commit": "b90d5971a8af6de4a6eaedf979344a9e53ef0cac",
+    "dirty": true
+  },
+  "case_ids": [],
+  "artifacts": [
+    {
+      "path": "docs/evidence/graphics-background-20261012/README.md",
+      "sha256": "192945b1b4054f5eee24772f9063e559b1ea5695cd4a8d2f82ea852e0577d213"
+    },
+    {
+      "path": "docs/evidence/graphics-background-20261012/macos-overview.png",
+      "sha256": "dfd200a9da882c05df621d35352146ac92185c1acf236884cec27fc3522824b9"
+    },
+    {
+      "path": "docs/evidence/graphics-background-20261012/macos-gpu-texture.png",
+      "sha256": "4d6d4ee04ee938576ab90b701aeba6d48c49d2df73f41e5101ba47e9d03782c0"
+    },
+    {
+      "path": "docs/evidence/graphics-background-20261012/macos-uv.png",
+      "sha256": "60f9bfbd676ea70188e08a1c43a1f5b5ac586510b2e5c46ed73497452cdd46fc"
+    },
+    {
+      "path": "docs/evidence/graphics-background-20261012/macos-shader-rule.png",
+      "sha256": "1b55d42717305e9d59e5941eca7124105272a4abec1006419bcb0ef729db2863"
+    },
+    {
+      "path": "docs/evidence/graphics-background-20261012/runtime-summary.txt",
+      "sha256": "ef0866f23c117c5c8fdbe77767f185bbedbbec7c64160af1551e8548170987d5"
+    }
+  ],
+  "source": "manual_operator_record"
+}

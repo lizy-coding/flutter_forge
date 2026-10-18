@@ -41,12 +41,26 @@
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
       "packages/desktop_multi_window",
-      "packages/flutter_battery"
+      "packages/flutter_battery",
+      "packages/usb_network_bridge",
+      "packages/forge_scene_viewer"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "forge_scene_viewer",
+      "type": "flutter_package",
+      "path": "packages/forge_scene_viewer",
+      "entrypoint": "lib/forge_scene_viewer.dart"
+    },
+    {
+      "name": "usb_network_bridge",
+      "type": "flutter_plugin_package",
+      "path": "packages/usb_network_bridge",
+      "entrypoint": "lib/usb_network_bridge.dart"
+    },
     {
       "name": "flutter_battery",
       "type": "flutter_plugin_package",
@@ -96,17 +110,7 @@
     "shared_popup": "lib/shared/popup",
     "shared_table": "lib/shared/table"
   },
-  "external_tools": [
-    {
-      "package": "flutterguard_cli",
-      "source": "git",
-      "url": "https://github.com/lizy-coding/flutterguard.git",
-      "ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
-      "resolved_ref": "9f9be84a73dc4b99a956a8529b8c334849566b03",
-      "immutable": true,
-      "lock_status": "git_pinned"
-    }
-  ],
+  "external_tools": [],
   "layers": [
     {
       "id": "app",
@@ -187,6 +191,33 @@
     "desktop_window_policy": "lib/app/category_navigation.dart",
     "navigation_policy": "lib/app/navigation_policy.dart",
     "compact_width_breakpoint_dp": 600,
+    "desktop_shell": {
+      "targets": [
+        "macos",
+        "windows"
+      ],
+      "rendering": "shared_flutter_workbench",
+      "titlebar": "immersive_flutter_48dp_with_native_window_controls",
+      "titlebar_home": "main_workbench_or_focused_category_root",
+      "titlebar_double_click": "platform_system_preference",
+      "window_controls": "native_macos_leading_traffic_lights_windows_trailing_caption",
+      "fullscreen_entry": "separate_native_fullscreen_button_and_f11",
+      "native_control_layout": "host_reported_logical_insets",
+      "window_host": "lib/app/desktop_window_host.dart",
+      "native_hosts": [
+        "macos/Runner/AppDelegate.swift",
+        "windows/runner/desktop_window_host.cpp"
+      ],
+      "default_home": "workbench_recent_and_categories",
+      "navigation": "two_level_category_module_single_active_route",
+      "quick_open": "title_subtitle_category_concepts",
+      "recent_history": "bounded_module_entry_preferences_not_task_restore",
+      "default_palette": "graphiteForge_on_first_desktop_launch",
+      "glass_scope": "main_framework_over_application_background",
+      "main_window_close": "exit_application",
+      "category_window_close": "close_current_window",
+      "decision": "docs/adr/0016-shared-desktop-workbench.md"
+    },
     "mobile_window_policy": "in_app_navigation_only",
     "web_window_policy": "in_app_navigation_only",
     "platform_snapshot": "bootstrap_initialized_process_immutable",
@@ -204,9 +235,9 @@
     "web_startup_shell": "web/index.html + web/flutter_bootstrap.js",
     "platform_capability_contract": "business_neutral_interface",
     "availability_source": "tool/agent_indexes/availability.js",
-    "verification_semantics": "independent_labels_never_admission",
+    "maintenance_semantics": "support_declarations_and_known_constraints",
     "maintenance_matrix": "docs/module_availability/matrix.json",
-    "acceptance_cases": "docs/module_availability/acceptance-cases.md"
+    "historical_reports": "docs/module_availability/archive/README.md"
   },
   "change_protocol": {
     "branch_policy": {
@@ -235,31 +266,25 @@
       "tool/agent_indexes/contracts.js",
       "tool/agent_indexes/routes.js",
       "tool/agent_indexes/availability.js",
-      "tool/agent_indexes/verification.js",
-      "tool/agent_indexes/acceptance_cases.js",
-      "tool/agent_indexes/visual_flows.js"
+      "tool/agent_indexes/support.js"
     ],
     "generate": "bash tool/generate_harness_ai_analysis.sh",
     "validate": [
-      "bash tool/generate_harness_ai_analysis.sh + git diff --exit-code",
-      "dart format . + git diff --exit-code -- *.dart",
+      "bash tool/check_generated_docs.sh",
+      "dart format --output=none --set-exit-if-changed .",
       "flutter analyze (bare)",
       "bash tool/test_all.sh",
       "bash tool/verify_test_layout.sh",
-      "bash tool/build_web_release.sh",
-      "dart run flutterguard_cli:flutterguard scan . --fail-on high (cd apps/flutter_forge)"
+      "bash tool/build_web_release.sh"
     ],
     "ci": {
       "authoritative_remote_packaging_gate": ".github/workflows/ci.yml",
       "analyze_standard": "bare flutter analyze (info/warning treated as failure)",
       "steps": [
-        "flutter pub get",
-        "agent doc generation + drift check",
-        "dart format + drift check",
-        "flutter analyze (bare)",
-        "bash tool/test_all.sh"
+        "flutter pub get --enforce-lockfile",
+        "bash tool/quality_gate.sh"
       ],
-      "flutterguard": "not run in CI (previously failed from repo root with empty match); enforced only by local quality_gate.sh stage 6"
+      "implementation": "bash tool/quality_gate.sh; no FlutterGuard dependency"
     }
   }
 }

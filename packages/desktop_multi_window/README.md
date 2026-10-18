@@ -50,6 +50,11 @@ Future<void> main(List<String> args) async {
 
 ### 2. Create New Windows
 
+Forge 内部副本要求 Flutter 3.47.2 及以上。Windows 子引擎可通过
+`WindowConfiguration(enableFlutterGpu: true, arguments: ...)` 显式启用
+Flutter GPU；默认关闭，其他宿主沿用自身引擎配置。Forge 分类窗口传递该开关，
+使其具备与主窗口一致的 GPU 前提。
+
 Use `WindowController.create()` to create and manage new windows:
 
 ```dart

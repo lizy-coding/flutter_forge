@@ -7,6 +7,7 @@
 struct WindowConfiguration {
   std::string arguments;
   bool hidden_at_launch = false;
+  bool enable_flutter_gpu = false;
 
   static WindowConfiguration FromEncodableMap(
       const flutter::EncodableMap* map) {
@@ -23,6 +24,10 @@ struct WindowConfiguration {
       it = map->find(flutter::EncodableValue("hiddenAtLaunch"));
       if (it != map->end()) {
         config.hidden_at_launch = std::get<bool>(it->second);
+      }
+      it = map->find(flutter::EncodableValue("enableFlutterGpu"));
+      if (it != map->end()) {
+        config.enable_flutter_gpu = std::get<bool>(it->second);
       }
     } catch (const std::exception& e) {
       std::cerr << "Failed to parse WindowConfiguration: " << e.what()

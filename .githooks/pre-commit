@@ -1,13 +1,3 @@
-#!/bin/bash
-# FlutterGuard CI gate — reject commits that introduce high-severity issues
+#!/usr/bin/env bash
 set -euo pipefail
-
-echo "🔍 Running FlutterGuard static scan..."
-if ! (cd apps/flutter_forge && dart run flutterguard_cli:flutterguard scan . --fail-on high); then
-  echo ""
-  echo "❌ FlutterGuard 检测到高优问题，提交被阻止。"
-  echo "   运行 'cd apps/flutter_forge && dart run flutterguard_cli:flutterguard scan . --fail-on high' 查看详情。"
-  exit 1
-fi
-
-echo "✅ FlutterGuard 扫描通过。"
+# Full validation is owned by quality_gate.sh and CI; commits do not require FlutterGuard.

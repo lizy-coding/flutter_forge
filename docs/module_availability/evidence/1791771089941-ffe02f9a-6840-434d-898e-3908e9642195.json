@@ -1,0 +1,30 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "kind": "execution",
+  "module": "pixel_shader_intro",
+  "platform": "macOS",
+  "status": "pass",
+  "environment": "macOS arm64; Flutter 3.47.2; Debug; fresh-launch three-step lesson smoke; no reload/restart",
+  "recorded_at": "2026-10-12T02:11:29.880Z",
+  "fingerprint": "6dfc77f5144da29e7954598409c51453c2b3e2b93ab5b4a02d896dbc5cbe2116",
+  "revision": {
+    "commit": "b90d5971a8af6de4a6eaedf979344a9e53ef0cac",
+    "dirty": true
+  },
+  "case_ids": [],
+  "artifacts": [
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/FINAL.md",
+      "sha256": "d9f39b7b472e19c2dd88cc420c4ffedcdd06b8d43f2d8506ea154986f2ac0060"
+    },
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/macos-cold-start-uv.png",
+      "sha256": "1b559b55f7af79e42e237ec3122a9d956b70969d59973c792a694a3ac145e038"
+    },
+    {
+      "path": "docs/evidence/pixel-shader-intro-20261012/cold-start-log-summary.txt",
+      "sha256": "d25498f32fb62a2a34ad30a66fa302707b1cc5a3eac34aa6c6c2e7c92c6aa1ed"
+    }
+  ],
+  "source": "manual_operator_record"
+}

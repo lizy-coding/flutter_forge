@@ -1,4 +1,4 @@
-import 'package:flutter_scene/build_hooks.dart';
+import 'package:forge_scene_viewer/build_hooks.dart';
 import 'package:hooks/hooks.dart';
 
 void main(List<String> args) async {

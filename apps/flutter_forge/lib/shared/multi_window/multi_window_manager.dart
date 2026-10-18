@@ -25,8 +25,12 @@ class MultiWindowManager {
   static bool get isSupported => multiWindowPlatformSupported;
 
   final Map<ModuleCategory, String> _categoryWindows = {};
+  final Map<ModuleCategory, Future<String?>> _pendingCategoryWindows = {};
+  int _windowStateVersion = 0;
   final MultiWindowPlatform _platform;
   final MultiWindowDiagnosticSink _diagnosticSink;
+  // The singleton observes windows for the process lifetime.
+  // ignore: cancel_subscriptions
   StreamSubscription<void>? _windowCloseListener;
   String _themeSelectionPayload = 'system';
 
@@ -41,9 +45,20 @@ class MultiWindowManager {
     await _calibrateCategoryWindows();
   }
 
-  Future<String?> createCategoryWindow(ModuleCategory category) async {
-    if (!isSupported) return null;
+  Future<String?> createCategoryWindow(ModuleCategory category) {
+    if (!isSupported) return Future.value(null);
 
+    return _pendingCategoryWindows.putIfAbsent(category, () async {
+      try {
+        return await _createCategoryWindow(category);
+      } finally {
+        // The removed future is already returned to the callers.
+        unawaited(_pendingCategoryWindows.remove(category));
+      }
+    });
+  }
+
+  Future<String> _createCategoryWindow(ModuleCategory category) async {
     final stopwatch = Stopwatch()..start();
     await _calibrateCategoryWindows();
 
@@ -76,12 +91,12 @@ class MultiWindowManager {
                 .map((controller) => controller.windowId)
                 .toSet();
             if (liveWindowIds.contains(existingId)) rethrow;
-            _categoryWindows.remove(category);
+            _removeCategoryWindow(category);
             break;
           }
         }
       }
-      _categoryWindows.remove(category);
+      _removeCategoryWindow(category);
     }
 
     final args = jsonEncode({
@@ -90,11 +105,16 @@ class MultiWindowManager {
       'themeSelection': _themeSelectionPayload,
     });
 
-    final config = WindowConfiguration(hiddenAtLaunch: false, arguments: args);
+    final config = WindowConfiguration(
+      hiddenAtLaunch: false,
+      arguments: args,
+      enableFlutterGpu: true,
+    );
 
     final controller = await _platform.createWindow(config);
 
     _categoryWindows[category] = controller.windowId;
+    _windowStateVersion++;
     _recordDiagnostic(
       category: category,
       arguments: controller.arguments,
@@ -106,7 +126,10 @@ class MultiWindowManager {
   }
 
   Future<void> _calibrateCategoryWindows() async {
+    final version = _windowStateVersion;
     final controllers = await _platform.getAllWindows();
+    // A list captured before a concurrent mutation cannot replace newer state.
+    if (version != _windowStateVersion) return;
     final liveCategoryWindows = <ModuleCategory, String>{};
     for (final controller in controllers) {
       final arguments = parseArguments(controller.arguments);
@@ -114,9 +137,16 @@ class MultiWindowManager {
         liveCategoryWindows[arguments.category!] = controller.windowId;
       }
     }
+    // Even an unchanged accepted snapshot supersedes older pending snapshots.
+    _windowStateVersion++;
+    if (mapEquals(_categoryWindows, liveCategoryWindows)) return;
     _categoryWindows
       ..clear()
       ..addAll(liveCategoryWindows);
+  }
+
+  void _removeCategoryWindow(ModuleCategory category) {
+    if (_categoryWindows.remove(category) != null) _windowStateVersion++;
   }
 
   void _recordDiagnostic({

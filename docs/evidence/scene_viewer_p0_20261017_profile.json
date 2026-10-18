@@ -1,0 +1,89 @@
+{
+  "evidence_scope": "macOS Profile working tree; functional validation, not a throughput benchmark",
+  "base_sha": "6910044320f33ae27aa32d8ff5e2617672ccb248",
+  "uncommitted_worktree": true,
+  "diagnostics": {
+    "schema": "forge_scene_viewer.diagnostics.v1",
+    "build_mode": "profile",
+    "platform": "macOS",
+    "render_mode": "manual",
+    "motion_state": "paused",
+    "visible": true,
+    "sampling_generation": 2,
+    "metrics": {
+      "requests": 35,
+      "coalesced_requests": 0,
+      "scene_render_calls": 35,
+      "returned_calls": 35,
+      "failed_calls": 0,
+      "scene_call_rate_hz": 1,
+      "last_reason": "单帧重绘",
+      "scene_cpu": {
+        "samples": 13,
+        "latest_us": 510,
+        "p50_us": 502,
+        "p95_us": 659,
+        "max_us": 659
+      },
+      "window_build": {
+        "samples": 126,
+        "latest_us": 222,
+        "p50_us": 214,
+        "p95_us": 1978,
+        "max_us": 11792
+      },
+      "window_raster": {
+        "samples": 126,
+        "latest_us": 1417,
+        "p50_us": 868,
+        "p95_us": 1652,
+        "max_us": 11044
+      },
+      "window_over_budget_ratio": 0.0,
+      "sampling": false,
+      "window_limit_seconds": 10,
+      "sample_limit": 1200,
+      "capture_calls": 1,
+      "specification": {
+        "logical_width": 884.0,
+        "logical_height": 320.0,
+        "pixel_width": 1768,
+        "pixel_height": 640,
+        "device_pixel_ratio": 2.0,
+        "render_scale": 1.0,
+        "anti_aliasing": "msaa",
+        "refresh_rate_hz": 60.0,
+        "path": "flutter_scene / Flutter GPU",
+        "gpu_backend": null
+      },
+      "gpu_duration_us": null,
+      "gpu_memory_bytes": null,
+      "gpu_draw_calls": null,
+      "last_error": null,
+      "last_error_at": null,
+      "events": [
+        "6.37s · 绘制模式：manual",
+        "6.37s · 开始采样",
+        "6.88s · 完成单帧抓取（2 Pass）",
+        "7.37s · 绘制模式：continuous",
+        "7.77s · 绘制模式：manual",
+        "10.47s · 停止采样"
+      ]
+    },
+    "capture": {
+      "width_px": 1768,
+      "height_px": 640,
+      "passes": [
+        {
+          "name": "ScenePass",
+          "cpu_us": 563
+        },
+        {
+          "name": "ResolvePass",
+          "cpu_us": 134
+        }
+      ]
+    },
+    "scope": "Scene CPU calls and Flutter window timings; GPU completion is not measured."
+  }
+}

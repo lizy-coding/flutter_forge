@@ -18,7 +18,11 @@
 | 0010 | Flutter Scene Android 只读准入 | accepted |
 | 0011 | 平台快照与守卫路由 | accepted |
 | 0012 | 自适应导航外壳与分类专注窗口 | accepted |
-| 0013 | [能力推导可用性与独立验证记录](0013-capability-derived-availability-and-evidence.md) | accepted |
+| 0013 | [能力推导可用性与独立验证记录](0013-capability-derived-availability-and-evidence.md) | accepted；验证维护部分被 0014 取代 |
+| 0014 | [最简支持声明维护](0014-minimal-support-maintenance.md) | accepted |
+| 0015 | [macOS 基础桌面外壳](0015-macos-desktop-shell.md) | superseded by 0016 |
+| 0016 | [通用桌面工作台与沉浸式标题栏](0016-shared-desktop-workbench.md) | accepted |
+| 0017 | [内部 3D 查看包与可观测绘制](0017-scene-viewer-package-and-render-observability.md) | accepted |
 
 ## 状态定义
 

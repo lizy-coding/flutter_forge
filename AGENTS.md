@@ -43,13 +43,16 @@
 
 - 平台限制用 `ModulePlatformSupport.excludedPlatforms` 表达；普通模块使用空排除集合。
 - 平台限制由 `tool/agent_indexes/availability.js` 的共用能力适配规则推导；模块仅声明可选能力或带依据的产品级禁用例外，禁止重复手填平台名单。
-- 逻辑、编译、执行与人工界面验收只做标识；通过 `tool/module_availability.js` 记录一次，生成矩阵与用例，证据来源变化标为 STALE。
+- 日常维护仅生成入口支持范围、必要功能差异与限制依据；`tool/module_availability.js list` 只读查看支持声明。测试结果、源码指纹和历史验收状态不进入维护矩阵，也不作为日常健康判定标准；专项报告按需保留，CI 测试继续作为开发反馈。
 - 目录和路由统一通过 `module_registry` 判定；模块页面不得自行决定目录可见性。
 - 不支持的平台保留稳定模块路径，并进入统一不可用说明页。
 - 平台可用性与 `ModuleStatus.pending/ready/recommended` 相互独立。
 - Android、iOS、Web 和小于 `600dp` 的窗口使用应用内导航。
-- 仅桌面宽窗口且多窗口能力可用时创建分类窗口。
-- UI 通过 `NavigationPolicy` 选择导航模式；`MultiWindowManager` 只管理桌面窗口生命周期。
+- 桌面主框架遵循 `docs/adr/0016-shared-desktop-workbench.md`：macOS/Windows 共用 Flutter 沉浸式标题栏、工作台首页、两层分类／模块导航和快速打开；内容区共用布局；窗口控制遵循平台规范，macOS 左侧原生红黄绿按钮，Windows 右侧原生窗口按钮。
+- 标题栏主页按钮进入当前窗口根路由；空白区双击遵循系统习惯；独立全屏按钮和 F11 切换真实全屏／窗口模式，不改变原生最大化按钮语义。主窗口关闭退出应用，分类窗口关闭仅影响自身。
+- 透明主题首期覆盖主框架并透出应用自身背景；桌面透视和模块内部教学布局不属于本期。移动端下一阶段评估，保留既有入口。
+- 仅桌面窗口且多窗口能力可用时，由用户显式打开分类专注窗口；普通分类与模块点击使用应用内导航。
+- 应用层选择通用桌面框架，移动／Web 的紧凑、Rail 和侧栏布局由 `NavigationPolicy` 选择；`MultiWindowManager` 只管理桌面窗口生命周期。
 - 平台接入、构建通过和真机/真实主机验收必须分开描述；不得扩大证据范围。
 
 ## 修改流程
@@ -60,7 +63,9 @@
 4. 逻辑变化补定向测试；教学 UI 变化补人工验收或截图说明。
 5. 执行 `bash tool/quality_gate.sh`。
 
-质量门禁必须通过：Agent 文档无漂移、Dart 格式无漂移、bare `flutter analyze` 无 issue、全量测试通过、测试布局合规、FlutterGuard 无 HIGH。
+质量门禁必须通过：全部生成物无漂移、Dart 格式合规、bare `flutter analyze` 无 issue、workspace 全量测试和工具测试通过、模块测试存在性合规。通用目录命名、测试顶层目录与源码依赖扫描不属于本仓库门禁；
+FlutterGuard 独立安装，后续仅通过外部插件或工具集按需使用，不属于依赖解析、提交、CI 或发布的强制要求。
+`tool/verify_test_layout.sh` 仅保留模块测试存在性检查；稳定路由、教学组件、注册一致性和支持声明仍是业务契约。
 
 ## Git 与发布
 

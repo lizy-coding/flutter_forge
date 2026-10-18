@@ -70,6 +70,8 @@ void main() {
     testWidgets(
       'leaving during ${overlay ? 'overlay' : 'dialog'} chain opening cleans up the module',
       (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1200, 1000));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
         final router = GoRouter(
           initialLocation: '/popup-widgets',
           routes: AppRouteTable.routesFor(
@@ -79,7 +81,10 @@ void main() {
         addTearDown(router.dispose);
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
         await tester.pumpAndSettle();
-        final button = find.text(overlay ? 'Overlay 打开 A→B→C' : '打开 A→B→C');
+        final button = find.widgetWithText(
+          ElevatedButton,
+          overlay ? 'Overlay 打开 A→B→C' : '打开 A→B→C',
+        );
         final scrollable = find
             .descendant(
               of: find.byType(PopupDemoInteractiveDemo),
@@ -88,7 +93,8 @@ void main() {
             .first;
         await tester.scrollUntilVisible(button, 300, scrollable: scrollable);
         await Scrollable.ensureVisible(tester.element(button), alignment: 0.5);
-        await tester.pump();
+        await tester.pumpAndSettle();
+        expect(button.hitTestable(), findsOneWidget);
         await tester.tap(button);
         await tester.pump();
         router.go('/');
@@ -98,7 +104,7 @@ void main() {
         expect(find.textContaining('弹窗 A'), findsNothing);
         expect(find.textContaining('弹窗 B'), findsNothing);
         expect(find.textContaining('弹窗 C'), findsNothing);
-        expect(find.text('Lizy'), findsOneWidget);
+        expect(find.byKey(const ValueKey('workbench-home')), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );

@@ -29,7 +29,7 @@ class EventChannelHandler(
     // 默认推送间隔（毫秒）
     
     // 上次推送的电池电量
-    private var lastPushedBatteryLevel: Int = -1
+    private var lastPowerState: String? = null
     
     // 是否启用防抖动（仅在电量变化时推送）
     private var enableDebounce: Boolean = true
@@ -59,7 +59,7 @@ class EventChannelHandler(
         enableDebounce = config.debounce
         if (config.level) {
             timerManager.setInterval(config.levelInterval)
-            lastPushedBatteryLevel = -1
+            lastPowerState = null
             timerManager.start()
         }
         if (config.info) {
@@ -77,19 +77,12 @@ class EventChannelHandler(
      */
     private fun pushBatteryInfo() {
         try {
-            val currentLevel = batteryMonitor.getBatteryLevel()
-            
-            // 如果启用防抖动，则只在电量变化时推送
-            if (!enableDebounce || currentLevel != lastPushedBatteryLevel) {
-                lastPushedBatteryLevel = currentLevel
-                
-                val batteryInfo = HashMap<String, Any>(4)
-                batteryInfo[KEY_TYPE] = if (currentLevel < 0) "BATTERY_UNAVAILABLE" else EVENT_BATTERY_LEVEL
-                batteryInfo[KEY_BATTERY_LEVEL] = currentLevel
-                batteryInfo[KEY_LEVEL] = currentLevel
-                batteryInfo[KEY_TIMESTAMP] = System.currentTimeMillis()
-                
-                eventSink?.success(batteryInfo)
+            val payload = HashMap<String, Any>(batteryMonitor.readBattery("level"))
+            val signature = listOf("level", "powerSource", "isCharging", "isCharged").joinToString("|") { payload[it].toString() }
+            if (!enableDebounce || signature != lastPowerState || payload["availability"] != "available") {
+                lastPowerState = signature
+                payload[KEY_TYPE] = if (payload["availability"] == "available") EVENT_BATTERY_LEVEL else "BATTERY_UNAVAILABLE"
+                eventSink?.success(payload)
             }
         } catch (e: Exception) {
             eventSink?.error(
@@ -105,7 +98,7 @@ class EventChannelHandler(
      */
     private fun pushCompleteBatteryInfo() {
         try {
-            val batteryInfo = batteryMonitor.getBatteryInfo()
+            val batteryInfo = batteryMonitor.readBattery("info")
             
             // 添加消息类型标记
             val message = HashMap<String, Any>(batteryInfo.size + 3)
@@ -133,7 +126,7 @@ class EventChannelHandler(
 
     private fun pushBatteryHealthInfo() {
         try {
-            val health = batteryMonitor.getBatteryHealth()
+            val health = batteryMonitor.readBattery("health")
             val payload = HashMap<String, Any>(health.size + 3)
             payload.putAll(health)
             payload[KEY_TYPE] = EVENT_BATTERY_HEALTH

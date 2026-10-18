@@ -1,0 +1,35 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "source": "automated_command",
+  "kind": "logic",
+  "module": "usb_network",
+  "platform": "any",
+  "status": "pass",
+  "recorded_at": "2026-10-07T11:39:44.283Z",
+  "fingerprint": "17ecf95a29dc65e78f77da62372a5f8f0920fbaa5bc582bed60c51554b3c0c14",
+  "revision": {
+    "commit": "75a57d1cdab644d3499f77eade3f1c668acbec83",
+    "dirty": true
+  },
+  "environment": "darwin arm64 25.5.0; Flutter 3.47.2 • channel stable • https://github.com/flutter/flutter.git",
+  "command": [
+    "flutter",
+    "test",
+    "test/modules/platform/usb_network",
+    "--no-pub",
+    "--machine"
+  ],
+  "exit_code": 0,
+  "test_summary": {
+    "completed": 8,
+    "skipped": 0,
+    "failed": 0,
+    "success": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/module_availability/evidence/logs/1791373184000-73db00b7-c031-4076-a4d4-8d153fe2171b.log",
+      "sha256": "123266fe7eeb38bb0f837dcc263208097e49abe4815613aa1fb57f5f4559c4f9"
+    }
+  ]
+}

@@ -8,6 +8,8 @@ class ProviderFutureRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
+      // Initialization starts in this synchronous Flutter lifecycle callback.
+      // ignore: discarded_futures
       create: (_) => _UserModel()..load(),
       child: _FutureContent(),
     );

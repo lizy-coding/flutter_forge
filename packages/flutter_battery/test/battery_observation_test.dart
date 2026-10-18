@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_battery/flutter_battery.dart';
+import 'package:flutter_battery/legacy_flutter_battery.dart';
 import 'package:flutter_battery/flutter_battery_method_channel.dart';
 import 'package:flutter_battery/flutter_bluetooth_method_channel.dart';
 import 'package:flutter/services.dart';
@@ -62,7 +62,7 @@ void main() {
         },
       );
       final fast = await hub.open(
-        BatteryObservationOptions(levelIntervalMs: 100, debounceLevel: false),
+        BatteryObservationOptions(levelIntervalMs: 100),
       );
       final slow = await hub.open(
         BatteryObservationOptions(levelIntervalMs: 1000),

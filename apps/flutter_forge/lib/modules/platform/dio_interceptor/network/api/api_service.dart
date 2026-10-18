@@ -3,12 +3,11 @@ import '../http_client.dart';
 /// API服务类
 /// 封装对后端API的调用
 class ApiService {
-  static final ApiService _instance = ApiService._internal();
-  factory ApiService() => _instance;
-
-  final HttpClient _httpClient = HttpClient();
-
-  ApiService._internal();
+  ApiService(this._httpClient);
+  final HttpClient _httpClient;
+  bool get isLoggedIn => _httpClient.auth.getToken() != null;
+  void setToken(String token) => _httpClient.auth.setToken(token);
+  void clearToken() => _httpClient.auth.clearToken();
 
   /// 登录
   Future<Map<String, dynamic>> login(String username, String password) async {

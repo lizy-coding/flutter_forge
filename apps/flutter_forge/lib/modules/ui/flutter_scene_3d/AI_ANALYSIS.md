@@ -32,6 +32,7 @@
         "capability": "scene_render",
         "reason": "scene_gpu_adapters",
         "sources": [
+          "packages/forge_scene_viewer/lib/src/scene_runtime.dart",
           "apps/flutter_forge/android/app/src/main/AndroidManifest.xml",
           "apps/flutter_forge/windows/runner/main.cpp",
           "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart"
@@ -47,7 +48,7 @@
         ],
         "reason": "desktop_scene_controls_android_view_only",
         "sources": [
-          "apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"
+          "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/scene_interaction_mode.dart"
         ]
       }
     }
@@ -63,8 +64,7 @@
   ],
   "depends": [
     "shared_learning",
-    "flutter_scene",
-    "vector_math",
+    "forge_scene_viewer",
     "module_registry"
   ],
   "children": [],

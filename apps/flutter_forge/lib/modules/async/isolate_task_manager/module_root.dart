@@ -21,10 +21,10 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
     super.initState();
     _taskManager = TaskManager(
       onTaskUpdate: (task) {
-        setState(() {});
+        if (mounted) setState(() {});
       },
       onTaskComplete: (task) {
-        setState(() {});
+        if (mounted) setState(() {});
       },
     );
   }
@@ -90,6 +90,14 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
                                   context,
                                 ).textTheme.headlineSmall,
                               ),
+                              if (task.error != null)
+                                Tooltip(
+                                  message: task.error!,
+                                  child: const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                  ),
+                                ),
                               if (task.isCompleted)
                                 const Icon(
                                   Icons.check_circle,
@@ -116,7 +124,9 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
                             children: [
                               Text('进度: ${task.progress}%'),
                               Text(
-                                task.isCompleted
+                                task.error != null
+                                    ? '启动失败，可删除后重试'
+                                    : task.isCompleted
                                     ? '已完成'
                                     : task.isPaused
                                     ? '已暂停'
@@ -132,7 +142,7 @@ class _MultiTaskIsolatePageState extends State<MultiTaskIsolatePage> {
                               ),
                             ],
                           ),
-                          if (!task.isCompleted)
+                          if (!task.isCompleted && task.error == null)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [

@@ -1,10 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-const _categories = {'basic', 'async', 'state', 'ui', 'popupTable', 'platform'};
-const _difficulties = {'beginner', 'intermediate', 'advanced'};
-const _platforms = {'android', 'iOS', 'macOS', 'windows', 'linux', 'fuchsia'};
-
 Future<void> main(List<String> args) async {
   try {
     final options = _parse(args);
@@ -12,10 +8,12 @@ Future<void> main(List<String> args) async {
       stdout.write(_usage);
       return;
     }
-    final spec = _spec(options);
-    final files = _files(spec);
+    final candidate = await _candidate(options);
+    final spec = candidate['spec'] as Map<String, dynamic>;
+    final declaration = spec['declaration'] as Map<String, dynamic>;
+    final files = _files(candidate);
     final output = Directory(
-      options['output'] ?? 'build/module_scaffold/${spec['name']}',
+      options['output'] ?? 'build/module_scaffold/${declaration['id']}',
     );
 
     if (options['apply'] != 'true') {
@@ -24,6 +22,8 @@ Future<void> main(List<String> args) async {
           'mode': 'preview',
           'output': output.path,
           'files': files.keys.toList(),
+          'spec': spec,
+          'registration': candidate['registration'],
         }),
       );
       return;
@@ -34,8 +34,9 @@ Future<void> main(List<String> args) async {
       );
     }
     for (final entry in files.entries) {
-      final file = File('${output.path}/${entry.key}')
-        ..createSync(recursive: true);
+      final file = File.fromUri(
+        output.absolute.uri.resolveUri(Uri(path: entry.key)),
+      )..createSync(recursive: true);
       file.writeAsStringSync(entry.value);
     }
     stdout.writeln(
@@ -43,12 +44,16 @@ Future<void> main(List<String> args) async {
         'mode': 'applied',
         'output': output.path,
         'files': files.keys.toList(),
+        'routeRegistration': spec['routeRegistration'],
       }),
     );
   } on ArgumentError catch (error) {
     stderr.writeln('module_scaffold: ${error.message}');
     stderr.writeln(_usage);
     exitCode = 64;
+  } on ProcessException catch (error) {
+    stderr.writeln('module_scaffold: Node.js is required: ${error.message}');
+    exitCode = 78;
   }
 }
 
@@ -56,101 +61,83 @@ Map<String, String> _parse(List<String> args) {
   final result = <String, String>{};
   for (var i = 0; i < args.length; i++) {
     final arg = args[i];
-    if (arg == '--help' || arg == '-h') {
-      result['help'] = 'true';
-    } else if (arg == '--apply' || arg == '--force') {
-      result[arg.substring(2)] = 'true';
-    } else if (arg.startsWith('--') && i + 1 < args.length) {
-      result[arg.substring(2)] = args[++i];
-    } else {
-      throw ArgumentError('unknown or incomplete argument: $arg');
+    final key = arg == '-h' ? 'help' : arg.replaceFirst(RegExp(r'^--'), '');
+    if ((!arg.startsWith('--') && arg != '-h') || result.containsKey(key)) {
+      throw ArgumentError('unknown or duplicate argument: $arg');
     }
+    if (key == 'help' || key == 'apply' || key == 'force') {
+      result[key] = 'true';
+    } else if (i + 1 < args.length && !args[i + 1].startsWith('--')) {
+      result[key] = args[++i];
+    } else {
+      throw ArgumentError('incomplete argument: $arg');
+    }
+  }
+  if (result.containsKey('help') && result.length != 1) {
+    throw ArgumentError('--help must be used by itself');
+  }
+  if (result.containsKey('force') && !result.containsKey('apply')) {
+    throw ArgumentError('--force requires --apply');
   }
   return result;
 }
 
-Map<String, String> _spec(Map<String, String> options) {
-  String required(String name) {
-    final value = options[name];
-    if (value == null || value.trim().isEmpty) {
-      throw ArgumentError('--$name is required');
-    }
-    return value.trim();
-  }
-
-  final category = required('category');
-  final name = required('name');
-  final title = required('title');
-  final subtitle = required('subtitle');
-  final difficulty = options['difficulty'] ?? 'beginner';
-  final minutes = int.tryParse(options['minutes'] ?? '15');
-  if (!_categories.contains(category))
-    throw ArgumentError('invalid category: $category');
-  if (!RegExp(r'^[a-z][a-z0-9_]*$').hasMatch(name))
-    throw ArgumentError('name must be snake_case: $name');
-  if (!_difficulties.contains(difficulty))
-    throw ArgumentError('invalid difficulty: $difficulty');
-  if (minutes == null || minutes <= 0)
-    throw ArgumentError('minutes must be a positive integer');
-  final platforms = (options['platforms'] ?? '')
-      .split(',')
-      .where((item) => item.isNotEmpty)
-      .toSet();
-  if (platforms.any((platform) => !_platforms.contains(platform)))
-    throw ArgumentError('invalid platform in: $platforms');
-  final concepts = (options['concepts'] ?? 'Flutter,实践')
-      .split(',')
-      .map((item) => item.trim())
-      .where((item) => item.isNotEmpty)
-      .toList();
-  if (concepts.isEmpty) throw ArgumentError('concepts must not be empty');
-  return {
-    'category': category,
-    'name': name,
-    'title': title,
-    'subtitle': subtitle,
-    'difficulty': difficulty,
-    'minutes': '$minutes',
-    'concepts': jsonEncode(concepts),
-    'platforms': jsonEncode(platforms.toList()),
-  };
+Future<Map<String, dynamic>> _candidate(Map<String, String> options) async {
+  final helper = File.fromUri(
+    Platform.script.resolve('agent_indexes/module_spec.js'),
+  );
+  final process = await Process.start('node', [helper.path]);
+  final output = process.stdout.transform(utf8.decoder).join();
+  final errors = process.stderr.transform(utf8.decoder).join();
+  process.stdin.writeln(jsonEncode(options));
+  await process.stdin.close();
+  final status = await process.exitCode;
+  final error = await errors;
+  if (status != 0) throw ArgumentError(error.trim());
+  return jsonDecode(await output) as Map<String, dynamic>;
 }
 
-Map<String, String> _files(Map<String, String> spec) {
-  final platforms = (jsonDecode(spec['platforms']!) as List).cast<String>();
-  final concepts = (jsonDecode(spec['concepts']!) as List)
-      .map((item) => "'$item'")
+Map<String, String> _files(Map<String, dynamic> candidate) {
+  final spec = candidate['spec'] as Map<String, dynamic>;
+  final declaration = spec['declaration'] as Map<String, dynamic>;
+  final category = declaration['category'] as String;
+  final id = declaration['id'] as String;
+  final title = declaration['title'] as String;
+  final entryClass = declaration['entry'] as String;
+  final pageClass = '${entryClass.substring(0, entryClass.length - 5)}Page';
+  final concepts = (declaration['concepts'] as List)
+      .cast<String>()
+      .map(_dartLiteral)
       .join(', ');
-  final root = 'lib/modules/${spec['category']}/${spec['name']}';
-  final testRoot = 'test/modules/${spec['category']}/${spec['name']}';
-  final className = _className(spec['name']!);
+  final root = 'lib/modules/$category/$id';
+  final testRoot = 'test/modules/$category/$id';
   return {
     '$root/module_entry.dart':
         '''import 'package:flutter/material.dart';
 
 import 'module_root.dart';
 
-class ${_className(spec['name']!)}Entry extends StatelessWidget {
-  const ${_className(spec['name']!)}Entry({super.key});
+class $entryClass extends StatelessWidget {
+  const $entryClass({super.key});
 
   @override
-  Widget build(BuildContext context) => const ${_className(spec['name']!)}Page();
+  Widget build(BuildContext context) => const $pageClass();
 }
 ''',
     '$root/module_root.dart':
         '''import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
-class ${_className(spec['name']!)}Page extends StatelessWidget {
-  const ${_className(spec['name']!)}Page({super.key});
+class $pageClass extends StatelessWidget {
+  const $pageClass({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const LearningScaffold(
-      title: '${spec['title']}',
+      title: ${_dartLiteral(title)},
       interactiveDemo: _InteractiveDemo(),
       sections: [
-        LearningObjectives(objectives: ['理解 ${spec['title']} 的核心机制']),
+        LearningObjectives(objectives: [${_dartLiteral('理解 $title 的核心机制')}]),
         ConceptChips(concepts: [$concepts]),
         ExerciseCard(task: '补充一个可验证的交互练习。'),
       ],
@@ -164,80 +151,47 @@ class _InteractiveDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const SizedBox(
         height: 160,
-        child: Center(child: Text('在这里实现 ${spec['title']} 的交互演示')),
+        child: Center(child: Text(${_dartLiteral('在这里实现 $title 的交互演示')})),
       );
 }
 ''',
-    '$testRoot/${spec['name']}_test.dart':
+    '$testRoot/${id}_test.dart':
         '''import 'package:flutter/material.dart';
-import 'package:flutter_forge_app/modules/${spec['category']}/${spec['name']}/module_entry.dart';
+import 'package:flutter_forge_app/modules/$category/$id/module_entry.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('${spec['title']} renders in a compact viewport', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(320, 640));
+  testWidgets(${_dartLiteral('$title renders in a compact viewport')}, (tester) async {
+    await tester.binding.setSurfaceSize(const Size(360, 640));
     addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.pumpWidget(const MaterialApp(home: ${className}Entry()));
+    await tester.pumpWidget(const MaterialApp(home: $entryClass()));
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
   });
 }
 ''',
-    '$root/AI_ANALYSIS.md': jsonEncode({
-      'schema': 'vibecoding.harness.ai_analysis.v2',
-      'mode': 'module_contract',
-      'node': {
-        'id': 'flutter_forge_app.modules.${spec['category']}.${spec['name']}',
-        'kind': 'learning_module',
-        'package': 'flutter_forge_app',
-        'path': root,
-        'status': 'pending',
-      },
-      'route': '/${spec['name']!.replaceAll('_', '-')}',
-      'category': spec['category'],
-      'entrypoints': ['module_entry.dart', 'module_root.dart'],
-      'owns': ['module_entry', 'module_ui', 'module_docs'],
-      'depends': ['shared_learning', 'module_registry'],
-      'children': [],
-      'analysis_parent': 'lib/modules/AI_ANALYSIS.md',
-      'contracts': {
-        'no_natural_language': true,
-        'index_only': true,
-        'max_index_depth': 2,
-        'doc_consumer': 'coding_agent',
-        'doc_mode': 'machine_contract',
-        'update_required_on_file_change': true,
-        'import_direction_enforced': true,
-      },
-      'validation': ['flutter analyze', 'flutter test'],
-    }),
-    'module_spec.json': jsonEncode({
-      'category': spec['category'],
-      'name': spec['name'],
-      'title': spec['title'],
-      'subtitle': spec['subtitle'],
-      'difficulty': spec['difficulty'],
-      'estimatedMinutes': int.parse(spec['minutes']!),
-      'concepts': jsonDecode(spec['concepts']!),
-      'supportedPlatforms': platforms,
-      'routeRegistration': 'explicit_review_required',
-    }),
+    '$root/AI_ANALYSIS.md':
+        '${const JsonEncoder.withIndent('  ').convert(candidate['contract'])}\n',
+    'module_spec.json': '${const JsonEncoder.withIndent('  ').convert(spec)}\n',
+    'module_registration.js.txt': candidate['registration'] as String,
   };
 }
 
-String _className(String value) => value
-    .split('_')
-    .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
-    .join();
+String _dartLiteral(String value) => jsonEncode(value).replaceAll(r'$', r'\$');
 
 const _usage = '''Usage: dart run tool/module_scaffold.dart [options]
 
 Required: --category --name --title --subtitle
 Optional: --difficulty beginner|intermediate|advanced --minutes 15
-          --concepts a,b,c --platforms android,iOS,macOS,windows
+          --concepts a,b,c --depends package_a,package_b
+          --optional-capabilities capability_a,capability_b
+          --restriction-reason REASON --restriction-sources path_a,path_b
           --output path --apply --force
 
-Default mode is preview. --apply writes the candidate files and never edits
-the route table; route registration remains an Agent Hub frozen-task decision.
+Requires Node.js. Default mode previews the pending declaration without writes.
+Platform policy comes from shared capability rules; --platforms is not accepted.
+An entry restriction closes all target entries and requires existing sources.
+--apply writes candidate files and a reviewable registration fragment. Review
+the declaration explicitly before adding it to tool/generate_agent_indexes.js.
 ''';

@@ -1,0 +1,5 @@
+Command: flutter run -d macos --no-pub
+Scope: fresh launch, window zoom, module entry, three steps, width/rule changes, restart lesson, exit and reentry
+✓ Built build/macos/Build/Products/Debug/Flutter Forge.app
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+Observed AXTree/engine exception lines in this fresh-launch log: 0

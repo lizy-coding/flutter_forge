@@ -4,6 +4,8 @@ import 'app_platform_snapshot.dart';
 import 'module_platform_support.dart';
 
 const modulePlatformPolicies = <String, ModulePlatformSupport>{
+  'graphics_background': ModulePlatformSupport(),
+  'pixel_shader_intro': ModulePlatformSupport(),
   'constraint_layout': ModulePlatformSupport(),
   'tree_state': ModulePlatformSupport(),
   'microtask': ModulePlatformSupport(),
@@ -43,6 +45,7 @@ const modulePlatformPolicies = <String, ModulePlatformSupport>{
       },
     },
   ),
+  'shader_playground': ModulePlatformSupport(),
   'flutter_scene_3d': ModulePlatformSupport(
     excludedPlatforms: {AppTargetPlatform.iOS, AppTargetPlatform.web},
     features: {
@@ -54,6 +57,13 @@ const modulePlatformPolicies = <String, ModulePlatformSupport>{
   'scroll_table': ModulePlatformSupport(),
   'overlay_follow_compare': ModulePlatformSupport(),
   'dio_interceptor': ModulePlatformSupport(),
+  'usb_network': ModulePlatformSupport(
+    excludedPlatforms: {
+      AppTargetPlatform.android,
+      AppTargetPlatform.iOS,
+      AppTargetPlatform.web,
+    },
+  ),
   'usb_detector': ModulePlatformSupport(
     excludedPlatforms: {
       AppTargetPlatform.android,

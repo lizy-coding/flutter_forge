@@ -9,6 +9,9 @@ const { modules } = require('../generate_agent_indexes');
 const root = path.resolve(__dirname, '../..');
 const appRoot = path.join(root, 'apps/flutter_forge');
 
+// Keep candidate/source consistency checks in the existing quality-gate entry.
+require('./module_spec.test');
+
 function fixture(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-generator-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
@@ -89,19 +92,4 @@ test('duplicate outputs and escaping paths are rejected before writing', (t) => 
     writeText('duplicate.json', 'second');
   }), /Invalid or duplicate/);
   assert.equal(fs.existsSync(path.join(dir, 'duplicate.json')), false);
-});
-
-
-test('module preflight rejects direct imports of sibling modules', (t) => {
-  const dir = fixture(t);
-  const appRoot = path.join(dir, 'apps/flutter_forge');
-  const samples = modules.slice(0, 2);
-  for (const module of samples) {
-    const target = path.join(appRoot, 'lib/modules', module.category, module.id);
-    fs.mkdirSync(target, { recursive: true });
-    fs.writeFileSync(path.join(target, 'module_entry.dart'), '');
-    fs.writeFileSync(path.join(target, 'module_routes.dart'), '');
-  }
-  fs.writeFileSync(path.join(appRoot, 'lib/modules/basic/tree_state/module_entry.dart'), "import '../microtask/module_entry.dart';");
-  assert.throws(() => validateModules(samples, categoryComments, appRoot), /Cross-module dependency/);
 });

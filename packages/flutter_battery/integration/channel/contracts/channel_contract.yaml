@@ -41,7 +41,30 @@ flutter_battery_method_channel:
         batteryInfoIntervalMs: int_100_to_3600000
         batteryHealthIntervalMs: int_100_to_3600000
         enableDebounce: bool
+    - id: readBattery
+      scope: phase1_core
+      args:
+        sample: level_or_info_or_health
+      result:
+        availability: available_or_noBattery_or_unknown
+        level: required_int_0_to_100_when_available
+        isCharging: optional_bool_actual_active_charging
+        isCharged: optional_bool
+        powerSource: external_or_battery_or_unknown
+        temperature: optional_finite_number_celsius
+        voltage: optional_finite_nonnegative_number_volts
+        capacity:
+          optional: true
+          remaining: optional_nonnegative_int
+          fullCharge: optional_positive_int
+          design: optional_positive_int
+          cycleCount: optional_nonnegative_int
+          unit: milliampHours_or_milliwattHours_or_percent_or_unspecified
+          source: nonempty_string
+        state: optional_health_enum
+        timestamp: optional_epoch_milliseconds
     - id: getBatteryLevel
+      scope: legacy_only
       result: int?
     - id: getBatteryInfo
       result: map
@@ -272,3 +295,25 @@ example_iot_stream:
     deviceId: string?
     timestamp: int
     data: map
+
+phase1_public_api:
+  version: 0.1.0-dev.1
+  core_entrypoint: flutter_battery.dart
+  operations: [capabilities, read, observe]
+  observation: [events, current, state, close]
+  runtime_states: [pending, available, noBattery, unknown, unsupported, permissionDenied, unavailable, invalidData, timedOut, failed, closed]
+  invalid_parameters: ArgumentError
+  raw_maps_and_global_callbacks: legacy_only
+
+battery_changes:
+  name: flutter_battery/battery_changes
+  configure_method: configureBatteryChanges
+  lifecycle: independent_of_sampling_last_owner_releases_notifications
+  native_source:
+    macos: IOPSNotificationCreateRunLoopSource
+    android: ACTION_BATTERY_CHANGED_BroadcastReceiver
+  timers: none
+  delivery: initial_then_logical_changes_excluding_timestamp
+  level_comparison: level_and_availability
+  info_health_comparison: logical_payload_excluding_timestamp
+  concurrent_with_sampling: true

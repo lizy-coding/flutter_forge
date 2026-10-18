@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 import '../network/api/api_service.dart';
-import '../network/interceptor/auth_interceptor.dart';
+import '../lesson_session.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,17 +18,25 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
-  final ApiService _apiService = ApiService();
+  late final LessonLease _lease;
+  ApiService get _apiService => _lease.api;
+
+  @override
+  void initState() {
+    super.initState();
+    _lease = LessonSession.acquire();
+  }
 
   @override
   void dispose() {
+    unawaited(_lease.close());
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_isLoading || !_formKey.currentState!.validate()) return;
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
     setState(() {
@@ -35,10 +44,13 @@ class _LoginPageState extends State<LoginPage> {
       _errorMessage = null;
     });
     try {
+      await _lease.ready;
+      if (!mounted) return;
       final result = await _apiService.login(username, password);
+      if (!mounted) return;
       if (result['success'] == true && result['data'] != null) {
         final token = result['data']['token'] as String;
-        AuthInterceptor.setToken(token);
+        _apiService.setToken(token);
         if (mounted) Navigator.pop(context, true);
       } else {
         setState(() {
@@ -47,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = '登录失败: $e';
         _isLoading = false;

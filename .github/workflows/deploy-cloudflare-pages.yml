@@ -16,7 +16,10 @@ env:
   FLUTTER_VERSION: "3.47.2"
 
 jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
   deploy:
+    needs: quality
     name: Build and deploy Cloudflare Pages
     if: ${{ vars.CLOUDFLARE_PAGES_ENABLED == 'true' }}
     runs-on: ubuntu-latest

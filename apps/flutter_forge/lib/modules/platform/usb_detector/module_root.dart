@@ -27,13 +27,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _initializeUsb();
+    unawaited(_initializeUsb());
   }
 
   @override
   void dispose() {
     for (final subscription in _subscriptions) {
-      subscription.cancel();
+      unawaited(subscription.cancel());
     }
     _usbService.dispose();
     super.dispose();

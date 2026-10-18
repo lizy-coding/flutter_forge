@@ -1,0 +1,22 @@
+name: usb_network_bridge
+description: Minimal desktop CDC-NCM interface enumeration and bound TCP transport.
+version: 0.0.1
+publish_to: 'none'
+resolution: workspace
+environment:
+  sdk: ^3.11.5
+dependencies:
+  flutter:
+    sdk: flutter
+  ffi: ^2.2.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+flutter:
+  plugin:
+    platforms:
+      windows:
+        ffiPlugin: true
+      macos:
+        pluginClass: UsbNetworkBridgePlugin

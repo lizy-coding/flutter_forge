@@ -5,4 +5,4 @@ analyzer:
     - windows/**
     - macos/**
     - web/**
-include: package:flutter_lints/flutter.yaml
+include: ../../analysis_options.yaml

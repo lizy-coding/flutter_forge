@@ -1,3 +1,12 @@
+## 0.1.0-dev.1 (unreleased)
+
+- Distinguish external power from active charging/full/discharging; deliver same-level power transitions and retain trailing throttled samples.
+
+- BREAKING: core FlutterBattery exposes capabilities/read/observe only; results and observations are typed and classify runtime states explicitly.
+- BREAKING: no public sentinel values or manufactured optional measurements; global callbacks and mixed notification/widget/peer exports move to legacy_flutter_battery.dart, outside the phase-one supported API.
+- Add native readBattery availability protocol, operation deadlines, late-open cleanup and structured close results.
+- Migrate the primary example and Forge; keep the older full demonstration at example/lib/legacy_main.dart.
+
 ## Unreleased
 
 - Add independently closeable battery observations with per-owner sample selection, intervals and debounce; merge native sampling requirements without affecting legacy callbacks.
@@ -38,3 +47,8 @@
 * 初始版本发布
 * 支持电池电量获取和低电量监控
 * 支持系统通知和 Flutter UI 渲染
+
+- Add optional capacity diagnostics with explicit units/provenance; macOS uses raw capacity fields without percentage fallbacks, Android exposes the public charge counter only.
+- Distinguish failed desktop sessions from healthy active sessions while retaining their close action.
+
+- BREAKING: split periodic sample(BatterySamplingOptions) from system-event watchChanges(BatteryChangeOptions); remove debounceLevel. Observations have explicit initial/sample/change delivery markers and independently owned native channels.

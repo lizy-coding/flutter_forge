@@ -194,7 +194,7 @@ class BleSession extends ChangeNotifier {
     _availabilitySubscription = client.availabilityChanges.listen((state) {
       if (_closed) return;
       _applyAvailability(state);
-      if (state == AvailabilityState.poweredOn) refreshStatus();
+      if (state == AvailabilityState.poweredOn) unawaited(refreshStatus());
       _notify();
     });
   }
@@ -327,7 +327,7 @@ class BleSession extends ChangeNotifier {
     if (!active) {
       _heartbeat?.cancel();
       _heartbeat = null;
-      if (scanPhase != BleScanPhase.idle) stopScan(reason: '页面离开');
+      if (scanPhase != BleScanPhase.idle) unawaited(stopScan(reason: '页面离开'));
     } else if (lastSeen.isNotEmpty || scanning) {
       _startHeartbeat();
       _notify();
@@ -891,10 +891,10 @@ class BleSession extends ChangeNotifier {
   }
 
   void _clearConnection() {
-    _connectionSubscription?.cancel();
+    unawaited(_connectionSubscription?.cancel());
     _connectionSubscription = null;
     for (final listener in _valueSubscriptions.values) {
-      listener.cancel();
+      unawaited(listener.cancel());
     }
     _valueSubscriptions.clear();
     subscriptions.clear();

@@ -1,0 +1,46 @@
+{
+  "schema": "flutter_forge.module_evidence.v1",
+  "kind": "execution",
+  "module": "shader_playground",
+  "platform": "macOS",
+  "status": "pass",
+  "environment": "macOS 26.7.1 arm64; Flutter 3.47.2; Debug; Impeller MetalSDF; native UI smoke only",
+  "recorded_at": "2026-10-10T10:12:16.707Z",
+  "fingerprint": "b8d9ec5d1a7ce2812affcc4b1a2c843244dd86873dfd090b06615a3ecfd47764",
+  "revision": {
+    "commit": "b90d5971a8af6de4a6eaedf979344a9e53ef0cac",
+    "dirty": true
+  },
+  "case_ids": [],
+  "artifacts": [
+    {
+      "path": "docs/evidence/shader-playground-20261010/README.md",
+      "sha256": "729b433efc362b5803d771dcec2bd993d0c2a7bf5904f80630e2e77333a10aaf"
+    },
+    {
+      "path": "docs/evidence/shader-playground-20261010/macos-gradient.png",
+      "sha256": "5e395bba194ff9c2af2e000a790bd79deb9e9af2cb60da64408527ab9c75e6e6"
+    },
+    {
+      "path": "docs/evidence/shader-playground-20261010/macos-vertical.png",
+      "sha256": "2da107088a10e03c1f974e92adbcf4536be5b5a4fd43869656f98c7c0d60bed4"
+    },
+    {
+      "path": "docs/evidence/shader-playground-20261010/macos-offset.png",
+      "sha256": "f123f60f291582e62a2ebdf2624b8055bd29cc48f81cb3117d2baa4af430bf5d"
+    },
+    {
+      "path": "docs/evidence/shader-playground-20261010/macos-swapped.png",
+      "sha256": "1e113b025e72178e24c027ec8d3eef2bea5361fd77ca8ef26eb96a95fae74ad7"
+    },
+    {
+      "path": "docs/evidence/shader-playground-20261010/macos-uv.png",
+      "sha256": "67f675620082d5b621d67413a0646c06b0aba23f71a36c21d333cebe2cdd2e69"
+    },
+    {
+      "path": "docs/evidence/shader-playground-20261010/macos-reset.png",
+      "sha256": "f2f806bb431d1ae23eb867d3dadf783c7d1e70e44a5774a51ae0cf102264b543"
+    }
+  ],
+  "source": "manual_operator_record"
+}
