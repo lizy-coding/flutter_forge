@@ -75,7 +75,10 @@ if (require.main === module) {
   };
   const source_sha = git('rev-parse', 'HEAD');
   if (process.env.EXPECTED_SHA && source_sha !== process.env.EXPECTED_SHA) throw new Error('Checkout differs from quality-gate SHA');
-  try { git('diff', '--quiet', 'HEAD'); } catch { throw new Error('Source changed after checkout; refusing release artifacts'); }
+  try { git('diff', '--quiet', 'HEAD'); } catch {
+    const diff = git('diff', '--no-ext-diff', '--no-color', 'HEAD');
+    throw new Error(`Source changed after checkout; refusing release artifacts\n${diff}`);
+  }
   verifyUntrackedInputs(git, mode, process.env.RELEASE_PLATFORM, version, process.argv[3]);
   if (tag) {
     if (git('rev-parse', `${tag}^{commit}`) !== source_sha) throw new Error('Tag differs from checkout');
