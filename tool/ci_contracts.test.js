@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const {versionOf, checkTag, metadata} = require('./release_metadata');
+const {versionOf, checkTag, metadata, releaseToolchain} = require('./release_metadata');
 test('release tag must agree with application version', () => {
   assert.equal(versionOf('version: 1.2.8+2\n'), '1.2.8+2');
   checkTag('v1.2.8', '1.2.8+2');
@@ -13,12 +13,12 @@ test('release tag must agree with application version', () => {
 test('artifact verification rejects absent, empty and wrong-format output', (t) => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-artifact-'));
   t.after(() => fs.rmSync(dir, {recursive:true, force:true}));
-  assert.throws(() => metadata(dir, {platform:'android'}), /No release/);
+  assert.throws(() => metadata(dir, {platform:'android', toolchain:{flutter:'3.47.2',node:'24'}}), /No release/);
   fs.writeFileSync(path.join(dir, 'test.apk'), '');
-  assert.throws(() => metadata(dir, {platform:'android'}), /Invalid artifact/);
+  assert.throws(() => metadata(dir, {platform:'android', toolchain:{flutter:'3.47.2',node:'24'}}), /Invalid artifact/);
   fs.writeFileSync(path.join(dir, 'test.apk'), 'bytes');
-  assert.throws(() => metadata(dir, {platform:'windows'}), /Missing windows/);
-  const data = metadata(dir, {platform:'android'});
+  assert.throws(() => metadata(dir, {platform:'windows', toolchain:{flutter:'3.47.2',node:'24'}}), /Missing windows/);
+  const data = metadata(dir, {platform:'android', toolchain:{flutter:'3.47.2',node:'24'}});
   assert.equal(data.build_mode, 'debug');
   assert.equal(data.signing, 'Android debug certificate');
   assert.equal(data.artifacts[0].size, 5);
@@ -103,4 +103,19 @@ test('release CLI verifies exact clean source and rejects dirty or unrelated tag
   git('commit', '-qm', 'candidate outside stable ref');
   git('tag', '-f', 'v1.2.8');
   assert.throws(() => verify({EXPECTED_SHA:git('rev-parse', 'HEAD')}), /outside stable master/);
+});
+
+test('producer metadata binds architecture and normalized measured toolchain', (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-provenance-'));
+  t.after(() => fs.rmSync(dir, {recursive:true, force:true}));
+  for (const [platform, extension, architecture] of [['macos','dmg','x64'],['windows','exe','x64'],['android','apk','arm64-v8a'],['web','zip','not applicable']]) {
+    const artifact = path.join(dir, `fixture.${extension}`);
+    fs.writeFileSync(artifact, 'artifact fixture');
+    const data = metadata(dir, {platform, toolchain:{flutter:'3.47.2',node:'24.3.0'}});
+    assert.equal(data.architecture, architecture);
+    assert.deepEqual(data.toolchain, {flutter:'3.47.2',node:'24'});
+    assert.throws(() => metadata(dir, {platform}), /toolchain evidence/);
+    fs.rmSync(artifact);
+  }
+  assert.throws(() => releaseToolchain({flutter:'unknown',node:'24'}), /toolchain evidence/);
 });

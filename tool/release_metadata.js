@@ -36,6 +36,16 @@ function verifyUntrackedInputs(git, mode, platform, version, directory) {
     if (!fs.lstatSync(file).isFile()) throw new Error(`Invalid release output: ${file}`);
   }
 }
+function releaseToolchain(value) {
+  if (!value || !/^\d+\.\d+\.\d+(?:[-+].*)?$/.test(String(value.flutter)) || !/^\d+(?:\.\d+){0,2}$/.test(String(value.node))) {
+    throw new Error('Missing or invalid release toolchain evidence');
+  }
+  return {flutter: String(value.flutter), node: String(value.node).split('.')[0]};
+}
+function installedToolchain() {
+  const flutter = JSON.parse(execFileSync('flutter', ['--version', '--machine'], {encoding: 'utf8', shell: process.platform === 'win32'}));
+  return releaseToolchain({flutter: flutter.frameworkVersion, node: process.versions.node});
+}
 function metadata(directory, context) {
   if (fs.lstatSync(directory).isSymbolicLink()) throw new Error('Release artifact directory must not be a symlink');
   const names = fs.readdirSync(directory).filter((name) => !name.startsWith('RELEASE_MANIFEST-') && !name.startsWith('SHA256SUMS-')).sort();
@@ -49,7 +59,9 @@ function metadata(directory, context) {
   const platform = context.platform;
   const expected = {macos: '.dmg', windows: '.exe', android: '.apk', web: '.zip'}[platform];
   if (!expected || !artifacts.some((a) => a.name.endsWith(expected))) throw new Error(`Missing ${platform} artifact`);
-  return {...context, schema: 'flutter_forge.release_manifest.v1', build_mode: platform === 'android' ? 'debug' : 'release', signing: platform === 'android' ? 'Android debug certificate' : platform === 'web' ? 'not applicable' : 'unsigned', artifacts};
+  const architecture = {macos: 'x64', windows: 'x64', android: 'arm64-v8a', web: 'not applicable'}[platform];
+  const toolchain = releaseToolchain(context.toolchain);
+  return {...context, architecture, toolchain, schema: 'flutter_forge.release_manifest.v1', build_mode: platform === 'android' ? 'debug' : 'release', signing: platform === 'android' ? 'Android debug certificate' : platform === 'web' ? 'not applicable' : 'unsigned', artifacts};
 }
 if (require.main === module) {
   const mode = process.argv[2];
@@ -71,10 +83,10 @@ if (require.main === module) {
   }
   if (mode === 'stage') {
     const directory = process.argv[3];
-    const data = metadata(directory, {version, tag: tag || null, source_sha, platform: process.env.RELEASE_PLATFORM, run_id: process.env.GITHUB_RUN_ID || null, run_attempt: process.env.GITHUB_RUN_ATTEMPT || null});
+    const data = metadata(directory, {version, tag: tag || null, source_sha, platform: process.env.RELEASE_PLATFORM, run_id: process.env.GITHUB_RUN_ID || null, run_attempt: process.env.GITHUB_RUN_ATTEMPT || null, toolchain: installedToolchain()});
     fs.writeFileSync(path.join(directory, `RELEASE_MANIFEST-${data.platform}.json`), JSON.stringify(data, null, 2) + '\n');
     fs.writeFileSync(path.join(directory, `SHA256SUMS-${data.platform}`), data.artifacts.map((a) => `${a.sha256}  ${a.name}`).join('\n') + '\n');
   } else if (mode !== 'verify') throw new Error('Usage: node tool/release_metadata.js verify|stage [directory]');
   console.log(`release_identity:PASS:${source_sha}:${version}`);
 }
-module.exports = {versionOf, checkTag, metadata};
+module.exports = {versionOf, checkTag, metadata, releaseToolchain};
