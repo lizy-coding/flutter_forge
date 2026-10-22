@@ -11,6 +11,7 @@ import '../module_registry/module_catalog_utils.dart';
 import '../shared/multi_window/multi_window_manager.dart';
 import 'theme/forge_glass.dart';
 import 'theme/forge_theme_tokens.dart';
+import 'navigation_session.dart';
 
 class CategoryHomePage extends StatelessWidget {
   const CategoryHomePage({
@@ -33,76 +34,86 @@ class CategoryHomePage extends StatelessWidget {
     final categoryModules = modules
         .where((module) => module.category == category)
         .toList(growable: false);
+    final session = NavigationSessionScope.maybeOf(context);
+    final scrollView = CustomScrollView(
+      key: PageStorageKey('category-scroll:${category.name}'),
+      slivers: _slivers(context, categoryModules),
+    );
     return ColoredBox(
+      key: ValueKey('category-page:${category.name}'),
       color: context.forgeColors.glass
           ? Colors.transparent
           : Theme.of(context).colorScheme.surface,
-      child: CustomScrollView(
-        key: ValueKey('category-page:${category.name}'),
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
-            sliver: SliverToBoxAdapter(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
-                  child: _CategoryHeader(
-                    key: ValueKey('category-window-action:${category.name}'),
-                    category: category,
-                    moduleCount: categoryModules.length,
-                    openCategoryWindow: openCategoryWindow,
-                    showWindowAction:
-                        !focusedWindow &&
-                        platform.hostFamily == AppHostFamily.desktop &&
-                        MultiWindowManager.isSupported,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
-            sliver: SliverLayoutBuilder(
-              builder: (context, constraints) {
-                final columns =
-                    constraints.crossAxisExtent >= 820 &&
-                        MediaQuery.textScalerOf(context).scale(14) <= 17
-                    ? 2
-                    : 1;
-                if (columns == 1 || context.forgeColors.desktop) {
-                  return SliverList.builder(
-                    itemCount: categoryModules.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: ModuleCard(
-                        module: categoryModules[index],
-                        platform: platform,
-                      ),
-                    ),
-                  );
-                }
-                return SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    mainAxisExtent: 260,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => ModuleCard(
-                      module: categoryModules[index],
-                      platform: platform,
-                    ),
-                    childCount: categoryModules.length,
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+      child: session == null
+          ? scrollView
+          : PageStorage(bucket: session.pages, child: scrollView),
     );
   }
+
+  List<Widget> _slivers(
+    BuildContext context,
+    List<ModuleEntry> categoryModules,
+  ) => [
+    SliverPadding(
+      padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
+      sliver: SliverToBoxAdapter(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1200),
+            child: _CategoryHeader(
+              key: ValueKey('category-window-action:${category.name}'),
+              category: category,
+              moduleCount: categoryModules.length,
+              openCategoryWindow: openCategoryWindow,
+              showWindowAction:
+                  !focusedWindow &&
+                  platform.hostFamily == AppHostFamily.desktop &&
+                  MultiWindowManager.isSupported,
+            ),
+          ),
+        ),
+      ),
+    ),
+    SliverPadding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+      sliver: SliverLayoutBuilder(
+        builder: (context, constraints) {
+          final columns =
+              constraints.crossAxisExtent >= 820 &&
+                  MediaQuery.textScalerOf(context).scale(14) <= 17
+              ? 2
+              : 1;
+          if (columns == 1 || context.forgeColors.desktop) {
+            return SliverList.builder(
+              itemCount: categoryModules.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: ModuleCard(
+                  module: categoryModules[index],
+                  platform: platform,
+                ),
+              ),
+            );
+          }
+          return SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columns,
+              mainAxisExtent: 260,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => ModuleCard(
+                module: categoryModules[index],
+                platform: platform,
+              ),
+              childCount: categoryModules.length,
+            ),
+          );
+        },
+      ),
+    ),
+  ];
 }
 
 class _CategoryHeader extends StatefulWidget {
@@ -309,7 +320,7 @@ class ModuleCard extends StatelessWidget {
                       tooltip: '在新标签页打开',
                       visualDensity: VisualDensity.compact,
                       onPressed: () => launchUrl(
-                        Uri.base.resolve(module.path),
+                        Uri.base.replace(fragment: module.path),
                         webOnlyWindowName: '_blank',
                       ),
                       icon: const Icon(Icons.open_in_new_rounded, size: 19),

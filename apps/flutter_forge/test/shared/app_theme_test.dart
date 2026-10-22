@@ -133,7 +133,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('start-learning')));
+    await tester.tap(find.byKey(const ValueKey('learning-category:basic')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('category-page:basic')), findsOneWidget);
     expect(tester.takeException(), isNull);

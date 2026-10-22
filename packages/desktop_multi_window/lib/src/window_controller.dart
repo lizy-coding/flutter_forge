@@ -42,9 +42,13 @@ class WindowController {
       'createWindow',
       configuration.toJson(),
     );
-    assert(windowId != null, 'windowId is null');
-    assert(windowId!.isNotEmpty, 'windowId is empty');
-    return WindowController._(windowId!, configuration.arguments);
+    if (windowId == null || windowId.isEmpty) {
+      throw PlatformException(
+        code: 'WINDOW_CREATION_FAILED',
+        message: 'Native window creation returned no window identity',
+      );
+    }
+    return WindowController._(windowId, configuration.arguments);
   }
 
   static Future<WindowController> fromCurrentEngine() async {
@@ -83,6 +87,23 @@ class WindowController {
   Future<void> show() => _callWindowMethod('window_show', {});
 
   Future<void> hide() => _callWindowMethod('window_hide', {});
+
+  /// Closes a native window on Windows or macOS, including a failed startup.
+  Future<void> closeNative() => _callWindowMethod('window_close');
+
+  /// Enables native inventory notifications after this window has mounted.
+  ///
+  /// Call this on the current engine on Windows or macOS.
+  Future<void> markReady() => _callWindowMethod('window_markReady');
+
+  /// Reports whether the Windows child engine has rendered its first frame.
+  ///
+  /// This is a startup barrier, not proof of visible content or GPU completion.
+  Future<bool> isReadyToShow() async =>
+      await _channel.invokeMethod<bool>('window_isReadyToShow', {
+        'windowId': windowId,
+      }) ??
+      false;
 
   @optionalTypeArgs
   Future<T?> invokeMethod<T>(String method, [dynamic arguments]) =>

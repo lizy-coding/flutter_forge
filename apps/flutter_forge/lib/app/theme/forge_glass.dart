@@ -5,14 +5,57 @@ import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 
 import 'forge_theme_tokens.dart';
 
+class ForgeSurfaceScope extends InheritedWidget {
+  const ForgeSurfaceScope({
+    super.key,
+    required this.nativeMaterial,
+    required this.teaching,
+    required super.child,
+  });
+  final bool nativeMaterial;
+  final bool teaching;
+
+  static ForgeSurfaceScope? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ForgeSurfaceScope>();
+
+  @override
+  bool updateShouldNotify(ForgeSurfaceScope oldWidget) =>
+      nativeMaterial != oldWidget.nativeMaterial ||
+      teaching != oldWidget.teaching;
+}
+
 class ForgeShellSurface extends StatelessWidget {
-  const ForgeShellSurface({super.key, required this.child, this.radius = 0});
+  const ForgeShellSurface({
+    super.key,
+    required this.child,
+    this.radius = 0,
+    this.titlebar = false,
+    this.floating = false,
+  });
   final Widget child;
   final double radius;
+  final bool titlebar;
+  final bool floating;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final scope = ForgeSurfaceScope.maybeOf(context);
+    if (scope?.nativeMaterial == true) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Material(
+          color: colors.surface.withValues(
+            alpha: floating
+                ? 0.97
+                : scope!.teaching
+                ? (titlebar ? 0.94 : 1)
+                : 0.18,
+          ),
+          child: child,
+        ),
+      );
+    }
     final glass =
         context.forgeColors.glass && !MediaQuery.highContrastOf(context);
     final surface = Material(
@@ -39,6 +82,14 @@ class ForgeThemeBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.forgeColors;
+    final scope = ForgeSurfaceScope.maybeOf(context);
+    if (scope?.nativeMaterial == true) {
+      return ColoredBox(
+        key: const ValueKey('native-material-backdrop'),
+        color: Colors.transparent,
+        child: child,
+      );
+    }
     final dark = Theme.of(context).brightness == Brightness.dark;
     // Keep the navigator at the same position when the palette changes.
     return Stack(
@@ -90,6 +141,14 @@ class ForgeGlassSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    if (ForgeSurfaceScope.maybeOf(context)?.nativeMaterial == true) {
+      return Material(
+        color: colors.surface.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(radius),
+        clipBehavior: Clip.antiAlias,
+        child: child,
+      );
+    }
     final dark = Theme.of(context).brightness == Brightness.dark;
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radius),

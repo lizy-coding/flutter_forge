@@ -1,17 +1,41 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../module_registry/module_entry.dart';
+import 'navigation_session.dart';
 
-class ModuleSearchDelegate extends SearchDelegate<void> {
-  ModuleSearchDelegate(this.modules);
+bool matchesModule(ModuleEntry module, String query) => [
+  module.title,
+  module.subtitle,
+  module.category.label,
+  ...module.concepts,
+].join(' ').toLowerCase().contains(query.trim().toLowerCase());
+
+Future<void> showModuleSearch(
+  BuildContext context,
+  List<ModuleEntry> modules,
+) async {
+  final session = NavigationSessionScope.maybeOf(context);
+  while (true) {
+    if (!context.mounted) return;
+    final selected = await showSearch<String?>(
+      context: context,
+      query: session?.searchQuery ?? '',
+      delegate: ModuleSearchDelegate(modules, session: session),
+    );
+    if (selected == null || !context.mounted) return;
+    await context.push(selected);
+  }
+}
+
+class ModuleSearchDelegate extends SearchDelegate<String?> {
+  ModuleSearchDelegate(this.modules, {this.session});
 
   final List<ModuleEntry> modules;
+  final NavigationSession? session;
 
   @override
-  String get searchFieldLabel => '搜索模块标题';
+  String get searchFieldLabel => '搜索模块、概念或分类';
 
   @override
   List<Widget> buildActions(BuildContext context) => [
@@ -38,12 +62,11 @@ class ModuleSearchDelegate extends SearchDelegate<void> {
 
   Widget _results(BuildContext context) {
     final normalized = query.trim().toLowerCase();
+    session?.searchQuery = query;
     final matches = normalized.isEmpty
         ? const <ModuleEntry>[]
         : modules
-              .where(
-                (module) => module.title.toLowerCase().contains(normalized),
-              )
+              .where((module) => matchesModule(module, normalized))
               .toList(growable: false);
     if (normalized.isNotEmpty && matches.isEmpty) {
       return Center(
@@ -53,7 +76,8 @@ class ModuleSearchDelegate extends SearchDelegate<void> {
         ),
       );
     }
-    return ListView.builder(
+    final results = ListView.builder(
+      key: PageStorageKey('module-search:$normalized'),
       itemCount: matches.length,
       itemBuilder: (context, index) {
         final module = matches[index];
@@ -61,11 +85,13 @@ class ModuleSearchDelegate extends SearchDelegate<void> {
           title: Text(module.title),
           subtitle: Text(module.category.label),
           onTap: () {
-            close(context, null);
-            unawaited(context.push(module.path));
+            close(context, module.path);
           },
         );
       },
     );
+    return session == null
+        ? results
+        : PageStorage(bucket: session!.pages, child: results);
   }
 }

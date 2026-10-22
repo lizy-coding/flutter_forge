@@ -7,6 +7,7 @@ import '../module_registry/module_entry.dart';
 import 'module_quick_open.dart';
 import 'theme/forge_glass.dart';
 import 'workbench_history.dart';
+import 'navigation_session.dart';
 
 class WorkbenchHomePage extends StatelessWidget {
   const WorkbenchHomePage({
@@ -26,8 +27,9 @@ class WorkbenchHomePage extends StatelessWidget {
       for (final path in paths)
         if (byPath[path] case final module?) module,
     ];
-    return ListView(
-      key: const ValueKey('workbench-home'),
+    final session = NavigationSessionScope.maybeOf(context);
+    final content = ListView(
+      key: const PageStorageKey('workbench-home-scroll'),
       padding: const EdgeInsets.all(28),
       children: [
         Text('学习工作台', style: Theme.of(context).textTheme.headlineSmall),
@@ -90,6 +92,12 @@ class WorkbenchHomePage extends StatelessWidget {
             ),
           ),
       ],
+    );
+    return KeyedSubtree(
+      key: const ValueKey('workbench-home'),
+      child: session == null
+          ? content
+          : PageStorage(bucket: session.pages, child: content),
     );
   }
 }

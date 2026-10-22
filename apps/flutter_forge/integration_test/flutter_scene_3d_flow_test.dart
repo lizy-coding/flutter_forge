@@ -41,9 +41,9 @@ void main() {
       ),
     );
     await _pumpFrames(tester, const Duration(milliseconds: 600));
-    expect(find.byKey(const ValueKey('creator-home-scroll')), findsOneWidget);
+    expect(find.byKey(const ValueKey('workbench-home')), findsOneWidget);
 
-    final category = find.byKey(const ValueKey('home-category:ui'));
+    final category = find.byKey(const ValueKey('workbench-category:ui'));
     await tester.ensureVisible(category);
     await tester.tap(category);
     final categoryPage = find.byKey(const ValueKey('category-page:ui'));
@@ -107,12 +107,12 @@ void main() {
     await tester.pump();
     expect(find.text('传感器'), findsNothing);
 
-    await tester.pageBack();
+    router.go('/category/ui');
     await _pumpFrames(tester, const Duration(milliseconds: 400));
     expect(categoryPage, findsOneWidget);
     router.go('/');
     await _pumpFrames(tester, const Duration(milliseconds: 400));
-    expect(find.byKey(const ValueKey('creator-home-scroll')), findsOneWidget);
+    expect(find.byKey(const ValueKey('workbench-home')), findsOneWidget);
   });
 }
 

@@ -11,13 +11,16 @@ import 'platform_support_io.dart'
 class MultiWindowManager {
   MultiWindowManager._({MultiWindowPlatform? platform})
     : _platform = platform ?? const DesktopMultiWindowPlatform(),
+      _startupTimeout = const Duration(seconds: 15),
       _diagnosticSink = _printDiagnostic;
 
   @visibleForTesting
   MultiWindowManager.forTesting(
     MultiWindowPlatform platform, {
     MultiWindowDiagnosticSink? diagnosticSink,
+    Duration startupTimeout = const Duration(seconds: 15),
   }) : _platform = platform,
+       _startupTimeout = startupTimeout,
        _diagnosticSink = diagnosticSink ?? _printDiagnostic;
 
   static final MultiWindowManager instance = MultiWindowManager._();
@@ -26,8 +29,11 @@ class MultiWindowManager {
 
   final Map<ModuleCategory, String> _categoryWindows = {};
   final Map<ModuleCategory, Future<String?>> _pendingCategoryWindows = {};
+  final Set<String> _unreadyWindowIds = {};
+  final Map<ModuleCategory, MultiWindowController> _failedStartupWindows = {};
   int _windowStateVersion = 0;
   final MultiWindowPlatform _platform;
+  final Duration _startupTimeout;
   final MultiWindowDiagnosticSink _diagnosticSink;
   // The singleton observes windows for the process lifetime.
   // ignore: cancel_subscriptions
@@ -35,6 +41,7 @@ class MultiWindowManager {
   String _themeSelectionPayload = 'system';
 
   static const themeSelectionMethod = 'themeSelectionChanged';
+  static const readyMethod = 'windowReady';
 
   /// Starts window lifecycle observation and removes stale category entries.
   Future<void> initialize() async {
@@ -60,6 +67,11 @@ class MultiWindowManager {
 
   Future<String> _createCategoryWindow(ModuleCategory category) async {
     final stopwatch = Stopwatch()..start();
+    final failed = _failedStartupWindows[category];
+    if (failed != null) {
+      await _platform.closeWindow(failed).timeout(const Duration(seconds: 3));
+      _failedStartupWindows.remove(category);
+    }
     await _calibrateCategoryWindows();
 
     if (_categoryWindows.containsKey(category)) {
@@ -106,13 +118,59 @@ class MultiWindowManager {
     });
 
     final config = WindowConfiguration(
-      hiddenAtLaunch: false,
+      hiddenAtLaunch: true,
       arguments: args,
       enableFlutterGpu: true,
     );
 
-    final controller = await _platform.createWindow(config);
+    // Future.timeout cannot cancel native creation. A late result must be
+    // closed, rather than becoming an orphaned hidden engine.
+    var abandoned = false;
+    final creation = _platform.createWindow(config).then((controller) async {
+      if (abandoned) {
+        _unreadyWindowIds.add(controller.windowId);
+        _windowStateVersion++;
+        if (!await _closeFailedWindow(controller)) {
+          _failedStartupWindows[category] = controller;
+        }
+      }
+      return controller;
+    });
+    late final MultiWindowController controller;
+    try {
+      controller = await creation.timeout(_startupTimeout);
+    } catch (_) {
+      abandoned = true;
+      rethrow;
+    }
+    if (controller.windowId.isEmpty) {
+      throw StateError('Native window creation returned an empty identity');
+    }
 
+    _unreadyWindowIds.add(controller.windowId);
+    _windowStateVersion++;
+
+    try {
+      await _platform.waitUntilReady(controller).timeout(_startupTimeout);
+      await _platform.showWindow(controller).timeout(_startupTimeout);
+    } catch (error, stackTrace) {
+      _removeCategoryWindow(category);
+      if (!await _closeFailedWindow(controller)) {
+        _failedStartupWindows[category] = controller;
+      }
+      _recordDiagnostic(
+        category: category,
+        arguments: controller.arguments,
+        controllerId: controller.windowId,
+        operation: 'startup_failed',
+        stopwatch: stopwatch,
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+
+    _unreadyWindowIds.remove(controller.windowId);
     _categoryWindows[category] = controller.windowId;
     _windowStateVersion++;
     _recordDiagnostic(
@@ -125,15 +183,36 @@ class MultiWindowManager {
     return controller.windowId;
   }
 
+  Future<bool> _closeFailedWindow(MultiWindowController controller) async {
+    try {
+      await _platform
+          .closeWindow(controller)
+          .timeout(const Duration(seconds: 3));
+      return true;
+    } catch (error) {
+      debugPrint(
+        '[multi-window] startup cleanup failed for ${controller.windowId}: $error',
+      );
+      return false;
+    }
+  }
+
   Future<void> _calibrateCategoryWindows() async {
     final version = _windowStateVersion;
     final controllers = await _platform.getAllWindows();
     // A list captured before a concurrent mutation cannot replace newer state.
     if (version != _windowStateVersion) return;
+    final liveIds = controllers
+        .map((controller) => controller.windowId)
+        .toSet();
+    _unreadyWindowIds.retainWhere(liveIds.contains);
     final liveCategoryWindows = <ModuleCategory, String>{};
     for (final controller in controllers) {
       final arguments = parseArguments(controller.arguments);
       if (arguments.type == WindowType.category && arguments.category != null) {
+        // Native inventory includes hidden windows still starting. They must
+        // not be advertised as reusable until their startup barrier completes.
+        if (_unreadyWindowIds.contains(controller.windowId)) continue;
         liveCategoryWindows[arguments.category!] = controller.windowId;
       }
     }
@@ -224,6 +303,10 @@ abstract interface class MultiWindowPlatform {
 
   Future<void> showWindow(MultiWindowController controller);
 
+  Future<void> waitUntilReady(MultiWindowController controller);
+
+  Future<void> closeWindow(MultiWindowController controller);
+
   Future<void> invokeMethod(
     MultiWindowController controller,
     String method,
@@ -273,6 +356,70 @@ class DesktopMultiWindowPlatform implements MultiWindowPlatform {
   @override
   Future<void> showWindow(MultiWindowController controller) =>
       controller.nativeController!.show();
+
+  @override
+  Future<void> closeWindow(MultiWindowController controller) async {
+    final elapsed = Stopwatch()..start();
+    const timeout = Duration(seconds: 3);
+    Future<bool> exists() async {
+      final remaining = timeout - elapsed.elapsed;
+      if (remaining <= Duration.zero) {
+        throw TimeoutException('Window cleanup did not complete');
+      }
+      return (await WindowController.getAll().timeout(
+        remaining,
+      )).any((window) => window.windowId == controller.windowId);
+    }
+
+    try {
+      await controller.nativeController!.closeNative().timeout(timeout);
+    } catch (_) {
+      // The window may have closed between the inventory read and this call.
+      if (!await exists()) return;
+      rethrow;
+    }
+    while (await exists()) {
+      await Future<void>.delayed(const Duration(milliseconds: 25));
+    }
+  }
+
+  @override
+  Future<void> waitUntilReady(MultiWindowController controller) async {
+    final elapsed = Stopwatch()..start();
+    const timeout = Duration(seconds: 15);
+    while (true) {
+      final remaining = timeout - elapsed.elapsed;
+      if (remaining <= Duration.zero) {
+        throw TimeoutException('Window did not become ready');
+      }
+      try {
+        await controller.nativeController!
+            .invokeMethod<void>(MultiWindowManager.readyMethod)
+            .timeout(remaining);
+        break;
+      } on WindowChannelException catch (error) {
+        if (error.code != 'CHANNEL_UNREGISTERED' &&
+            error.code != 'CHANNEL_NOT_FOUND') {
+          rethrow;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
+    if (waitsForNativeFirstFrame) {
+      while (true) {
+        final remaining = timeout - elapsed.elapsed;
+        if (remaining <= Duration.zero) {
+          throw TimeoutException('No native first frame');
+        }
+        if (await controller.nativeController!.isReadyToShow().timeout(
+          remaining,
+        )) {
+          return;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
+  }
 
   @override
   Future<void> invokeMethod(

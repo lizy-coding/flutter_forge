@@ -44,7 +44,7 @@ void main() {
 
     await tester.tap(find.text('返回模块目录'));
     await tester.pumpAndSettle();
-    expect(find.text('Lizy'), findsOneWidget);
+    expect(find.byKey(const ValueKey('learning-home')), findsOneWidget);
   });
 
   testWidgets('supported module path renders its business page', (

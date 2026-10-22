@@ -76,6 +76,10 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
   if (method == "createWindow") {
     auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
     auto window_id = MultiWindowManager::Instance()->Create(args);
+    if (window_id.empty()) {
+      result->Error("WINDOW_CREATION_FAILED", "Native window could not be created");
+      return;
+    }
     result->Success(flutter::EncodableValue(window_id));
     return;
   } else if (method == "getWindowDefinition") {

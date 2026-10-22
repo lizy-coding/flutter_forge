@@ -12,6 +12,7 @@ import 'module_quick_open.dart';
 import 'theme/forge_glass.dart';
 import 'theme/theme_mode_button.dart';
 import 'workbench_history.dart';
+import 'navigation_session.dart';
 
 class DesktopWorkbenchShell extends StatefulWidget {
   const DesktopWorkbenchShell({
@@ -104,6 +105,13 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
     _locations.removeLast();
     _goingBack = true;
     context.go(_locations.last);
+    final session = NavigationSessionScope.maybeOf(context);
+    if (session?.quickOpenOrigin == _locations.last) {
+      session?.quickOpenOrigin = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _search();
+      });
+    }
   }
 
   Future<void> _windowAction(String action) async {
@@ -325,10 +333,18 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                         ),
                       ],
                       Expanded(
-                        child: Semantics(
-                          container: true,
-                          explicitChildNodes: true,
-                          child: widget.child,
+                        child: ColoredBox(
+                          key: const ValueKey('workbench-content-surface'),
+                          color:
+                              ForgeSurfaceScope.maybeOf(context)?.teaching ==
+                                  true
+                              ? Theme.of(context).colorScheme.surface
+                              : Colors.transparent,
+                          child: Semantics(
+                            container: true,
+                            explicitChildNodes: true,
+                            child: widget.child,
+                          ),
                         ),
                       ),
                     ],
@@ -355,6 +371,7 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
   Widget _titlebar() {
     final window = DesktopWindowScope.maybeOf(context);
     return ForgeShellSurface(
+      titlebar: true,
       child: SizedBox(
         key: const ValueKey('immersive-titlebar'),
         height: 48,

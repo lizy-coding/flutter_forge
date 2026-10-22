@@ -33,6 +33,7 @@ class FlutterWindow: NSObject {
     let windowArgument: String
     private(set) var window: NSWindow
     private var channel: FlutterMethodChannel?
+    private var notificationsReady = false
 
     private var willBecomeActiveObserver: NSObjectProtocol?
     private var didResignActiveObserver: NSObjectProtocol?
@@ -90,15 +91,21 @@ class FlutterWindow: NSObject {
     }
 
     func notifyWindowEvent(_ event: String, data: [String: Any]) {
-        if let channel = channel {
+        if let channel = channel, notificationsReady {
             channel.invokeMethod(event, arguments: data)
-        } else {
-            debugPrint("Channel not set for window \(windowId), cannot notify event \(event)")
         }
     }
 
     func handleWindowMethod(method: String, arguments: Any?, result: @escaping FlutterResult) {
         switch method {
+        case "window_markReady":
+            notificationsReady = true
+            result(nil)
+        case "window_close":
+            result(nil)
+            // Let the method-channel callback unwind before destroying its
+            // target window and registrar.
+            DispatchQueue.main.async { [window] in window.close() }
         case "window_show":
             window.makeKeyAndOrderFront(nil)
             window.setIsVisible(true)

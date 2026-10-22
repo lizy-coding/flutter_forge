@@ -34,6 +34,50 @@
   },
   "work_queue": [
     {
+      "id": "desktop_native_material_compatibility",
+      "priority": 22,
+      "status": "pending",
+      "implementation_status": "implemented_macos_integration_pass_windows_host_pending",
+      "decision": "docs/adr/0018-platform-interaction-and-native-materials.md",
+      "targets": [
+        "apps/flutter_forge/lib/app",
+        "apps/flutter_forge/macos/Runner",
+        "apps/flutter_forge/windows/runner",
+        "packages/desktop_multi_window"
+      ],
+      "acceptance": [
+        "evaluate_flutter_acrylic_without_transferring_window_control_ownership",
+        "per_engine_main_and_category_window_material_binding",
+        "macos_native_material_and_windows11_mica_or_solid_fallback",
+        "system_transparency_high_contrast_and_saved_preference_fallback",
+        "independent_host_build_and_window_interaction_checks"
+      ]
+    },
+    {
+      "id": "four_platform_interaction_rules",
+      "priority": 23,
+      "status": "pending",
+      "implementation_status": "implemented_platform_validation_partial",
+      "decision": "docs/adr/0018-platform-interaction-and-native-materials.md",
+      "depends_on": [
+        "desktop_native_material_compatibility"
+      ],
+      "targets": [
+        "apps/flutter_forge/lib/app",
+        "apps/flutter_forge/test/shared",
+        "tool/agent_indexes/routes.js"
+      ],
+      "acceptance": [
+        "semantic_basic_page_material_and_solid_teaching_surfaces",
+        "web_mobile_search_categories_recent_home_and_about",
+        "shared_title_subtitle_category_concepts_search",
+        "session_query_category_scroll_return_and_browser_history",
+        "preserved_saved_preferences_and_module_entry_history",
+        "shared_teaching_content_and_blocking_overflow_repairs",
+        "quality_gate_and_separate_platform_interaction_checks"
+      ]
+    },
+    {
       "id": "module_platform_contract",
       "priority": 1,
       "status": "completed",

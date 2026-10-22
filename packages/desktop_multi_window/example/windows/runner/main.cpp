@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include "flutter_window.h"
+#include "desktop_multi_window/desktop_multi_window_plugin.h"
 #include "utils.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
@@ -36,8 +37,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   while (::GetMessage(&msg, nullptr, 0, 0)) {
     ::TranslateMessage(&msg);
     ::DispatchMessage(&msg);
+    DesktopMultiWindowProcessPendingWindowCleanup();
   }
 
+  DesktopMultiWindowShutdown();
+  window.Destroy();
   ::CoUninitialize();
   return EXIT_SUCCESS;
 }

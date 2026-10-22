@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_theme_controller.dart';
 import 'app_theme_selection.dart';
+import 'forge_theme_tokens.dart';
 
 class ThemeModeButton extends StatelessWidget {
   const ThemeModeButton({super.key});
@@ -33,7 +34,13 @@ class ThemeModeButton extends StatelessWidget {
                   ? const Icon(Icons.check_rounded)
                   : null,
               onPressed: () => controller.setPalette(palette),
-              child: Text(palette.label),
+              child: Text(
+                palette == AppThemePalette.graphiteForge
+                    ? '实色外观'
+                    : context.forgeColors.desktop
+                    ? '系统材质'
+                    : '玻璃外观',
+              ),
             ),
           const Divider(),
         ],
