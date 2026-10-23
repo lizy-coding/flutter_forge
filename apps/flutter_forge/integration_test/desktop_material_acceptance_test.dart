@@ -14,6 +14,7 @@ import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import '../test/support/desktop_material_contract.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,7 @@ void main() {
         await tester.pumpAndSettle();
         final initial = await _state();
         debugPrint('NATIVE_ACCEPTANCE initial=$initial');
-        expect(initial['materialActive'], initial['transparencyAllowed']);
+        expectDesktopMaterial(initial, macOS: Platform.isMacOS);
         if (Platform.isMacOS) {
           expect(
             initial['inputSurfaceOpaque'],
@@ -84,10 +85,7 @@ void main() {
           const AppThemeSelection(mode: AppThemeModePreference.dark),
         );
         await tester.pumpAndSettle();
-        expect(
-          (await _state())['materialActive'],
-          initial['transparencyAllowed'],
-        );
+        expectDesktopMaterial(await _state(), macOS: Platform.isMacOS);
 
         await tester.tap(find.byKey(const ValueKey('workbench-back')));
         await tester.pumpAndSettle();

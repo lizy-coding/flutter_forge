@@ -36,7 +36,7 @@ List<RouteBase> _routesFor(AppPlatformSnapshot platform) => [
         builder: (context, state) =>
             platform.hostFamily == AppHostFamily.desktop
             ? WorkbenchHomePage(modules: moduleManifest, platform: platform)
-            : LearningHomePage(modules: moduleManifest),
+            : LearningHomePage(modules: moduleManifest, platform: platform),
       ),
       GoRoute(
         path: '/about',

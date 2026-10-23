@@ -17,6 +17,9 @@
     "desktop_window_host.dart",
     "desktop_workbench_shell.dart",
     "module_quick_open.dart",
+    "module_discovery_panel.dart",
+    "module_discovery_surface.dart",
+    "module_discovery_session.dart",
     "workbench_history.dart",
     "workbench_home_page.dart",
     "learning_home_page.dart",
@@ -66,7 +69,8 @@
     "titlebar_home_navigation",
     "two_level_module_navigation",
     "recent_module_history",
-    "desktop_quick_open"
+    "desktop_quick_open",
+    "generated_module_discovery"
   ],
   "depends": [
     "go_router",
@@ -75,6 +79,11 @@
     "liquid_glass_easy",
     "module_registry",
     "shared/multi_window",
+    "shared/genui",
+    "genui",
+    "a2ui_core",
+    "json_schema_builder",
+    "dio",
     "modules"
   ],
   "children": [

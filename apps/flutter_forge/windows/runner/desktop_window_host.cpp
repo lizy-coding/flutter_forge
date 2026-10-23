@@ -180,6 +180,7 @@ class DesktopWindowHost final : public flutter::Plugin {
         {Value("trailingInset"), Value(trailing)},
         {Value("fullscreen"), Value(fullscreen_)},
         {Value("materialActive"), Value(material_active_)},
+        {Value("systemBackdropSupported"), Value(supports_system_backdrop_)},
         {Value("transparencyAllowed"), Value(TransparencyAllowed())},
     });
   }

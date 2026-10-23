@@ -1,3 +1,5 @@
+import '../module_registry/app_platform_snapshot.dart';
+import 'module_discovery_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,8 +10,9 @@ import 'navigation_session.dart';
 import 'workbench_history.dart';
 
 class LearningHomePage extends StatelessWidget {
-  const LearningHomePage({super.key, required this.modules});
+  const LearningHomePage({super.key, required this.modules, this.platform});
   final List<ModuleEntry> modules;
+  final AppPlatformSnapshot? platform;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +26,10 @@ class LearningHomePage extends StatelessWidget {
       key: const PageStorageKey('learning-home-scroll'),
       padding: const EdgeInsets.all(24),
       children: [
+        ModuleDiscoveryPanel(
+          modules: modules,
+          platform: platform ?? AppPlatformSnapshot.detect(),
+        ),
         Text('探索与查阅', style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 8),
         Text(

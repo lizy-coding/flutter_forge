@@ -1,3 +1,4 @@
+import 'module_discovery_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,24 +33,23 @@ class WorkbenchHomePage extends StatelessWidget {
       key: const PageStorageKey('workbench-home-scroll'),
       padding: const EdgeInsets.all(28),
       children: [
-        Text('学习工作台', style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        Text(
-          '找到一个模块，开始运行与探索。',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+        ModuleDiscoveryPanel(modules: modules, platform: platform),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                '随时继续探索',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () => showModuleQuickOpen(context, modules),
+              icon: const Icon(Icons.search, size: 16),
+              label: const Text('快速打开模块'),
+            ),
+          ],
         ),
         const SizedBox(height: 20),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: FilledButton.icon(
-            onPressed: () => showModuleQuickOpen(context, modules),
-            icon: const Icon(Icons.search, size: 18),
-            label: const Text('快速打开模块'),
-          ),
-        ),
-        const SizedBox(height: 32),
         Text('最近访问', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
         if (recent.isEmpty)
@@ -95,9 +95,14 @@ class WorkbenchHomePage extends StatelessWidget {
     );
     return KeyedSubtree(
       key: const ValueKey('workbench-home'),
-      child: session == null
-          ? content
-          : PageStorage(bucket: session.pages, child: content),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1080),
+          child: session == null
+              ? content
+              : PageStorage(bucket: session.pages, child: content),
+        ),
+      ),
     );
   }
 }
