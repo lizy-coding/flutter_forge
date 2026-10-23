@@ -13,6 +13,8 @@
     "adsorption_line",
     "download_animation",
     "font_picker",
+    "genui_workbench",
+    "workflow_workbench",
     "shader_playground",
     "flutter_scene_3d"
   ],
@@ -26,6 +28,13 @@
     "module_registry",
     "provider",
     "go_router",
+    "genui",
+    "a2ui_core",
+    "json_schema_builder",
+    "dio",
+    "shared_table",
+    "shared_workflows",
+    "forge_articles",
     "forge_scene_viewer"
   ],
   "children": [
@@ -33,6 +42,8 @@
     "adsorption_line/AI_ANALYSIS.md",
     "download_animation/AI_ANALYSIS.md",
     "font_picker/AI_ANALYSIS.md",
+    "genui_workbench/AI_ANALYSIS.md",
+    "workflow_workbench/AI_ANALYSIS.md",
     "shader_playground/AI_ANALYSIS.md",
     "flutter_scene_3d/AI_ANALYSIS.md"
   ],

@@ -11,6 +11,7 @@
   "entrypoints": [
     "dio_interceptor",
     "usb_network",
+    "network_diagnostics",
     "usb_detector",
     "battery_monitor",
     "bluetooth_ble",
@@ -24,6 +25,7 @@
   "depends": [
     "shared_learning",
     "dio",
+    "forge_articles",
     "module_registry",
     "go_router",
     "usb_network_bridge",
@@ -41,6 +43,7 @@
   "children": [
     "dio_interceptor/AI_ANALYSIS.md",
     "usb_network/AI_ANALYSIS.md",
+    "network_diagnostics/AI_ANALYSIS.md",
     "usb_detector/AI_ANALYSIS.md",
     "battery_monitor/AI_ANALYSIS.md",
     "bluetooth_ble/AI_ANALYSIS.md",

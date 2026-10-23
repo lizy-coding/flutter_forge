@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
+import 'package:go_router/go_router.dart';
+
 import 'drawing_canvas.dart';
 import 'drawing_model.dart';
 
@@ -194,6 +196,11 @@ class _PixelShaderIntroPageState extends State<PixelShaderIntroPage> {
             const SizedBox(height: 8),
             const Text(
               '片元 Shader 会为绘制区域中的片元计算颜色；入门时可以先把片元近似理解为待绘制的像素。本页用 Dart 和 Canvas 演示这条思路，后续课程再把规则写成真正的 Shader。',
+            ),
+            FilledButton(
+              key: const Key('intro-continue-shader'),
+              onPressed: () => unawaited(context.push('/shader-playground')),
+              child: const Text('继续学习：把颜色规则写成真实 Shader'),
             ),
             TextButton(
               onPressed: () => _startStep(0),

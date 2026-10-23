@@ -12,6 +12,7 @@ import 'platform_adapter_io.dart'
 class HttpClient {
   late Dio dio;
   final CancelToken _cancelToken = CancelToken();
+  CancelToken get requestCancelToken => _cancelToken;
   final AuthInterceptor auth = AuthInterceptor();
 
   HttpClient({required String baseUrl}) {
