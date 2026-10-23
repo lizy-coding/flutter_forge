@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-22",
+  "baseline": "b501f21",
+  "scope": "macOS integration test; real Codex CLI; form input and three model turns; automatic context disabled",
+  "automatic_context_disabled": true,
+  "context_audit": "codex_context_audit.json",
+  "requests": 3,
+  "sdk_actions": 1,
+  "source": "真实生成 · codex-default",
+  "before": {
+    "parentWidth": 240.0,
+    "requestedWidth": 180.0,
+    "tight": false,
+    "revision": 1,
+    "observationRevision": 1,
+    "actualWidth": 180.0,
+    "actualHeight": 60.0,
+    "observationSource": "Flutter RenderBox.size after layout"
+  },
+  "after": {
+    "parentWidth": 240.0,
+    "requestedWidth": 180.0,
+    "tight": true,
+    "revision": 2,
+    "observationRevision": 2,
+    "actualWidth": 240.0,
+    "actualHeight": 60.0,
+    "observationSource": "Flutter RenderBox.size after layout"
+  },
+  "surface": {
+    "surfaceId": "constraint-lab",
+    "catalogId": "dev.flutterforge.constraint-lab",
+    "components": {
+      "root": {
+        "id": "root",
+        "component": "LabColumn",
+        "children": [
+          "intro",
+          "parent",
+          "child",
+          "mode",
+          "preview",
+          "result",
+          "explain"
+        ]
+      },
+      "intro": {
+        "id": "intro",
+        "component": "Note",
+        "text": "依据 snapshot.revision = 2（观测版本 observationRevision = 2）：当前父级宽度为 240，子组件期望宽度为 180，已启用紧约束。\n紧约束将子组件允许的最小宽度和最大宽度都设为 240，因此期望宽度 180 无法生效。Flutter 布局后的 RenderBox.size 实测为宽 240、高 60，与此一致。\n保持这两项宽度不变，切换到松约束后，可观察子组件是否按期望宽度 180 布局；切换后的实际尺寸须以新的 Flutter 观测为准。"
+      },
+      "parent": {
+        "id": "parent",
+        "component": "NumberControl",
+        "field": "parentWidth"
+      },
+      "child": {
+        "id": "child",
+        "component": "NumberControl",
+        "field": "requestedWidth"
+      },
+      "mode": {
+        "id": "mode",
+        "component": "ModeControl"
+      },
+      "preview": {
+        "id": "preview",
+        "component": "ConstraintPreview"
+      },
+      "result": {
+        "id": "result",
+        "component": "Observation"
+      },
+      "explain": {
+        "id": "explain",
+        "component": "ExplainAction"
+      }
+    }
+  },
+  "records": [
+    "模式 · 真实生成 · codex-default",
+    "请求 · 为什么子组件设置了宽度却没有生效？请生成松约束实验。",
+    "消息 · {\"version\":\"v0.9\",\"createSurface\":{\"surfaceId\":\"constraint-lab\",\"catalogId\":\"dev.flutterforge.constraint-lab\",\"sendDataModel\":false}}",
+    "消息 · {\"version\":\"v0.9\",\"updateDataModel\":{\"surfaceId\":\"constraint-lab\",\"path\":\"/\",\"value\":{\"parentWidth\":240.0,\"requestedWidth\":120.0,\"tight\":false}}}",
+    "消息 · {\"version\":\"v0.9\",\"updateComponents\":{\"surfaceId\":\"constraint-lab\",\"components\":[{\"id\":\"root\",\"component\":\"LabColumn\",\"children\":[\"intro\",\"parent\",\"child\",\"mode\",\"preview\",\"result\",\"explain\"]},{\"id\":\"intro\",\"component\":\"Note\",\"text\":\"松约束实验（依据 snapshot.revision = 0）：子组件设置的宽度是期望值，最终尺寸仍须满足父级约束。松约束允许子组件在上限内选择宽度；若期望宽度超过父级允许的最大值，就会受到限制。紧约束则把最小与最大宽度设为相同值，子组件无法自由选择宽度。\\n当前父级宽度为 240，期望宽度为 120，已选择松约束。Flutter 尚未提供布局观测，因此暂不能确认实际尺寸。请调整两项宽度，比较期望宽度小于和大于父级宽度的情况；保留松约束观察，再切换紧约束对比。布局完成后点击解释，依据新快照分析结果。\"},{\"id\":\"parent\",\"component\":\"NumberControl\",\"field\":\"parentWidth\"},{\"id\":\"child\",\"component\":\"NumberControl\",\"field\":\"requestedWidth\"},{\"id\":\"mode\",\"component\":\"ModeControl\"},{\"id\":\"preview\",\"component\":\"ConstraintPreview\"},{\"id\":\"result\",\"component\":\"Observation\"},{\"id\":\"explain\",\"component\":\"ExplainAction\"}]}}",
+    "状态 · requestedWidth = 180.0 · v1",
+    "请求 · 换成紧约束看看，只修改 tight，保留父宽度、期望宽度和其他组件。",
+    "状态 · tight = true · v2",
+    "消息 · {\"version\":\"v0.9\",\"updateDataModel\":{\"surfaceId\":\"constraint-lab\",\"path\":\"/tight\",\"value\":true}}",
+    "事件 · {\"version\":\"v0.9\",\"action\":{\"name\":\"explain\",\"sourceComponentId\":\"explain\",\"timestamp\":\"2026-10-22T20:31:17.018528\",\"context\":{\"parentWidth\":240.0,\"requestedWidth\":180.0,\"tight\":true,\"revision\":2,\"observationRevision\":2,\"actualWidth\":240.0,\"actualHeight\":60.0,\"observationSource\":\"Flutter RenderBox.size after layout\"},\"surfaceId\":\"constraint-lab\"}}",
+    "请求 · 解释当前结果",
+    "消息 · {\"version\":\"v0.9\",\"updateComponents\":{\"surfaceId\":\"constraint-lab\",\"components\":[{\"id\":\"intro\",\"component\":\"Note\",\"text\":\"依据 snapshot.revision = 2（观测版本 observationRevision = 2）：当前父级宽度为 240，子组件期望宽度为 180，已启用紧约束。\\n紧约束将子组件允许的最小宽度和最大宽度都设为 240，因此期望宽度 180 无法生效。Flutter 布局后的 RenderBox.size 实测为宽 240、高 60，与此一致。\\n保持这两项宽度不变，切换到松约束后，可观察子组件是否按期望宽度 180 布局；切换后的实际尺寸须以新的 Flutter 观测为准。\"}]}}"
+  ]
+}

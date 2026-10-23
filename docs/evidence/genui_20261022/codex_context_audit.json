@@ -1,0 +1,19 @@
+{
+  "method": "local mock Responses endpoint; no external inference; only marker booleans retained",
+  "captured_local_requests": 1,
+  "agents_header": false,
+  "skills_block": false,
+  "memory_block": false,
+  "forge_repository_path": false,
+  "cli_version": "0.162.1",
+  "overrides": [
+    "instructions=\"\"",
+    "project_doc_max_bytes=0",
+    "skills.include_instructions=false",
+    "memories.use_memories=false",
+    "memories.generate_memories=false",
+    "features.apps=false",
+    "mcp_servers={}"
+  ],
+  "global_home_instruction_files_empty": true
+}
