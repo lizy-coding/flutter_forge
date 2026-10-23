@@ -22,6 +22,7 @@
   "dependency_migration": {
     "layout": "pub_workspace",
     "internal_packages": [
+      "packages/forge_articles",
       "packages/forge_scene_viewer",
       "packages/usb_network_bridge",
       "packages/flutter_battery",

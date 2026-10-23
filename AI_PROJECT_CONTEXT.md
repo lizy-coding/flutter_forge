@@ -37,6 +37,7 @@
     "layout": "pub_workspace",
     "workspace_root": ".",
     "members": [
+      "packages/forge_articles",
       "apps/flutter_forge",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
@@ -49,6 +50,12 @@
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "forge_articles",
+      "type": "dart_package",
+      "path": "packages/forge_articles",
+      "entrypoint": "lib/forge_articles.dart"
+    },
     {
       "name": "forge_scene_viewer",
       "type": "flutter_package",
@@ -108,7 +115,8 @@
   "capability_aliases": {
     "shared_learning": "lib/shared/learning",
     "shared_popup": "lib/shared/popup",
-    "shared_table": "lib/shared/table"
+    "shared_table": "lib/shared/table",
+    "shared_workflows": "lib/shared/workflows"
   },
   "external_tools": [],
   "layers": [
