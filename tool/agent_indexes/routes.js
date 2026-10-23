@@ -111,7 +111,7 @@ function writeRoutes({ modules, categoryComments, categoryEnumNames, writeText }
     routeLines.push('        builder: (context, state) =>');
     routeLines.push('            platform.hostFamily == AppHostFamily.desktop');
     routeLines.push('            ? WorkbenchHomePage(modules: moduleManifest, platform: platform)');
-    routeLines.push('            : LearningHomePage(modules: moduleManifest),');
+    routeLines.push('            : LearningHomePage(modules: moduleManifest, platform: platform),');
     routeLines.push('      ),');
     routeLines.push('      GoRoute(');
     routeLines.push("        path: '/about',");

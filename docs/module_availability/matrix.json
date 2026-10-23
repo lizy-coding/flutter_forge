@@ -263,6 +263,30 @@
       ]
     },
     {
+      "id": "genui_workbench",
+      "title": "生成式实验工作区",
+      "route": "/genui-workbench",
+      "supported_platforms": [
+        "android",
+        "iOS",
+        "macOS",
+        "web",
+        "windows"
+      ]
+    },
+    {
+      "id": "workflow_workbench",
+      "title": "跨项目工作流实验室",
+      "route": "/workflow-workbench",
+      "supported_platforms": [
+        "android",
+        "iOS",
+        "macOS",
+        "web",
+        "windows"
+      ]
+    },
+    {
       "id": "shader_playground",
       "title": "Shader 像素绘制与交互动效",
       "route": "/shader-playground",
@@ -384,6 +408,25 @@
           "sources": [
             "packages/usb_network_bridge/pubspec.yaml",
             "packages/usb_network_bridge/lib/src/backend_native.dart"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "network_diagnostics",
+      "title": "网络诊断：从现象到检测证据",
+      "route": "/network-diagnostics",
+      "supported_platforms": [
+        "macOS",
+        "windows"
+      ],
+      "limitations": [
+        {
+          "capability": "desktop_network_diagnostics",
+          "reason": "desktop_direct_network_probes_mobile_deferred_web_out_of_scope",
+          "sources": [
+            "apps/flutter_forge/lib/modules/platform/network_diagnostics/desktop_network_probe.dart",
+            "docs/NETWORK_DIAGNOSTICS_DESIGN.md"
           ]
         }
       ]

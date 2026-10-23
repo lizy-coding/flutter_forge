@@ -37,7 +37,7 @@ function writeProjectDocuments({ writeJson, workspacePackages, facts }) {
         entrypoint: entrypoints[0],
       })),
       external_packages: [{ ...facts.gcodeDependency, entrypoint: 'lib/gcode_core.dart', flutter_min: '3.47.2', entry_platforms: facts.gcodeEntryPlatforms, requires: ['impeller', 'flutter_gpu'], macos_deployment_target_min: '12.0' }],
-      capability_aliases: { shared_learning: 'lib/shared/learning', shared_popup: 'lib/shared/popup', shared_table: 'lib/shared/table' },
+      capability_aliases: { shared_learning: 'lib/shared/learning', shared_popup: 'lib/shared/popup', shared_table: 'lib/shared/table', shared_workflows: 'lib/shared/workflows' },
       external_tools: [],
       layers: [
         {

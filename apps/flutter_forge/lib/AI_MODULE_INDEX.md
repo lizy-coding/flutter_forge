@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 30,
+  "count": 33,
   "modules": [
     {
       "id": "graphics_background",
@@ -38,7 +38,8 @@
       "route": "/pixel-shader-intro",
       "status": "ready",
       "depends": [
-        "shared_learning"
+        "shared_learning",
+        "go_router"
       ],
       "platform_support": {
         "target_platforms": [
@@ -560,13 +561,112 @@
       "analysis": "lib/modules/ui/font_picker/AI_ANALYSIS.md"
     },
     {
+      "id": "genui_workbench",
+      "category": "ui",
+      "path": "lib/modules/ui/genui_workbench",
+      "route": "/genui-workbench",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "genui",
+        "a2ui_core",
+        "json_schema_builder",
+        "dio"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [],
+        "required_capabilities": [
+          "genui_surface"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "genui_surface",
+            "reason": "bounded_flutter_catalog_and_http_stream_no_native_model_runtime",
+            "sources": [
+              "apps/flutter_forge/lib/modules/ui/genui_workbench/workbench_catalog.dart",
+              "apps/flutter_forge/lib/modules/ui/genui_workbench/workbench_source.dart",
+              "apps/flutter_forge/pubspec.yaml"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/ui/genui_workbench/AI_ANALYSIS.md"
+    },
+    {
+      "id": "workflow_workbench",
+      "category": "ui",
+      "path": "lib/modules/ui/workflow_workbench",
+      "route": "/workflow-workbench",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "shared_table",
+        "shared_workflows",
+        "forge_articles",
+        "genui",
+        "a2ui_core",
+        "json_schema_builder",
+        "dio"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [],
+        "required_capabilities": [
+          "article_workflow",
+          "genui_surface"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "article_workflow",
+            "reason": "pure_dart_article_request_and_teaching_adapter",
+            "sources": [
+              "packages/forge_articles/pubspec.yaml",
+              "packages/forge_articles/lib/forge_articles.dart"
+            ]
+          },
+          {
+            "capability": "genui_surface",
+            "reason": "bounded_flutter_catalog_and_http_stream_no_native_model_runtime",
+            "sources": [
+              "apps/flutter_forge/lib/modules/ui/genui_workbench/workbench_catalog.dart",
+              "apps/flutter_forge/lib/modules/ui/genui_workbench/workbench_source.dart",
+              "apps/flutter_forge/pubspec.yaml"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/ui/workflow_workbench/AI_ANALYSIS.md"
+    },
+    {
       "id": "shader_playground",
       "category": "ui",
       "path": "lib/modules/ui/shader_playground",
       "route": "/shader-playground",
       "status": "ready",
       "depends": [
-        "shared_learning"
+        "shared_learning",
+        "go_router"
       ],
       "platform_support": {
         "target_platforms": [
@@ -779,6 +879,7 @@
       "depends": [
         "shared_learning",
         "dio",
+        "forge_articles",
         "module_registry",
         "go_router"
       ],
@@ -791,10 +892,21 @@
           "windows"
         ],
         "excluded_platforms": [],
-        "required_capabilities": [],
+        "required_capabilities": [
+          "article_workflow"
+        ],
         "unreviewed_dependencies": [],
         "optional_capabilities": [],
-        "reasons": [],
+        "reasons": [
+          {
+            "capability": "article_workflow",
+            "reason": "pure_dart_article_request_and_teaching_adapter",
+            "sources": [
+              "packages/forge_articles/pubspec.yaml",
+              "packages/forge_articles/lib/forge_articles.dart"
+            ]
+          }
+        ],
         "restriction": null,
         "features": {}
       },
@@ -842,6 +954,48 @@
         "features": {}
       },
       "analysis": "lib/modules/platform/usb_network/AI_ANALYSIS.md"
+    },
+    {
+      "id": "network_diagnostics",
+      "category": "platform",
+      "path": "lib/modules/platform/network_diagnostics",
+      "route": "/network-diagnostics",
+      "status": "pending",
+      "depends": [
+        "shared_learning"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "android",
+          "iOS",
+          "web"
+        ],
+        "required_capabilities": [
+          "desktop_network_diagnostics"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "desktop_network_diagnostics",
+            "reason": "desktop_direct_network_probes_mobile_deferred_web_out_of_scope",
+            "sources": [
+              "apps/flutter_forge/lib/modules/platform/network_diagnostics/desktop_network_probe.dart",
+              "docs/NETWORK_DIAGNOSTICS_DESIGN.md"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/platform/network_diagnostics/AI_ANALYSIS.md"
     },
     {
       "id": "usb_detector",
