@@ -14,3 +14,9 @@ workspace:
   - packages/flutter_battery
   - packages/usb_network_bridge
   - packages/forge_scene_viewer
+
+# CI 的 macos-15-intel runner（Xcode 16.4）编译不了 video_player_avfoundation
+# 2.12.3 的 Swift #isolation 语法；v1.2.9 发布基线是 2.12.2，待其兼容旧
+# 工具链后解除本覆盖。
+dependency_overrides:
+  video_player_avfoundation: 2.12.2
