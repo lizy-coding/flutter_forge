@@ -7,7 +7,7 @@ import 'package:flutter_forge_app/app/router/app_router.dart';
 import 'package:flutter_forge_app/app/theme/app_theme_controller.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
-import 'package:flutter_forge_app/modules/popup_table/popup_widgets/module_root.dart';
+import 'package:flutter_forge_app/modules/popup_table/popup_list_interaction/pages/popup_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -91,9 +91,10 @@ void main() {
     await tester.pumpAndSettle();
 
     final popupTile = find.widgetWithText(ListTile, '弹窗组件');
+    await tester.ensureVisible(popupTile);
     await tester.tap(popupTile);
     await tester.pumpAndSettle();
-    expect(find.byType(PopDemoHomePage), findsOneWidget);
+    expect(find.byType(PopupPage), findsOneWidget);
 
     await tester.pageBack();
     await tester.pumpAndSettle();

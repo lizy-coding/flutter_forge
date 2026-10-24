@@ -44,7 +44,18 @@ void main() {
     expect(find.byKey(const ValueKey('workbench-home')), findsOneWidget);
 
     final category = find.byKey(const ValueKey('workbench-category:ui'));
-    await tester.ensureVisible(category);
+    // The workbench home is a lazily built ListView: scroll the tile into
+    // existence before tapping it.
+    await tester.scrollUntilVisible(
+      category,
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('workbench-home')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     await tester.tap(category);
     final categoryPage = find.byKey(const ValueKey('category-page:ui'));
     await _pumpUntil(tester, categoryPage);
