@@ -8,10 +8,13 @@ import '../module_registry/app_platform_snapshot.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import 'desktop_window_host.dart';
+import 'forge_nav_tile.dart';
+import 'forge_selectable_list.dart';
 import 'module_quick_open.dart';
 import 'theme/forge_glass.dart';
 import 'theme/theme_mode_button.dart';
 import 'workbench_history.dart';
+import 'navigation_session.dart';
 
 class DesktopWorkbenchShell extends StatefulWidget {
   const DesktopWorkbenchShell({
@@ -104,6 +107,13 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
     _locations.removeLast();
     _goingBack = true;
     context.go(_locations.last);
+    final session = NavigationSessionScope.maybeOf(context);
+    if (session?.quickOpenOrigin == _locations.last) {
+      session?.quickOpenOrigin = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _search();
+      });
+    }
   }
 
   Future<void> _windowAction(String action) async {
@@ -128,6 +138,41 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
         ...widget.modules.where((module) => module.category == category),
     ],
   ];
+
+  int get _selectedEntryIndex {
+    final entries = _navigationEntries;
+    for (var index = 0; index < entries.length; index++) {
+      final entry = entries[index];
+      if (entry is ModuleEntry && entry == _currentModule) return index;
+      if (entry is ModuleCategory &&
+          widget.location == '/category/${entry.name}') {
+        return index;
+      }
+    }
+    return 0;
+  }
+
+  void _activateEntry(Object entry) {
+    if (entry is ModuleCategory) {
+      setState(() => _expandedCategory = entry);
+      context.go(
+        widget.focusedCategory == null ? '/category/${entry.name}' : '/',
+      );
+    } else if (entry is ModuleEntry) {
+      context.go(entry.path);
+    }
+  }
+
+  Color _contentSurfaceColor(BuildContext context) {
+    final scope = ForgeSurfaceScope.maybeOf(context);
+    if (scope?.teaching == true) return Theme.of(context).colorScheme.surface;
+    if (scope?.nativeMaterial != true) return Colors.transparent;
+    // Native-material hierarchy: chrome tints lightest, content grounds the
+    // page, cards sit near-solid on top — opacity is the elevation.
+    return Theme.of(context).colorScheme.surface.withValues(
+      alpha: Theme.of(context).brightness == Brightness.dark ? 0.45 : 0.5,
+    );
+  }
 
   String get _title {
     if (_currentModule case final module?) return module.title;
@@ -181,17 +226,15 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                           key: const ValueKey('workbench-sidebar'),
                           width: _sidebarWidth,
                           child: ForgeShellSurface(
+                            edgeHighlight: true,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 if (widget.focusedCategory == null)
-                                  ListTile(
-                                    dense: true,
-                                    leading: const Icon(
-                                      Icons.space_dashboard_outlined,
-                                      size: 18,
-                                    ),
-                                    title: const Text('学习工作台'),
+                                  ForgeNavTile(
+                                    label: '学习工作台',
+                                    icon: Icons.space_dashboard_outlined,
+                                    indent: 8,
                                     selected: widget.location == '/',
                                     onTap: () => context.go('/'),
                                   ),
@@ -203,22 +246,30 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                                   ),
                                 ),
                                 Expanded(
-                                  child: ListView.builder(
+                                  child: ForgeSelectableList(
                                     key: const ValueKey(
                                       'workbench-module-tree',
                                     ),
                                     itemCount: entries.length,
-                                    itemBuilder: (context, index) {
+                                    selectedIndex: _selectedEntryIndex,
+                                    onActivate: _activateEntry,
+                                    itemBuilder: (context, index, active) {
                                       final entry = entries[index];
                                       if (entry is ModuleCategory) {
-                                        return ListTile(
-                                          dense: true,
-                                          leading: Icon(entry.icon, size: 18),
-                                          title: Text(
-                                            entry.label,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
+                                        return ForgeNavTile(
+                                          key: ValueKey(
+                                            'sidebar-category:${entry.name}',
                                           ),
+                                          label: entry.label,
+                                          icon: entry.icon,
+                                          indent: 8,
+                                          keyboardActive: active,
+                                          selected:
+                                              widget.location ==
+                                                  '/category/${entry.name}' ||
+                                              (widget.focusedCategory ==
+                                                      entry &&
+                                                  widget.location == '/'),
                                           trailing: IconButton(
                                             tooltip: _expandedCategory == entry
                                                 ? '收起分类'
@@ -236,73 +287,42 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                                               size: 18,
                                             ),
                                           ),
-                                          onTap: () {
-                                            setState(
-                                              () => _expandedCategory = entry,
-                                            );
-                                            context.go(
-                                              widget.focusedCategory == null
-                                                  ? '/category/${entry.name}'
-                                                  : '/',
-                                            );
-                                          },
+                                          onTap: () => _activateEntry(entry),
                                         );
                                       }
                                       final module = entry as ModuleEntry;
-                                      final selected = module == _currentModule;
-                                      return Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                          28,
-                                          1,
-                                          8,
-                                          1,
+                                      return ForgeNavTile(
+                                        key: ValueKey(
+                                          'sidebar-module:${module.path}',
                                         ),
-                                        child: ListTile(
-                                          key: ValueKey(
-                                            'sidebar-module:${module.path}',
-                                          ),
-                                          dense: true,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              6,
-                                            ),
-                                          ),
-                                          selected: selected,
-                                          selectedTileColor: Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withValues(alpha: 0.12),
-                                          title: Text(
-                                            module.title,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          trailing:
-                                              module.isSupportedOn(
-                                                widget.platform,
-                                              )
-                                              ? null
-                                              : const Tooltip(
-                                                  message: '当前平台不可用',
-                                                  child: Icon(
-                                                    Icons.info_outline,
-                                                    size: 14,
-                                                  ),
+                                        label: module.title,
+                                        indent: 20,
+                                        keyboardActive: active,
+                                        selected: module == _currentModule,
+                                        trailing:
+                                            module.isSupportedOn(
+                                              widget.platform,
+                                            )
+                                            ? null
+                                            : const Tooltip(
+                                                message: '当前平台不可用',
+                                                child: Icon(
+                                                  Icons.info_outline,
+                                                  size: 14,
                                                 ),
-                                          onTap: () => context.go(module.path),
-                                        ),
+                                              ),
+                                        onTap: () => context.go(module.path),
                                       );
                                     },
                                   ),
                                 ),
                                 if (widget.focusedCategory == null)
-                                  ListTile(
-                                    dense: true,
-                                    leading: const Icon(
-                                      Icons.info_outline,
-                                      size: 18,
-                                    ),
-                                    title: const Text('关于 Flutter Forge'),
+                                  ForgeNavTile(
+                                    key: const ValueKey('sidebar-about'),
+                                    label: '关于 Flutter Forge',
+                                    icon: Icons.info_outline,
+                                    indent: 8,
+                                    selected: widget.location == '/about',
                                     onTap: () => context.go('/about'),
                                   ),
                               ],
@@ -325,10 +345,14 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                         ),
                       ],
                       Expanded(
-                        child: Semantics(
-                          container: true,
-                          explicitChildNodes: true,
-                          child: widget.child,
+                        child: ColoredBox(
+                          key: const ValueKey('workbench-content-surface'),
+                          color: _contentSurfaceColor(context),
+                          child: Semantics(
+                            container: true,
+                            explicitChildNodes: true,
+                            child: widget.child,
+                          ),
                         ),
                       ),
                     ],
@@ -355,6 +379,8 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
   Widget _titlebar() {
     final window = DesktopWindowScope.maybeOf(context);
     return ForgeShellSurface(
+      titlebar: true,
+      edgeHighlight: true,
       child: SizedBox(
         key: const ValueKey('immersive-titlebar'),
         height: 48,

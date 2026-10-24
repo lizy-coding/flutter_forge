@@ -45,6 +45,8 @@ const modulePlatformPolicies = <String, ModulePlatformSupport>{
       },
     },
   ),
+  'genui_workbench': ModulePlatformSupport(),
+  'workflow_workbench': ModulePlatformSupport(),
   'shader_playground': ModulePlatformSupport(),
   'flutter_scene_3d': ModulePlatformSupport(
     excludedPlatforms: {AppTargetPlatform.iOS, AppTargetPlatform.web},
@@ -58,6 +60,13 @@ const modulePlatformPolicies = <String, ModulePlatformSupport>{
   'overlay_follow_compare': ModulePlatformSupport(),
   'dio_interceptor': ModulePlatformSupport(),
   'usb_network': ModulePlatformSupport(
+    excludedPlatforms: {
+      AppTargetPlatform.android,
+      AppTargetPlatform.iOS,
+      AppTargetPlatform.web,
+    },
+  ),
+  'network_diagnostics': ModulePlatformSupport(
     excludedPlatforms: {
       AppTargetPlatform.android,
       AppTargetPlatform.iOS,

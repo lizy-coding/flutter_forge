@@ -107,11 +107,15 @@ class MultiWindowManager: NSObject {
         let project = FlutterDartProject()
         project.dartEntrypointArguments = ["multi_window", windowId, config.arguments]
         let flutterViewController = FlutterViewController(project: project)
+        // FlutterView defaults to black before Dart configures its surface.
+        // Set the startup surface before attaching or presenting the view.
+        flutterViewController.backgroundColor = .windowBackgroundColor
         window.contentViewController = flutterViewController
         window.setFrame(NSRect(x: 0, y: 0, width: 800, height: 600), display: true)
 
-        window.orderFront(nil)
-        window.setIsVisible(!config.hiddenAtLaunch)
+        // A hidden window does not get viewDidAppear to start its engine.
+        // Start explicitly before plugin registration and any native messages.
+        flutterViewController.engine.run(withEntrypoint: nil)
 
         FlutterMultiWindowPlugin.onWindowCreatedCallback?(flutterViewController)
 
@@ -123,6 +127,13 @@ class MultiWindowManager: NSObject {
 
         let channel = registerMultiWindowChannel(window: flutterWindow, with: registrar)
         flutterWindow.setChannel(channel)
+
+        // Install plugins, the per-window host and the window definition before
+        // showing it. A user-requested visible window should also receive key
+        // status rather than requiring another click or a Window-menu action.
+        if !config.hiddenAtLaunch {
+            window.makeKeyAndOrderFront(nil)
+        }
 
         notifyWindowsChanged()
 

@@ -96,6 +96,8 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
           'lib/shared/multi_window/AI_ANALYSIS.md',
           'lib/shared/popup/AI_ANALYSIS.md',
           'lib/shared/table/AI_ANALYSIS.md',
+          'lib/shared/workflows/AI_ANALYSIS.md',
+          'lib/shared/genui/AI_ANALYSIS.md',
           'lib/modules/basic/AI_ANALYSIS.md',
           'lib/modules/async/AI_ANALYSIS.md',
           'lib/modules/state/AI_ANALYSIS.md',
@@ -183,9 +185,9 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       rel: 'lib/app/AI_ANALYSIS.md',
       id: 'flutter_forge_app.app',
       kind: 'app_index',
-      entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'forge_bubble_navigation.dart', 'desktop_window_host.dart', 'desktop_workbench_shell.dart', 'module_quick_open.dart', 'workbench_history.dart', 'workbench_home_page.dart', 'module_search.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'theme/app_theme.dart', 'theme/app_theme_selection.dart', 'theme/app_theme_controller.dart', 'theme/forge_theme_tokens.dart', 'theme/forge_glass.dart', 'theme/theme_mode_button.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
-      owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'mobile_creator_home', 'desktop_workbench_home', 'creator_about', 'module_catalog', 'mobile_title_search', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell', 'category_router_lifecycle', 'light_dark_theme', 'theme_palette_catalog', 'theme_semantic_tokens', 'theme_preference_persistence', 'cross_window_theme_sync', 'shared_desktop_window_commands', 'immersive_titlebar', 'native_fullscreen_toggle', 'titlebar_home_navigation', 'two_level_module_navigation', 'recent_module_history', 'desktop_quick_open'],
-      depends: ['go_router', 'flutter_riverpod', 'url_launcher', 'liquid_glass_easy', 'module_registry', 'shared/multi_window', 'modules'],
+      entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'forge_bubble_navigation.dart', 'desktop_window_host.dart', 'desktop_workbench_shell.dart', 'module_quick_open.dart', 'module_discovery_panel.dart', 'module_discovery_surface.dart', 'module_discovery_session.dart', 'module_discovery_replay.dart', 'workbench_history.dart', 'workbench_home_page.dart', 'learning_home_page.dart', 'navigation_session.dart', 'module_search.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'theme/app_theme.dart', 'theme/app_theme_selection.dart', 'theme/app_theme_controller.dart', 'theme/forge_theme_tokens.dart', 'theme/forge_glass.dart', 'theme/theme_mode_button.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
+      owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'web_mobile_learning_home', 'desktop_workbench_home', 'creator_about', 'module_catalog', 'shared_module_metadata_search', 'session_navigation_positions', 'native_window_material', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell', 'category_router_lifecycle', 'light_dark_theme', 'theme_palette_catalog', 'theme_semantic_tokens', 'theme_preference_persistence', 'cross_window_theme_sync', 'shared_desktop_window_commands', 'immersive_titlebar', 'native_fullscreen_toggle', 'titlebar_home_navigation', 'two_level_module_navigation', 'recent_module_history', 'desktop_quick_open', 'generated_module_discovery', 'discovery_progressive_apply', 'discovery_local_filter', 'discovery_offline_replay'],
+      depends: ['go_router', 'flutter_riverpod', 'url_launcher', 'liquid_glass_easy', 'module_registry', 'shared/multi_window', 'shared/genui', 'genui', 'a2ui_core', 'json_schema_builder', 'dio', 'modules'],
       children: ['router/AI_ANALYSIS.md'],
     });
     writeIndex({
@@ -193,8 +195,8 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       id: 'flutter_forge_app.app.router',
       kind: 'router_index',
       entrypoints: ['app_router.dart', 'app_route_table.dart'],
-      owns: ['go_router_root', 'adaptive_shell_route', 'workbench_home_route', 'mobile_creator_home_route', 'creator_about_route', 'category_route', 'stable_guarded_module_routes', 'module_route_aggregation', 'module_catalog_composition'],
-      depends: ['app/adaptive_app_shell', 'app/creator_home_page', 'app/workbench_home_page', 'app/module_home_page', 'module_registry', 'modules'],
+      owns: ['go_router_root', 'adaptive_shell_route', 'workbench_home_route', 'web_mobile_learning_home_route', 'creator_about_route', 'category_route', 'stable_guarded_module_routes', 'module_route_aggregation', 'module_catalog_composition'],
+      depends: ['app/adaptive_app_shell', 'app/creator_home_page', 'app/workbench_home_page', 'app/learning_home_page', 'app/module_home_page', 'module_registry', 'modules'],
     });
     writeIndex({
       rel: 'lib/module_registry/AI_ANALYSIS.md',
@@ -208,10 +210,10 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       rel: 'lib/shared/AI_ANALYSIS.md',
       id: 'flutter_forge_app.shared',
       kind: 'shared_index',
-      entrypoints: ['learning', 'multi_window', 'platform', 'popup', 'table'],
-      owns: ['business_free_capabilities', 'learning_templates', 'desktop_window_lifecycle', 'platform_boundaries', 'popup_ownership', 'reusable_table_view'],
-      depends: ['desktop_multi_window', 'packages/file_picker_bridge'],
-      children: ['multi_window/AI_ANALYSIS.md', 'platform/AI_ANALYSIS.md', 'popup/AI_ANALYSIS.md', 'table/AI_ANALYSIS.md'],
+      entrypoints: ['learning', 'multi_window', 'platform', 'popup', 'table', 'workflows'],
+      owns: ['business_free_capabilities', 'learning_templates', 'desktop_window_lifecycle', 'platform_boundaries', 'popup_ownership', 'reusable_table_view', 'workflow_control_transport'],
+      depends: ['desktop_multi_window', 'packages/file_picker_bridge', 'dio'],
+      children: ['multi_window/AI_ANALYSIS.md', 'platform/AI_ANALYSIS.md', 'popup/AI_ANALYSIS.md', 'table/AI_ANALYSIS.md', 'workflows/AI_ANALYSIS.md', 'genui/AI_ANALYSIS.md'],
     });
     writeIndex({
       rel: 'lib/shared/popup/AI_ANALYSIS.md',
@@ -230,6 +232,14 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       owns: ['two_dimensional_table_view', 'pinned_headers', 'cell_interaction_callbacks'],
       depends: ['flutter_material', 'two_dimensional_scrollables'],
       validation: ['flutter analyze', 'flutter test test/modules/popup_table'],
+    });
+    writeIndex({rel: 'lib/shared/genui/AI_ANALYSIS.md', id: 'flutter_forge_app.shared.genui', kind: 'shared_capability_index', entrypoints: ['model_source.dart', 'model_connection_dialog.dart'], owns: ['bounded_model_transport', 'ephemeral_model_connection_form'], depends: ['dio', 'flutter_material'], validation: ['flutter analyze']});
+    writeIndex({
+      rel: 'lib/shared/workflows/AI_ANALYSIS.md',
+      id: 'flutter_forge_app.shared.workflows', kind: 'shared_capability_index',
+      entrypoints: ['hub_client.dart'],
+      owns: ['workflow_hub_http_transport', 'ephemeral_connection_auth'], depends: ['dio'],
+      validation: ['flutter analyze', 'flutter test test/modules/ui/workflow_workbench'],
     });
     writeIndex({
       rel: 'lib/shared/multi_window/AI_ANALYSIS.md',

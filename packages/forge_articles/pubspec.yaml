@@ -1,0 +1,12 @@
+name: forge_articles
+description: Reusable article request and deterministic teaching workflow capabilities.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.11.5
+resolution: workspace
+dependencies:
+  dio: ^5.11.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

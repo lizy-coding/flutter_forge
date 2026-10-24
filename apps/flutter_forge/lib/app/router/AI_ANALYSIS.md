@@ -16,7 +16,7 @@
     "go_router_root",
     "adaptive_shell_route",
     "workbench_home_route",
-    "mobile_creator_home_route",
+    "web_mobile_learning_home_route",
     "creator_about_route",
     "category_route",
     "stable_guarded_module_routes",
@@ -27,6 +27,7 @@
     "app/adaptive_app_shell",
     "app/creator_home_page",
     "app/workbench_home_page",
+    "app/learning_home_page",
     "app/module_home_page",
     "module_registry",
     "modules"

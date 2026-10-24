@@ -1,12 +1,73 @@
 import 'dart:async';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/shared/multi_window/multi_window_manager.dart';
 import 'package:flutter_forge_app/shared/multi_window/mac_window.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test(
+    'native cleanup waits for inventory removal, not just the close reply',
+    () async {
+      const channel = MethodChannel('mixin.one/desktop_multi_window');
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      var closed = false;
+      var inventoryReads = 0;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        if (call.method == 'window_close') return null;
+        if (call.method == 'getAllWindows') {
+          inventoryReads++;
+          if (inventoryReads < 3) {
+            return [
+              {'windowId': 'native-1', 'windowArgument': ''},
+            ];
+          }
+          closed = true;
+          return [];
+        }
+        throw StateError('unexpected native method ${call.method}');
+      });
+      addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+      await const DesktopMultiWindowPlatform().closeWindow(
+        MultiWindowController(
+          windowId: 'native-1',
+          arguments: '',
+          nativeController: WindowController.fromWindowId('native-1'),
+        ),
+      );
+      expect(closed, isTrue);
+      expect(inventoryReads, 3);
+    },
+  );
+
+  test(
+    'a close race is successful only when native inventory confirms absence',
+    () async {
+      const channel = MethodChannel('mixin.one/desktop_multi_window');
+      final messenger =
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        if (call.method == 'window_close') {
+          throw PlatformException(code: 'WINDOW_CLOSED');
+        }
+        return [];
+      });
+      addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+      await const DesktopMultiWindowPlatform().closeWindow(
+        MultiWindowController(
+          windowId: 'gone',
+          arguments: '',
+          nativeController: WindowController.fromWindowId('gone'),
+        ),
+      );
+    },
+  );
+
   test('mac window protocol carries category and lifecycle state', () {
     const handle = MacWindowHandle(
       id: 'window-1',
@@ -63,6 +124,119 @@ void main() {
     expect(platform.createRequests, hasLength(1));
     expect(platform.createdWindowIds, ['created-1']);
   });
+
+  test(
+    'hidden startup waits for readiness before showing or publishing',
+    () async {
+      final ready = Completer<void>();
+      final waiting = Completer<void>();
+      final platform = _FakeMultiWindowPlatform()
+        ..beforeReady = (_) {
+          waiting.complete();
+          return ready.future;
+        };
+      final manager = MultiWindowManager.forTesting(platform);
+      final opened = manager.createCategoryWindow(ModuleCategory.basic);
+      await waiting.future;
+      expect(platform.createRequests.single.hiddenAtLaunch, isTrue);
+      expect(platform.shownWindowIds, isEmpty);
+      expect(manager.isCategoryOpen(ModuleCategory.basic), isFalse);
+      ready.complete();
+      expect(await opened, 'created-1');
+      expect(platform.shownWindowIds, ['created-1']);
+      expect(manager.isCategoryOpen(ModuleCategory.basic), isTrue);
+    },
+  );
+
+  test(
+    'failed readiness closes the hidden window and permits a new attempt',
+    () async {
+      final platform = _FakeMultiWindowPlatform()
+        ..beforeReady = (_) async {
+          throw StateError('bootstrap failed');
+        };
+      final manager = MultiWindowManager.forTesting(platform);
+      await expectLater(
+        manager.createCategoryWindow(ModuleCategory.basic),
+        throwsStateError,
+      );
+      expect(platform.closedWindowIds, ['created-1']);
+      expect(platform.windows, isEmpty);
+      expect(manager.isCategoryOpen(ModuleCategory.basic), isFalse);
+      platform.beforeReady = null;
+      expect(
+        await manager.createCategoryWindow(ModuleCategory.basic),
+        'created-2',
+      );
+      expect(platform.shownWindowIds, ['created-2']);
+    },
+  );
+
+  test('startup timeout cleans up and ignores a late ready response', () async {
+    final ready = Completer<void>();
+    final platform = _FakeMultiWindowPlatform()
+      ..beforeReady = (_) => ready.future;
+    final manager = MultiWindowManager.forTesting(
+      platform,
+      startupTimeout: const Duration(milliseconds: 10),
+    );
+    await expectLater(
+      manager.createCategoryWindow(ModuleCategory.basic),
+      throwsA(isA<TimeoutException>()),
+    );
+    ready.complete();
+    await Future<void>.delayed(Duration.zero);
+    expect(platform.closedWindowIds, ['created-1']);
+    expect(platform.shownWindowIds, isEmpty);
+    expect(manager.isCategoryOpen(ModuleCategory.basic), isFalse);
+  });
+
+  test('a native window returned after creation timeout is closed', () async {
+    final create = Completer<void>();
+    final platform = _FakeMultiWindowPlatform()
+      ..beforeCreateWindow = (_) => create.future;
+    final manager = MultiWindowManager.forTesting(
+      platform,
+      startupTimeout: const Duration(milliseconds: 10),
+    );
+    await expectLater(
+      manager.createCategoryWindow(ModuleCategory.basic),
+      throwsA(isA<TimeoutException>()),
+    );
+    create.complete();
+    await Future<void>.delayed(Duration.zero);
+    expect(platform.closedWindowIds, ['created-1']);
+    expect(platform.windows, isEmpty);
+    expect(platform.shownWindowIds, isEmpty);
+  });
+
+  test(
+    'failed cleanup must succeed before another native window is created',
+    () async {
+      final platform = _FakeMultiWindowPlatform()
+        ..beforeReady = (_) async {
+          throw StateError('bootstrap failed');
+        }
+        ..failClose = true;
+      final manager = MultiWindowManager.forTesting(platform);
+      await expectLater(
+        manager.createCategoryWindow(ModuleCategory.basic),
+        throwsStateError,
+      );
+      await expectLater(
+        manager.createCategoryWindow(ModuleCategory.basic),
+        throwsStateError,
+      );
+      expect(platform.createRequests, hasLength(1));
+      platform.failClose = false;
+      platform.beforeReady = null;
+      expect(
+        await manager.createCategoryWindow(ModuleCategory.basic),
+        'created-2',
+      );
+      expect(platform.windows.map((window) => window.windowId), ['created-2']);
+    },
+  );
 
   test('failed shared creation is cleared so the category can retry', () async {
     final creationStarted = Completer<void>();
@@ -274,6 +448,9 @@ class _FakeMultiWindowPlatform implements MultiWindowPlatform {
   final Set<String> failShowWindowIds = {};
   final List<String> shownWindowIds = [];
   final List<String> createdWindowIds = [];
+  final List<String> closedWindowIds = [];
+  Future<void> Function(MultiWindowController)? beforeReady;
+  bool failClose = false;
   final List<(String, String, Object?)> invocations = [];
   final List<WindowConfiguration> createRequests = [];
   final Set<int> failedCreateAttempts = {};
@@ -311,6 +488,18 @@ class _FakeMultiWindowPlatform implements MultiWindowPlatform {
       windows.removeWhere((window) => window.windowId == controller.windowId);
       throw StateError('window closed before show');
     }
+  }
+
+  @override
+  Future<void> waitUntilReady(MultiWindowController controller) async {
+    await beforeReady?.call(controller);
+  }
+
+  @override
+  Future<void> closeWindow(MultiWindowController controller) async {
+    if (failClose) throw StateError('native close failed');
+    closedWindowIds.add(controller.windowId);
+    windows.removeWhere((window) => window.windowId == controller.windowId);
   }
 
   @override

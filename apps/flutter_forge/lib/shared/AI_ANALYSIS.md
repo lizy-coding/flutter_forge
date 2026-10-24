@@ -13,7 +13,8 @@
     "multi_window",
     "platform",
     "popup",
-    "table"
+    "table",
+    "workflows"
   ],
   "owns": [
     "business_free_capabilities",
@@ -21,17 +22,21 @@
     "desktop_window_lifecycle",
     "platform_boundaries",
     "popup_ownership",
-    "reusable_table_view"
+    "reusable_table_view",
+    "workflow_control_transport"
   ],
   "depends": [
     "desktop_multi_window",
-    "packages/file_picker_bridge"
+    "packages/file_picker_bridge",
+    "dio"
   ],
   "children": [
     "multi_window/AI_ANALYSIS.md",
     "platform/AI_ANALYSIS.md",
     "popup/AI_ANALYSIS.md",
-    "table/AI_ANALYSIS.md"
+    "table/AI_ANALYSIS.md",
+    "workflows/AI_ANALYSIS.md",
+    "genui/AI_ANALYSIS.md"
   ],
   "contracts": {
     "no_natural_language": true,

@@ -47,7 +47,8 @@
     "module_docs"
   ],
   "depends": [
-    "shared_learning"
+    "shared_learning",
+    "go_router"
   ],
   "children": [],
   "analysis_parent": "lib/modules/ui/AI_ANALYSIS.md",

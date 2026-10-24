@@ -24,6 +24,8 @@
 | 智能吸附线画板（`/adsorption-line`） | android、iOS、macOS、web、windows | — | — |
 | 下载飞入动效（`/download-animation`） | android、iOS、macOS、web、windows | — | — |
 | 字体选择器（`/font-picker`） | android、iOS、macOS、web、windows | font_file_import: android、macOS、windows；font_preview: android、iOS、macOS、windows | font_file_import: font_import_requires_native_bytes_and_file_bridge；font_preview: web_font_page_has_no_native_preview_controls |
+| 生成式实验工作区（`/genui-workbench`） | android、iOS、macOS、web、windows | — | — |
+| 跨项目工作流实验室（`/workflow-workbench`） | android、iOS、macOS、web、windows | — | — |
 | Shader 像素绘制与交互动效（`/shader-playground`） | android、iOS、macOS、web、windows | — | — |
 | 教学型 3D 查看器（`/flutter-scene-3d`） | android、macOS、windows | scene_controls: macOS、windows | scene_render: scene_gpu_adapters；scene_controls: desktop_scene_controls_android_view_only |
 | 弹窗合集（`/popup-widgets`） | android、iOS、macOS、web、windows | — | — |
@@ -32,6 +34,7 @@
 | Overlay 跟随方案对照组（`/overlay-compare`） | android、iOS、macOS、web、windows | — | — |
 | Dio 拦截器链路（`/dio-interceptor`） | android、iOS、macOS、web、windows | — | — |
 | USB 网络连接基础（`/usb-network`） | macOS、windows | — | usb_network: desktop_system_ncm_interface_bound_tcp |
+| 网络诊断：从现象到检测证据（`/network-diagnostics`） | macOS、windows | — | desktop_network_diagnostics: desktop_direct_network_probes_mobile_deferred_web_out_of_scope |
 | USB 设备检测（`/usb-detector`） | 不支持 | — | usb_otg_learning_workflow_deferred |
 | 电池状态与事件监听（`/battery-monitor`） | android、macOS | — | battery_monitor: battery_android_macos_native_adapters |
 | BLE 连接生命周期（`/bluetooth-ble`） | android、macOS、windows | — | ble_central: ble_central_adapters |

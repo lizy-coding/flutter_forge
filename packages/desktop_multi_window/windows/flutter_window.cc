@@ -36,21 +36,12 @@ bool FlutterWindow::OnCreate() {
   auto view_handle = flutter_controller_->view()->GetNativeWindow();
   SetChildContent(view_handle);
 
-  // The first frame can be scheduled before the child HWND is repainted.
-  // Capture only the HWND: FlutterWindow may be destroyed before the callback.
-  const HWND child_hwnd = view_handle;
-  flutter_controller_->engine()->SetNextFrameCallback([child_hwnd]() {
-    if (IsWindow(child_hwnd)) {
-      InvalidateRect(child_hwnd, nullptr, FALSE);
-      UpdateWindow(child_hwnd);
-    }
-  });
-  flutter_controller_->ForceRedraw();
-
   return true;
 }
 
 void FlutterWindow::OnDestroy() {
+  if (destroyed_) return;
+  destroyed_ = true;
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
   }
@@ -80,7 +71,7 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd,
       return 0;
     }
     case WM_FONTCHANGE:
-      flutter_controller_->engine()->ReloadSystemFonts();
+      if (flutter_controller_) flutter_controller_->engine()->ReloadSystemFonts();
       break;
   }
 

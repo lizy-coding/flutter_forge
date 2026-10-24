@@ -37,6 +37,7 @@ class FlutterWindow : public Win32Window {
   std::string id_;
   std::string window_argument_;
   bool enable_flutter_gpu_;
+  bool destroyed_ = false;
 
   // The Flutter instance hosted by this window.
   std::unique_ptr<flutter::FlutterViewController> flutter_controller_;

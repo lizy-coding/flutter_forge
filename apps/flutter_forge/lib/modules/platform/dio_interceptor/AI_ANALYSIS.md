@@ -19,10 +19,21 @@
       "windows"
     ],
     "excluded_platforms": [],
-    "required_capabilities": [],
+    "required_capabilities": [
+      "article_workflow"
+    ],
     "unreviewed_dependencies": [],
     "optional_capabilities": [],
-    "reasons": [],
+    "reasons": [
+      {
+        "capability": "article_workflow",
+        "reason": "pure_dart_article_request_and_teaching_adapter",
+        "sources": [
+          "packages/forge_articles/pubspec.yaml",
+          "packages/forge_articles/lib/forge_articles.dart"
+        ]
+      }
+    ],
     "restriction": null,
     "features": {}
   },
@@ -39,6 +50,7 @@
   "depends": [
     "shared_learning",
     "dio",
+    "forge_articles",
     "module_registry",
     "go_router"
   ],

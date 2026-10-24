@@ -6,6 +6,7 @@ environment:
   sdk: ^3.11.5
 
 workspace:
+  - packages/forge_articles
   - apps/flutter_forge
   - packages/file_picker_bridge
   - packages/flutter_ioc_core

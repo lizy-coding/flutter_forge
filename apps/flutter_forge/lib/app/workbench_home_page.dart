@@ -1,12 +1,14 @@
+import 'module_discovery_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../module_registry/app_platform_snapshot.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
+import 'forge_pressable_card.dart';
 import 'module_quick_open.dart';
-import 'theme/forge_glass.dart';
 import 'workbench_history.dart';
+import 'navigation_session.dart';
 
 class WorkbenchHomePage extends StatelessWidget {
   const WorkbenchHomePage({
@@ -26,28 +28,32 @@ class WorkbenchHomePage extends StatelessWidget {
       for (final path in paths)
         if (byPath[path] case final module?) module,
     ];
-    return ListView(
-      key: const ValueKey('workbench-home'),
+    final session = NavigationSessionScope.maybeOf(context);
+    final content = ListView(
+      key: const PageStorageKey('workbench-home-scroll'),
       padding: const EdgeInsets.all(28),
       children: [
-        Text('学习工作台', style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        Text(
-          '找到一个模块，开始运行与探索。',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+        ModuleDiscoveryPanel(
+          modules: modules,
+          platform: platform,
+          recentPaths: paths,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                '随时继续探索',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () => showModuleQuickOpen(context, modules),
+              icon: const Icon(Icons.search, size: 16),
+              label: const Text('快速打开模块'),
+            ),
+          ],
         ),
         const SizedBox(height: 20),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: FilledButton.icon(
-            onPressed: () => showModuleQuickOpen(context, modules),
-            icon: const Icon(Icons.search, size: 18),
-            label: const Text('快速打开模块'),
-          ),
-        ),
-        const SizedBox(height: 32),
         Text('最近访问', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
         if (recent.isEmpty)
@@ -58,15 +64,15 @@ class WorkbenchHomePage extends StatelessWidget {
         for (final module in recent)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: ForgeShellSurface(
+            child: ForgePressableCard(
+              key: ValueKey('recent:${module.path}'),
               radius: 8,
+              onTap: () => context.go(module.path),
               child: ListTile(
-                key: ValueKey('recent:${module.path}'),
                 leading: Icon(module.category.icon, size: 20),
                 title: Text(module.title),
                 subtitle: Text(module.category.label),
                 trailing: const Icon(Icons.arrow_forward, size: 18),
-                onTap: () => context.go(module.path),
               ),
             ),
           ),
@@ -76,20 +82,31 @@ class WorkbenchHomePage extends StatelessWidget {
         for (final category in ModuleCategory.values)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: ForgeShellSurface(
+            child: ForgePressableCard(
+              key: ValueKey('workbench-category:${category.name}'),
               radius: 8,
+              onTap: () => context.go('/category/${category.name}'),
               child: ListTile(
-                key: ValueKey('workbench-category:${category.name}'),
                 leading: Icon(category.icon, size: 20),
                 title: Text(category.label),
                 trailing: Text(
                   '${modules.where((module) => module.category == category).length} 个模块',
                 ),
-                onTap: () => context.go('/category/${category.name}'),
               ),
             ),
           ),
       ],
+    );
+    return KeyedSubtree(
+      key: const ValueKey('workbench-home'),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1080),
+          child: session == null
+              ? content
+              : PageStorage(bucket: session.pages, child: content),
+        ),
+      ),
     );
   }
 }

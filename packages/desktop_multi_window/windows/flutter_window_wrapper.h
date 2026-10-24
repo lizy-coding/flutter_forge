@@ -23,6 +23,8 @@ class FlutterWindowWrapper {
 
   HWND GetWindowHandle() { return hwnd_; }
 
+  void MarkFirstFrameReady() { first_frame_ready_ = true; }
+
   void SetChannel(
       std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>>
           channel) {
@@ -31,7 +33,7 @@ class FlutterWindowWrapper {
 
   void NotifyWindowEvent(const std::string& event,
                          const flutter::EncodableMap& data) {
-    if (channel_) {
+    if (notifications_ready_ && channel_) {
       channel_->InvokeMethod(event,
                              std::make_unique<flutter::EncodableValue>(data));
     }
@@ -41,7 +43,22 @@ class FlutterWindowWrapper {
       const std::string& method,
       const flutter::EncodableMap* arguments,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-    if (method == "window_show") {
+    if (method == "window_markReady") {
+      notifications_ready_ = true;
+      result->Success();
+    } else if (method == "window_isReadyToShow") {
+      result->Success(flutter::EncodableValue(first_frame_ready_));
+    } else if (method == "window_close") {
+      // Closing the target destroys this wrapper. Resolve the caller's result
+      // first and do not access members after DestroyWindow.
+      const HWND target = hwnd_;
+      if (!IsWindow(target)) {
+        result->Error("WINDOW_CLOSED", "Native window no longer exists");
+        return;
+      }
+      result->Success();
+      DestroyWindow(target);
+    } else if (method == "window_show") {
       if (hwnd_) {
         ::ShowWindow(hwnd_, SW_SHOW);
       }
@@ -62,6 +79,8 @@ class FlutterWindowWrapper {
  private:
   std::string window_id_;
   HWND hwnd_;
+  bool first_frame_ready_ = false;
+  bool notifications_ready_ = false;
   std::string window_argument_;
   std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
 };

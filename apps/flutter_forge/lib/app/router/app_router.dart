@@ -6,6 +6,8 @@ import 'app_route_table.dart';
 class AppRouter {
   AppRouter._();
 
-  static GoRouter create(AppPlatformSnapshot platform) =>
-      GoRouter(routes: AppRouteTable.routesFor(platform));
+  static GoRouter create(AppPlatformSnapshot platform) {
+    GoRouter.optionURLReflectsImperativeAPIs = true;
+    return GoRouter(routes: AppRouteTable.routesFor(platform));
+  }
 }

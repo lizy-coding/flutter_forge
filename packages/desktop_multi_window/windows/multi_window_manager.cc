@@ -1,6 +1,7 @@
 #include "multi_window_manager.h"
 
 #include <rpc.h>
+#include <exception>
 #include <iomanip>
 #include <memory>
 #include <random>
@@ -43,6 +44,7 @@ MultiWindowManager* MultiWindowManager::Instance() {
 MultiWindowManager::MultiWindowManager() : windows_() {}
 
 std::string MultiWindowManager::Create(const flutter::EncodableMap* args) {
+  if (shutting_down_) return "";
   std::string window_id = GenerateWindowId();
   WindowConfiguration config = WindowConfiguration::FromEncodableMap(args);
 
@@ -54,28 +56,38 @@ std::string MultiWindowManager::Create(const flutter::EncodableMap* args) {
 
   if (!flutter_window->Create(title, origin, size)) {
     std::cerr << "Failed to create window." << std::endl;
+    flutter_window->Destroy();
     return "";
   }
-
-  ::ShowWindow(flutter_window->GetHandle(),
-               config.hidden_at_launch ? SW_HIDE : SW_SHOW);
 
   auto wrapper = std::make_unique<FlutterWindowWrapper>(
       window_id, flutter_window->GetHandle(), config.arguments);
 
   windows_[window_id] = std::move(wrapper);
 
-  if (_g_window_created_callback) {
-    _g_window_created_callback(flutter_window->GetFlutterViewController());
-  }
-  auto registrar = flutter_window->GetFlutterViewController()
-                       ->engine()
-                       ->GetRegistrarForPlugin("DesktopMultiWindowPlugin");
-  InternalMultiWindowPluginRegisterWithRegistrar(registrar,
-                                                 windows_[window_id].get());
-
-  // keep flutter_window alive
+  // Establish ownership before plugin registration can re-enter the manager.
+  auto* controller = flutter_window->GetFlutterViewController();
   managed_flutter_windows_[window_id] = std::move(flutter_window);
+
+  try {
+    if (_g_window_created_callback) {
+      _g_window_created_callback(controller);
+    }
+    auto registrar = controller->engine()->GetRegistrarForPlugin("DesktopMultiWindowPlugin");
+    InternalMultiWindowPluginRegisterWithRegistrar(registrar,
+                                                   windows_[window_id].get());
+    controller->engine()->SetNextFrameCallback([window_id, config]() {
+      MultiWindowManager::Instance()->MarkFirstFrameReady(window_id,
+                                                         !config.hidden_at_launch);
+    });
+    controller->ForceRedraw();
+  } catch (const std::exception& error) {
+    std::cerr << "Failed to register child window: " << error.what() << std::endl;
+    managed_flutter_windows_[window_id]->Destroy();
+    windows_.erase(window_id);
+    CleanupRemovedWindows();
+    return "";
+  }
 
   // Notify all windows about the change
   NotifyWindowsChanged();
@@ -146,9 +158,31 @@ void MultiWindowManager::RemoveWindow(const std::string& window_id) {
   }
 
   // quit application if no windows left
-  if (windows_.empty()) {
+  if (!shutting_down_ && windows_.empty()) {
     PostQuitMessage(0);
   }
+}
+
+void MultiWindowManager::MarkFirstFrameReady(const std::string& window_id,
+                                            bool show) {
+  auto* window = GetWindow(window_id);
+  if (!window || shutting_down_) return;
+  window->MarkFirstFrameReady();
+  if (show && IsWindow(window->GetWindowHandle())) {
+    ShowWindow(window->GetWindowHandle(), SW_SHOW);
+  }
+}
+
+void MultiWindowManager::Shutdown() {
+  if (shutting_down_) return;
+  shutting_down_ = true;
+  _g_window_created_callback = nullptr;
+  // Destroy queues removals; keep ownership until every window procedure has
+  // returned. The main engine is still alive while children are disposed.
+  for (const auto& [id, window] : managed_flutter_windows_) {
+    window->Destroy();
+  }
+  CleanupRemovedWindows();
 }
 
 void MultiWindowManager::RemoveManagedFlutterWindowLater(
@@ -169,6 +203,7 @@ void MultiWindowManager::CleanupRemovedWindows() {
 }
 
 void MultiWindowManager::NotifyWindowsChanged() {
+  if (shutting_down_) return;
   auto window_ids = GetAllWindowIds();
   flutter::EncodableList window_ids_list;
   for (const auto& id : window_ids) {
@@ -187,4 +222,12 @@ void MultiWindowManager::NotifyWindowsChanged() {
 void DesktopMultiWindowSetWindowCreatedCallback(
     WindowCreatedCallback callback) {
   _g_window_created_callback = callback;
+}
+
+void DesktopMultiWindowShutdown() {
+  MultiWindowManager::Instance()->Shutdown();
+}
+
+void DesktopMultiWindowProcessPendingWindowCleanup() {
+  MultiWindowManager::Instance()->CleanupRemovedWindows();
 }

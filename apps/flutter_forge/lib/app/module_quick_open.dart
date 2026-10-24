@@ -7,16 +7,18 @@ import 'package:go_router/go_router.dart';
 import '../module_registry/module_entry.dart';
 import 'theme/forge_glass.dart';
 import 'workbench_history.dart';
-
-bool _quickOpenVisible = false;
+import 'module_search.dart';
+import 'navigation_session.dart';
 
 Future<void> showModuleQuickOpen(
   BuildContext context,
   List<ModuleEntry> modules,
 ) async {
-  if (_quickOpenVisible) return;
-  _quickOpenVisible = true;
+  final session = NavigationSessionScope.maybeOf(context);
+  if (session?.quickOpenVisible == true) return;
+  session?.quickOpenVisible = true;
   ModuleEntry? selected;
+  final origin = GoRouter.of(context).routeInformationProvider.value.uri.path;
   try {
     final recent = WorkbenchHistoryScope.maybeOf(context)?.recent ?? const [];
     selected = await showDialog<ModuleEntry>(
@@ -25,9 +27,12 @@ Future<void> showModuleQuickOpen(
       builder: (_) => _QuickOpenDialog(modules: modules, recent: recent),
     );
   } finally {
-    _quickOpenVisible = false;
+    session?.quickOpenVisible = false;
   }
-  if (selected != null && context.mounted) context.go(selected.path);
+  if (selected != null && context.mounted) {
+    session?.quickOpenOrigin = selected.path == origin ? null : origin;
+    context.go(selected.path);
+  }
 }
 
 class _QuickOpenDialog extends StatefulWidget {
@@ -43,18 +48,13 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
   final _scroll = ScrollController();
   late final _focus = FocusNode(onKeyEvent: _handleKey);
   String _query = '';
+  TextEditingController? _queryController;
   int _selected = 0;
 
   List<ModuleEntry> get _matches {
     final query = _query.trim().toLowerCase();
     final matches = widget.modules.where((module) {
-      return query.isEmpty ||
-          [
-            module.title,
-            module.subtitle,
-            module.category.label,
-            ...module.concepts,
-          ].join(' ').toLowerCase().contains(query);
+      return query.isEmpty || matchesModule(module, query);
     }).toList();
     if (query.isEmpty) {
       int order(ModuleEntry m) {
@@ -110,6 +110,7 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
 
   @override
   void dispose() {
+    _queryController?.dispose();
     _focus.dispose();
     _scroll.dispose();
     super.dispose();
@@ -117,6 +118,11 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final session = NavigationSessionScope.maybeOf(context);
+    if (_queryController == null) {
+      _query = session?.quickOpenQuery ?? '';
+      _queryController = TextEditingController(text: _query);
+    }
     final matches = _matches;
     final height = math.min(480.0, MediaQuery.sizeOf(context).height - 96);
     return Dialog(
@@ -128,12 +134,14 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
         constraints: BoxConstraints(maxWidth: 640, maxHeight: height),
         child: ForgeShellSurface(
           radius: 12,
+          floating: true,
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: TextField(
                   key: const ValueKey('quick-open-query'),
+                  controller: _queryController,
                   autofocus: true,
                   focusNode: _focus,
                   decoration: InputDecoration(
@@ -147,6 +155,7 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
                   ),
                   onChanged: (value) => setState(() {
                     _query = value;
+                    session?.quickOpenQuery = value;
                     _selected = 0;
                     if (_scroll.hasClients) _scroll.jumpTo(0);
                   }),

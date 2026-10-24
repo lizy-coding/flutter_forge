@@ -7,6 +7,21 @@ const targets = ['android', 'iOS', 'macOS', 'web', 'windows'];
 // or acceptance results. A dependency discovers a requirement; optional features
 // and product restrictions remain explicit module intent.
 const capabilities = {
+  desktop_network_diagnostics: {
+    fileNames: ['desktop_network_probe.dart'], platforms: ['macOS', 'windows'],
+    reason: 'desktop_direct_network_probes_mobile_deferred_web_out_of_scope',
+    sources: ['apps/flutter_forge/lib/modules/platform/network_diagnostics/desktop_network_probe.dart', 'docs/NETWORK_DIAGNOSTICS_DESIGN.md'],
+  },
+  article_workflow: {
+    dependencies: ['forge_articles'], platforms: targets,
+    reason: 'pure_dart_article_request_and_teaching_adapter',
+    sources: ['packages/forge_articles/pubspec.yaml', 'packages/forge_articles/lib/forge_articles.dart'],
+  },
+  genui_surface: {
+    dependencies: ['genui', 'a2ui_core', 'json_schema_builder'], platforms: targets,
+    reason: 'bounded_flutter_catalog_and_http_stream_no_native_model_runtime',
+    sources: ['apps/flutter_forge/lib/modules/ui/genui_workbench/workbench_catalog.dart', 'apps/flutter_forge/lib/modules/ui/genui_workbench/workbench_source.dart', 'apps/flutter_forge/pubspec.yaml'],
+  },
   fragment_shader_canvas: {
     fileNames: ['shader_preview.dart'], platforms: targets,
     reason: 'sdk_fragment_program_canvas_skia_impeller',

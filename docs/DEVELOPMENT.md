@@ -72,7 +72,7 @@ tool/
 | `flutter run` | 启动应用 |
 | `flutter analyze` | 静态分析 |
 | `dart format .` | 格式化 |
-| `dart run flutterguard_cli:flutterguard scan . --fail-on high` | 安全扫描 |
+| `boundarylens scan apps/flutter_forge -c boundarylens.yaml` | BoundaryLens 按需扫描（孤儿文件等，各成员包同理） |
 
 ## 故障排查
 

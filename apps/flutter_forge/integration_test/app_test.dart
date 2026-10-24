@@ -37,18 +37,34 @@ void main() {
     await tester.pumpWidget(testApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('Flutter 学习实验室'), findsOneWidget);
+    expect(
+      find.byKey(
+        ValueKey(
+          platform.hostFamily == AppHostFamily.desktop
+              ? 'workbench-home'
+              : 'learning-home',
+        ),
+      ),
+      findsOneWidget,
+    );
 
     final modules = AppRouteTable.modules
         .where((module) => isModuleAvailable(module, platform))
         .toList();
 
     for (final module in modules) {
+      router.go('/category/${module.category.name}');
+      await tester.pumpAndSettle();
       final tile = find.byKey(ValueKey('module:${module.path}'));
       await tester.scrollUntilVisible(
         tile,
         500,
-        scrollable: find.byType(Scrollable).first,
+        scrollable: find
+            .descendant(
+              of: find.byKey(ValueKey('category-page:${module.category.name}')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       debugPrint('Android module smoke: ${module.path}');
       await tester.tap(tile);
@@ -59,8 +75,8 @@ void main() {
         fail('${module.path} raised during Android smoke: $moduleException');
       }
 
-      expect(find.byType(Scaffold), findsOneWidget, reason: module.path);
-      await tester.pageBack();
+      expect(find.byType(Scaffold), findsWidgets, reason: module.path);
+      router.go('/category/${module.category.name}');
       await tester.pumpAndSettle();
     }
   });
@@ -101,7 +117,7 @@ void main() {
 
     await tester.tap(find.byTooltip('Open navigation menu'));
     await tester.pumpAndSettle();
-    expect(find.text('创作者主页'), findsOneWidget);
+    expect(find.text('探索与查阅'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('category-drawer:platform')));
     await tester.pumpAndSettle();

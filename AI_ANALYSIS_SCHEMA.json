@@ -15,6 +15,7 @@
       "AI_ANALYSIS.md"
     ],
     "package_contract": [
+      "packages/forge_articles/AI_ANALYSIS.md",
       "packages/forge_scene_viewer/AI_ANALYSIS.md",
       "packages/usb_network_bridge/AI_ANALYSIS.md",
       "packages/flutter_battery/AI_ANALYSIS.md",
@@ -35,6 +36,8 @@
       "lib/shared/multi_window/AI_ANALYSIS.md",
       "lib/shared/popup/AI_ANALYSIS.md",
       "lib/shared/table/AI_ANALYSIS.md",
+      "lib/shared/workflows/AI_ANALYSIS.md",
+      "lib/shared/genui/AI_ANALYSIS.md",
       "lib/modules/basic/AI_ANALYSIS.md",
       "lib/modules/async/AI_ANALYSIS.md",
       "lib/modules/state/AI_ANALYSIS.md",

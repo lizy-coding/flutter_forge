@@ -1,0 +1,735 @@
+{
+  "executorId": "forge-e2e-1792675786022593",
+  "runs": [
+    {
+      "schema": "forge.workflow.v1",
+      "id": "f44e43ab23ce21cbcd6f7b61",
+      "executorId": "forge-e2e-1792675786022593",
+      "definition": {
+        "id": "articles.explore",
+        "inputSchema": {
+          "properties": {
+            "delayMs": {
+              "default": 500,
+              "maximum": 5000,
+              "minimum": 0,
+              "title": "教学延迟（毫秒）",
+              "type": "integer"
+            },
+            "page": {
+              "default": 1,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "页码",
+              "type": "integer"
+            },
+            "pageSize": {
+              "default": 10,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "每页数量",
+              "type": "integer"
+            },
+            "query": {
+              "default": "",
+              "maxLength": 80,
+              "title": "筛选标题或作者",
+              "type": "string"
+            },
+            "simulateFailure": {
+              "default": false,
+              "title": "模拟请求失败",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "output": {
+          "columns": [
+            "ID",
+            "标题",
+            "作者"
+          ],
+          "kind": "table"
+        },
+        "schema": "forge.workflow.v1",
+        "source": "synthetic teaching data",
+        "steps": [
+          {
+            "capability": "articles.fetch",
+            "id": "fetch",
+            "version": 1
+          },
+          {
+            "capability": "articles.organize",
+            "id": "organize",
+            "version": 1
+          }
+        ],
+        "title": "文章数据探索",
+        "version": 1
+      },
+      "inputs": {
+        "page": 1,
+        "pageSize": 10,
+        "query": "admin",
+        "delayMs": 0,
+        "simulateFailure": false
+      },
+      "state": "succeeded",
+      "retryOf": null,
+      "createdAt": 1792675786.578076,
+      "result": {
+        "columns": [
+          "ID",
+          "标题",
+          "作者"
+        ],
+        "rows": [
+          [
+            "2",
+            "文章标题 2",
+            "admin"
+          ],
+          [
+            "4",
+            "文章标题 4",
+            "admin"
+          ],
+          [
+            "6",
+            "文章标题 6",
+            "admin"
+          ],
+          [
+            "8",
+            "文章标题 8",
+            "admin"
+          ],
+          [
+            "10",
+            "文章标题 10",
+            "admin"
+          ]
+        ]
+      },
+      "error": null,
+      "events": [
+        {
+          "seq": 1,
+          "kind": "queued"
+        },
+        {
+          "seq": 2,
+          "kind": "running"
+        },
+        {
+          "seq": 3,
+          "kind": "step_started",
+          "stepId": "fetch"
+        },
+        {
+          "seq": 4,
+          "kind": "step_succeeded",
+          "stepId": "fetch"
+        },
+        {
+          "seq": 5,
+          "kind": "step_started",
+          "stepId": "organize"
+        },
+        {
+          "seq": 6,
+          "kind": "step_succeeded",
+          "stepId": "organize"
+        },
+        {
+          "seq": 7,
+          "kind": "succeeded",
+          "result": {
+            "columns": [
+              "ID",
+              "标题",
+              "作者"
+            ],
+            "rows": [
+              [
+                "2",
+                "文章标题 2",
+                "admin"
+              ],
+              [
+                "4",
+                "文章标题 4",
+                "admin"
+              ],
+              [
+                "6",
+                "文章标题 6",
+                "admin"
+              ],
+              [
+                "8",
+                "文章标题 8",
+                "admin"
+              ],
+              [
+                "10",
+                "文章标题 10",
+                "admin"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schema": "forge.workflow.v1",
+      "id": "18741f24470fc050bbce524e",
+      "executorId": "forge-e2e-1792675786022593",
+      "definition": {
+        "id": "articles.explore",
+        "inputSchema": {
+          "properties": {
+            "delayMs": {
+              "default": 500,
+              "maximum": 5000,
+              "minimum": 0,
+              "title": "教学延迟（毫秒）",
+              "type": "integer"
+            },
+            "page": {
+              "default": 1,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "页码",
+              "type": "integer"
+            },
+            "pageSize": {
+              "default": 10,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "每页数量",
+              "type": "integer"
+            },
+            "query": {
+              "default": "",
+              "maxLength": 80,
+              "title": "筛选标题或作者",
+              "type": "string"
+            },
+            "simulateFailure": {
+              "default": false,
+              "title": "模拟请求失败",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "output": {
+          "columns": [
+            "ID",
+            "标题",
+            "作者"
+          ],
+          "kind": "table"
+        },
+        "schema": "forge.workflow.v1",
+        "source": "synthetic teaching data",
+        "steps": [
+          {
+            "capability": "articles.fetch",
+            "id": "fetch",
+            "version": 1
+          },
+          {
+            "capability": "articles.organize",
+            "id": "organize",
+            "version": 1
+          }
+        ],
+        "title": "文章数据探索",
+        "version": 1
+      },
+      "inputs": {
+        "page": 1,
+        "pageSize": 10,
+        "query": "标题 1",
+        "delayMs": 0,
+        "simulateFailure": false
+      },
+      "state": "succeeded",
+      "retryOf": null,
+      "createdAt": 1792675786.9839768,
+      "result": {
+        "columns": [
+          "ID",
+          "标题",
+          "作者"
+        ],
+        "rows": [
+          [
+            "1",
+            "文章标题 1",
+            "user"
+          ],
+          [
+            "10",
+            "文章标题 10",
+            "admin"
+          ]
+        ]
+      },
+      "error": null,
+      "events": [
+        {
+          "seq": 1,
+          "kind": "queued"
+        },
+        {
+          "seq": 2,
+          "kind": "running"
+        },
+        {
+          "seq": 3,
+          "kind": "step_started",
+          "stepId": "fetch"
+        },
+        {
+          "seq": 4,
+          "kind": "step_succeeded",
+          "stepId": "fetch"
+        },
+        {
+          "seq": 5,
+          "kind": "step_started",
+          "stepId": "organize"
+        },
+        {
+          "seq": 6,
+          "kind": "step_succeeded",
+          "stepId": "organize"
+        },
+        {
+          "seq": 7,
+          "kind": "succeeded",
+          "result": {
+            "columns": [
+              "ID",
+              "标题",
+              "作者"
+            ],
+            "rows": [
+              [
+                "1",
+                "文章标题 1",
+                "user"
+              ],
+              [
+                "10",
+                "文章标题 10",
+                "admin"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schema": "forge.workflow.v1",
+      "id": "d6ebaa5a8b4fcf0ff7bbf5c8",
+      "executorId": "forge-e2e-1792675786022593",
+      "definition": {
+        "id": "articles.explore",
+        "inputSchema": {
+          "properties": {
+            "delayMs": {
+              "default": 500,
+              "maximum": 5000,
+              "minimum": 0,
+              "title": "教学延迟（毫秒）",
+              "type": "integer"
+            },
+            "page": {
+              "default": 1,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "页码",
+              "type": "integer"
+            },
+            "pageSize": {
+              "default": 10,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "每页数量",
+              "type": "integer"
+            },
+            "query": {
+              "default": "",
+              "maxLength": 80,
+              "title": "筛选标题或作者",
+              "type": "string"
+            },
+            "simulateFailure": {
+              "default": false,
+              "title": "模拟请求失败",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "output": {
+          "columns": [
+            "ID",
+            "标题",
+            "作者"
+          ],
+          "kind": "table"
+        },
+        "schema": "forge.workflow.v1",
+        "source": "synthetic teaching data",
+        "steps": [
+          {
+            "capability": "articles.fetch",
+            "id": "fetch",
+            "version": 1
+          },
+          {
+            "capability": "articles.organize",
+            "id": "organize",
+            "version": 1
+          }
+        ],
+        "title": "文章数据探索",
+        "version": 1
+      },
+      "inputs": {
+        "page": 1,
+        "pageSize": 10,
+        "query": "admin",
+        "delayMs": 0,
+        "simulateFailure": true
+      },
+      "state": "failed",
+      "retryOf": null,
+      "createdAt": 1792675787.190659,
+      "result": null,
+      "error": "教学故障：文章请求失败。",
+      "events": [
+        {
+          "seq": 1,
+          "kind": "queued"
+        },
+        {
+          "seq": 2,
+          "kind": "running"
+        },
+        {
+          "seq": 3,
+          "kind": "step_started",
+          "stepId": "fetch"
+        },
+        {
+          "seq": 4,
+          "kind": "failed",
+          "message": "教学故障：文章请求失败。"
+        }
+      ]
+    },
+    {
+      "schema": "forge.workflow.v1",
+      "id": "28daf3e526eab2b02c913ce6",
+      "executorId": "forge-e2e-1792675786022593",
+      "definition": {
+        "id": "articles.explore",
+        "inputSchema": {
+          "properties": {
+            "delayMs": {
+              "default": 500,
+              "maximum": 5000,
+              "minimum": 0,
+              "title": "教学延迟（毫秒）",
+              "type": "integer"
+            },
+            "page": {
+              "default": 1,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "页码",
+              "type": "integer"
+            },
+            "pageSize": {
+              "default": 10,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "每页数量",
+              "type": "integer"
+            },
+            "query": {
+              "default": "",
+              "maxLength": 80,
+              "title": "筛选标题或作者",
+              "type": "string"
+            },
+            "simulateFailure": {
+              "default": false,
+              "title": "模拟请求失败",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "output": {
+          "columns": [
+            "ID",
+            "标题",
+            "作者"
+          ],
+          "kind": "table"
+        },
+        "schema": "forge.workflow.v1",
+        "source": "synthetic teaching data",
+        "steps": [
+          {
+            "capability": "articles.fetch",
+            "id": "fetch",
+            "version": 1
+          },
+          {
+            "capability": "articles.organize",
+            "id": "organize",
+            "version": 1
+          }
+        ],
+        "title": "文章数据探索",
+        "version": 1
+      },
+      "inputs": {
+        "page": 1,
+        "pageSize": 10,
+        "query": "admin",
+        "delayMs": 0,
+        "simulateFailure": false
+      },
+      "state": "succeeded",
+      "retryOf": "d6ebaa5a8b4fcf0ff7bbf5c8",
+      "createdAt": 1792675787.777209,
+      "result": {
+        "columns": [
+          "ID",
+          "标题",
+          "作者"
+        ],
+        "rows": [
+          [
+            "2",
+            "文章标题 2",
+            "admin"
+          ],
+          [
+            "4",
+            "文章标题 4",
+            "admin"
+          ],
+          [
+            "6",
+            "文章标题 6",
+            "admin"
+          ],
+          [
+            "8",
+            "文章标题 8",
+            "admin"
+          ],
+          [
+            "10",
+            "文章标题 10",
+            "admin"
+          ]
+        ]
+      },
+      "error": null,
+      "events": [
+        {
+          "seq": 1,
+          "kind": "queued"
+        },
+        {
+          "seq": 2,
+          "kind": "running"
+        },
+        {
+          "seq": 3,
+          "kind": "step_started",
+          "stepId": "fetch"
+        },
+        {
+          "seq": 4,
+          "kind": "step_succeeded",
+          "stepId": "fetch"
+        },
+        {
+          "seq": 5,
+          "kind": "step_started",
+          "stepId": "organize"
+        },
+        {
+          "seq": 6,
+          "kind": "step_succeeded",
+          "stepId": "organize"
+        },
+        {
+          "seq": 7,
+          "kind": "succeeded",
+          "result": {
+            "columns": [
+              "ID",
+              "标题",
+              "作者"
+            ],
+            "rows": [
+              [
+                "2",
+                "文章标题 2",
+                "admin"
+              ],
+              [
+                "4",
+                "文章标题 4",
+                "admin"
+              ],
+              [
+                "6",
+                "文章标题 6",
+                "admin"
+              ],
+              [
+                "8",
+                "文章标题 8",
+                "admin"
+              ],
+              [
+                "10",
+                "文章标题 10",
+                "admin"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "schema": "forge.workflow.v1",
+      "id": "241ce2df9574b5f63e6bf82e",
+      "executorId": "forge-e2e-1792675786022593",
+      "definition": {
+        "id": "articles.explore",
+        "inputSchema": {
+          "properties": {
+            "delayMs": {
+              "default": 500,
+              "maximum": 5000,
+              "minimum": 0,
+              "title": "教学延迟（毫秒）",
+              "type": "integer"
+            },
+            "page": {
+              "default": 1,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "页码",
+              "type": "integer"
+            },
+            "pageSize": {
+              "default": 10,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "每页数量",
+              "type": "integer"
+            },
+            "query": {
+              "default": "",
+              "maxLength": 80,
+              "title": "筛选标题或作者",
+              "type": "string"
+            },
+            "simulateFailure": {
+              "default": false,
+              "title": "模拟请求失败",
+              "type": "boolean"
+            }
+          },
+          "type": "object"
+        },
+        "output": {
+          "columns": [
+            "ID",
+            "标题",
+            "作者"
+          ],
+          "kind": "table"
+        },
+        "schema": "forge.workflow.v1",
+        "source": "synthetic teaching data",
+        "steps": [
+          {
+            "capability": "articles.fetch",
+            "id": "fetch",
+            "version": 1
+          },
+          {
+            "capability": "articles.organize",
+            "id": "organize",
+            "version": 1
+          }
+        ],
+        "title": "文章数据探索",
+        "version": 1
+      },
+      "inputs": {
+        "page": 1,
+        "pageSize": 10,
+        "query": "admin",
+        "delayMs": 4000,
+        "simulateFailure": false
+      },
+      "state": "cancelled",
+      "retryOf": null,
+      "createdAt": 1792675788.363487,
+      "result": null,
+      "error": "使用者取消或执行端离开",
+      "events": [
+        {
+          "seq": 1,
+          "kind": "queued"
+        },
+        {
+          "seq": 2,
+          "kind": "running"
+        },
+        {
+          "seq": 3,
+          "kind": "step_started",
+          "stepId": "fetch"
+        },
+        {
+          "seq": 4,
+          "kind": "cancelling"
+        },
+        {
+          "seq": 5,
+          "kind": "cancelled",
+          "message": "使用者取消或执行端离开"
+        }
+      ]
+    }
+  ],
+  "scope": {
+    "forgeHead": "b501f21",
+    "hubHead": "535c907",
+    "source": "uncommitted workspace",
+    "host": "macOS",
+    "data": "synthetic",
+    "externalModelCalls": false
+  }
+}

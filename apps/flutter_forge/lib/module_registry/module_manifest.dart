@@ -28,6 +28,8 @@ import '../modules/ui/download_animation/module_entry.dart';
 import '../modules/ui/download_animation/module_routes.dart';
 import '../modules/ui/font_picker/module_entry.dart';
 import '../modules/ui/font_picker/module_routes.dart';
+import '../modules/ui/genui_workbench/module_entry.dart';
+import '../modules/ui/workflow_workbench/module_entry.dart';
 import '../modules/ui/shader_playground/module_entry.dart';
 import '../modules/ui/flutter_scene_3d/module_entry.dart';
 import '../modules/popup_table/popup_widgets/module_entry.dart';
@@ -38,6 +40,7 @@ import '../modules/popup_table/overlay_follow_compare/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_entry.dart';
 import '../modules/platform/dio_interceptor/module_routes.dart';
 import '../modules/platform/usb_network/module_entry.dart';
+import '../modules/platform/network_diagnostics/module_entry.dart';
 import '../modules/platform/usb_detector/module_entry.dart';
 import '../modules/platform/battery_monitor/module_entry.dart';
 import '../modules/platform/bluetooth_ble/module_entry.dart';
@@ -285,9 +288,33 @@ final List<ModuleEntry> moduleManifest = [
     routes: FontPickerRoutes.routes,
   ),
   ModuleEntry(
+    title: '生成式实验工作区',
+    path: '/genui-workbench',
+    subtitle: '提出技术问题，用 GenUI 组织可操作实验，观察真实结果并继续探索',
+    category: ModuleCategory.ui,
+    difficulty: Difficulty.intermediate,
+    concepts: ['GenUI', 'A2UI', 'Catalog', 'Surface', 'DataModel', '交互事件'],
+    estimatedMinutes: 30,
+    status: ModuleStatus.ready,
+    platformSupport: modulePlatformPolicies['genui_workbench']!,
+    builder: (context) => const GenuiWorkbenchEntry(),
+  ),
+  ModuleEntry(
+    title: '跨项目工作流实验室',
+    path: '/workflow-workbench',
+    subtitle: 'Hub 保存流程与运行记录，Forge 执行文章能力并通过 GenUI 展示结果',
+    category: ModuleCategory.ui,
+    difficulty: Difficulty.intermediate,
+    concepts: ['工作流', '能力注册', '输入 Schema', '执行租约', 'GenUI', '运行事件'],
+    estimatedMinutes: 30,
+    status: ModuleStatus.ready,
+    platformSupport: modulePlatformPolicies['workflow_workbench']!,
+    builder: (context) => const WorkflowWorkbenchEntry(),
+  ),
+  ModuleEntry(
     title: 'Shader 像素绘制与交互动效',
     path: '/shader-playground',
-    subtitle: '从 UV 坐标与双色渐变入门，调节 uniform 观察像素颜色变化',
+    subtitle: '衔接绘制入门，分步对照 Dart 与 GLSL，从颜色规则走向渐变、卡片扫光和场景调优',
     category: ModuleCategory.ui,
     difficulty: Difficulty.intermediate,
     concepts: [
@@ -296,8 +323,11 @@ final List<ModuleEntry> moduleManifest = [
       'UV',
       'uniform',
       'CustomPainter',
+      '扫光',
+      '场景选择',
+      '视觉调优',
     ],
-    estimatedMinutes: 30,
+    estimatedMinutes: 40,
     status: ModuleStatus.ready,
     platformSupport: modulePlatformPolicies['shader_playground']!,
     builder: (context) => const ShaderPlaygroundEntry(),
@@ -397,6 +427,18 @@ final List<ModuleEntry> moduleManifest = [
     status: ModuleStatus.pending,
     platformSupport: modulePlatformPolicies['usb_network']!,
     builder: (context) => const UsbNetworkEntry(),
+  ),
+  ModuleEntry(
+    title: '网络诊断：从现象到检测证据',
+    path: '/network-diagnostics',
+    subtitle: '检测 DNS、TCP 与 HTTP 响应，观察延迟和间歇失败，预览并复制诊断报告',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: ['DNS', 'TCP', 'TLS', 'HTTP HEAD', '超时与取消', '证据边界'],
+    estimatedMinutes: 20,
+    status: ModuleStatus.pending,
+    platformSupport: modulePlatformPolicies['network_diagnostics']!,
+    builder: (context) => const NetworkDiagnosticsEntry(),
   ),
   ModuleEntry(
     title: 'USB 设备检测',

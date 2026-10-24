@@ -3,16 +3,70 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 
+import 'forge_interaction_tokens.dart';
 import 'forge_theme_tokens.dart';
 
+class ForgeSurfaceScope extends InheritedWidget {
+  const ForgeSurfaceScope({
+    super.key,
+    required this.nativeMaterial,
+    required this.teaching,
+    required super.child,
+  });
+  final bool nativeMaterial;
+  final bool teaching;
+
+  static ForgeSurfaceScope? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ForgeSurfaceScope>();
+
+  @override
+  bool updateShouldNotify(ForgeSurfaceScope oldWidget) =>
+      nativeMaterial != oldWidget.nativeMaterial ||
+      teaching != oldWidget.teaching;
+}
+
+/// Window chrome surface (titlebar, sidebar, floating panels).
+///
+/// Under native window material it lays a light tint over the system blur;
+/// without one it falls back to a Flutter backdrop blur. [edgeHighlight] adds
+/// a 1px specular cap so glass reads as a pane instead of a flat tint.
+/// Teaching and floating surfaces stay highlight-free per ADR 0018.
 class ForgeShellSurface extends StatelessWidget {
-  const ForgeShellSurface({super.key, required this.child, this.radius = 0});
+  const ForgeShellSurface({
+    super.key,
+    required this.child,
+    this.radius = 0,
+    this.titlebar = false,
+    this.floating = false,
+    this.edgeHighlight = false,
+  });
   final Widget child;
   final double radius;
+  final bool titlebar;
+  final bool floating;
+  final bool edgeHighlight;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final scope = ForgeSurfaceScope.maybeOf(context);
+    final teaching = scope?.teaching == true;
+    if (scope?.nativeMaterial == true) {
+      final surface = Material(
+        color: colors.surface.withValues(
+          alpha: floating
+              ? 0.97
+              : teaching
+              ? (titlebar ? 0.94 : 1)
+              : 0.18,
+        ),
+        child: child,
+      );
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: _withEdgeHighlight(context, surface, glassy: !teaching),
+      );
+    }
     final glass =
         context.forgeColors.glass && !MediaQuery.highContrastOf(context);
     final surface = Material(
@@ -21,12 +75,33 @@ class ForgeShellSurface extends StatelessWidget {
     );
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
-      child: glass
-          ? BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-              child: surface,
-            )
-          : surface,
+      child: _withEdgeHighlight(
+        context,
+        glass
+            ? BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: surface,
+              )
+            : surface,
+        glassy: glass,
+      ),
+    );
+  }
+
+  Widget _withEdgeHighlight(
+    BuildContext context,
+    Widget child, {
+    required bool glassy,
+  }) {
+    // Non-uniform borders cannot carry a radius, so chrome keeps square edges.
+    if (!edgeHighlight || floating || !glassy || radius != 0) return child;
+    return Container(
+      foregroundDecoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: context.forgeInteraction.chromeHighlightColor),
+        ),
+      ),
+      child: child,
     );
   }
 }
@@ -39,6 +114,14 @@ class ForgeThemeBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.forgeColors;
+    final scope = ForgeSurfaceScope.maybeOf(context);
+    if (scope?.nativeMaterial == true) {
+      return ColoredBox(
+        key: const ValueKey('native-material-backdrop'),
+        color: Colors.transparent,
+        child: child,
+      );
+    }
     final dark = Theme.of(context).brightness == Brightness.dark;
     // Keep the navigator at the same position when the palette changes.
     return Stack(
@@ -75,6 +158,9 @@ class ForgeThemeBackdrop extends StatelessWidget {
   }
 }
 
+/// Fixed navigation surfaces only (mobile sidebar, rail, compact app bar).
+/// Content cards use [ForgePressableCard] instead — glass is reserved for
+/// window chrome and transient overlays, never for scrollable content.
 class ForgeGlassSurface extends StatelessWidget {
   const ForgeGlassSurface({
     super.key,
@@ -90,6 +176,14 @@ class ForgeGlassSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    if (ForgeSurfaceScope.maybeOf(context)?.nativeMaterial == true) {
+      return Material(
+        color: colors.surface.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(radius),
+        clipBehavior: Clip.antiAlias,
+        child: child,
+      );
+    }
     final dark = Theme.of(context).brightness == Brightness.dark;
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radius),
@@ -98,9 +192,8 @@ class ForgeGlassSurface extends StatelessWidget {
     if (MediaQuery.highContrastOf(context)) {
       return Material(color: colors.surface, shape: shape, child: child);
     }
-    // Only fixed navigation surfaces use refraction. Scrolling cards use
-    // shader-free glass. Skia/Web uses the library's frosted fallback;
-    // no full-screen background capture is needed for this theme.
+    // Refraction belongs to fixed navigation surfaces only. Skia/Web uses the
+    // library's frosted fallback; no full-screen background capture is needed.
     return LiquidGlassLens(
       style: LiquidGlassStyle(
         shape: LiquidGlassShape.roundedRectangle(cornerRadius: radius),
@@ -111,24 +204,6 @@ class ForgeGlassSurface extends StatelessWidget {
         liteGlass: !refract,
       ),
       child: Material(type: MaterialType.transparency, child: child),
-    );
-  }
-}
-
-class ForgeCard extends StatelessWidget {
-  const ForgeCard({super.key, required this.child, this.margin});
-
-  final Widget child;
-  final EdgeInsetsGeometry? margin;
-
-  @override
-  Widget build(BuildContext context) {
-    if (!context.forgeColors.glass) {
-      return Card(margin: margin, clipBehavior: Clip.antiAlias, child: child);
-    }
-    return Padding(
-      padding: margin ?? const EdgeInsets.all(4),
-      child: ForgeGlassSurface(child: child),
     );
   }
 }

@@ -10,6 +10,51 @@ void main() {
 
   tearDown(() => messenger.setMockMethodCallHandler(channel, null));
 
+  for (final invalidId in [null, '']) {
+    test(
+      'creation rejects invalid native identity $invalidId at runtime',
+      () async {
+        messenger.setMockMethodCallHandler(channel, (_) async => invalidId);
+        await expectLater(
+          WindowController.create(const WindowConfiguration(arguments: '')),
+          throwsA(
+            isA<PlatformException>().having(
+              (error) => error.code,
+              'code',
+              'WINDOW_CREATION_FAILED',
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  test(
+    'startup frame barrier and native close target the correct window',
+    () async {
+      final calls = <MethodCall>[];
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        calls.add(call);
+        return call.method == 'window_isReadyToShow' ? true : null;
+      });
+      final controller = WindowController.fromWindowId('starting-window');
+      await controller.markReady();
+      expect(await controller.isReadyToShow(), isTrue);
+      await controller.closeNative();
+      expect(calls.map((call) => call.method), [
+        'window_markReady',
+        'window_isReadyToShow',
+        'window_close',
+      ]);
+      expect(
+        calls.every(
+          (call) => (call.arguments as Map)['windowId'] == 'starting-window',
+        ),
+        isTrue,
+      );
+    },
+  );
+
   test(
     'child GPU configuration is opt-in and reaches native creation',
     () async {

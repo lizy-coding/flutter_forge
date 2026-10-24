@@ -57,6 +57,27 @@ add_subdirectory("runner")
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
+# The BLE generated header contains Unicode. Scope encoding to that plugin;
+# do not change /WX or the caller's CL environment.
+if(MSVC AND TARGET universal_ble_plugin)
+  target_compile_options(universal_ble_plugin PRIVATE /utf-8)
+endif()
+
+# Keep private Release symbols separate from the installed runtime bundle.
+if(MSVC)
+  foreach(forge_target IN ITEMS ${BINARY_NAME} desktop_multi_window_plugin usb_network_bridge)
+    if(TARGET ${forge_target})
+      target_compile_options(${forge_target} PRIVATE "$<$<CONFIG:Release>:/Zi>")
+      target_link_options(${forge_target} PRIVATE
+        "$<$<CONFIG:Release>:/DEBUG:FULL>"
+        "$<$<CONFIG:Release>:/OPT:REF>"
+        "$<$<CONFIG:Release>:/OPT:ICF>")
+      set_target_properties(${forge_target} PROPERTIES
+        PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/private-symbols/$<CONFIG>")
+    endif()
+  endforeach()
+endif()
+
 # Keep the Windows plugin graph compatible with NMake and avoid passing MSBuild
 # .targets files as link inputs. video_player_win still owns downloading WIL;
 # the explicit dependency makes that step complete before the plugin builds.

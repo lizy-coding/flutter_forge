@@ -21,6 +21,7 @@ test('existing entry policy is preserved while shared requirements are discovere
     flutter_scene_3d: ['iOS', 'web'], usb_detector: targets,
     battery_monitor: ['iOS', 'web', 'windows'],
     usb_network: ['android', 'iOS', 'web'],
+    network_diagnostics: ['android', 'iOS', 'web'],
     bluetooth_ble: ['iOS', 'web'], file_picker: ['iOS'], online_video_player: ['iOS'], webview: ['iOS', 'web'],
   };
   for (const module of modules) assert.deepEqual(module.excludedPlatforms, expected[module.id] ?? [], module.id);
@@ -33,6 +34,22 @@ test('new modules sharing an adapter inherit its policy without per-module platf
   assert.deepEqual(resolveModules(root, [extra])[0].excludedPlatforms, ['iOS']);
   assert.throws(() => resolveModules(root, [{ ...extra, excludedPlatforms: [] }]), /platform lists are derived/);
   assert.throws(() => resolveModules(root, [{ ...extra, optionalCapabilities: ['unknown'] }]), /not discovered/);
+});
+
+test('bounded GenUI rendering uses common Flutter and HTTP capabilities', () => {
+  const module = modules.find((item) => item.id === 'genui_workbench');
+  assert.deepEqual(module.platformPolicy.required_capabilities, ['genui_surface']);
+  assert.deepEqual(module.platformPolicy.unreviewed_dependencies, []);
+  assert.deepEqual(module.excludedPlatforms, []);
+});
+
+test('network diagnostics entry follows the desktop probe adapter and scoped product rollout', () => {
+  const module = modules.find((item) => item.id === 'network_diagnostics');
+  assert.deepEqual(module.platformPolicy.required_capabilities, ['desktop_network_diagnostics']);
+  assert.deepEqual(module.platformPolicy.unreviewed_dependencies, []);
+  const row = supportDeclaration([module]).modules[0];
+  assert.deepEqual(row.supported_platforms, ['macOS', 'windows']);
+  assert.ok(row.limitations.some((item) => item.reason === 'desktop_direct_network_probes_mobile_deferred_web_out_of_scope'));
 });
 
 test('optional features do not close the module entry and Android scene remains view-only', () => {

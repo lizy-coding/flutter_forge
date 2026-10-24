@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../adaptive_app_shell.dart';
 import '../creator_home_page.dart';
 import '../workbench_home_page.dart';
+import '../learning_home_page.dart';
 import '../module_home_page.dart';
 import '../unsupported_module_page.dart';
 import '../../module_registry/app_platform_snapshot.dart';
@@ -35,13 +36,12 @@ List<RouteBase> _routesFor(AppPlatformSnapshot platform) => [
         builder: (context, state) =>
             platform.hostFamily == AppHostFamily.desktop
             ? WorkbenchHomePage(modules: moduleManifest, platform: platform)
-            : const CreatorHomePage(),
+            : LearningHomePage(modules: moduleManifest, platform: platform),
       ),
-      if (platform.hostFamily == AppHostFamily.desktop)
-        GoRoute(
-          path: '/about',
-          builder: (context, state) => const CreatorHomePage(),
-        ),
+      GoRoute(
+        path: '/about',
+        builder: (context, state) => const CreatorHomePage(),
+      ),
       GoRoute(
         path: '/category/:category',
         builder: (context, state) {

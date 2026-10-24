@@ -80,6 +80,7 @@ function writeRoutes({ modules, categoryComments, categoryEnumNames, writeText }
     routeLines.push("import '../adaptive_app_shell.dart';");
     routeLines.push("import '../creator_home_page.dart';");
     routeLines.push("import '../workbench_home_page.dart';");
+    routeLines.push("import '../learning_home_page.dart';");
     routeLines.push("import '../module_home_page.dart';");
     routeLines.push("import '../unsupported_module_page.dart';");
     routeLines.push("import '../../module_registry/app_platform_snapshot.dart';");
@@ -110,13 +111,12 @@ function writeRoutes({ modules, categoryComments, categoryEnumNames, writeText }
     routeLines.push('        builder: (context, state) =>');
     routeLines.push('            platform.hostFamily == AppHostFamily.desktop');
     routeLines.push('            ? WorkbenchHomePage(modules: moduleManifest, platform: platform)');
-    routeLines.push('            : const CreatorHomePage(),');
+    routeLines.push('            : LearningHomePage(modules: moduleManifest, platform: platform),');
     routeLines.push('      ),');
-    routeLines.push('      if (platform.hostFamily == AppHostFamily.desktop)');
-    routeLines.push('        GoRoute(');
-    routeLines.push("          path: '/about',");
-    routeLines.push('          builder: (context, state) => const CreatorHomePage(),');
-    routeLines.push('        ),');
+    routeLines.push('      GoRoute(');
+    routeLines.push("        path: '/about',");
+    routeLines.push('        builder: (context, state) => const CreatorHomePage(),');
+    routeLines.push('      ),');
     routeLines.push('      GoRoute(');
     routeLines.push("        path: '/category/:category',");
     routeLines.push('        builder: (context, state) {');

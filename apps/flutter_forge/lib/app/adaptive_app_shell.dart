@@ -10,10 +10,14 @@ import 'navigation_policy.dart';
 import 'module_search.dart';
 import '../module_registry/app_platform_snapshot.dart';
 import 'desktop_workbench_shell.dart';
+import 'desktop_window_host.dart';
 import 'forge_bubble_navigation.dart';
+import 'forge_nav_tile.dart';
+import 'forge_selectable_list.dart';
 import 'theme/theme_mode_button.dart';
 import 'theme/forge_theme_tokens.dart';
 import 'theme/forge_glass.dart';
+import 'workbench_history.dart';
 
 class AdaptiveAppShell extends StatefulWidget {
   const AdaptiveAppShell({
@@ -60,10 +64,32 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
   }
 
   Future<void> _showSearch() async {
-    await showSearch<void>(
-      context: context,
-      delegate: ModuleSearchDelegate(widget.modules),
-    );
+    await showModuleSearch(context, widget.modules);
+  }
+
+  @override
+  void didUpdateWidget(AdaptiveAppShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.location != widget.location) _recordRecent();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _recordRecent();
+  }
+
+  void _recordRecent() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      for (final module in widget.modules) {
+        if (widget.location == module.path ||
+            widget.location.startsWith('${module.path}/')) {
+          WorkbenchHistoryScope.maybeOf(context)?.record(module.path);
+          break;
+        }
+      }
+    });
   }
 
   @override
@@ -86,7 +112,12 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
         final compact = layout == AppNavigationLayout.compact;
         return CallbackShortcuts(
           bindings: {
-            const SingleActivator(LogicalKeyboardKey.slash): _showSearch,
+            if (!isTeachingLocation(widget.location, widget.modules))
+              const SingleActivator(LogicalKeyboardKey.slash): _showSearch,
+            const SingleActivator(LogicalKeyboardKey.keyK, control: true):
+                _showSearch,
+            const SingleActivator(LogicalKeyboardKey.keyK, meta: true):
+                _showSearch,
             if (context.forgeColors.desktop)
               const SingleActivator(LogicalKeyboardKey.keyF, meta: true):
                   _showSearch,
@@ -101,6 +132,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
               appBar:
                   compact &&
                       (widget.location == '/' ||
+                          widget.location == '/about' ||
                           widget.location.startsWith('/category/'))
                   ? AppBar(
                       backgroundColor: context.forgeColors.glass
@@ -304,7 +336,7 @@ class _Sidebar extends StatelessWidget {
                     onTap: onSearch,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.search),
-                      hintText: '搜索模块标题',
+                      hintText: '搜索模块或概念',
                       suffixIconConstraints: const BoxConstraints.tightFor(
                         width: 40,
                         height: 36,
@@ -347,9 +379,11 @@ class _Sidebar extends StatelessWidget {
                                 ValueKey('sidebar-destination:$index'),
                           ),
                         )
-                      : ListView.builder(
+                      : ForgeSelectableList(
                           itemCount: _destinations.length,
-                          itemBuilder: (context, index) {
+                          selectedIndex: selectedIndex,
+                          onActivate: onDestinationSelected,
+                          itemBuilder: (context, index, keyboardActive) {
                             final destination = _destinations[index];
                             final native = context.forgeColors.desktop;
                             return Padding(
@@ -357,27 +391,12 @@ class _Sidebar extends StatelessWidget {
                                 horizontal: native ? 8 : 0,
                                 vertical: native ? 2 : 0,
                               ),
-                              child: ListTile(
+                              child: ForgeNavTile(
                                 key: ValueKey('sidebar-destination:$index'),
-                                dense: native,
-                                minTileHeight: native ? 32 : null,
-                                minLeadingWidth: native ? 18 : null,
-                                horizontalTitleGap: native ? 8 : null,
-                                shape: native
-                                    ? RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(6),
-                                      )
-                                    : null,
-                                selectedTileColor: native
-                                    ? Theme.of(context).colorScheme.primary
-                                          .withValues(alpha: 0.12)
-                                    : null,
+                                label: destination.label,
+                                icon: destination.icon,
+                                keyboardActive: keyboardActive,
                                 selected: index == selectedIndex,
-                                leading: Icon(
-                                  destination.icon,
-                                  size: native ? 18 : null,
-                                ),
-                                title: Text(destination.label),
                                 onTap: () => onDestinationSelected(index),
                               ),
                             );
@@ -394,7 +413,7 @@ class _Sidebar extends StatelessWidget {
 }
 
 final List<ForgeNavigationDestination> _destinations = [
-  const ForgeNavigationDestination('创作者主页', Icons.home_outlined),
+  const ForgeNavigationDestination('探索与查阅', Icons.home_outlined),
   for (final category in ModuleCategory.values)
     ForgeNavigationDestination(category.label, category.icon),
 ];

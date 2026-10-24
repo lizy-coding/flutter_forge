@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +21,7 @@ Future<void> bootstrapFlutterForgeApp() async {
   final platform = AppPlatformSnapshot.detect();
 
   Widget? root;
+  final startupReady = Completer<void>();
   WindowController? currentWindow;
   var arguments = const WindowArguments(type: WindowType.main);
   if (!platform.isWeb && MultiWindowManager.isSupported) {
@@ -32,8 +35,8 @@ Future<void> bootstrapFlutterForgeApp() async {
   final themeController = await AppThemeController.load(
     defaultSelection: AppThemeSelection(
       palette: platform.hostFamily == AppHostFamily.desktop
-          ? AppThemePalette.graphiteForge
-          : AppThemePalette.liquidGlass,
+          ? AppThemePalette.liquidGlass
+          : AppThemePalette.graphiteForge,
     ),
     initialSelectionPayload: arguments.type == WindowType.category
         ? arguments.themeSelectionPayload
@@ -43,7 +46,9 @@ Future<void> bootstrapFlutterForgeApp() async {
   if (currentWindow != null) {
     if (arguments.type == WindowType.category && arguments.category != null) {
       await currentWindow.setWindowMethodHandler((call) async {
-        if (call.method == MultiWindowManager.themeSelectionMethod) {
+        if (call.method == MultiWindowManager.readyMethod) {
+          await startupReady.future;
+        } else if (call.method == MultiWindowManager.themeSelectionMethod) {
           themeController.applyRemoteSelection(call.arguments as String?);
         }
       });
@@ -77,4 +82,15 @@ Future<void> bootstrapFlutterForgeApp() async {
       ),
     ),
   );
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    if (currentWindow != null && platform.hostFamily == AppHostFamily.desktop) {
+      try {
+        await currentWindow.markReady();
+      } catch (error) {
+        debugPrint('Native window readiness failed: $error');
+        return;
+      }
+    }
+    if (!startupReady.isCompleted) startupReady.complete();
+  });
 }

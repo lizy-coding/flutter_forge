@@ -5,6 +5,7 @@ import 'package:flutter_forge_app/app/app.dart';
 import 'package:flutter_forge_app/app/app_platform_provider.dart';
 import 'package:flutter_forge_app/app/category_window_app.dart';
 import 'package:flutter_forge_app/app/desktop_window_host.dart';
+import 'package:flutter_forge_app/app/forge_nav_tile.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/app/router/app_router.dart';
 import 'package:flutter_forge_app/app/theme/app_theme.dart';
@@ -179,7 +180,7 @@ void main() {
       );
       expect(
         tester
-            .widget<ListTile>(
+            .widget<ForgeNavTile>(
               find.byKey(ValueKey('sidebar-module:${module.path}')),
             )
             .selected,
@@ -196,6 +197,32 @@ void main() {
     },
     variant: _desktopPlatforms,
   );
+
+  testWidgets('sidebar marks the active category and about entries', (
+    tester,
+  ) async {
+    _mockHost(tester);
+    final router = await _pump(tester);
+    router.go('/category/basic');
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ForgeNavTile>(
+            find.byKey(const ValueKey('sidebar-category:basic')),
+          )
+          .selected,
+      isTrue,
+    );
+    router.go('/about');
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ForgeNavTile>(find.byKey(const ValueKey('sidebar-about')))
+          .selected,
+      isTrue,
+    );
+    expect(tester.takeException(), isNull);
+  }, variant: _desktopPlatforms);
 
   testWidgets('category windows use the shared chrome and scoped quick open', (
     tester,

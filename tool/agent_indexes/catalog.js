@@ -27,6 +27,12 @@ const categoryOwnership = {
 
 const workspacePackages = [
   {
+    name: 'forge_articles', kind: 'dart_package',
+    path: 'packages/forge_articles', entrypoints: ['lib/forge_articles.dart'],
+    owns: ['article_request_api', 'synthetic_article_adapter', 'article_workflow_execution'],
+    depends: ['dio'], validation: ['dart analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'forge_scene_viewer', kind: 'flutter_package',
     path: 'packages/forge_scene_viewer', entrypoints: ['lib/forge_scene_viewer.dart', 'lib/build_hooks.dart'],
     owns: ['scene_runtime', 'orbit_camera', 'scene_selection', 'render_scheduling', 'render_diagnostics'],

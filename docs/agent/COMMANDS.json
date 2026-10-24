@@ -60,8 +60,8 @@
       "success_condition": "exit_code=0 && 0 errors"
     },
     "flutterguard": {
-      "cmd": "dart run flutterguard_cli:flutterguard scan . --fail-on high",
-      "description": "FlutterGuard 安全扫描",
+      "cmd": "boundarylens scan apps/flutter_forge -c boundarylens.yaml",
+      "description": "BoundaryLens（flutterguard 后继）按需静态扫描",
       "modifies_files": false,
       "timeout_seconds": 60,
       "artifacts": [],

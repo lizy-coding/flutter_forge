@@ -55,6 +55,25 @@ Forge 内部副本要求 Flutter 3.47.2 及以上。Windows 子引擎可通过
 Flutter GPU；默认关闭，其他宿主沿用自身引擎配置。Forge 分类窗口传递该开关，
 使其具备与主窗口一致的 GPU 前提。
 
+macOS 创建时先配置非黑色启动背景、注册插件与每窗口宿主、绑定窗口定义，
+再将非隐藏窗口设为 key 并显示；`hiddenAtLaunch` 不提前显示窗口。
+创建返回不代表 Flutter 首帧已呈现，实际内容与鼠标操作仍须主机验收。
+
+Windows 同样在插件与窗口定义注册后安装首帧回调；非隐藏窗口也要等首帧后才显示。
+`WindowController.create` 对空窗口 ID 在 Release 中抛出 `WINDOW_CREATION_FAILED`。
+Windows 可调用 `isReadyToShow()` 查询子引擎首帧屏障；该值不代表可见内容或 GPU 完成。
+Windows／macOS 可调用 `closeNative()` 清理启动失败的隐藏窗口。
+使用当前引擎的 controller，在页面挂载后调用 `markReady()` 启用原生库存通知；
+未握手的窗口不接收主动通知，避免向未启动的引擎发消息。Linux 沿用原有通知流程。
+
+Forge 分类窗口采用隐藏创建，等待子窗口 Dart 页面构建握手（Windows 另等原生首帧）后显示；
+创建或启动超时会清理窗口，迟到的创建结果也会关闭，失败清理未完成前不再为该分类创建新窗口。
+
+Windows runner 必须在主 controller 销毁前调用 `DesktopMultiWindowShutdown()`，
+使子 HWND／engine 在主引擎和 COM 仍存活时退出；并在消息循环每次 `DispatchMessage` 返回后
+调用 `DesktopMultiWindowProcessPendingWindowCleanup()`，避免在正在执行的窗口回调内删除其对象。
+退出消息循环后、`CoUninitialize` 前再次执行 shutdown 和主窗口 `Destroy()`，两者可重复调用。
+
 Use `WindowController.create()` to create and manage new windows:
 
 ```dart
@@ -158,7 +177,7 @@ final controller = await WindowController.fromWindowId(other_window_id);
 await controller.center();
 
 // Close the window
-await controller.close();
+    await controller.close();
 ```
 
 ## Working with Plugins in Sub-Windows

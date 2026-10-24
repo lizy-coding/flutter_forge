@@ -1,0 +1,11 @@
+# BoundaryLens（flutterguard 仓库，独立安装）按需扫描配置。
+# 用法：boundarylens scan <成员包目录> -c boundarylens.yaml
+# 本文件不属于依赖解析、CI 或发布强制要求；仅在显式调用扫描时生效。
+include:
+  - lib/**
+  - test/**
+  - hook/**
+  - integration_test/**
+rules:
+  orphan_file:
+    enabled: true

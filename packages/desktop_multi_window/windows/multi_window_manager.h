@@ -26,6 +26,13 @@ class MultiWindowManager {
 
   void RemoveManagedFlutterWindowLater(const std::string& window_id);
 
+  void MarkFirstFrameReady(const std::string& window_id, bool show);
+
+  void Shutdown();
+
+  // Call after dispatch unwinds so closed window objects can be freed safely.
+  void CleanupRemovedWindows();
+
   flutter::EncodableList GetAllWindows();
 
   std::vector<std::string> GetAllWindowIds();
@@ -33,8 +40,7 @@ class MultiWindowManager {
  private:
   void NotifyWindowsChanged();
 
-  void CleanupRemovedWindows();
-
+  bool shutting_down_ = false;
   std::map<std::string, std::unique_ptr<FlutterWindowWrapper>> windows_;
   std::map<std::string, std::unique_ptr<FlutterWindow>>
       managed_flutter_windows_;

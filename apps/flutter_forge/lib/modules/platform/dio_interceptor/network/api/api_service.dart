@@ -1,4 +1,5 @@
 import '../http_client.dart';
+import 'package:forge_articles/forge_articles.dart';
 
 /// API服务类
 /// 封装对后端API的调用
@@ -42,16 +43,10 @@ class ApiService {
     int page = 1,
     int pageSize = 10,
   }) async {
-    try {
-      final response = await _httpClient.get(
-        '/api/articles',
-        queryParameters: {'page': page, 'pageSize': pageSize},
-      );
-
-      return response.data;
-    } catch (e) {
-      rethrow;
-    }
+    return ArticleApi(
+      _httpClient.dio,
+      defaultCancelToken: _httpClient.requestCancelToken,
+    ).getArticles(page: page, pageSize: pageSize);
   }
 
   /// 创建文章

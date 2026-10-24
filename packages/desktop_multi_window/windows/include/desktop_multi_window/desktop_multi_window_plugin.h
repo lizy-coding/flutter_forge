@@ -20,6 +20,12 @@ FLUTTER_PLUGIN_EXPORT void DesktopMultiWindowPluginRegisterWithRegistrar(
 typedef void (*WindowCreatedCallback)(void *flutter_view_controller);
 FLUTTER_PLUGIN_EXPORT void DesktopMultiWindowSetWindowCreatedCallback(WindowCreatedCallback callback);
 
+// Close child HWNDs and dispose child engines before destroying the main engine.
+FLUTTER_PLUGIN_EXPORT void DesktopMultiWindowShutdown();
+
+// Drain deferred window-object removals after DispatchMessage has returned.
+FLUTTER_PLUGIN_EXPORT void DesktopMultiWindowProcessPendingWindowCleanup();
+
 #if defined(__cplusplus)
 }  // extern "C"
 #endif

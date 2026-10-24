@@ -17,12 +17,13 @@
 | 0009 | Flutter Scene Windows 逻辑准入 | accepted |
 | 0010 | Flutter Scene Android 只读准入 | accepted |
 | 0011 | 平台快照与守卫路由 | accepted |
-| 0012 | 自适应导航外壳与分类专注窗口 | accepted |
+| 0012 | 自适应导航外壳与分类专注窗口 | accepted；桌面部分由 0016、Web／移动首页与搜索部分由 0018 取代 |
 | 0013 | [能力推导可用性与独立验证记录](0013-capability-derived-availability-and-evidence.md) | accepted；验证维护部分被 0014 取代 |
 | 0014 | [最简支持声明维护](0014-minimal-support-maintenance.md) | accepted |
 | 0015 | [macOS 基础桌面外壳](0015-macos-desktop-shell.md) | superseded by 0016 |
-| 0016 | [通用桌面工作台与沉浸式标题栏](0016-shared-desktop-workbench.md) | accepted |
+| 0016 | [通用桌面工作台与沉浸式标题栏](0016-shared-desktop-workbench.md) | accepted；材质范围与默认外观由 0018 取代 |
 | 0017 | [内部 3D 查看包与可观测绘制](0017-scene-viewer-package-and-render-observability.md) | accepted |
+| 0018 | [四端交互分工与原生窗口背景材质](0018-platform-interaction-and-native-materials.md) | accepted；实现待推进 |
 
 ## 状态定义
 

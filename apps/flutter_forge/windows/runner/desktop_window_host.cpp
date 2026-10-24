@@ -16,6 +16,18 @@ namespace {
 using Value = flutter::EncodableValue;
 using Map = flutter::EncodableMap;
 
+bool SupportsSystemBackdrop() {
+  // Public system backdrops require Windows 11 22H2 (build 22621).
+  // The runner manifest declares Windows 10/11 compatibility. A failed
+  // version check deliberately keeps Windows 10 and unknown hosts solid.
+  OSVERSIONINFOEXW version{};
+  version.dwOSVersionInfoSize = sizeof(version);
+  version.dwBuildNumber = 22621;
+  const DWORDLONG conditions =
+      VerSetConditionMask(0, VER_BUILDNUMBER, VER_GREATER_EQUAL);
+  return VerifyVersionInfoW(&version, VER_BUILDNUMBER, conditions) != FALSE;
+}
+
 class DesktopWindowHost final : public flutter::Plugin {
  public:
   DesktopWindowHost(flutter::PluginRegistrarWindows* registrar, HWND window, HWND view)
@@ -28,6 +40,7 @@ class DesktopWindowHost final : public flutter::Plugin {
     channel_->SetMethodCallHandler([this](const auto& call, auto result) {
       const auto& method = call.method_name();
       if (method == "configure") {
+        configured_ = true;
         const auto* args = std::get_if<Map>(call.arguments());
         if (args) {
           const auto title = args->find(Value("title"));
@@ -47,8 +60,12 @@ class DesktopWindowHost final : public flutter::Plugin {
               theme_mode_ = *mode;
             }
           }
+          const auto material = args->find(Value("materialEnabled"));
+          material_requested_ = material != args->end() &&
+              std::get_if<bool>(&material->second) && std::get<bool>(material->second);
         }
         ApplyTheme();
+        RefreshChrome();
         result->Success(State());
       } else if (method == "minimize") {
         ShowWindow(window_, SW_MINIMIZE);
@@ -80,13 +97,19 @@ class DesktopWindowHost final : public flutter::Plugin {
   }
 
   ~DesktopWindowHost() override {
-    channel_->SetMethodCallHandler(nullptr);
+    // Registrar teardown can run after the messenger's engine has been cleared.
+    // The engine owns its message handlers; do not call messenger APIs here.
+    *alive_ = false;
+    DetachWindowSubclass();
+  }
+
+ private:
+  void DetachWindowSubclass() {
     if (IsWindow(window_)) {
       RemoveWindowSubclass(window_, WindowProc, reinterpret_cast<UINT_PTR>(this));
     }
   }
 
- private:
   void ConfigureFrame() {
     const LONG_PTR style = GetWindowLongPtr(window_, GWL_STYLE);
     SetWindowLongPtr(window_, GWL_STYLE, style | WS_CAPTION | WS_SYSMENU |
@@ -122,7 +145,8 @@ class DesktopWindowHost final : public flutter::Plugin {
   void RefreshChrome() {
     if (!IsWindow(view_) || IsIconic(window_)) return;
     const int top = fullscreen_ ? 0 : MulDiv(48, GetDpiForWindow(window_), 96);
-    const MARGINS margins{0, 0, top, 0};
+    const MARGINS margins = material_active_
+        ? MARGINS{-1, -1, -1, -1} : MARGINS{0, 0, top, 0};
     DwmExtendFrameIntoClientArea(window_, &margins);
     if (fullscreen_) {
       SetWindowRgn(view_, nullptr, TRUE);
@@ -155,6 +179,9 @@ class DesktopWindowHost final : public flutter::Plugin {
         {Value("leadingInset"), Value(6.0)},
         {Value("trailingInset"), Value(trailing)},
         {Value("fullscreen"), Value(fullscreen_)},
+        {Value("materialActive"), Value(material_active_)},
+        {Value("systemBackdropSupported"), Value(supports_system_backdrop_)},
+        {Value("transparencyAllowed"), Value(TransparencyAllowed())},
     });
   }
 
@@ -196,11 +223,39 @@ class DesktopWindowHost final : public flutter::Plugin {
     const BOOL dark = theme_mode_ == "dark" ||
                      (theme_mode_ == "system" && light == 0);
     DwmSetWindowAttribute(window_, 20, &dark, sizeof(dark));
+    if (!supports_system_backdrop_) {
+      material_active_ = false;
+      return;
+    }
+    const int backdrop = material_requested_ && TransparencyAllowed() ? 2 : 1;
+    // Public DWMWA_SYSTEMBACKDROP_TYPE (Windows 11 22H2+). Failure leaves
+    // older Windows on the existing opaque background; no undocumented APIs.
+    material_active_ = SUCCEEDED(DwmSetWindowAttribute(window_, 38, &backdrop,
+                                                     sizeof(backdrop))) && backdrop == 2;
+  }
+
+  bool TransparencyAllowed() const {
+    HIGHCONTRASTW contrast{};
+    contrast.cbSize = sizeof(contrast);
+    if (SystemParametersInfoW(SPI_GETHIGHCONTRAST, sizeof(contrast), &contrast, 0) &&
+        (contrast.dwFlags & HCF_HIGHCONTRASTON)) return false;
+    DWORD enabled = 1;
+    DWORD size = sizeof(enabled);
+    RegGetValueW(HKEY_CURRENT_USER,
+        L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        L"EnableTransparency", RRF_RT_REG_DWORD, nullptr, &enabled, &size);
+    return enabled != 0;
   }
 
   static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wparam,
       LPARAM lparam, UINT_PTR /*subclass_id*/, DWORD_PTR reference) {
     auto* host = reinterpret_cast<DesktopWindowHost*>(reference);
+    if (message == WM_DESTROY || message == WM_NCDESTROY) {
+      // The original procedure synchronously destroys the controller and this
+      // plugin. Detach before delegating and never touch host afterwards.
+      host->DetachWindowSubclass();
+      return DefSubclassProc(window, message, wparam, lparam);
+    }
     LRESULT dwm_result = 0;
     if (!host->fullscreen_ &&
         DwmDefWindowProc(window, message, wparam, lparam, &dwm_result)) {
@@ -228,10 +283,16 @@ class DesktopWindowHost final : public flutter::Plugin {
     if (message == WM_SIZE || message == WM_ACTIVATE || message == WM_DPICHANGED ||
         message == WM_SHOWWINDOW || message == WM_SETTINGCHANGE ||
         message == WM_DWMCOLORIZATIONCOLORCHANGED) {
+      // Delegation can re-enter window teardown. Keep a separate lifetime token
+      // so this callback does not dereference a plugin destroyed by that call.
+      const auto alive = host->alive_;
       const auto result = DefSubclassProc(window, message, wparam, lparam);
+      if (!*alive) return result;
       host->ApplyTheme();
       host->RefreshChrome();
-      host->channel_->InvokeMethod("windowState", std::make_unique<Value>(host->State()));
+      if (host->configured_) {
+        host->channel_->InvokeMethod("windowState", std::make_unique<Value>(host->State()));
+      }
       return result;
     }
     // WM_DESTROY may synchronously destroy the engine and this plugin. Never
@@ -241,7 +302,12 @@ class DesktopWindowHost final : public flutter::Plugin {
 
   HWND window_;
   HWND view_;
+  const std::shared_ptr<bool> alive_ = std::make_shared<bool>(true);
+  const bool supports_system_backdrop_ = SupportsSystemBackdrop();
   bool fullscreen_ = false;
+  bool configured_ = false;
+  bool material_requested_ = false;
+  bool material_active_ = false;
   WINDOWPLACEMENT placement_{};
   LONG_PTR saved_style_ = 0;
   std::unique_ptr<flutter::MethodChannel<Value>> channel_;
