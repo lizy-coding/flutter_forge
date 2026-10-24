@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-15-intel
+          - os: macos-26
             platform: macos
           - os: windows-latest
             platform: windows
@@ -64,10 +64,10 @@ jobs:
           app_path="$GITHUB_WORKSPACE/apps/flutter_forge/build/macos/Build/Products/Release/Flutter Forge.app"
           dmg_root="$RUNNER_TEMP/flutter-forge-dmg"
           app_version="$(sed -n 's/^version: *//p' "$GITHUB_WORKSPACE/apps/flutter_forge/pubspec.yaml" | head -1 | tr -d "'\"" | cut -d+ -f1)"
-          dmg_path="$GITHUB_WORKSPACE/release-assets/FlutterForge-${app_version}-macos-x64.dmg"
+          dmg_path="$GITHUB_WORKSPACE/release-assets/FlutterForge-${app_version}-macos-arm64.dmg"
           test -d "$app_path"
           binary="$(/usr/libexec/PlistBuddy -c 'Print CFBundleExecutable' "$app_path/Contents/Info.plist")"
-          lipo -archs "$app_path/Contents/MacOS/$binary" | grep -qw x86_64
+          lipo -archs "$app_path/Contents/MacOS/$binary" | grep -qw arm64
           test -n "$app_version"
           mkdir -p "$dmg_root"
           mkdir -p "$(dirname "$dmg_path")"
@@ -132,7 +132,7 @@ jobs:
           mkdir -p verified-release
           APP_VERSION="$(node tool/release_metadata.js version)"
           case "$RELEASE_PLATFORM" in
-            macos) cp release-assets/*.dmg "verified-release/FlutterForge-${APP_VERSION}-macos-x64.dmg" ;;
+            macos) cp release-assets/*.dmg "verified-release/FlutterForge-${APP_VERSION}-macos-arm64.dmg" ;;
             windows) cp flutter_forge-setup-x64.exe "verified-release/FlutterForge-${APP_VERSION}-windows-x64.exe" ;;
             android) unzip -l apps/flutter_forge/release-assets/*.apk | grep -q "lib/arm64-v8a/"; cp apps/flutter_forge/release-assets/*.apk "verified-release/FlutterForge-${APP_VERSION}-android-arm64-v8a-debug.apk" ;;
             web) (cd apps/flutter_forge/build/web && zip -qr "$GITHUB_WORKSPACE/verified-release/FlutterForge-${APP_VERSION}-web.zip" .) ;;

@@ -2,7 +2,7 @@
 
 此预览版未使用 Apple Developer ID 签名或公证，首次启动时 macOS Gatekeeper 的拦截属于预期行为。DMG 只是安装镜像，不会替应用增加签名或公证。
 
-1. 双击 `FlutterForge-<版本>-macos-x64.dmg` 挂载磁盘映像。
+1. 双击 `FlutterForge-<版本>-macos-arm64.dmg` 挂载磁盘映像（Apple Silicon M 系列机型）。
 2. 将 `Flutter Forge.app` 拖到 `Applications` 快捷方式。
 3. 在“应用程序”中右键点击 `Flutter Forge.app`，选择“打开”，再在确认窗口中点击“打开”。
 4. 如果仍被拦截，在终端执行：

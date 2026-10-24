@@ -5,12 +5,6 @@ publish_to: 'none'
 environment:
   sdk: ^3.11.5
 
-# CI 的 macos-15-intel runner（Xcode 16.4）编译不了 video_player_avfoundation
-# 2.12.3 的 Swift #isolation 语法；v1.2.9 发布基线是 2.12.2，待其兼容旧
-# 工具链后解除本覆盖。
-dependency_overrides:
-  video_player_avfoundation: 2.12.2
-
 # workspace 必须保持为最后一个顶层节：tool/agent_indexes 的契约测试
 # 通过向文件末尾追加成员行来验证未配置成员不能从生成契约中消失。
 workspace:

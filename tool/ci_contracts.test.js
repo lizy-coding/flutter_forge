@@ -66,7 +66,7 @@ test('release CLI verifies exact clean source and rejects dirty or unrelated tag
     [path.join(__dirname, 'release_metadata.js'), 'stage', directory],
     {cwd:dir, env:{...env, RELEASE_PLATFORM:platform}, encoding:'utf8', stdio:'pipe'});
   for (const [platform, suffix, raw] of [
-    ['macos', 'macos-x64.dmg', 'release-assets/FlutterForge-1.2.8-macos-x64.dmg'],
+    ['macos', 'macos-arm64.dmg', 'release-assets/FlutterForge-1.2.8-macos-arm64.dmg'],
     ['windows', 'windows-x64.exe', 'flutter_forge-setup-x64.exe'],
     ['android', 'android-arm64-v8a-debug.apk', 'apps/flutter_forge/release-assets/flutter_forge-android-arm64-debug.apk'],
     ['web', 'web.zip', null],
@@ -108,7 +108,7 @@ test('release CLI verifies exact clean source and rejects dirty or unrelated tag
 test('producer metadata binds architecture and normalized measured toolchain', (t) => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-provenance-'));
   t.after(() => fs.rmSync(dir, {recursive:true, force:true}));
-  for (const [platform, extension, architecture] of [['macos','dmg','x64'],['windows','exe','x64'],['android','apk','arm64-v8a'],['web','zip','not applicable']]) {
+  for (const [platform, extension, architecture] of [['macos','dmg','arm64'],['windows','exe','x64'],['android','apk','arm64-v8a'],['web','zip','not applicable']]) {
     const artifact = path.join(dir, `fixture.${extension}`);
     fs.writeFileSync(artifact, 'artifact fixture');
     const data = metadata(dir, {platform, toolchain:{flutter:'3.47.2',node:'24.3.0'}});

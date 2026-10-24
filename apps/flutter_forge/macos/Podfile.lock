@@ -79,7 +79,7 @@ SPEC CHECKSUMS:
   universal_ble: a322ebabee64f0ec27a313e89a5dd6967f37a60f
   url_launcher_macos: f87a979182d112f911de6820aefddaf56ee9fbfd
   usb_network_bridge: 7a6a501f218ef1d35e5b7408682395ed8432bd4e
-  video_player_avfoundation: bc5f800d1e1c4f389bc5d51778a4f89dd1bf4a77
+  video_player_avfoundation: 3453f792138786248960ca029747fcd9f318ef52
   webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
 
 PODFILE CHECKSUM: 1e95c36afbfd1cb6423ceca4de7a8e1b256fb6ac
