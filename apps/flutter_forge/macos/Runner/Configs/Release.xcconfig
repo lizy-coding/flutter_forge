@@ -1,2 +1,5 @@
 #include "../../Flutter/Flutter-Release.xcconfig"
 #include "Warnings.xcconfig"
+
+// Release installers target Apple Silicon (ARM M-series) only.
+ARCHS = arm64

@@ -15,7 +15,7 @@ function verifyUntrackedInputs(git, mode, platform, version, directory) {
   if (mode === 'stage') {
     if (directory !== 'verified-release') throw new Error('Release staging must use verified-release');
     const name = {
-      macos: `FlutterForge-${version.split('+')[0]}-macos-x64.dmg`,
+      macos: `FlutterForge-${version.split('+')[0]}-macos-arm64.dmg`,
       windows: `FlutterForge-${version.split('+')[0]}-windows-x64.exe`,
       android: `FlutterForge-${version.split('+')[0]}-android-arm64-v8a-debug.apk`,
       web: `FlutterForge-${version.split('+')[0]}-web.zip`,
@@ -59,7 +59,7 @@ function metadata(directory, context) {
   const platform = context.platform;
   const expected = {macos: '.dmg', windows: '.exe', android: '.apk', web: '.zip'}[platform];
   if (!expected || !artifacts.some((a) => a.name.endsWith(expected))) throw new Error(`Missing ${platform} artifact`);
-  const architecture = {macos: 'x64', windows: 'x64', android: 'arm64-v8a', web: 'not applicable'}[platform];
+  const architecture = {macos: 'arm64', windows: 'x64', android: 'arm64-v8a', web: 'not applicable'}[platform];
   const toolchain = releaseToolchain(context.toolchain);
   return {...context, architecture, toolchain, schema: 'flutter_forge.release_manifest.v1', build_mode: platform === 'android' ? 'debug' : 'release', signing: platform === 'android' ? 'Android debug certificate' : platform === 'web' ? 'not applicable' : 'unsigned', artifacts};
 }
