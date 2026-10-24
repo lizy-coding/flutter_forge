@@ -30,7 +30,6 @@ jobs:
         shell: bash
         run: |
           flutter pub get --enforce-lockfile
-          (cd packages/video_player_win/example && flutter pub get)
       - name: Quality gate
         run: bash tool/quality_gate.sh
       - name: Record validated source

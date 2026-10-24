@@ -47,7 +47,6 @@ jobs:
         shell: bash
         run: |
           flutter pub get --enforce-lockfile
-          (cd packages/video_player_win/example && flutter pub get)
       - name: Verify source and release version
         env:
           EXPECTED_SHA: ${{ needs.quality.outputs.source-sha }}
