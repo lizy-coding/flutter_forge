@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:a2ui_core/a2ui_core.dart' as a2ui;
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import '../module_registry/module_entry.dart';
 import '../module_registry/app_platform_snapshot.dart';
 import '../shared/genui/model_source.dart';
+import '../shared/genui/session_core.dart';
 import 'module_discovery_surface.dart';
 
 const discoverySurface = 'module-discovery';
 const discoveryCatalog = 'dev.flutterforge.module-menu';
 
-class ModuleDiscoverySession extends ChangeNotifier {
+class ModuleDiscoverySession extends GenuiSessionCore {
   ModuleDiscoverySession({
     required this.modules,
     required this.platform,
@@ -112,7 +112,7 @@ class ModuleDiscoverySession extends ChangeNotifier {
                         onPressed: busy
                             ? null
                             : () {
-                                records.add('本地打开：${module.path}');
+                                addRecord('本地打开：${module.path}');
                                 openModule(module.path);
                               },
                         child: Text(moduleActionLabel(module)),
@@ -192,7 +192,7 @@ class ModuleDiscoverySession extends ChangeNotifier {
                                     onPressed: busy
                                         ? null
                                         : () {
-                                            records.add('本地打开：${module.path}');
+                                            addRecord('本地打开：${module.path}');
                                             openModule(module.path);
                                           },
                                     icon: const Icon(
@@ -343,7 +343,7 @@ class ModuleDiscoverySession extends ChangeNotifier {
                                             : () {
                                                 final path =
                                                     steps[index].module.path;
-                                                records.add('本地打开：$path');
+                                                addRecord('本地打开：$path');
                                                 openModule(path);
                                               },
                                         icon: const Icon(
@@ -414,7 +414,7 @@ class ModuleDiscoverySession extends ChangeNotifier {
                       onPressed: busy
                           ? null
                           : () {
-                              records.add('本地打开：${module.path}');
+                              addRecord('本地打开：${module.path}');
                               openModule(module.path);
                             },
                     ),
@@ -488,7 +488,7 @@ class ModuleDiscoverySession extends ChangeNotifier {
       final choice = _pending;
       _pending = null;
       if (choice == null || message.parts.uiInteractionParts.isEmpty) return;
-      records.add('SDK 澄清动作：$choice');
+      addRecord('SDK 澄清动作：$choice');
       unawaited(submit('$question\n补充偏好：$choice'));
     });
   }
@@ -505,14 +505,8 @@ class ModuleDiscoverySession extends ChangeNotifier {
   Map<String, Map<String, dynamic>> components = {};
   Map<String, Map<String, dynamic>>? _preFilterComponents;
   String? localFilterLabel;
-  final records = <String>[];
   String question = '';
-  String? error;
   String? _pending;
-  bool busy = false;
-  bool _disposed = false;
-  int _epoch = 0;
-  CancelToken? _token;
   // Replay is the offline default; a live source replaces it explicitly.
   bool get connected => _source?.isReplay == false;
   bool get isReplay => _source?.isReplay ?? false;
@@ -540,17 +534,54 @@ class ModuleDiscoverySession extends ChangeNotifier {
     _source?.dispose();
     _source = source;
     error = null;
-    notifyListeners();
+    notifyChanged();
   }
 
-  void cancel() {
-    _epoch++;
-    _token?.cancel('cancelled');
-    _token = null;
-    busy = false;
-    _pending = null;
-    if (!_disposed) notifyListeners();
+  @override
+  WorkbenchSource get activeSource => _source!;
+
+  @override
+  String? submitGuard(String prompt) {
+    if (prompt.isEmpty || prompt.length > 1500) {
+      return '请用 1～1500 字描述想了解的内容。';
+    }
+    if (_source == null) {
+      return '请先连接模型服务，或使用下方本地模块浏览。';
+    }
+    return null;
   }
+
+  @override
+  WorkbenchRequest buildRequest(String prompt) => WorkbenchRequest(
+    prompt: prompt,
+    snapshot: {'question': question, 'recent': recentPaths},
+    components: components.values.toList(),
+    systemPrompt: systemPrompt,
+  );
+
+  @override
+  void applyStreamMessage(a2ui.A2uiMessage message) => _applyMessage(message);
+
+  @override
+  String get fallbackError => '推荐暂未完成，请检查模型服务后重试。已有结果仍可使用。';
+
+  @override
+  void recordError(Object cause, String message) {
+    if (cause is! FormatException) addRecord('错误：$cause');
+  }
+
+  @override
+  void onRunStarted(String prompt) {
+    question = prompt;
+    addRecord('请求：$prompt');
+  }
+
+  @override
+  void onSuccess(String prompt, int appliedMessages) =>
+      addRecord('界面更新：共 $appliedMessages 条消息，${components.length} 个组件');
+
+  @override
+  void onCancelled() => _pending = null;
 
   Map<String, Map<String, dynamic>> validate(
     List<Map<String, dynamic>> updates,
@@ -660,77 +691,6 @@ class ModuleDiscoverySession extends ChangeNotifier {
     }
   }
 
-  Future<void> submit(String prompt) async {
-    if (_disposed || busy) return;
-    prompt = prompt.trim();
-    if (prompt.isEmpty || prompt.length > 1500) {
-      error = '请用 1～1500 字描述想了解的内容。';
-      notifyListeners();
-      return;
-    }
-    final source = _source;
-    if (source == null) {
-      error = '请先连接模型服务，或使用下方本地模块浏览。';
-      notifyListeners();
-      return;
-    }
-    final epoch = ++_epoch;
-    final token = _token = CancelToken();
-    question = prompt;
-    busy = true;
-    error = null;
-    records.add('请求：$prompt');
-    if (records.length > 20) records.removeRange(0, records.length - 20);
-    notifyListeners();
-    var applied = 0;
-    var length = 0;
-    try {
-      final request = WorkbenchRequest(
-        prompt: prompt,
-        snapshot: {'question': question, 'recent': recentPaths},
-        components: components.values.toList(),
-        systemPrompt: systemPrompt,
-      );
-      // Apply each protocol message as it is parsed so partial results render
-      // progressively; every message is fully validated before it commits,
-      // and an invalid tail leaves earlier messages in place.
-      await for (final event
-          in source
-              .generate(request, token)
-              .timeout(const Duration(seconds: 100))
-              .map((chunk) {
-                length += chunk.length;
-                if (length > 48000) throw const FormatException('生成内容过长');
-                return chunk;
-              })
-              .transform(const A2uiParserTransformer())) {
-        if (_disposed || epoch != _epoch) return;
-        if (event is A2uiMessageEvent) {
-          _applyMessage(event.message);
-          applied++;
-        } else if (event is TextEvent && event.text.trim().isNotEmpty) {
-          throw const FormatException('响应不是完整的界面协议');
-        }
-      }
-      if (_disposed || epoch != _epoch) return;
-      if (applied == 0) throw const FormatException('没有收到推荐界面');
-      records.add('界面更新：共 $applied 条消息，${components.length} 个组件');
-    } catch (e) {
-      if (!_disposed && epoch == _epoch) {
-        error = e is FormatException
-            ? e.message
-            : '推荐暂未完成，请检查模型服务后重试。已有结果仍可使用。';
-        if (e is! FormatException) records.add('错误：$e');
-      }
-    } finally {
-      if (!_disposed && epoch == _epoch) {
-        busy = false;
-        _token = null;
-        notifyListeners();
-      }
-    }
-  }
-
   void _applyMessage(a2ui.A2uiMessage message) {
     switch (message) {
       case a2ui.CreateSurfaceMessage m:
@@ -753,7 +713,7 @@ class ModuleDiscoverySession extends ChangeNotifier {
             .contextFor(discoverySurface)
             .dataModel
             .update(DataPath('/question'), question);
-        records.add('消息：更新 ${m.components.length} 项 → 共 ${next.length} 组件');
+        addRecord('消息：更新 ${m.components.length} 项 → 共 ${next.length} 组件');
       default:
         throw const FormatException('当前只接受创建与组件更新');
     }
@@ -767,7 +727,7 @@ class ModuleDiscoverySession extends ChangeNotifier {
     required String value,
     required String label,
   }) {
-    if (_disposed || busy || !hasSurface) return;
+    if (disposed || busy || !hasSurface) return;
     _preFilterComponents ??= {
       for (final entry in components.entries)
         entry.key: Map<String, dynamic>.from(entry.value),
@@ -775,27 +735,26 @@ class ModuleDiscoverySession extends ChangeNotifier {
     final filtered = _filterTree(by, value);
     if (filtered == null) {
       error = '本地过滤「$label」没有匹配的模块，可换个条件或清除过滤。';
-      notifyListeners();
+      notifyChanged();
       return;
     }
     _applyComponents(filtered);
     localFilterLabel = label;
     error = null;
-    records.add('本地过滤：$label（未调用模型）');
-    if (records.length > 20) records.removeRange(0, records.length - 20);
-    notifyListeners();
+    addRecord('本地过滤：$label（未调用模型）');
+    notifyChanged();
   }
 
   void clearLocalFilter() {
-    if (_disposed) return;
+    if (disposed) return;
     final restore = _preFilterComponents;
     _preFilterComponents = null;
     localFilterLabel = null;
     if (restore != null && hasSurface) {
       _applyComponents(restore);
-      records.add('已清除本地过滤');
+      addRecord('已清除本地过滤');
     }
-    notifyListeners();
+    notifyChanged();
   }
 
   Map<String, Map<String, dynamic>>? _filterTree(String by, String value) {
@@ -865,11 +824,9 @@ ModuleCard.moduleId、CompareTable.moduleIds、LearningPath.steps[].moduleId 必
 ''';
   @override
   void dispose() {
-    _disposed = true;
-    cancel();
+    super.dispose();
     unawaited(_events.cancel());
     controller.dispose();
     _source?.dispose();
-    super.dispose();
   }
 }

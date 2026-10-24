@@ -233,7 +233,15 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       depends: ['flutter_material', 'two_dimensional_scrollables'],
       validation: ['flutter analyze', 'flutter test test/modules/popup_table'],
     });
-    writeIndex({rel: 'lib/shared/genui/AI_ANALYSIS.md', id: 'flutter_forge_app.shared.genui', kind: 'shared_capability_index', entrypoints: ['model_source.dart', 'model_connection_dialog.dart'], owns: ['bounded_model_transport', 'ephemeral_model_connection_form'], depends: ['dio', 'flutter_material'], validation: ['flutter analyze']});
+    writeIndex({
+      rel: 'lib/shared/genui/AI_ANALYSIS.md',
+      id: 'flutter_forge_app.shared.genui',
+      kind: 'shared_capability_index',
+      entrypoints: ['model_source.dart', 'model_connection_dialog.dart', 'session_core.dart'],
+      owns: ['bounded_model_transport', 'ephemeral_model_connection_form', 'a2ui_session_run_state_machine'],
+      depends: ['dio', 'flutter_material', 'genui', 'a2ui_core'],
+      validation: ['flutter analyze', 'flutter test test/shared/genui_session_core_test.dart'],
+    });
     writeIndex({
       rel: 'lib/shared/workflows/AI_ANALYSIS.md',
       id: 'flutter_forge_app.shared.workflows', kind: 'shared_capability_index',

@@ -3,28 +3,31 @@ import 'dart:convert';
 
 import 'package:a2ui_core/a2ui_core.dart' as a2ui;
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:genui/genui.dart';
 
+import '../../../shared/genui/session_core.dart';
 import 'workbench_catalog.dart';
 import 'workbench_protocol.dart';
 import 'workbench_source.dart';
 
-class GenuiSession extends ChangeNotifier {
+const _explainPrompt = '解释当前结果';
+
+class GenuiSession extends GenuiSessionCore {
   GenuiSession({WorkbenchSource? source})
-    : _source = source ?? ReplayWorkbenchSource() {
+    : _source = source ?? ReplayWorkbenchSource(),
+      super(recordLimit: 40) {
     catalog = buildWorkbenchCatalog(this);
     controller = SurfaceController(catalogs: [catalog]);
     _submissions = controller.onSubmit.listen((message) {
-      if (_disposed) return;
+      if (disposed) return;
       final interactions = message.parts.uiInteractionParts;
       if (interactions.isEmpty) {
         error = 'SDK 无法处理当前组件或消息，请重置后重试。';
-        _changed();
+        notifyChanged();
         return;
       }
       _record('事件', interactions.first.interaction);
-      unawaited(submit('解释当前结果'));
+      unawaited(submit(_explainPrompt));
     });
   }
 
@@ -32,19 +35,13 @@ class GenuiSession extends ChangeNotifier {
   late final SurfaceController controller;
   late final StreamSubscription<ChatMessage> _submissions;
   WorkbenchSource _source;
-  CancelToken? _cancelToken;
-  bool _disposed = false;
-  bool _notificationPending = false;
-  int _epoch = 0;
+  int _sentRevision = 0;
   int revision = 0;
   int? observationRevision;
   int? explanationRevision;
   double? actualWidth;
   double? actualHeight;
-  bool busy = false;
-  String? error;
   String lastPrompt = '';
-  final List<String> records = [];
   Map<String, Map<String, dynamic>> _components = {};
 
   bool get hasSurface =>
@@ -73,18 +70,18 @@ class GenuiSession extends ChangeNotifier {
   };
 
   void updateParameter(String field, Object? next) {
-    if (_disposed || !hasSurface) return;
+    if (disposed || !hasSurface) return;
     final validated = validateExperimentValue(field, next);
     if (value(field) == validated) return;
     dataModel.update(DataPath('/$field'), validated);
     revision++;
     observationRevision = null;
     _record('状态', '$field = $validated · v$revision');
-    _changed();
+    notifyChanged();
   }
 
   void observe(int measuredRevision, double width, double height) {
-    if (_disposed || measuredRevision != revision || !hasSurface) return;
+    if (disposed || measuredRevision != revision || !hasSurface) return;
     if (observationRevision == revision &&
         actualWidth == width &&
         actualHeight == height) {
@@ -93,7 +90,7 @@ class GenuiSession extends ChangeNotifier {
     actualWidth = width;
     actualHeight = height;
     observationRevision = revision;
-    _changed();
+    notifyChanged();
   }
 
   void explain(CatalogItemContext context) {
@@ -113,15 +110,7 @@ class GenuiSession extends ChangeNotifier {
     _source = source;
     error = null;
     _record('模式', source.label);
-    _changed();
-  }
-
-  void cancel() {
-    _epoch++;
-    _cancelToken?.cancel('cancelled');
-    _cancelToken = null;
-    busy = false;
-    _changed();
+    notifyChanged();
   }
 
   void reset() {
@@ -140,88 +129,82 @@ class GenuiSession extends ChangeNotifier {
     error = null;
     lastPrompt = '';
     records.clear();
-    _changed();
+    notifyChanged();
   }
 
-  Future<void> submit(String prompt) async {
-    prompt = prompt.trim();
-    if (_disposed || busy || prompt.isEmpty) return;
-    if (prompt.length > 2000) {
-      error = '问题请控制在 2000 字以内。';
-      _changed();
-      return;
-    }
+  @override
+  WorkbenchSource get activeSource => _source;
+
+  @override
+  bool get silentEmptyPrompt => true;
+
+  @override
+  String? submitGuard(String prompt) {
+    if (prompt.length > 2000) return '问题请控制在 2000 字以内。';
     if (hasExperiment && !observationReady) {
-      error = '等待当前布局观测完成后再提交。';
-      _changed();
-      return;
+      return '等待当前布局观测完成后再提交。';
     }
-    final epoch = ++_epoch;
-    final token = _cancelToken = CancelToken();
-    final source = _source;
-    final sentRevision = revision;
-    busy = true;
-    error = null;
-    lastPrompt = prompt;
-    _record('请求', prompt);
-    _changed();
-    var received = 0;
-    var length = 0;
-    try {
-      final request = WorkbenchRequest(
-        prompt: prompt,
-        snapshot: snapshot,
-        components: _components.values.toList(),
-        systemPrompt: _systemPrompt,
-      );
-      // Use the SDK's public parser directly so malformed stream errors are
-      // awaited here, rather than escaping a separate broadcast subscription.
-      final events = source
-          .generate(request, token)
-          .timeout(const Duration(seconds: 100))
-          .map((chunk) {
-            length += chunk.length;
-            if (length > 64000) throw const FormatException('本次生成超出 64K 字符限制。');
-            return chunk;
-          })
-          .transform(const A2uiParserTransformer());
-      await for (final event in events) {
-        if (_disposed || epoch != _epoch) return;
-        if (event is A2uiMessageEvent) {
-          _apply(event.message);
-          received++;
-          _record('消息', jsonEncode(event.message.toJson()));
-        } else if (event is TextEvent && event.text.trim().isNotEmpty) {
-          throw const FormatException('响应含有不完整或非协议内容，请重试。');
+    return null;
+  }
+
+  @override
+  WorkbenchRequest buildRequest(String prompt) => WorkbenchRequest(
+    prompt: prompt,
+    snapshot: snapshot,
+    components: _components.values.toList(),
+    systemPrompt: _systemPrompt,
+  );
+
+  @override
+  void applyStreamMessage(a2ui.A2uiMessage message) => _apply(message);
+
+  @override
+  int get maxGeneratedChars => 64000;
+
+  @override
+  String get generatedOverflowMessage => '本次生成超出 64K 字符限制。';
+
+  @override
+  String get textLeakMessage => '响应含有不完整或非协议内容，请重试。';
+
+  @override
+  String get emptyResultMessage => '响应未包含可用的 A2UI v0.9 消息。';
+
+  @override
+  String get fallbackError => '生成失败，请检查模型端点、认证、跨域与网络后重试。';
+
+  @override
+  String describeError(Object cause) => cause is FormatException
+      ? cause.message
+      : cause is TimeoutException
+      ? '生成超时，请重试或切换回放。'
+      : cause is DioException
+      ? switch (cause.response?.statusCode) {
+          401 || 403 => '模型服务拒绝认证，请检查临时访问令牌。',
+          429 => '模型服务正忙或额度受限，请稍后重试。',
+          502 => '桥接中的 Codex 调用失败，请检查 CLI 登录、可用模型和额度。',
+          null => '无法连接模型服务（${cause.type.name}），请检查端点与网络。',
+          final status => '模型服务返回 HTTP $status，请检查服务配置。',
         }
-      }
-      if (_disposed || epoch != _epoch) return;
-      if (received == 0) throw const FormatException('响应未包含可用的 A2UI v0.9 消息。');
-      if (prompt == '解释当前结果') explanationRevision = sentRevision;
-    } catch (e) {
-      if (!_disposed && epoch == _epoch) {
-        error = e is FormatException
-            ? e.message
-            : e is TimeoutException
-            ? '生成超时，请重试或切换回放。'
-            : e is DioException
-            ? switch (e.response?.statusCode) {
-                401 || 403 => '模型服务拒绝认证，请检查临时访问令牌。',
-                429 => '模型服务正忙或额度受限，请稍后重试。',
-                502 => '桥接中的 Codex 调用失败，请检查 CLI 登录、可用模型和额度。',
-                final int status => '模型服务返回 HTTP $status，请检查服务配置。',
-                null => '无法连接模型服务（${e.type.name}），请检查端点与网络。',
-              }
-            : '生成失败，请检查模型端点、认证、跨域与网络后重试。';
-        _record('错误', error!);
-      }
-    } finally {
-      if (!_disposed && epoch == _epoch) {
-        busy = false;
-        _cancelToken = null;
-        _changed();
-      }
-    }
+      : fallbackError;
+
+  @override
+  void recordError(Object cause, String message) => _record('错误', message);
+
+  @override
+  void onRunStarted(String prompt) {
+    lastPrompt = prompt;
+    _sentRevision = revision;
+    _record('请求', prompt);
+  }
+
+  @override
+  void onMessageApplied(a2ui.A2uiMessage message) =>
+      _record('消息', jsonEncode(message.toJson()));
+
+  @override
+  void onSuccess(String prompt, int appliedMessages) {
+    if (prompt == _explainPrompt) explanationRevision = _sentRevision;
   }
 
   void _apply(a2ui.A2uiMessage message) {
@@ -266,7 +249,7 @@ class GenuiSession extends ChangeNotifier {
       default:
         throw const FormatException('未知消息类型。');
     }
-    _changed();
+    notifyChanged();
   }
 
   String get _systemPrompt =>
@@ -285,30 +268,13 @@ ${jsonEncode(catalog.items.map((item) => item.dataSchema.value).toList())}
 首次消息示例：${jsonEncode(initialMessages())}
 ''';
 
-  void _record(String kind, String content) {
-    records.add(
-      '$kind · ${content.length > 4000 ? '${content.substring(0, 4000)}…' : content}',
-    );
-    if (records.length > 40) records.removeAt(0);
-  }
-
-  void _changed() {
-    if (_disposed || _notificationPending) return;
-    _notificationPending = true;
-    scheduleMicrotask(() {
-      _notificationPending = false;
-      if (!_disposed) notifyListeners();
-    });
-  }
+  void _record(String kind, String content) => addRecord('$kind · $content');
 
   @override
   void dispose() {
-    _disposed = true;
-    _epoch++;
-    _cancelToken?.cancel('disposed');
+    super.dispose();
     unawaited(_submissions.cancel());
     controller.dispose();
     _source.dispose();
-    super.dispose();
   }
 }
