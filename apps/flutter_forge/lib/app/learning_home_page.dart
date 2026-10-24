@@ -29,6 +29,7 @@ class LearningHomePage extends StatelessWidget {
         ModuleDiscoveryPanel(
           modules: modules,
           platform: platform ?? AppPlatformSnapshot.detect(),
+          recentPaths: history,
         ),
         Text('探索与查阅', style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 8),

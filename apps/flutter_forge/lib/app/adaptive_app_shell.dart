@@ -12,6 +12,8 @@ import '../module_registry/app_platform_snapshot.dart';
 import 'desktop_workbench_shell.dart';
 import 'desktop_window_host.dart';
 import 'forge_bubble_navigation.dart';
+import 'forge_nav_tile.dart';
+import 'forge_selectable_list.dart';
 import 'theme/theme_mode_button.dart';
 import 'theme/forge_theme_tokens.dart';
 import 'theme/forge_glass.dart';
@@ -377,9 +379,11 @@ class _Sidebar extends StatelessWidget {
                                 ValueKey('sidebar-destination:$index'),
                           ),
                         )
-                      : ListView.builder(
+                      : ForgeSelectableList(
                           itemCount: _destinations.length,
-                          itemBuilder: (context, index) {
+                          selectedIndex: selectedIndex,
+                          onActivate: onDestinationSelected,
+                          itemBuilder: (context, index, keyboardActive) {
                             final destination = _destinations[index];
                             final native = context.forgeColors.desktop;
                             return Padding(
@@ -387,27 +391,12 @@ class _Sidebar extends StatelessWidget {
                                 horizontal: native ? 8 : 0,
                                 vertical: native ? 2 : 0,
                               ),
-                              child: ListTile(
+                              child: ForgeNavTile(
                                 key: ValueKey('sidebar-destination:$index'),
-                                dense: native,
-                                minTileHeight: native ? 32 : null,
-                                minLeadingWidth: native ? 18 : null,
-                                horizontalTitleGap: native ? 8 : null,
-                                shape: native
-                                    ? RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(6),
-                                      )
-                                    : null,
-                                selectedTileColor: native
-                                    ? Theme.of(context).colorScheme.primary
-                                          .withValues(alpha: 0.12)
-                                    : null,
+                                label: destination.label,
+                                icon: destination.icon,
+                                keyboardActive: keyboardActive,
                                 selected: index == selectedIndex,
-                                leading: Icon(
-                                  destination.icon,
-                                  size: native ? 18 : null,
-                                ),
-                                title: Text(destination.label),
                                 onTap: () => onDestinationSelected(index),
                               ),
                             );

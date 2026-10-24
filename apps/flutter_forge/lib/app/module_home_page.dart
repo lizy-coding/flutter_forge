@@ -9,7 +9,7 @@ import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
 import '../module_registry/module_catalog_utils.dart';
 import '../shared/multi_window/multi_window_manager.dart';
-import 'theme/forge_glass.dart';
+import 'forge_pressable_card.dart';
 import 'theme/forge_theme_tokens.dart';
 import 'navigation_session.dart';
 
@@ -266,94 +266,87 @@ class ModuleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final available = isModuleAvailable(module, platform);
     final concepts = module.concepts.take(3);
-    if (platform.hostFamily == AppHostFamily.desktop) {
-      return ForgeShellSurface(
-        radius: 8,
-        child: ListTile(
-          key: ValueKey('module:${module.path}'),
-          minVerticalPadding: 12,
-          leading: Icon(module.category.icon, size: 20),
-          title: Text(module.title),
-          subtitle: Text(
-            available ? module.subtitle : '当前平台暂不支持此模块',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: Text(
-            '${module.difficulty.label} · ${module.estimatedMinutes} 分钟',
-          ),
-          onTap: () => context.go(module.path),
-        ),
-      );
-    }
-    return ForgeCard(
-      child: InkWell(
-        key: ValueKey('module:${module.path}'),
-        borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          if (platform.hostFamily == AppHostFamily.desktop) {
-            context.go(module.path);
-          } else {
-            unawaited(context.push(module.path));
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      module.title,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  Chip(
-                    visualDensity: VisualDensity.compact,
-                    label: Text(module.difficulty.label),
-                  ),
-                  if (platform.isWeb)
-                    IconButton(
-                      key: ValueKey('open-tab:${module.path}'),
-                      tooltip: '在新标签页打开',
-                      visualDensity: VisualDensity.compact,
-                      onPressed: () => launchUrl(
-                        Uri.base.replace(fragment: module.path),
-                        webOnlyWindowName: '_blank',
-                      ),
-                      icon: const Icon(Icons.open_in_new_rounded, size: 19),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
+    final desktop = platform.hostFamily == AppHostFamily.desktop;
+    return ForgePressableCard(
+      key: ValueKey('module:${module.path}'),
+      radius: desktop ? 8 : 12,
+      onTap: () {
+        if (desktop) {
+          context.go(module.path);
+        } else {
+          unawaited(context.push(module.path));
+        }
+      },
+      child: desktop
+          ? ListTile(
+              minVerticalPadding: 12,
+              leading: Icon(module.category.icon, size: 20),
+              title: Text(module.title),
+              subtitle: Text(
                 available ? module.subtitle : '当前平台暂不支持此模块',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 6,
-                runSpacing: 4,
+              trailing: Text(
+                '${module.difficulty.label} · ${module.estimatedMinutes} 分钟',
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (final concept in concepts)
-                    Chip(
-                      visualDensity: VisualDensity.compact,
-                      label: Text(concept),
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          module.title,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                      Chip(
+                        visualDensity: VisualDensity.compact,
+                        label: Text(module.difficulty.label),
+                      ),
+                      if (platform.isWeb)
+                        IconButton(
+                          key: ValueKey('open-tab:${module.path}'),
+                          tooltip: '在新标签页打开',
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => launchUrl(
+                            Uri.base.replace(fragment: module.path),
+                            webOnlyWindowName: '_blank',
+                          ),
+                          icon: const Icon(Icons.open_in_new_rounded, size: 19),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    available ? module.subtitle : '当前平台暂不支持此模块',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: [
+                      for (final concept in concepts)
+                        Chip(
+                          visualDensity: VisualDensity.compact,
+                          label: Text(concept),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '预计 ${module.estimatedMinutes} 分钟 · ${module.status.label}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
-              const SizedBox(height: 6),
-              Text(
-                '预计 ${module.estimatedMinutes} 分钟 · ${module.status.label}',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

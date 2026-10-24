@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import 'app_theme_selection.dart';
+import 'forge_interaction_tokens.dart';
 import 'forge_theme_tokens.dart';
 
 @immutable
@@ -70,6 +71,7 @@ abstract final class AppTheme {
     final colors = dark ? definition.darkScheme : definition.lightScheme;
     final tokens = (dark ? definition.darkTokens : definition.lightTokens)
         .copyWith(desktop: desktop);
+    final interaction = ForgeInteractionTokens.fromScheme(colors);
     return ThemeData(
       platform: desktop ? TargetPlatform.windows : null,
       brightness: brightness,
@@ -78,7 +80,7 @@ abstract final class AppTheme {
       materialTapTargetSize: desktop
           ? MaterialTapTargetSize.shrinkWrap
           : MaterialTapTargetSize.padded,
-      extensions: [tokens],
+      extensions: [tokens, interaction],
       useMaterial3: true,
       scaffoldBackgroundColor: tokens.glass
           ? Colors.transparent

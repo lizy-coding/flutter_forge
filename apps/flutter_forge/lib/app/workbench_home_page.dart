@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../module_registry/app_platform_snapshot.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/module_entry.dart';
+import 'forge_pressable_card.dart';
 import 'module_quick_open.dart';
-import 'theme/forge_glass.dart';
 import 'workbench_history.dart';
 import 'navigation_session.dart';
 
@@ -33,7 +33,11 @@ class WorkbenchHomePage extends StatelessWidget {
       key: const PageStorageKey('workbench-home-scroll'),
       padding: const EdgeInsets.all(28),
       children: [
-        ModuleDiscoveryPanel(modules: modules, platform: platform),
+        ModuleDiscoveryPanel(
+          modules: modules,
+          platform: platform,
+          recentPaths: paths,
+        ),
         Row(
           children: [
             Expanded(
@@ -60,15 +64,15 @@ class WorkbenchHomePage extends StatelessWidget {
         for (final module in recent)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: ForgeShellSurface(
+            child: ForgePressableCard(
+              key: ValueKey('recent:${module.path}'),
               radius: 8,
+              onTap: () => context.go(module.path),
               child: ListTile(
-                key: ValueKey('recent:${module.path}'),
                 leading: Icon(module.category.icon, size: 20),
                 title: Text(module.title),
                 subtitle: Text(module.category.label),
                 trailing: const Icon(Icons.arrow_forward, size: 18),
-                onTap: () => context.go(module.path),
               ),
             ),
           ),
@@ -78,16 +82,16 @@ class WorkbenchHomePage extends StatelessWidget {
         for (final category in ModuleCategory.values)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: ForgeShellSurface(
+            child: ForgePressableCard(
+              key: ValueKey('workbench-category:${category.name}'),
               radius: 8,
+              onTap: () => context.go('/category/${category.name}'),
               child: ListTile(
-                key: ValueKey('workbench-category:${category.name}'),
                 leading: Icon(category.icon, size: 20),
                 title: Text(category.label),
                 trailing: Text(
                   '${modules.where((module) => module.category == category).length} 个模块',
                 ),
-                onTap: () => context.go('/category/${category.name}'),
               ),
             ),
           ),

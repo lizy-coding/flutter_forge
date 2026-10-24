@@ -20,6 +20,7 @@
     "module_discovery_panel.dart",
     "module_discovery_surface.dart",
     "module_discovery_session.dart",
+    "module_discovery_replay.dart",
     "workbench_history.dart",
     "workbench_home_page.dart",
     "learning_home_page.dart",
@@ -70,7 +71,10 @@
     "two_level_module_navigation",
     "recent_module_history",
     "desktop_quick_open",
-    "generated_module_discovery"
+    "generated_module_discovery",
+    "discovery_progressive_apply",
+    "discovery_local_filter",
+    "discovery_offline_replay"
   ],
   "depends": [
     "go_router",

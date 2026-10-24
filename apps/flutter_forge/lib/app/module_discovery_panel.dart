@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../module_registry/module_entry.dart';
 import '../module_registry/app_platform_snapshot.dart';
 import '../shared/genui/model_connection_dialog.dart';
+import 'module_discovery_replay.dart';
 import 'module_discovery_session.dart';
 import 'module_discovery_surface.dart';
 
@@ -14,10 +15,12 @@ class ModuleDiscoveryPanel extends StatefulWidget {
     required this.modules,
     required this.platform,
     this.session,
+    this.recentPaths = const [],
   });
   final List<ModuleEntry> modules;
   final AppPlatformSnapshot platform;
   final ModuleDiscoverySession? session;
+  final List<String> recentPaths;
   @override
   State<ModuleDiscoveryPanel> createState() => _ModuleDiscoveryPanelState();
 }
@@ -28,7 +31,14 @@ class _ModuleDiscoveryPanelState extends State<ModuleDiscoveryPanel> {
       ModuleDiscoverySession(
         modules: widget.modules,
         platform: widget.platform,
+        recentPaths: widget.recentPaths,
         openModule: (path) => context.go(path),
+        // Visitors get the labelled offline replay; the toolbar button swaps
+        // in a live model source.
+        source: ReplayDiscoverySource(
+          modules: widget.modules,
+          platform: widget.platform,
+        ),
       );
   final question = TextEditingController();
   bool focused = false;
@@ -44,8 +54,7 @@ class _ModuleDiscoveryPanelState extends State<ModuleDiscoveryPanel> {
 
   Future<void> submit() async {
     if (question.text.trim().isEmpty) return;
-    if (!session.connected) await connect();
-    if (mounted && session.connected) await session.submit(question.text);
+    await session.submit(question.text);
   }
 
   @override
@@ -87,7 +96,7 @@ class _ModuleDiscoveryPanelState extends State<ModuleDiscoveryPanel> {
                   const Spacer(),
                   IconButton(
                     onPressed: session.busy ? null : connect,
-                    tooltip: session.connected ? '更换模型服务' : '连接模型服务',
+                    tooltip: session.connected ? '更换模型服务' : '连接真实模型',
                     icon: const Icon(Icons.tune_rounded, size: 20),
                   ),
                 ],
@@ -141,14 +150,14 @@ class _ModuleDiscoveryPanelState extends State<ModuleDiscoveryPanel> {
                             Icon(
                               session.connected
                                   ? Icons.check_circle_outline_rounded
-                                  : Icons.circle_outlined,
+                                  : Icons.replay_rounded,
                               size: 14,
                               color: colors.onSurfaceVariant,
                             ),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                session.connected ? '模型已连接' : '首次探索时连接模型',
+                                session.connected ? '模型已连接' : '固定回放 · 未调用模型',
                                 style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(color: colors.onSurfaceVariant),
                               ),
@@ -256,10 +265,51 @@ class _ModuleDiscoveryPanelState extends State<ModuleDiscoveryPanel> {
                       ),
                     if (session.hasSurface) ...[
                       const SizedBox(height: 28),
-                      Text(
-                        '为这次好奇，找到入口',
-                        style: Theme.of(context).textTheme.titleMedium,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '为这次好奇，找到入口',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          if (session.isReplay)
+                            Container(
+                              key: const ValueKey('discovery-replay-badge'),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: colors.outlineVariant,
+                                ),
+                              ),
+                              child: Text(
+                                '固定回放',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: colors.onSurfaceVariant),
+                              ),
+                            ),
+                        ],
                       ),
+                      if (session.localFilterLabel != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: InputChip(
+                              key: const ValueKey('discovery-filter-chip'),
+                              label: Text('本地过滤：${session.localFilterLabel}'),
+                              tooltip: '清除本地过滤，恢复完整推荐',
+                              deleteIcon: const Icon(Icons.close, size: 18),
+                              onDeleted: session.busy
+                                  ? null
+                                  : session.clearLocalFilter,
+                            ),
+                          ),
+                        ),
                       const SizedBox(height: 12),
                       Surface(
                         surfaceContext: session.controller.contextFor(

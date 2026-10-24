@@ -1,6 +1,7 @@
 import Cocoa
 import FlutterMacOS
 import desktop_multi_window
+import UniformTypeIdentifiers
 
 @main
 class AppDelegate: FlutterAppDelegate {
@@ -149,7 +150,20 @@ class AppDelegate: FlutterAppDelegate {
     panel.canChooseDirectories = false
     panel.allowsMultipleSelection = false
     if !extensions.isEmpty {
-      panel.allowedFileTypes = extensions
+      // UTType(filenameExtension:) yields a dynamic type for unregistered
+      // extensions such as gcode/nc, which the panel matches by extension
+      // just like the legacy allowedFileTypes filter (deprecated in macOS 12).
+      // Callers may pass extensions with a leading dot; normalize like the
+      // Dart file_selector path does so the filter still applies.
+      let allowedTypes = extensions.compactMap { extensionName -> UTType? in
+        let normalized = extensionName.hasPrefix(".")
+          ? String(extensionName.dropFirst())
+          : extensionName
+        return UTType(filenameExtension: normalized)
+      }
+      if !allowedTypes.isEmpty {
+        panel.allowedContentTypes = allowedTypes
+      }
     }
 
     guard panel.runModal() == .OK else {
