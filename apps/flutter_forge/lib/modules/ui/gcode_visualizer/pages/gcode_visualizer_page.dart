@@ -67,66 +67,72 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
   }
 
   Widget _buildInteractiveDemo(BuildContext context) {
-    final isWide = MediaQuery.of(context).size.width > 700;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Decide by the width this demo actually receives: the desktop shell
+        // can leave much less than the window width, and the side-by-side
+        // panel needs enough room for its playback controls row.
+        final isWide = constraints.maxWidth > 700;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              Icons.speed,
-              size: 18,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '交互演示',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        if (isWide)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 320,
-                  child: GcodeCanvas(
-                    segments: _controller.segments,
-                    progress: _controller.progress,
-                    errorCount: _controller.errorCount,
-                    commandCount: _controller.totalCommands,
+            Row(
+              children: [
+                Icon(
+                  Icons.speed,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '交互演示',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (isWide)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: SizedBox(
+                      height: 320,
+                      child: GcodeCanvas(
+                        segments: _controller.segments,
+                        progress: _controller.progress,
+                        errorCount: _controller.errorCount,
+                        commandCount: _controller.totalCommands,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(child: _buildRightPanel(context)),
+                ],
+              )
+            else
+              Column(
+                children: [
+                  SizedBox(
+                    height: 280,
+                    child: GcodeCanvas(
+                      segments: _controller.segments,
+                      progress: _controller.progress,
+                      errorCount: _controller.errorCount,
+                      commandCount: _controller.totalCommands,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildRightPanel(context),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(child: _buildRightPanel(context)),
-            ],
-          )
-        else
-          Column(
-            children: [
-              SizedBox(
-                height: 280,
-                child: GcodeCanvas(
-                  segments: _controller.segments,
-                  progress: _controller.progress,
-                  errorCount: _controller.errorCount,
-                  commandCount: _controller.totalCommands,
-                ),
-              ),
-              const SizedBox(height: 12),
-              _buildRightPanel(context),
-            ],
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 
