@@ -16,6 +16,8 @@ dependencies:
     path: ../../packages/usb_network_bridge
   flutter_battery:
     path: ../../packages/flutter_battery
+  usb_detector_bridge:
+    path: ../../packages/usb_detector_bridge
   gcode_core:
     git:
       url: https://github.com/lizy-coding/gcode_core.git
