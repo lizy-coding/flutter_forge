@@ -257,4 +257,110 @@ void main() {
       '兜底错误',
     );
   });
+
+  test(
+    'cancelling mid-stream keeps the applied prefix and drops the tail',
+    () async {
+      final source = HeldSource();
+      final session = CoreTestSession(source);
+      final pending = session.submit('hello');
+      source.streams.single.add(createLine);
+      await pumpEventQueue();
+      session.cancel();
+      source.streams.single
+        ..add(updateLine(2))
+        ..addError(StateError('late failure'));
+      await source.streams.single.close();
+      await pending;
+
+      expect(session.applied, ['create:cat']);
+      expect(session.cancelCount, 1);
+      expect(session.error, isNull);
+      expect(session.busy, isFalse);
+    },
+  );
+
+  test('a source failure mid-stream keeps the applied prefix', () async {
+    final source = HeldSource();
+    final session = CoreTestSession(source);
+    final pending = session.submit('hello');
+    source.streams.single
+      ..add(createLine)
+      ..add(updateLine(1));
+    await pumpEventQueue();
+    source.streams.single.addError(StateError('bridge died'));
+    await source.streams.single.close();
+    await pending;
+
+    expect(session.applied, ['create:cat', 'update:1']);
+    expect(session.error, '兜底错误');
+    expect(session.busy, isFalse);
+  });
+
+  test('dispose mid-run freezes applied state without throwing', () async {
+    final source = HeldSource();
+    final session = CoreTestSession(source);
+    final pending = session.submit('hello');
+    source.streams.single.add(createLine);
+    await pumpEventQueue();
+    session.dispose();
+    source.streams.single
+      ..add(updateLine(2))
+      ..addError(StateError('after dispose'));
+    await source.streams.single.close();
+    await pending;
+
+    expect(session.disposed, isTrue);
+    expect(session.applied, ['create:cat']);
+    expect(session.error, isNull);
+  });
+
+  test('a submit after cancel runs a fresh epoch to success', () async {
+    final held = HeldSource();
+    final session = CoreTestSession(held);
+    final first = session.submit('hello');
+    session.cancel();
+    await held.streams.single.close();
+    await first;
+    expect(session.applied, isEmpty);
+
+    held.streams.add(StreamController<String>());
+    // The second submit creates its own controller; feed THAT stream.
+    final second = session.submit('again');
+    held.streams.last
+      ..add(createLine)
+      ..add(updateLine(3));
+    await held.streams.last.close();
+    await second;
+
+    expect(session.error, isNull);
+    expect(session.successCount, 2);
+    expect(session.applied, ['create:cat', 'update:3']);
+  });
+
+  test(
+    'non-local plaintext endpoints are rejected before any request',
+    () async {
+      final source = OpenAiWorkbenchSource(
+        endpoint: Uri.parse('http://insecure.example.com/v1/chat/completions'),
+        model: 'test-model',
+        token: 'token',
+      );
+      addTearDown(source.dispose);
+      await expectLater(
+        source
+            .generate(
+              const WorkbenchRequest(
+                prompt: 'q',
+                snapshot: {},
+                components: [],
+                systemPrompt: 's',
+              ),
+              CancelToken(),
+            )
+            .drain<void>(),
+        throwsFormatException,
+      );
+    },
+  );
 }

@@ -292,7 +292,7 @@
       "targets": [
         "desktop_multi_window",
         "lib/shared/multi_window",
-        "lib/app/category_navigation"
+        "lib/app/module_home_page.dart"
       ],
       "acceptance": [
         "three_category_windows",
@@ -538,7 +538,6 @@
     "teaching_ui_change:visual_evidence"
   ],
   "deferred_queue": [
-    "popup_widgets_decomposition",
     "widget_test_coverage",
     "recommended_module_visual_evidence",
     "flutter_scene_3d_model_loading",

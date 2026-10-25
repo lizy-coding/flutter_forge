@@ -77,7 +77,7 @@ function writeProjectDocuments({ writeJson, workspacePackages, facts }) {
       platform_rules: {
         router_platform_api: 'forbidden',
         module_host_navigation: 'forbidden',
-        desktop_window_policy: 'lib/app/category_navigation.dart',
+        desktop_window_policy: 'lib/app/module_home_page.dart',
         navigation_policy: 'lib/app/navigation_policy.dart',
         compact_width_breakpoint_dp: 600,
         desktop_shell: {

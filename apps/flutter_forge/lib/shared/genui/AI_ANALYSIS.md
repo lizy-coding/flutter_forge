@@ -15,14 +15,16 @@
   ],
   "owns": [
     "bounded_model_transport",
-    "ephemeral_model_connection_form",
+    "model_connection_form_with_remembered_endpoint",
+    "ephemeral_access_token",
     "a2ui_session_run_state_machine"
   ],
   "depends": [
     "dio",
     "flutter_material",
     "genui",
-    "a2ui_core"
+    "a2ui_core",
+    "shared_preferences"
   ],
   "children": [],
   "contracts": {
@@ -32,6 +34,6 @@
   },
   "validation": [
     "flutter analyze",
-    "flutter test test/shared/genui_session_core_test.dart"
+    "flutter test test/shared/genui_session_core_test.dart test/shared/model_connection_dialog_test.dart"
   ]
 }

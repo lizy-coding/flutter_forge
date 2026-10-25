@@ -207,7 +207,7 @@ function writePlan({ writeJson, workspacePackages }) {
           id: 'pc_window_lifecycle_baseline',
           priority: 3,
           status: 'completed',
-          targets: ['desktop_multi_window', 'lib/shared/multi_window', 'lib/app/category_navigation'],
+          targets: ['desktop_multi_window', 'lib/shared/multi_window', 'lib/app/module_home_page.dart'],
           acceptance: ['three_category_windows', 'close_reopen', 'no_black_surface', 'no_invalid_engine_handle'],
         },
         {
@@ -440,7 +440,6 @@ function writePlan({ writeJson, workspacePackages }) {
         'teaching_ui_change:visual_evidence',
       ],
       deferred_queue: [
-        'popup_widgets_decomposition',
         'widget_test_coverage',
         'recommended_module_visual_evidence',
         'flutter_scene_3d_model_loading',

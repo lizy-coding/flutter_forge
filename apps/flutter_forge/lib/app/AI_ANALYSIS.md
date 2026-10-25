@@ -30,7 +30,6 @@
     "creator_profile.dart",
     "module_home_page.dart",
     "unsupported_module_page.dart",
-    "category_navigation.dart",
     "navigation_policy.dart",
     "category_window_app.dart",
     "theme/app_theme.dart",

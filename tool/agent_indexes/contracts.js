@@ -185,7 +185,7 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       rel: 'lib/app/AI_ANALYSIS.md',
       id: 'flutter_forge_app.app',
       kind: 'app_index',
-      entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'forge_bubble_navigation.dart', 'desktop_window_host.dart', 'desktop_workbench_shell.dart', 'module_quick_open.dart', 'module_discovery_panel.dart', 'module_discovery_surface.dart', 'module_discovery_session.dart', 'module_discovery_replay.dart', 'workbench_history.dart', 'workbench_home_page.dart', 'learning_home_page.dart', 'navigation_session.dart', 'module_search.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'category_navigation.dart', 'navigation_policy.dart', 'category_window_app.dart', 'theme/app_theme.dart', 'theme/app_theme_selection.dart', 'theme/app_theme_controller.dart', 'theme/forge_theme_tokens.dart', 'theme/forge_glass.dart', 'theme/theme_mode_button.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
+      entrypoints: ['app.dart', 'app_bootstrap.dart', 'app_platform_provider.dart', 'adaptive_app_shell.dart', 'forge_bubble_navigation.dart', 'desktop_window_host.dart', 'desktop_workbench_shell.dart', 'module_quick_open.dart', 'module_discovery_panel.dart', 'module_discovery_surface.dart', 'module_discovery_session.dart', 'module_discovery_replay.dart', 'workbench_history.dart', 'workbench_home_page.dart', 'learning_home_page.dart', 'navigation_session.dart', 'module_search.dart', 'creator_home_page.dart', 'creator_profile.dart', 'module_home_page.dart', 'unsupported_module_page.dart', 'navigation_policy.dart', 'category_window_app.dart', 'theme/app_theme.dart', 'theme/app_theme_selection.dart', 'theme/app_theme_controller.dart', 'theme/forge_theme_tokens.dart', 'theme/forge_glass.dart', 'theme/theme_mode_button.dart', 'router/app_router.dart', 'router/app_route_table.dart'],
       owns: ['host_bootstrap', 'platform_snapshot_injection', 'material_app_router', 'router', 'web_mobile_learning_home', 'desktop_workbench_home', 'creator_about', 'module_catalog', 'shared_module_metadata_search', 'session_navigation_positions', 'native_window_material', 'unsupported_module_route', 'responsive_navigation_shell', 'adaptive_category_navigation', 'desktop_category_window_shell', 'category_router_lifecycle', 'light_dark_theme', 'theme_palette_catalog', 'theme_semantic_tokens', 'theme_preference_persistence', 'cross_window_theme_sync', 'shared_desktop_window_commands', 'immersive_titlebar', 'native_fullscreen_toggle', 'titlebar_home_navigation', 'two_level_module_navigation', 'recent_module_history', 'desktop_quick_open', 'generated_module_discovery', 'discovery_progressive_apply', 'discovery_local_filter', 'discovery_offline_replay'],
       depends: ['go_router', 'flutter_riverpod', 'url_launcher', 'liquid_glass_easy', 'module_registry', 'shared/multi_window', 'shared/genui', 'genui', 'a2ui_core', 'json_schema_builder', 'dio', 'modules'],
       children: ['router/AI_ANALYSIS.md'],
@@ -238,9 +238,9 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       id: 'flutter_forge_app.shared.genui',
       kind: 'shared_capability_index',
       entrypoints: ['model_source.dart', 'model_connection_dialog.dart', 'session_core.dart'],
-      owns: ['bounded_model_transport', 'ephemeral_model_connection_form', 'a2ui_session_run_state_machine'],
-      depends: ['dio', 'flutter_material', 'genui', 'a2ui_core'],
-      validation: ['flutter analyze', 'flutter test test/shared/genui_session_core_test.dart'],
+      owns: ['bounded_model_transport', 'model_connection_form_with_remembered_endpoint', 'ephemeral_access_token', 'a2ui_session_run_state_machine'],
+      depends: ['dio', 'flutter_material', 'genui', 'a2ui_core', 'shared_preferences'],
+      validation: ['flutter analyze', 'flutter test test/shared/genui_session_core_test.dart test/shared/model_connection_dialog_test.dart'],
     });
     writeIndex({
       rel: 'lib/shared/workflows/AI_ANALYSIS.md',
