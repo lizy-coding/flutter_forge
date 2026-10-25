@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 import 'package:flutter_forge_app/modules/ui/genui_workbench/genui_session.dart';
@@ -204,6 +205,52 @@ void main() {
       session.dispose();
     },
   );
+
+  testWidgets('observation transcript keeps machine dump out of semantics', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    final session = GenuiSession();
+    await tester.runAsync(() => session.submit('为什么设置宽度却没有生效？'));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: GenuiWorkbenchPage(session: session)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('观察生成过程'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('观察生成过程'));
+    await tester.pumpAndSettle();
+    // 可见内容不变：快照 JSON 仍渲染在页面上。
+    expect(find.textContaining('状态 · {'), findsOneWidget);
+    // 语义树上：机器 JSON 不暴露；转写文本（走 value 属性）仍可达。
+    String semanticsText(SemanticsNode node) {
+      final buffer = StringBuffer();
+      bool visit(SemanticsNode current) {
+        final data = current.getSemanticsData();
+        buffer
+          ..write(data.label)
+          ..write(' ')
+          ..write(data.value);
+        current.visitChildren(visit);
+        return true;
+      }
+
+      visit(node);
+      return buffer.toString();
+    }
+
+    // rootPipelineOwner 上不挂语义 owner；从根 RenderObject 的已构建语义节点取树根。
+    final root = tester.binding.renderViews.first.debugSemantics;
+    expect(root, isNotNull, reason: 'ensureSemantics 后语义树应存在');
+    final treeText = semanticsText(root!);
+    expect(treeText, isNot(contains('状态 · {')));
+    expect(treeText, contains('请求 · '));
+    await tester.pumpWidget(const SizedBox.shrink());
+    session.dispose();
+    semantics.dispose();
+  });
 
   testWidgets('360dp and large text can reach controls without overflow', (
     tester,

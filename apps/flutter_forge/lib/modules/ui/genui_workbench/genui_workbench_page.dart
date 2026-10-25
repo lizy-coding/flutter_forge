@@ -108,11 +108,18 @@ class _GenuiWorkbenchPageState extends State<GenuiWorkbenchPage> {
                   childrenPadding: const EdgeInsets.all(12),
                   expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      '状态 · ${const JsonEncoder.withIndent('  ').convert(_session.snapshot)}',
+                    // 快照 JSON 与转写随流式逐条重写；机器调试输出不进语义树，
+                    // 转写收拢为单节点，降低 macOS AX 桥的提交频率
+                    // （docs/reports/MACOS_AX_BRIDGE_CRASH-20261025.md）。
+                    ExcludeSemantics(
+                      child: Text(
+                        '状态 · ${const JsonEncoder.withIndent('  ').convert(_session.snapshot)}',
+                      ),
                     ),
                     const Divider(),
-                    SelectableText(_session.records.join('\n\n')),
+                    MergeSemantics(
+                      child: SelectableText(_session.records.join('\n\n')),
+                    ),
                   ],
                 ),
                 const ExpansionTile(
