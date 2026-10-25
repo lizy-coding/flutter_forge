@@ -18,6 +18,7 @@
       "packages/forge_articles/AI_ANALYSIS.md",
       "packages/forge_scene_viewer/AI_ANALYSIS.md",
       "packages/usb_network_bridge/AI_ANALYSIS.md",
+      "packages/usb_detector_bridge/AI_ANALYSIS.md",
       "packages/flutter_battery/AI_ANALYSIS.md",
       "packages/file_picker_bridge/AI_ANALYSIS.md",
       "packages/flutter_ioc_core/AI_ANALYSIS.md",

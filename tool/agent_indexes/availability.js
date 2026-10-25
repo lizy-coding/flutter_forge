@@ -32,6 +32,11 @@ const capabilities = {
     reason: 'desktop_system_ncm_interface_bound_tcp',
     sources: ['packages/usb_network_bridge/pubspec.yaml', 'packages/usb_network_bridge/lib/src/backend_native.dart'],
   },
+  usb_detection: {
+    dependencies: ['usb_detector_bridge'], platforms: ['android'],
+    reason: 'android_usb_manager_enumeration_only',
+    sources: ['packages/usb_detector_bridge/pubspec.yaml', 'packages/usb_detector_bridge/lib/usb_detector_method_channel.dart'],
+  },
   battery_monitor: {
     dependencies: ['flutter_battery'], platforms: ['android', 'macOS'],
     reason: 'battery_android_macos_native_adapters',

@@ -446,7 +446,7 @@ final List<ModuleEntry> moduleManifest = [
     subtitle: 'Android USB 设备检测与状态监控',
     category: ModuleCategory.platform,
     difficulty: Difficulty.intermediate,
-    concepts: ['Android USB', 'MethodChannel', 'Stream 广播', '设备扫描'],
+    concepts: ['Android USB', '平台接口', '能力查询', '类型化结果'],
     estimatedMinutes: 25,
     status: ModuleStatus.ready,
     platformSupport: modulePlatformPolicies['usb_detector']!,

@@ -47,6 +47,13 @@ const workspacePackages = [
     validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
   },
   {
+    name: 'usb_detector_bridge', kind: 'flutter_plugin_package',
+    path: 'packages/usb_detector_bridge', entrypoints: ['lib/usb_detector_bridge.dart'],
+    owns: ['usb_device_enumeration', 'usb_permission_gated_descriptors', 'usb_detection_capabilities', 'usb_detection_outcomes'],
+    depends: ['flutter_sdk', 'plugin_platform_interface'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'flutter_battery', kind: 'flutter_plugin_package',
     path: 'packages/flutter_battery', entrypoints: ['lib/flutter_battery.dart'],
     owns: ['battery_api', 'battery_native_adapters', 'battery_event_lifecycle'],

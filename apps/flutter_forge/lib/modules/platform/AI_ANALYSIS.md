@@ -29,6 +29,7 @@
     "module_registry",
     "go_router",
     "usb_network_bridge",
+    "usb_detector_bridge",
     "device_info_plus",
     "flutter_battery",
     "universal_ble",

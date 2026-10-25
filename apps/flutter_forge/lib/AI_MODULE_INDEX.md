@@ -1005,6 +1005,7 @@
       "status": "ready",
       "depends": [
         "shared_learning",
+        "usb_detector_bridge",
         "device_info_plus",
         "module_registry"
       ],
@@ -1023,12 +1024,23 @@
           "web",
           "windows"
         ],
-        "required_capabilities": [],
+        "required_capabilities": [
+          "usb_detection"
+        ],
         "unreviewed_dependencies": [
           "device_info_plus"
         ],
         "optional_capabilities": [],
-        "reasons": [],
+        "reasons": [
+          {
+            "capability": "usb_detection",
+            "reason": "android_usb_manager_enumeration_only",
+            "sources": [
+              "packages/usb_detector_bridge/pubspec.yaml",
+              "packages/usb_detector_bridge/lib/usb_detector_method_channel.dart"
+            ]
+          }
+        ],
         "restriction": {
           "reason": "usb_otg_learning_workflow_deferred",
           "sources": [

@@ -35,7 +35,7 @@
 | Dio 拦截器链路（`/dio-interceptor`） | android、iOS、macOS、web、windows | — | — |
 | USB 网络连接基础（`/usb-network`） | macOS、windows | — | usb_network: desktop_system_ncm_interface_bound_tcp |
 | 网络诊断：从现象到检测证据（`/network-diagnostics`） | macOS、windows | — | desktop_network_diagnostics: desktop_direct_network_probes_mobile_deferred_web_out_of_scope |
-| USB 设备检测（`/usb-detector`） | 不支持 | — | usb_otg_learning_workflow_deferred |
+| USB 设备检测（`/usb-detector`） | 不支持 | — | usb_detection: android_usb_manager_enumeration_only；usb_otg_learning_workflow_deferred |
 | 电池状态与事件监听（`/battery-monitor`） | android、macOS | — | battery_monitor: battery_android_macos_native_adapters |
 | BLE 连接生命周期（`/bluetooth-ble`） | android、macOS、windows | — | ble_central: ble_central_adapters |
 | 文件选择器（`/file-picker`） | android、macOS、web、windows | — | file_selection: file_bridge_adapters_web_filename_only |
