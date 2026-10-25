@@ -39,18 +39,22 @@ lib/
 │   ├── multi_window/          # 桌面多窗口
 │   └── platform/              # 平台边界
 └── modules/                   # 学习模块
-    ├── basic/                 # 基础机制 (3)
+    ├── basic/                 # 基础机制 (6)
     ├── async/                 # 异步并发 (3)
-    ├── state/                 # 状态管理 (2)
-    ├── ui/                    # UI 与动效 (3)
+    ├── state/                 # 状态管理 (3)
+    ├── ui/                    # UI 与动效 (8)
     ├── popup_table/           # 弹窗与列表 (4)
-    └── platform/              # 网络与平台 (2)
+    └── platform/              # 网络与平台 (9)
 
 packages/
-├── gcode_core/                # G-code 解析
-├── flutter_study_learning/    # 教学模板组件
+├── desktop_multi_window/      # 桌面多窗口宿主
 ├── file_picker_bridge/        # 文件选择桥接
-└── flutter_ioc_core/          # IoC 容器
+├── flutter_battery/           # 电池监控
+├── flutter_ioc_core/          # IoC 容器
+├── forge_articles/            # 文章工作流
+├── forge_scene_viewer/        # 3D 场景查看
+├── usb_network_bridge/        # USB 网络桥接
+└── video_player_win/          # Windows 视频播放
 
 tool/
 ├── bootstrap.sh               # 环境自举

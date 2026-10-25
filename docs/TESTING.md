@@ -39,7 +39,7 @@ cd packages/flutter_ioc_core && dart test
 
 新模块必须通过：
 1. 模块入口 smoke test（widget 可渲染）
-2. 教学模板验证（使用了 flutter_study_learning 组件）
+2. 教学模板验证（使用 `shared/learning` 的教学组件，如 `LearningScaffold`）
 3. 平台支持声明（ModuleEntry.platform_support）
 
 ## 测试环境
