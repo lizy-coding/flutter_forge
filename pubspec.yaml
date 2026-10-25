@@ -17,3 +17,4 @@ workspace:
   - packages/usb_network_bridge
   - packages/forge_scene_viewer
   - packages/usb_detector_bridge
+  - packages/forge_notification_bridge
