@@ -1,78 +1,66 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
+import 'package:usb_detector_bridge/usb_detector_bridge.dart';
 
-import 'models/usb_device_info.dart';
-import 'services/usb_detection_service.dart';
+import 'usb_detector_session.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class UsbDetectorPage extends StatefulWidget {
+  const UsbDetectorPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<UsbDetectorPage> createState() => _UsbDetectorPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  final UsbDetectionService _usbService = UsbDetectionService();
-  final List<StreamSubscription<dynamic>> _subscriptions = [];
+class _UsbDetectorPageState extends State<UsbDetectorPage> {
+  final UsbDetectorSession _session = UsbDetectorSession();
   List<UsbDeviceInfo> _devices = [];
-  String _statusMessage = '正在初始化...';
-  String _systemInfo = '';
-  bool _isInitialized = false;
+  bool _capabilityResolved = false;
 
   @override
   void initState() {
     super.initState();
-    unawaited(_initializeUsb());
+    unawaited(_initialize());
   }
 
   @override
   void dispose() {
-    for (final subscription in _subscriptions) {
-      unawaited(subscription.cancel());
-    }
-    _usbService.dispose();
+    _session.removeListener(_onSessionChange);
+    _session.dispose();
     super.dispose();
   }
 
-  Future<void> _initializeUsb() async {
-    bool initialized = await _usbService.initialize();
-    String systemInfo = await _usbService.getSystemInfo();
+  Future<void> _initialize() async {
+    _session.addListener(_onSessionChange);
+    await _session.initialize();
+    unawaited(_session.loadSystemInfo());
+    if (mounted) {
+      setState(() {
+        _capabilityResolved = _session.capabilityResolved;
+      });
+      _onSessionChange();
+    }
+  }
 
+  void _onSessionChange() {
     if (!mounted) return;
-
     setState(() {
-      _isInitialized = initialized;
-      _systemInfo = systemInfo;
+      _devices = _session.devices;
+      _capabilityResolved = _session.capabilityResolved;
     });
-
-    _subscriptions.add(
-      _usbService.deviceStream.listen((devices) {
-        setState(() {
-          _devices = devices;
-        });
-      }),
-    );
-
-    _subscriptions.add(
-      _usbService.statusStream.listen((status) {
-        setState(() {
-          _statusMessage = status;
-        });
-      }),
-    );
   }
 
   Future<void> _refreshDevices() async {
-    await _usbService.refreshDevices();
+    await _session.refresh();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final outcomeStatus = _session.listResult?.status;
     return LearningScaffold(
       title: widget.title,
       floatingActionButton: FloatingActionButton(
@@ -97,29 +85,42 @@ class _MyHomePageState extends State<MyHomePage> {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Icon(
-                          _isInitialized
-                              ? Icons.check_circle
-                              : Icons.error_outline,
-                          color: _isInitialized ? Colors.green : Colors.red,
+                          switch (outcomeStatus) {
+                            UsbDetectionStatus.available => Icons.check_circle,
+                            UsbDetectionStatus.unsupported =>
+                              Icons.info_outline,
+                            UsbDetectionStatus.unavailable ||
+                            UsbDetectionStatus.invalidData ||
+                            UsbDetectionStatus.failed => Icons.error_outline,
+                            null ||
+                            UsbDetectionStatus.pending => Icons.hourglass_top,
+                          },
+                          color: switch (outcomeStatus) {
+                            UsbDetectionStatus.available => Colors.green,
+                            UsbDetectionStatus.unsupported => Colors.orange,
+                            UsbDetectionStatus.unavailable ||
+                            UsbDetectionStatus.invalidData ||
+                            UsbDetectionStatus.failed => Colors.red,
+                            null || UsbDetectionStatus.pending => Colors.blue,
+                          },
                         ),
-                        Text(
-                          'USB驱动状态',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
+                        Text('USB适配器状态', style: theme.textTheme.headlineSmall),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Text(_usbService.systemStatus),
-                    const SizedBox(height: 4),
-                    Text(
-                      _statusMessage,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    if (_systemInfo.isNotEmpty) ...[
+                    Text(_session.statusText),
+                    if (_session.reason != null) ...[
                       const SizedBox(height: 4),
                       Text(
-                        _systemInfo,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        '${_session.reason!.code}：${_session.reason!.message}',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
+                    if (_session.systemInfo != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        _session.systemInfo!,
+                        style: theme.textTheme.bodySmall,
                       ),
                     ],
                   ],
@@ -129,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 16),
             Text(
               'USB设备列表 (${_devices.length})',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: theme.textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
             Expanded(
@@ -145,9 +146,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            _isInitialized ? '未检测到USB设备' : 'USB服务未初始化',
-                            style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(color: Colors.grey[600]),
+                            _capabilityResolved ? '未检测到USB设备' : 'USB服务未初始化',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: Colors.grey[600],
+                            ),
                           ),
                         ],
                       ),
@@ -172,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Text('制造商: ${device.manufacturer}'),
                                 if (device.serialNumber != null)
                                   Text('序列号: ${device.serialNumber}'),
-                                Text('状态: ${device.status.displayName}'),
+                                Text('状态: ${device.status.uiLabel}'),
                               ],
                             ),
                             trailing: Container(
@@ -191,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               child: Text(
-                                device.status.displayName,
+                                device.status.uiLabel,
                                 style: TextStyle(
                                   color: _getStatusColor(device.status),
                                   fontSize: 12,
@@ -207,43 +209,42 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      sections: [
+      sections: const [
         LearningObjectives(
           objectives: [
-            '理解 Flutter 中 USB 设备检测的实现方式',
-            '掌握 MethodChannel 与原生平台通信的模式',
-            '学会使用 Stream 监听设备插拔事件',
+            '理解平台能力桥接包的分层：平台接口、MethodChannel 适配器与类型化结果',
+            '掌握 queryCapabilities 能力探测与不支持平台的降级展示',
+            '学会用 Outcome + 原因码区分"平台不支持"与"运行期失败"',
           ],
         ),
         ConceptChips(
-          concepts: ['USB', '设备检测', 'MethodChannel', 'Stream', '平台通道'],
+          concepts: ['USB', '设备检测', 'MethodChannel', '平台接口', '能力查询'],
         ),
         CodeSnippetCard(
-          title: 'USB 检测服务使用',
+          title: '桥接包使用（usb_detector_bridge）',
           code:
-              'final service = UsbDetectionService();\n'
-              'await service.initialize();\n'
-              'service.deviceStream.listen((devices) {\n'
-              '  // 设备列表更新\n'
-              '});\n'
-              'service.statusStream.listen((status) {\n'
-              '  // 状态变化通知\n'
-              '});\n'
-              'await service.refreshDevices();\n'
-              'service.dispose();',
-          explanation: 'UsbDetectionService 封装了平台通道调用和设备状态管理。',
+              'final bridge = UsbDetectorBridge();\n'
+              'final capabilities = await bridge.queryCapabilities();\n'
+              'if (capabilities.isSupported) {\n'
+              '  final outcome = await bridge.listDevices();\n'
+              '  if (outcome.isAvailable) {\n'
+              '    // outcome.value 是 List<UsbDeviceInfo>\n'
+              '  }\n'
+              '  // 否则按 outcome.status 展示原因码\n'
+              '}',
+          explanation: '模块只消费平台接口与结果类型；原生实现自注册通道，宿主 App 不再手动接线。',
         ),
         CommonPitfalls(
           pitfalls: [
-            'USB 检测需要平台特定权限 — macOS 需在 entitlements 中声明，Android 需声明 USB 权限',
-            '平台通道需在后台线程操作 — USB 通信可能阻塞，避免在主 Isolate 中执行耗时操作',
-            '设备热插拔监听需及时注册 — initState 中启动监听，dispose 中释放',
+            'USB 检测需要平台特定权限 — macOS 需在 entitlements 中声明，Android 序列号等描述符需用户授权后才可读',
+            '平台通道调用可能失败或缺失 — 用类型化 Outcome 与原因码承接，不要把异常转成界面字符串',
+            '设备热插拔监听需及时注册 — initState 中启动轮询，dispose 中释放',
           ],
         ),
         ExerciseCard(
-          task: '实现设备连接时的 Toast 或 SnackBar 提示，当 USB 设备插入时自动弹出通知。',
+          task: '把轮询扫描改为对比前后两次设备列表，设备数量变化时弹出 SnackBar 提示插入或拔出。',
           hint:
-              '在 deviceStream 监听中检查设备数量变化，使用 ScaffoldMessenger.of(context).showSnackBar()。',
+              '在 session.refresh() 后保存上一次 devices 长度，比较差异后使用 ScaffoldMessenger.of(context).showSnackBar()。',
         ),
       ],
     );
@@ -274,4 +275,13 @@ class _MyHomePageState extends State<MyHomePage> {
         return Colors.orange;
     }
   }
+}
+
+extension _UsbDeviceStatusUiLabel on UsbDeviceStatus {
+  String get uiLabel => switch (this) {
+    UsbDeviceStatus.connected => '已连接',
+    UsbDeviceStatus.disconnected => '已断开',
+    UsbDeviceStatus.error => '错误',
+    UsbDeviceStatus.unknown => '未知',
+  };
 }

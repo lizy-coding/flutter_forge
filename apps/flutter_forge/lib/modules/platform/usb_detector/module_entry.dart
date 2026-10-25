@@ -7,6 +7,6 @@ class UsbDetectorEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const usb_detector.MyHomePage(title: 'USB设备检测器');
+    return const usb_detector.UsbDetectorPage(title: 'USB设备检测器');
   }
 }
