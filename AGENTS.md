@@ -43,6 +43,7 @@
 
 - 平台限制用 `ModulePlatformSupport.excludedPlatforms` 表达；普通模块使用空排除集合。
 - 平台限制由 `tool/agent_indexes/availability.js` 的共用能力适配规则推导；模块仅声明可选能力或带依据的产品级禁用例外，禁止重复手填平台名单。
+- 平台差异能力（原生通道、FFI、平台行为差异）经 `packages/` 桥接包接入，遵循 `docs/adr/0019-platform-capability-bridge-packages.md` 的 flutter_battery 模板：平台接口、不抛出的能力查询、类型化 Outcome、通道契约测试；宿主 App 原生代码只保留应用壳通道，禁止承载模块功能通道。
 - 日常维护仅生成入口支持范围、必要功能差异与限制依据；`tool/module_availability.js list` 只读查看支持声明。测试结果、源码指纹和历史验收状态不进入维护矩阵，也不作为日常健康判定标准；专项报告按需保留，CI 测试继续作为开发反馈。
 - 目录和路由统一通过 `module_registry` 判定；模块页面不得自行决定目录可见性。
 - 不支持的平台保留稳定模块路径，并进入统一不可用说明页。

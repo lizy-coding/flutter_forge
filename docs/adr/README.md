@@ -24,6 +24,7 @@
 | 0016 | [通用桌面工作台与沉浸式标题栏](0016-shared-desktop-workbench.md) | accepted；材质范围与默认外观由 0018 取代 |
 | 0017 | [内部 3D 查看包与可观测绘制](0017-scene-viewer-package-and-render-observability.md) | accepted |
 | 0018 | [四端交互分工与原生窗口背景材质](0018-platform-interaction-and-native-materials.md) | accepted；实现待推进 |
+| 0019 | [平台能力桥接包规范](0019-platform-capability-bridge-packages.md) | accepted |
 
 ## 状态定义
 
