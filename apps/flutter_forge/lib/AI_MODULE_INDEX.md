@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 33,
+  "count": 35,
   "modules": [
     {
       "id": "graphics_background",
@@ -1226,6 +1226,94 @@
         "features": {}
       },
       "analysis": "lib/modules/platform/online_video_player/AI_ANALYSIS.md"
+    },
+    {
+      "id": "biometric_auth",
+      "category": "platform",
+      "path": "lib/modules/platform/biometric_auth",
+      "route": "/biometric-auth",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "flutter_biometric",
+        "module_registry"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web",
+          "windows"
+        ],
+        "required_capabilities": [
+          "biometric_auth"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "biometric_auth",
+            "reason": "biometric_biometricprompt_localauth_adapters",
+            "sources": [
+              "apps/flutter_forge/pubspec.yaml",
+              "apps/flutter_forge/lib/modules/platform/biometric_auth/module_entry.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/platform/biometric_auth/AI_ANALYSIS.md"
+    },
+    {
+      "id": "system_notification",
+      "category": "platform",
+      "path": "lib/modules/platform/system_notification",
+      "route": "/system-notification",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "forge_notification_bridge",
+        "module_registry"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web",
+          "windows"
+        ],
+        "required_capabilities": [
+          "notification_posting"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "notification_posting",
+            "reason": "notification_android_macos_local_adapters",
+            "sources": [
+              "packages/forge_notification_bridge/pubspec.yaml",
+              "packages/forge_notification_bridge/lib/forge_notification_method_channel.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/platform/system_notification/AI_ANALYSIS.md"
     },
     {
       "id": "webview",

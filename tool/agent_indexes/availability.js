@@ -37,6 +37,16 @@ const capabilities = {
     reason: 'android_usb_manager_enumeration_only',
     sources: ['packages/usb_detector_bridge/pubspec.yaml', 'packages/usb_detector_bridge/lib/usb_detector_method_channel.dart'],
   },
+  biometric_auth: {
+    dependencies: ['flutter_biometric'], platforms: ['android', 'macOS'],
+    reason: 'biometric_biometricprompt_localauth_adapters',
+    sources: ['apps/flutter_forge/pubspec.yaml', 'apps/flutter_forge/lib/modules/platform/biometric_auth/module_entry.dart'],
+  },
+  notification_posting: {
+    dependencies: ['forge_notification_bridge'], platforms: ['android', 'macOS'],
+    reason: 'notification_android_macos_local_adapters',
+    sources: ['packages/forge_notification_bridge/pubspec.yaml', 'packages/forge_notification_bridge/lib/forge_notification_method_channel.dart'],
+  },
   battery_monitor: {
     dependencies: ['flutter_battery'], platforms: ['android', 'macOS'],
     reason: 'battery_android_macos_native_adapters',

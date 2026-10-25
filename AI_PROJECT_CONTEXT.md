@@ -45,7 +45,8 @@
       "packages/flutter_battery",
       "packages/usb_network_bridge",
       "packages/forge_scene_viewer",
-      "packages/usb_detector_bridge"
+      "packages/usb_detector_bridge",
+      "packages/forge_notification_bridge"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
@@ -74,6 +75,12 @@
       "type": "flutter_plugin_package",
       "path": "packages/usb_detector_bridge",
       "entrypoint": "lib/usb_detector_bridge.dart"
+    },
+    {
+      "name": "forge_notification_bridge",
+      "type": "flutter_plugin_package",
+      "path": "packages/forge_notification_bridge",
+      "entrypoint": "lib/forge_notification_bridge.dart"
     },
     {
       "name": "flutter_battery",

@@ -46,6 +46,8 @@ import '../modules/platform/battery_monitor/module_entry.dart';
 import '../modules/platform/bluetooth_ble/module_entry.dart';
 import '../modules/platform/file_picker/module_entry.dart';
 import '../modules/platform/online_video_player/module_entry.dart';
+import '../modules/platform/biometric_auth/module_entry.dart';
+import '../modules/platform/system_notification/module_entry.dart';
 import '../modules/platform/webview/module_entry.dart';
 
 // ==================== 状态管理子路由（模块内部已定义映射） ====================
@@ -506,6 +508,42 @@ final List<ModuleEntry> moduleManifest = [
     status: ModuleStatus.ready,
     platformSupport: modulePlatformPolicies['online_video_player']!,
     builder: (context) => const OnlineVideoPlayerEntry(),
+  ),
+  ModuleEntry(
+    title: '生物特征与本地认证',
+    path: '/biometric-auth',
+    subtitle: '从能力查询到认证结果，观察指纹与面容的运行时差异',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: [
+      'BiometricPrompt',
+      'LocalAuthentication',
+      '能力查询',
+      '认证原因码',
+      '凭据回退',
+    ],
+    estimatedMinutes: 30,
+    status: ModuleStatus.ready,
+    platformSupport: modulePlatformPolicies['biometric_auth']!,
+    builder: (context) => const BiometricAuthEntry(),
+  ),
+  ModuleEntry(
+    title: '系统通知与授权状态',
+    path: '/system-notification',
+    subtitle: '授权状态、授权请求与本地通知投递的运行时链路',
+    category: ModuleCategory.platform,
+    difficulty: Difficulty.intermediate,
+    concepts: [
+      'UNUserNotificationCenter',
+      'NotificationChannel',
+      '运行时权限',
+      '授权状态',
+      '通知投递',
+    ],
+    estimatedMinutes: 25,
+    status: ModuleStatus.ready,
+    platformSupport: modulePlatformPolicies['system_notification']!,
+    builder: (context) => const SystemNotificationEntry(),
   ),
   ModuleEntry(
     title: '网页容器与跨平台导航',

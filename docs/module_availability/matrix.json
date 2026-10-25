@@ -534,6 +534,44 @@
       ]
     },
     {
+      "id": "biometric_auth",
+      "title": "生物特征与本地认证",
+      "route": "/biometric-auth",
+      "supported_platforms": [
+        "android",
+        "macOS"
+      ],
+      "limitations": [
+        {
+          "capability": "biometric_auth",
+          "reason": "biometric_biometricprompt_localauth_adapters",
+          "sources": [
+            "apps/flutter_forge/pubspec.yaml",
+            "apps/flutter_forge/lib/modules/platform/biometric_auth/module_entry.dart"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "system_notification",
+      "title": "系统通知与授权状态",
+      "route": "/system-notification",
+      "supported_platforms": [
+        "android",
+        "macOS"
+      ],
+      "limitations": [
+        {
+          "capability": "notification_posting",
+          "reason": "notification_android_macos_local_adapters",
+          "sources": [
+            "packages/forge_notification_bridge/pubspec.yaml",
+            "packages/forge_notification_bridge/lib/forge_notification_method_channel.dart"
+          ]
+        }
+      ]
+    },
+    {
       "id": "webview",
       "title": "网页容器与跨平台导航",
       "route": "/webview",

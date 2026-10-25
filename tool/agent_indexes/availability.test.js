@@ -23,6 +23,7 @@ test('existing entry policy is preserved while shared requirements are discovere
     usb_network: ['android', 'iOS', 'web'],
     network_diagnostics: ['android', 'iOS', 'web'],
     bluetooth_ble: ['iOS', 'web'], file_picker: ['iOS'], online_video_player: ['iOS'], webview: ['iOS', 'web'],
+    biometric_auth: ['iOS', 'web', 'windows'], system_notification: ['iOS', 'web', 'windows'],
   };
   for (const module of modules) assert.deepEqual(module.excludedPlatforms, expected[module.id] ?? [], module.id);
   assert.deepEqual(modules.find((module) => module.id === 'isolate_basic').platformPolicy.required_capabilities, ['isolates']);

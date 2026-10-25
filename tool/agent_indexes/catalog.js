@@ -54,6 +54,13 @@ const workspacePackages = [
     validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
   },
   {
+    name: 'forge_notification_bridge', kind: 'flutter_plugin_package',
+    path: 'packages/forge_notification_bridge', entrypoints: ['lib/forge_notification_bridge.dart'],
+    owns: ['notification_capability_queries', 'notification_permission_states', 'notification_post_outcomes', 'notification_channel_contract'],
+    depends: ['flutter_sdk', 'plugin_platform_interface'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'flutter_battery', kind: 'flutter_plugin_package',
     path: 'packages/flutter_battery', entrypoints: ['lib/flutter_battery.dart'],
     owns: ['battery_api', 'battery_native_adapters', 'battery_event_lifecycle'],

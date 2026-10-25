@@ -40,6 +40,8 @@
 | BLE 连接生命周期（`/bluetooth-ble`） | android、macOS、windows | — | ble_central: ble_central_adapters |
 | 文件选择器（`/file-picker`） | android、macOS、web、windows | — | file_selection: file_bridge_adapters_web_filename_only |
 | 在线视频播放（`/online-video-player`） | android、macOS、web、windows | — | media_playback: media_backend_adapters |
+| 生物特征与本地认证（`/biometric-auth`） | android、macOS | — | biometric_auth: biometric_biometricprompt_localauth_adapters |
+| 系统通知与授权状态（`/system-notification`） | android、macOS | — | notification_posting: notification_android_macos_local_adapters |
 | 网页容器与跨平台导航（`/webview`） | android、macOS、windows | — | embedded_web: embedded_web_adapters |
 
 完整声明及限制来源见 [matrix.json](matrix.json)；维护方式见 [README](README.md)。

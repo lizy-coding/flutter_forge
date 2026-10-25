@@ -26,6 +26,7 @@
       "packages/forge_scene_viewer",
       "packages/usb_network_bridge",
       "packages/usb_detector_bridge",
+      "packages/forge_notification_bridge",
       "packages/flutter_battery",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",

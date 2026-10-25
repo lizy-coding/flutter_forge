@@ -10,7 +10,11 @@ PODS:
     - FlutterMacOS
   - flutter_battery (0.1.0):
     - FlutterMacOS
+  - flutter_biometric (0.1.0):
+    - FlutterMacOS
   - FlutterMacOS (1.0.0)
+  - forge_notification_bridge (0.1.0):
+    - FlutterMacOS
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -34,7 +38,9 @@ DEPENDENCIES:
   - device_info_plus (from `Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos`)
   - file_selector_macos (from `Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos`)
   - flutter_battery (from `Flutter/ephemeral/.symlinks/plugins/flutter_battery/macos`)
+  - flutter_biometric (from `Flutter/ephemeral/.symlinks/plugins/flutter_biometric/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
+  - forge_notification_bridge (from `Flutter/ephemeral/.symlinks/plugins/forge_notification_bridge/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - universal_ble (from `Flutter/ephemeral/.symlinks/plugins/universal_ble/darwin`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
@@ -53,8 +59,12 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos
   flutter_battery:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_battery/macos
+  flutter_biometric:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_biometric/macos
   FlutterMacOS:
     :path: Flutter/ephemeral
+  forge_notification_bridge:
+    :path: Flutter/ephemeral/.symlinks/plugins/forge_notification_bridge/macos
   shared_preferences_foundation:
     :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin
   universal_ble:
@@ -74,7 +84,9 @@ SPEC CHECKSUMS:
   device_info_plus: a56e6e74dbbd2bb92f2da12c64ddd4f67a749041
   file_selector_macos: 3af0fddc391c32a6a3956a7d3898ca3a86057a4f
   flutter_battery: 93901c99ae6f576ce1010669d386400f86facdc4
+  flutter_biometric: 37990d2b733eb3f3eddcae2f191347903515aefc
   FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
+  forge_notification_bridge: 0b205537904893cb3e03705f523cf847e5071c02
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   universal_ble: a322ebabee64f0ec27a313e89a5dd6967f37a60f
   url_launcher_macos: f87a979182d112f911de6820aefddaf56ee9fbfd

@@ -17,6 +17,8 @@
     "bluetooth_ble",
     "file_picker",
     "online_video_player",
+    "biometric_auth",
+    "system_notification",
     "webview"
   ],
   "owns": [
@@ -38,6 +40,8 @@
     "video_player",
     "video_player_web",
     "video_player_win",
+    "flutter_biometric",
+    "forge_notification_bridge",
     "webview_flutter",
     "webview_windows"
   ],
@@ -50,6 +54,8 @@
     "bluetooth_ble/AI_ANALYSIS.md",
     "file_picker/AI_ANALYSIS.md",
     "online_video_player/AI_ANALYSIS.md",
+    "biometric_auth/AI_ANALYSIS.md",
+    "system_notification/AI_ANALYSIS.md",
     "webview/AI_ANALYSIS.md"
   ],
   "contracts": {

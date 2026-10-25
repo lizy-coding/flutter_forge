@@ -350,6 +350,15 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_biometric:
+    dependency: transitive
+    description:
+      path: "."
+      ref: "v0.2.0"
+      resolved-ref: "84f36aa567384ea83e9148822355dc12db72eeb0"
+      url: "https://github.com/lizy-coding/flutter_biometric.git"
+    source: git
+    version: "0.2.0"
   flutter_bloc:
     dependency: transitive
     description:
