@@ -1,13 +1,14 @@
 package com.flutterforge.preview
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 // Host-level wiring is limited to app-shell concerns. Module platform
 // adapters live in their workspace packages (usb_detector_bridge registers
-// usb_detector/usb on its own).
-class MainActivity : FlutterActivity() {
+// usb_detector/usb on its own). FragmentActivity is required so
+// androidx.biometric prompts (forge_biometric_bridge) can attach.
+class MainActivity : FlutterFragmentActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
