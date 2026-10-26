@@ -25,6 +25,15 @@ void main() {
     return channel;
   }
 
+  test('malformed capabilities remain non-throwing', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.android;
+    mockResponses((_) => {'enumerationSupported': 'yes'});
+    expect(
+      (await MethodChannelUsbDetector().queryCapabilities()).isSupported,
+      isFalse,
+    );
+  });
+
   test('Android listDevices keeps the channel contract', () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
     final detector = MethodChannelUsbDetector();

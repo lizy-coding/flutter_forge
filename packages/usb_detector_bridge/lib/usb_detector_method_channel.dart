@@ -28,6 +28,8 @@ class MethodChannelUsbDetector extends UsbDetectorPlatform {
       return UsbDetectionCapabilities.fromMap(result);
     } on MissingPluginException {
       return const UsbDetectionCapabilities.none();
+    } on TypeError {
+      return const UsbDetectionCapabilities.none();
     } on PlatformException {
       return const UsbDetectionCapabilities.none();
     }
