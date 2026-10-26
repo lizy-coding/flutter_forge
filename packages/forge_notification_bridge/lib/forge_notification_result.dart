@@ -62,15 +62,32 @@ class ForgeNotificationOutcome<T> {
   bool get isAvailable => status == NotificationStatus.available;
 
   factory ForgeNotificationOutcome.fromMap(
-    Map<Object?, Object?>? map, {
+    Object? payload, {
     required T Function(Map<Object?, Object?> map) parseValue,
   }) {
+    if (payload != null && payload is! Map<Object?, Object?>) {
+      return ForgeNotificationOutcome.state(
+        NotificationStatus.invalidData,
+        'invalid_payload',
+        'Expected a result map',
+      );
+    }
+    final map = payload as Map<Object?, Object?>?;
     if (map == null) {
       return ForgeNotificationOutcome.state(
         NotificationStatus.invalidData,
         'null_response',
         'Native adapter returned no result',
       );
+    }
+    for (final key in ['reason', 'message']) {
+      if (map[key] != null && map[key] is! String) {
+        return ForgeNotificationOutcome.state(
+          NotificationStatus.invalidData,
+          'invalid_reason',
+          'Expected string reason fields',
+        );
+      }
     }
     final rawStatus = map[NotificationChannelContract.keyStatus];
     if (rawStatus is! String || rawStatus.isEmpty) {
@@ -172,7 +189,7 @@ class NotificationContent {
   };
 }
 
-/// A delivered local notification; `id` is the stable identifier used to
+/// A system-accepted local notification request; `id` is the stable identifier used to
 /// cancel it later.
 class PostedNotification {
   const PostedNotification({required this.id});

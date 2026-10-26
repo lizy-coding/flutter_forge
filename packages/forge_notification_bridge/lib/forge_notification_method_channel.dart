@@ -19,7 +19,13 @@ class MethodChannelForgeNotification extends ForgeNotificationPlatform {
       final map = await methodChannel.invokeMethod<Object?>(
         NotificationChannelContract.queryCapabilities,
       );
-      if (map is Map<Object?, Object?>) {
+      if (map is Map<Object?, Object?> &&
+          [
+            'postingSupported',
+            'permissionQuerySupported',
+            'permissionRequestSupported',
+            'cancelSupported',
+          ].every((key) => map[key] == null || map[key] is bool)) {
         return NotificationCapabilities.fromMap(map);
       }
       return const NotificationCapabilities.none();
@@ -35,7 +41,7 @@ class MethodChannelForgeNotification extends ForgeNotificationPlatform {
     try {
       final map = await methodChannel.invokeMethod<Object?>(method);
       return ForgeNotificationOutcome.fromMap(
-        map as Map<Object?, Object?>?,
+        map,
         parseValue: (value) =>
             parsePermissionState(value[NotificationChannelContract.keyState]),
       );
@@ -74,11 +80,10 @@ class MethodChannelForgeNotification extends ForgeNotificationPlatform {
         content.toMap(),
       );
       return ForgeNotificationOutcome.fromMap(
-        map as Map<Object?, Object?>?,
+        map,
         parseValue: (value) {
-          final id =
-              value[NotificationChannelContract.keyNotificationId] as String?;
-          if (id == null || id.isEmpty) {
+          final id = value[NotificationChannelContract.keyNotificationId];
+          if (id is! String || id.trim().isEmpty) {
             throw const FormatException('Native adapter returned no id');
           }
           return PostedNotification(id: id);
@@ -107,9 +112,16 @@ class MethodChannelForgeNotification extends ForgeNotificationPlatform {
         {NotificationChannelContract.argNotificationId: id},
       );
       return ForgeNotificationOutcome.fromMap(
-        map as Map<Object?, Object?>?,
-        parseValue: (value) =>
-            value[NotificationChannelContract.keyCancelled] == true,
+        map,
+        parseValue: (value) {
+          final cancelled = value[NotificationChannelContract.keyCancelled];
+          if (cancelled is! bool) {
+            throw const FormatException(
+              'Expected cancellation acknowledgement',
+            );
+          }
+          return cancelled;
+        },
       );
     } on PlatformException catch (error) {
       return ForgeNotificationOutcome.state(

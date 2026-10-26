@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:forge_notification_bridge/forge_notification_bridge.dart';
 
@@ -12,18 +14,49 @@ class NotificationSession extends ChangeNotifier {
   NotificationCapabilities? capabilities;
   NotificationPermissionState? permissionState;
   bool loading = false;
+  bool _closed = false;
+  final _disposed = Completer<void>();
+  Future<T> _owned<T>(Future<T> operation) => Future.any([
+    operation,
+    _disposed.future.then<T>((_) => throw const _SessionClosed()),
+  ]);
+  int _epoch = 0;
+  bool _current(int epoch) => !_closed && epoch == _epoch;
+
+  @override
+  void dispose() {
+    if (_closed) return;
+    _closed = true;
+    _disposed.complete();
+    ++_epoch;
+    loading = false;
+    super.dispose();
+  }
+
   final List<String> logs = [];
 
   Future<void> initialize() async {
+    if (_closed || loading) return;
+    final epoch = ++_epoch;
     loading = true;
     notifyListeners();
-    capabilities = await _notifications.queryCapabilities();
-    if (capabilities!.permissionQuerySupported) {
-      final outcome = await _notifications.queryPermissionState();
-      if (outcome.isAvailable) permissionState = outcome.value;
+    try {
+      final result = await _owned(_notifications.queryCapabilities());
+      if (!_current(epoch)) return;
+      capabilities = result;
+      if (capabilities!.permissionQuerySupported) {
+        final outcome = await _owned(_notifications.queryPermissionState());
+        if (!_current(epoch)) return;
+        permissionState = outcome.isAvailable ? outcome.value : null;
+      }
+    } on _SessionClosed {
+      return;
+    } finally {
+      if (_current(epoch)) {
+        loading = false;
+        notifyListeners();
+      }
     }
-    loading = false;
-    notifyListeners();
   }
 
   String get permissionText {
@@ -32,9 +65,9 @@ class NotificationSession extends ChangeNotifier {
       return '授权状态不可用（capability=${capabilities?.permissionQuerySupported ?? false}）';
     }
     return switch (state) {
-      NotificationPermissionState.granted => '已授权：通知可以立即投递',
+      NotificationPermissionState.granted => '已授权：系统可受理投递；实际展示取决于系统设置',
       NotificationPermissionState.denied => '已拒绝：投递会返回 permissionDenied',
-      NotificationPermissionState.notDetermined => '未决定：下一次请求授权时会弹出系统询问',
+      NotificationPermissionState.notDetermined => '未决定：请求授权时由系统决定是否显示询问',
       NotificationPermissionState.provisional => '临时授权：通知静默展示',
       NotificationPermissionState.unavailable => '授权状态不可用',
     };
@@ -50,51 +83,86 @@ class NotificationSession extends ChangeNotifier {
   };
 
   Future<void> requestPermission() async {
-    if (loading || !(capabilities?.permissionRequestSupported ?? false)) return;
+    if (_closed ||
+        loading ||
+        !(capabilities?.permissionRequestSupported ?? false)) {
+      return;
+    }
+    final epoch = ++_epoch;
     loading = true;
     notifyListeners();
-    final outcome = await _notifications.requestPermission();
-    logs.add(
-      '请求授权 → ${outcome.status.name}'
-      '${outcome.isAvailable ? '（${permissionName(outcome.value)}）' : '（${outcome.reason?.code ?? 'unspecified_reason'}）'}',
-    );
-    if (outcome.isAvailable) {
-      permissionState = outcome.value;
+    try {
+      final outcome = await _owned(_notifications.requestPermission());
+      if (!_current(epoch)) return;
+      logs.add(
+        '请求授权 → ${outcome.status.name}'
+        '${outcome.isAvailable ? '（${permissionName(outcome.value)}）' : '（${outcome.reason?.code ?? 'unspecified_reason'}）'}',
+      );
+      if (outcome.isAvailable) {
+        permissionState = outcome.value;
+      } else {
+        final refreshed = await _owned(_notifications.queryPermissionState());
+        if (!_current(epoch)) return;
+        permissionState = refreshed.isAvailable ? refreshed.value : null;
+      }
+    } on _SessionClosed {
+      return;
+    } finally {
+      if (_current(epoch)) {
+        loading = false;
+        notifyListeners();
+      }
     }
-    loading = false;
-    notifyListeners();
   }
 
   Future<void> post(String title, String body) async {
-    if (loading) return;
+    if (_closed || loading) return;
+    final epoch = ++_epoch;
     loading = true;
     notifyListeners();
-    final outcome = await _notifications.post(
-      NotificationContent(title: title, body: body),
-    );
-    if (outcome.isAvailable) {
-      logs.add('投递成功 id=${outcome.value!.id}');
-    } else {
-      logs.add(
-        '投递失败 ${outcome.status.name}（${outcome.reason?.code ?? 'unspecified_reason'}）',
+    try {
+      final outcome = await _owned(
+        _notifications.post(NotificationContent(title: title, body: body)),
       );
+      if (!_current(epoch)) return;
+      if (outcome.isAvailable) {
+        logs.add('系统已受理通知（不保证可见） id=${outcome.value!.id}');
+      } else {
+        logs.add(
+          '投递失败 ${outcome.status.name}（${outcome.reason?.code ?? 'unspecified_reason'}）',
+        );
+      }
+    } on _SessionClosed {
+      return;
+    } finally {
+      if (_current(epoch)) {
+        loading = false;
+        notifyListeners();
+      }
     }
-    loading = false;
-    notifyListeners();
   }
 
   Future<void> cancel(String id) async {
-    if (loading || id.trim().isEmpty) return;
+    if (_closed || loading || id.trim().isEmpty) return;
+    final epoch = ++_epoch;
     loading = true;
     notifyListeners();
-    final outcome = await _notifications.cancel(id.trim());
-    logs.add(
-      outcome.isAvailable
-          ? '撤回成功 id=$id'
-          : '撤回失败 ${outcome.status.name}（${outcome.reason?.code ?? 'unspecified_reason'}）',
-    );
-    loading = false;
-    notifyListeners();
+    try {
+      final outcome = await _owned(_notifications.cancel(id.trim()));
+      if (!_current(epoch)) return;
+      logs.add(
+        outcome.isAvailable && outcome.value == true
+            ? '系统已受理撤回请求 id=$id'
+            : '撤回失败 ${outcome.status.name}（${outcome.reason?.code ?? 'unspecified_reason'}）',
+      );
+    } on _SessionClosed {
+      return;
+    } finally {
+      if (_current(epoch)) {
+        loading = false;
+        notifyListeners();
+      }
+    }
   }
 
   static String permissionName(NotificationPermissionState? state) =>
@@ -106,4 +174,8 @@ class NotificationSession extends ChangeNotifier {
         NotificationPermissionState.provisional => 'provisional',
         NotificationPermissionState.unavailable => 'unavailable',
       };
+}
+
+class _SessionClosed implements Exception {
+  const _SessionClosed();
 }

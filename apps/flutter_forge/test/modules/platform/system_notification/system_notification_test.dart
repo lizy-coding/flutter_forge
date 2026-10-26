@@ -50,6 +50,32 @@ ForgeNotifications fakeBridge(FakeNotificationPlatform platform) =>
     ForgeNotifications(platform: platform);
 
 void main() {
+  testWidgets('key operation works at 360dp with large text', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final platform = FakeNotificationPlatform();
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.5)),
+          child: child!,
+        ),
+        home: SystemNotificationEntry(notifications: fakeBridge(platform)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.ensureVisible(find.text('投递通知'));
+    await tester.tap(find.text('投递通知'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(platform.postedContent, hasLength(1));
+  });
+
   group(NotificationSession, () {
     test('initialize reads capability and permission facts', () async {
       final platform = FakeNotificationPlatform();
@@ -83,7 +109,7 @@ void main() {
       await session.post('教学通知', '正文');
 
       expect(platform.postedContent.single.title, '教学通知');
-      expect(session.logs.single, contains('投递成功'));
+      expect(session.logs.single, contains('系统已受理通知'));
       expect(session.logs.single, contains('n-1'));
     });
 
@@ -109,7 +135,7 @@ void main() {
       await session.cancel('n-1');
 
       expect(platform.cancelledIds, ['n-1']);
-      expect(session.logs.single, contains('撤回成功'));
+      expect(session.logs.single, contains('系统已受理撤回请求'));
     });
   });
 
@@ -130,7 +156,7 @@ void main() {
     await tester.tap(find.text('投递通知'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('投递成功'), findsOneWidget);
+    expect(find.textContaining('系统已受理通知'), findsOneWidget);
     expect(platform.postedContent, hasLength(1));
   });
 

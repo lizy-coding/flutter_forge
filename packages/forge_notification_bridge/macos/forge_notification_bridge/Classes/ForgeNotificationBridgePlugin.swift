@@ -6,6 +6,56 @@ import FlutterMacOS
 /// forge_notification/notifications channel. Authorization queries and
 /// notification posts resolve to typed status maps; nothing throws.
 public class ForgeNotificationBridgePlugin: NSObject, FlutterPlugin {
+    private var pending: [UUID: FlutterResult] = [:]
+    private var deadlines: [UUID: DispatchWorkItem] = [:]
+    private var permissionPending = false
+
+    func closePending(reason: String = "owner_closed") {
+        let callbacks = Array(pending.values)
+        pending.removeAll()
+        deadlines.values.forEach { $0.cancel() }
+        deadlines.removeAll()
+        permissionPending = false
+        callbacks.forEach { $0(["status": "unavailable", "reason": reason, "message": "引擎已退出；系统操作可能仍会完成，请重新查询状态"]) }
+    }
+
+    var operationDeadline: TimeInterval = 10
+    var permissionDeadline: TimeInterval = 120
+
+    func ownedResult(_ result: @escaping FlutterResult, permission: Bool = false) -> FlutterResult {
+        let id = UUID()
+        pending[id] = result
+        let complete: FlutterResult = { [weak self] value in
+            guard let self = self, let callback = self.pending.removeValue(forKey: id) else { return }
+            self.deadlines.removeValue(forKey: id)?.cancel()
+            if permission { self.permissionPending = false }
+            callback(value)
+        }
+        let deadline = DispatchWorkItem {
+            complete(["status": "unavailable", "reason": "operation_unresolved", "message": "系统结果未返回，操作可能仍会完成，请查询状态后重试"])
+        }
+        deadlines[id] = deadline
+        DispatchQueue.main.asyncAfter(deadline: .now() + (permission ? permissionDeadline : operationDeadline), execute: deadline)
+        return complete
+    }
+
+    private var closeObserver: NSObjectProtocol?
+    private weak var hostView: NSView?
+
+    private func bindLifetime(_ registrar: FlutterPluginRegistrar) {
+        hostView = registrar.view
+        closeObserver = NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: nil, queue: .main) { [weak self] note in
+            guard let self = self, let window = note.object as? NSWindow,
+                  self.hostView?.window === window else { return }
+            self.closePending(reason: "window_closed")
+        }
+    }
+
+    deinit {
+        if let observer = closeObserver { NotificationCenter.default.removeObserver(observer) }
+        deadlines.values.forEach { $0.cancel() }
+    }
+
     private static let channelName = "forge_notification/notifications"
 
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -13,7 +63,9 @@ public class ForgeNotificationBridgePlugin: NSObject, FlutterPlugin {
             name: ForgeNotificationBridgePlugin.channelName,
             binaryMessenger: registrar.messenger
         )
-        registrar.addMethodCallDelegate(ForgeNotificationBridgePlugin(), channel: channel)
+        let plugin = ForgeNotificationBridgePlugin()
+        plugin.bindLifetime(registrar)
+        registrar.addMethodCallDelegate(plugin, channel: channel)
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -26,11 +78,16 @@ public class ForgeNotificationBridgePlugin: NSObject, FlutterPlugin {
                 "cancelSupported": true,
             ])
         case "queryPermissionState":
-            queryPermissionState(result: result)
+            queryPermissionState(result: ownedResult(result))
         case "requestPermission":
-            requestPermission(result: result)
+            if permissionPending {
+                result(["status": "unavailable", "reason": "request_in_progress", "message": "已有授权请求进行中"])
+            } else {
+                permissionPending = true
+                requestPermission(result: ownedResult(result, permission: true))
+            }
         case "post":
-            post(arguments: call.arguments, result: result)
+            post(arguments: call.arguments, result: ownedResult(result))
         case "cancel":
             cancel(arguments: call.arguments, result: result)
         default:
@@ -44,7 +101,7 @@ public class ForgeNotificationBridgePlugin: NSObject, FlutterPlugin {
         let center = UNUserNotificationCenter.current()
         center.getNotificationSettings { settings in
             DispatchQueue.main.async {
-                result(["status": "available", "state": self.stateName(settings.authorizationStatus)])
+                result(["status": "available", "state": Self.stateName(settings.authorizationStatus)])
             }
         }
     }
@@ -54,11 +111,7 @@ public class ForgeNotificationBridgePlugin: NSObject, FlutterPlugin {
         center.requestAuthorization(options: [.alert, .sound, .badge]) { _, error in
             DispatchQueue.main.async {
                 if let error = error as NSError? {
-                    result([
-                        "status": "failed",
-                        "reason": "macos_error_\(error.code)",
-                        "message": error.localizedDescription,
-                    ])
+                    result(Self.errorOutcome(error, operation: "permission"))
                     return
                 }
                 // The request answer alone is not the stored state; re-query
@@ -67,7 +120,7 @@ public class ForgeNotificationBridgePlugin: NSObject, FlutterPlugin {
                     DispatchQueue.main.async {
                         result([
                             "status": "available",
-                            "state": self.stateName(settings.authorizationStatus),
+                            "state": Self.stateName(settings.authorizationStatus),
                         ])
                     }
                 }
@@ -101,11 +154,7 @@ public class ForgeNotificationBridgePlugin: NSObject, FlutterPlugin {
         center.add(request) { error in
             DispatchQueue.main.async {
                 if let error = error as NSError? {
-                    result([
-                        "status": "failed",
-                        "reason": "post_failed",
-                        "message": error.localizedDescription,
-                    ])
+                    result(Self.errorOutcome(error, operation: "post"))
                     return
                 }
                 result(["status": "available", "notificationId": identifier])
@@ -130,7 +179,16 @@ public class ForgeNotificationBridgePlugin: NSObject, FlutterPlugin {
         result(["status": "available", "cancelled": true])
     }
 
-    private func stateName(_ status: UNAuthorizationStatus) -> String {
+    static func errorOutcome(_ error: NSError, operation: String) -> [String: Any] {
+        let permissionDenied = error.domain == UNErrorDomain && error.code == UNError.Code.notificationsNotAllowed.rawValue
+        return [
+            "status": permissionDenied ? "permissionDenied" : "failed",
+            "reason": permissionDenied ? "notifications_not_allowed" : (operation == "post" ? "post_failed" : "macos_error_\(error.code)"),
+            "message": "\(error.domain) (\(error.code)): \(error.localizedDescription)",
+        ]
+    }
+
+    private static func stateName(_ status: UNAuthorizationStatus) -> String {
         switch status {
         case .authorized:
             return "granted"

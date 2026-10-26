@@ -120,13 +120,13 @@ class _SystemNotificationEntryState extends State<SystemNotificationEntry> {
               '「请求授权」返回 granted 只是当次结果，系统设置里随时可以再关闭，投递前应重新查询',
               'Android 13 之前没有运行时通知权限，授权状态来自「通知开关」而不是权限对话框',
               'macOS 的授权结果需要重新读取通知设置，requestAuthorization 的布尔值不是最终状态',
-              '通知需要 smallIcon（Android）与前台运行时上下文，缺失会直接投递失败',
+              'Android 通知需要有效 smallIcon；系统受理请求不保证展示，专注模式、通知开关和前台展示策略均可能影响可见性',
             ],
           ),
           ExerciseCard(
             task: '在拒绝授权后投递一次通知，再授权后重新投递，对比两次原因码',
             hint:
-                '拒绝后投递返回 permissionDenied/post_notifications_denied；授权后返回 available 并给出可撤回的 id',
+                'Android 拒绝后投递返回 permissionDenied；macOS 的 available 也只表示系统受理。拒绝后如需更改授权，应在系统设置中操作并重新查询。',
           ),
         ],
       ),
