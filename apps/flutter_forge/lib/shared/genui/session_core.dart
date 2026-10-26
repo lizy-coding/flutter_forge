@@ -31,10 +31,10 @@ abstract class GenuiSessionCore extends ChangeNotifier {
 
   bool get disposed => _disposed;
 
-  /// Transport for the run started by [submit]. Must be non-null whenever
-  /// [submitGuard] accepted the prompt: guards that reject prompts while no
-  /// source is connected run before the core reads this.
-  WorkbenchSource get activeSource;
+  /// Transport for the run started by [submit]. Return null while no source
+  /// is connected; [submitGuard] should reject prompts in that state, and a
+  /// null after an accepted guard fails the run safely instead of crashing.
+  WorkbenchSource? get activeSource;
 
   /// Rejects a trimmed prompt before a run starts by returning the error to
   /// show; null accepts the prompt.
@@ -110,6 +110,14 @@ abstract class GenuiSessionCore extends ChangeNotifier {
       notifyChanged();
       return;
     }
+    final source = activeSource;
+    if (source == null) {
+      // A guard that accepts prompts guarantees a transport; failing safe
+      // keeps a future subclass mistake from becoming a crash.
+      error = fallbackError;
+      notifyChanged();
+      return;
+    }
     final epoch = ++_epoch;
     final token = _token = CancelToken();
     busy = true;
@@ -123,7 +131,7 @@ abstract class GenuiSessionCore extends ChangeNotifier {
       // render progressively; every message is fully validated before it
       // commits, and an invalid tail leaves earlier messages in place.
       await for (final event
-          in activeSource
+          in source
               .generate(buildRequest(trimmed), token)
               .timeout(generationTimeout)
               .map((chunk) {

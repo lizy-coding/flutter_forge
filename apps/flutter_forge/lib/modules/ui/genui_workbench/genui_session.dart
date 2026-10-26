@@ -133,7 +133,7 @@ class GenuiSession extends GenuiSessionCore {
   }
 
   @override
-  WorkbenchSource get activeSource => _source;
+  WorkbenchSource? get activeSource => _source;
 
   @override
   bool get silentEmptyPrompt => true;

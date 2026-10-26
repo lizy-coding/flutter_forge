@@ -11,13 +11,13 @@ import 'package:flutter_forge_app/shared/genui/session_core.dart';
 /// so the core's run machinery is exercised without a surface catalog.
 class CoreTestSession extends GenuiSessionCore {
   CoreTestSession(
-    WorkbenchSource source, {
+    WorkbenchSource? source, {
     super.recordLimit,
     this.silentEmptyPrompt = false,
     this.maxGeneratedChars = 48000,
   }) : _source = source;
 
-  final WorkbenchSource _source;
+  final WorkbenchSource? _source;
 
   @override
   final bool silentEmptyPrompt;
@@ -31,7 +31,7 @@ class CoreTestSession extends GenuiSessionCore {
   int cancelCount = 0;
 
   @override
-  WorkbenchSource get activeSource => _source;
+  WorkbenchSource? get activeSource => _source;
 
   @override
   String? submitGuard(String prompt) =>
@@ -138,6 +138,18 @@ void main() {
       expect(session.busy, isFalse);
       expect(source.calls, 0);
       expect(session.startedPrompt, isNull);
+    },
+  );
+
+  test(
+    'a run without a transport fails safe after the guard accepts',
+    () async {
+      final session = CoreTestSession(null);
+      addTearDown(session.dispose);
+      await session.submit('hello');
+      expect(session.error, '兜底错误');
+      expect(session.startedPrompt, isNull, reason: '失败发生在 run 开始之前');
+      expect(session.busy, isFalse);
     },
   );
 
