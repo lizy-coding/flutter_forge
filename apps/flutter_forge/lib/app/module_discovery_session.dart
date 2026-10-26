@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:a2ui_core/a2ui_core.dart' as a2ui;
-import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
 import '../module_registry/module_entry.dart';
 import '../module_registry/app_platform_snapshot.dart';
 import '../shared/genui/model_source.dart';
 import '../shared/genui/session_core.dart';
-import 'module_discovery_surface.dart';
+import 'module_discovery_catalog.dart';
 
 const discoverySurface = 'module-discovery';
 const discoveryCatalog = 'dev.flutterforge.module-menu';
@@ -22,471 +20,11 @@ class ModuleDiscoverySession extends GenuiSessionCore {
     WorkbenchSource? source,
   }) : _source = source {
     _byPath = {for (final module in modules) module.path: module};
-    catalog = Catalog([
-      _item(
-        'Group',
-        {
-          'children': S.list(items: S.string()),
-          'title': S.string(),
-          'layout': S.string(enumValues: ['list', 'compare']),
-        },
-        (c) {
-          final data = c.data as Map;
-          final children = [
-            for (final id in data['children'] as List)
-              c.buildChild(id as String),
-          ];
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (data['title'] is String)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    data['title'] as String,
-                    style: Theme.of(c.buildContext).textTheme.titleMedium,
-                  ),
-                ),
-              if (data['layout'] == 'compare')
-                LayoutBuilder(
-                  builder: (_, constraints) => Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: [
-                      for (final child in children)
-                        SizedBox(
-                          width: constraints.maxWidth >= 600
-                              ? (constraints.maxWidth - 12) / 2
-                              : constraints.maxWidth,
-                          child: child,
-                        ),
-                    ],
-                  ),
-                )
-              else
-                ...children,
-            ],
-          );
-        },
-        required: ['children'],
-      ),
-      _item(
-        'Note',
-        {'text': S.string(maxLength: 600)},
-        (c) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text((c.data as Map)['text'] as String),
-        ),
-        required: ['text'],
-      ),
-      _item(
-        'ModuleCard',
-        {'moduleId': S.string(), 'reason': S.string(maxLength: 400)},
-        (c) {
-          final data = c.data as Map;
-          final module = _byPath[data['moduleId'] as String]!;
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: DiscoverySurface(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      module.title,
-                      style: Theme.of(c.buildContext).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(module.subtitle),
-                    Text(
-                      '${module.category.label} · ${module.difficulty.label} · ${module.estimatedMinutes} 分钟',
-                    ),
-                    const SizedBox(height: 8),
-                    Text(data['reason'] as String),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: FilledButton.tonal(
-                        onPressed: busy
-                            ? null
-                            : () {
-                                addRecord('本地打开：${module.path}');
-                                openModule(module.path);
-                              },
-                        child: Text(moduleActionLabel(module)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-        required: ['moduleId', 'reason'],
-      ),
-      _item(
-        'CompareTable',
-        {
-          'moduleIds': S.list(items: S.string()),
-          'focus': S.string(maxLength: 120),
-        },
-        (c) {
-          final data = c.data as Map;
-          final selected = [
-            for (final id in (data['moduleIds'] as List).whereType<String>())
-              _byPath[id]!,
-          ];
-          final focus = data['focus'] as String?;
-          final theme = Theme.of(c.buildContext);
-          final colors = theme.colorScheme;
-          TableRow row(String label, List<String> values) => TableRow(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Text(
-                  label,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-                ),
-              ),
-              for (final value in values)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: Text(value, style: theme.textTheme.bodySmall),
-                ),
-            ],
-          );
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: DiscoverySurface(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Table(
-                      columnWidths: const {0: FixedColumnWidth(72)},
-                      defaultVerticalAlignment:
-                          TableCellVerticalAlignment.middle,
-                      children: [
-                        TableRow(
-                          children: [
-                            const SizedBox(),
-                            for (final module in selected)
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      module.title,
-                                      style: theme.textTheme.titleSmall,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    tooltip: moduleActionLabel(module),
-                                    visualDensity: VisualDensity.compact,
-                                    onPressed: busy
-                                        ? null
-                                        : () {
-                                            addRecord('本地打开：${module.path}');
-                                            openModule(module.path);
-                                          },
-                                    icon: const Icon(
-                                      Icons.open_in_new,
-                                      size: 16,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        ),
-                        row('分类', [
-                          for (final module in selected) module.category.label,
-                        ]),
-                        row('难度', [
-                          for (final module in selected)
-                            module.difficulty.label,
-                        ]),
-                        row('时长', [
-                          for (final module in selected)
-                            '${module.estimatedMinutes} 分钟',
-                        ]),
-                        row('平台', [
-                          for (final module in selected)
-                            module.isSupportedOn(platform)
-                                ? '当前平台可用'
-                                : '当前平台受限',
-                        ]),
-                        row('概念', [
-                          for (final module in selected)
-                            module.concepts.take(3).join('、'),
-                        ]),
-                      ],
-                    ),
-                    if (focus != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          '对比重点：$focus',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colors.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-        required: ['moduleIds'],
-      ),
-      _item(
-        'LearningPath',
-        {
-          'title': S.string(maxLength: 40),
-          'steps': S.list(
-            items: S.object(
-              properties: {
-                'moduleId': S.string(),
-                'goal': S.string(maxLength: 120),
-              },
-              required: ['moduleId', 'goal'],
-            ),
-          ),
-        },
-        (c) {
-          final data = c.data as Map;
-          final theme = Theme.of(c.buildContext);
-          final colors = theme.colorScheme;
-          final steps = [
-            for (final step in (data['steps'] as List).whereType<Map>())
-              (
-                module: _byPath[step['moduleId'] as String?]!,
-                goal: step['goal'] as String,
-              ),
-          ];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: DiscoverySurface(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (data['title'] is String)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Text(
-                          data['title'] as String,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                      ),
-                    for (var index = 0; index < steps.length; index++)
-                      Padding(
-                        padding: EdgeInsets.only(top: index == 0 ? 0 : 12),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 24,
-                              height: 24,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: colors.primaryContainer,
-                              ),
-                              child: Text(
-                                '${index + 1}',
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: colors.onPrimaryContainer,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    steps[index].goal,
-                                    style: theme.textTheme.bodyMedium,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        steps[index].module.category.icon,
-                                        size: 16,
-                                        color: colors.onSurfaceVariant,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          steps[index].module.title,
-                                          style: theme.textTheme.titleSmall,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        tooltip: moduleActionLabel(
-                                          steps[index].module,
-                                        ),
-                                        visualDensity: VisualDensity.compact,
-                                        onPressed: busy
-                                            ? null
-                                            : () {
-                                                final path =
-                                                    steps[index].module.path;
-                                                addRecord('本地打开：$path');
-                                                openModule(path);
-                                              },
-                                        icon: const Icon(
-                                          Icons.arrow_forward,
-                                          size: 18,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    steps[index].module.subtitle,
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: colors.onSurfaceVariant,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-        required: ['steps'],
-      ),
-      _item('RecentHint', {'title': S.string(maxLength: 40)}, (c) {
-        final recents = [
-          for (final path in recentPaths)
-            if (_byPath[path] case final module?) module,
-        ].take(3).toList();
-        if (recents.isEmpty) return const SizedBox.shrink();
-        final theme = Theme.of(c.buildContext);
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.history_rounded,
-                    size: 16,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    ((c.data as Map)['title'] as String?) ?? '继续上次',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  for (final module in recents)
-                    ActionChip(
-                      label: Text(module.title),
-                      onPressed: busy
-                          ? null
-                          : () {
-                              addRecord('本地打开：${module.path}');
-                              openModule(module.path);
-                            },
-                    ),
-                ],
-              ),
-            ],
-          ),
-        );
-      }),
-      _item(
-        'RefineChoice',
-        {
-          'label': S.string(maxLength: 60),
-          'prompt': S.string(maxLength: 300),
-          'filter': S.object(
-            properties: {
-              'by': S.string(enumValues: ['difficulty', 'category', 'concept']),
-              'value': S.string(maxLength: 20),
-            },
-            required: ['by', 'value'],
-          ),
-        },
-        (c) {
-          final data = c.data as Map;
-          final filter = data['filter'];
-          final isLocal = filter is Map;
-          return Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: OutlinedButton.icon(
-                onPressed: busy || (!isLocal && _pending != null)
-                    ? null
-                    : () {
-                        final filter = data['filter'];
-                        if (filter case Map<String, dynamic> filter
-                            when filter['by'] is String &&
-                                filter['value'] is String) {
-                          applyLocalFilter(
-                            by: filter['by'] as String,
-                            value: filter['value'] as String,
-                            label: data['label'] as String,
-                          );
-                        } else {
-                          _pending = data['prompt'] as String;
-                          c.dispatchEvent(
-                            UserActionEvent(
-                              name: 'refineIntent',
-                              sourceComponentId: c.id,
-                              context: {'choice': _pending!},
-                            ),
-                          );
-                        }
-                      },
-                icon: Icon(
-                  isLocal
-                      ? Icons.filter_alt_outlined
-                      : Icons.north_east_rounded,
-                  size: 14,
-                ),
-                label: Text(data['label'] as String),
-              ),
-            ),
-          );
-        },
-        required: ['label'],
-      ),
-    ], catalogId: discoveryCatalog);
+    catalog = buildDiscoveryCatalog(this);
     controller = SurfaceController(catalogs: [catalog]);
     _events = controller.onSubmit.listen((message) {
-      final choice = _pending;
-      _pending = null;
+      final choice = pendingChoice;
+      pendingChoice = null;
       if (choice == null || message.parts.uiInteractionParts.isEmpty) return;
       addRecord('SDK 澄清动作：$choice');
       unawaited(submit('$question\n补充偏好：$choice'));
@@ -506,7 +44,11 @@ class ModuleDiscoverySession extends GenuiSessionCore {
   Map<String, Map<String, dynamic>>? _preFilterComponents;
   String? localFilterLabel;
   String question = '';
-  String? _pending;
+
+  /// Clarification prompt chosen by a generated [RefineChoice] and consumed
+  /// by the surface's submit event; set by the catalog, drained once.
+  String? pendingChoice;
+
   // Replay is the offline default; a live source replaces it explicitly.
   bool get connected => _source?.isReplay == false;
   bool get isReplay => _source?.isReplay ?? false;
@@ -518,16 +60,10 @@ class ModuleDiscoverySession extends GenuiSessionCore {
   String moduleActionLabel(ModuleEntry module) =>
       module.isSupportedOn(platform) ? '进入模块' : '查看平台限制';
 
-  CatalogItem _item(
-    String name,
-    Map<String, Schema> properties,
-    Widget Function(CatalogItemContext) builder, {
-    List<String> required = const [],
-  }) => CatalogItem(
-    name: name,
-    dataSchema: S.object(properties: properties, required: required),
-    widgetBuilder: builder,
-  );
+  /// Resolves a validated module reference; the catalog may assume non-null
+  /// because [validate] rejects unknown paths before they reach a renderer.
+  ModuleEntry? moduleByPath(String? path) =>
+      path == null ? null : _byPath[path];
 
   void setSource(WorkbenchSource source) {
     cancel();
@@ -538,7 +74,7 @@ class ModuleDiscoverySession extends GenuiSessionCore {
   }
 
   @override
-  WorkbenchSource get activeSource => _source!;
+  WorkbenchSource? get activeSource => _source;
 
   @override
   String? submitGuard(String prompt) {
@@ -581,7 +117,7 @@ class ModuleDiscoverySession extends GenuiSessionCore {
       addRecord('界面更新：共 $appliedMessages 条消息，${components.length} 个组件');
 
   @override
-  void onCancelled() => _pending = null;
+  void onCancelled() => pendingChoice = null;
 
   Map<String, Map<String, dynamic>> validate(
     List<Map<String, dynamic>> updates,
@@ -636,6 +172,19 @@ class ModuleDiscoverySession extends GenuiSessionCore {
           }
         case 'RecentHint':
           if (node['title'] != null) _text(node['title'], 40);
+          final ids = node['moduleIds'];
+          if (ids != null &&
+              (ids is! List ||
+                  ids.isEmpty ||
+                  ids.length > 3 ||
+                  ids.any(
+                    (id) =>
+                        id is! String ||
+                        !_byPath.containsKey(id) ||
+                        !recentPaths.contains(id),
+                  ))) {
+            throw const FormatException('最近访问须引用本地已有的模块入口');
+          }
         case 'Note':
           _text(node['text'], 600);
         case 'RefineChoice':
@@ -765,6 +314,12 @@ class ModuleDiscoverySession extends GenuiSessionCore {
       _ => false,
     };
     final kept = <String, Map<String, dynamic>>{};
+    var matchedModules = 0;
+    bool matchesPath(Object? path) {
+      final module = path is String ? _byPath[path] : null;
+      return module != null && matches(module);
+    }
+
     Map<String, dynamic>? visit(String id) {
       if (kept.containsKey(id)) return kept[id];
       final node = components[id];
@@ -782,20 +337,62 @@ class ModuleDiscoverySession extends GenuiSessionCore {
         kept[id] = copy;
         return copy;
       }
-      if (node['component'] == 'ModuleCard') {
-        final module = _byPath[node['moduleId'] as String?];
-        if (module == null || !matches(module)) return null;
-      }
       final copy = Map<String, dynamic>.from(node);
+      switch (node['component']) {
+        case 'ModuleCard':
+          if (!matchesPath(node['moduleId'])) return null;
+          matchedModules++;
+        case 'CompareTable':
+          final ids = (node['moduleIds'] as List).where(matchesPath).toList();
+          if (ids.isEmpty) return null;
+          matchedModules += ids.length;
+          if (ids.length == 1) {
+            kept[id] = {
+              'id': id,
+              'component': 'ModuleCard',
+              'moduleId': ids.single,
+              'reason': node['focus'] ?? '符合当前过滤条件的模块',
+            };
+            return kept[id];
+          }
+          copy['moduleIds'] = ids;
+        case 'LearningPath':
+          final steps = [
+            for (final step in (node['steps'] as List).cast<Map>())
+              if (matchesPath(step['moduleId'])) step,
+          ];
+          if (steps.isEmpty) return null;
+          matchedModules += steps.length;
+          if (steps.length == 1) {
+            kept[id] = {
+              'id': id,
+              'component': 'ModuleCard',
+              'moduleId': steps.single['moduleId'],
+              'reason': steps.single['goal'],
+            };
+            return kept[id];
+          }
+          copy['steps'] = steps;
+        case 'RecentHint':
+          final ids = (node['moduleIds'] as List? ?? recentPaths)
+              .where((path) => path is String && _byPath.containsKey(path))
+              .take(3)
+              .where(matchesPath)
+              .toList();
+          if (ids.isEmpty) return null;
+          matchedModules += ids.length;
+          copy['moduleIds'] = ids;
+      }
       kept[id] = copy;
       return copy;
     }
 
-    if (visit('root') == null) return null;
+    if (visit('root') == null || matchedModules == 0) return null;
     return kept;
   }
 
   void _applyComponents(Map<String, Map<String, dynamic>> next) {
+    validate(next.values.toList(), {});
     controller.handleMessage(
       a2ui.UpdateComponentsMessage(
         surfaceId: discoverySurface,
