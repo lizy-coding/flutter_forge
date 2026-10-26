@@ -252,7 +252,8 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                                     ),
                                     itemCount: entries.length,
                                     selectedIndex: _selectedEntryIndex,
-                                    onActivate: _activateEntry,
+                                    onActivate: (index) =>
+                                        _activateEntry(entries[index]),
                                     itemBuilder: (context, index, active) {
                                       final entry = entries[index];
                                       if (entry is ModuleCategory) {

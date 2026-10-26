@@ -27,6 +27,47 @@ const _desktopPlatforms = TargetPlatformVariant({
 const _neutral = AppThemeSelection(palette: AppThemePalette.graphiteForge);
 
 void main() {
+  testWidgets('sidebar keyboard activates categories and modules', (
+    tester,
+  ) async {
+    _mockHost(tester);
+    final router = await _pump(tester);
+    final module = AppRouteTable.modules.firstWhere(
+      (module) => module.category == ModuleCategory.basic,
+    );
+    await tester.tap(find.byKey(const ValueKey('sidebar-category:basic')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    // Entering a category replaces the route's focus scope. Arm its sidebar
+    // after the category page has mounted, then navigate using real key events.
+    await tester.tap(find.byKey(const ValueKey('sidebar-category:basic')));
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(
+      tester
+          .widget<ForgeNavTile>(
+            find.byKey(ValueKey('sidebar-module:${module.path}')),
+          )
+          .keyboardActive,
+      isTrue,
+    );
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(router.routeInformationProvider.value.uri.path, module.path);
+
+    await tester.tap(find.byKey(ValueKey('sidebar-module:${module.path}')));
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.home);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(router.routeInformationProvider.value.uri.path, '/category/basic');
+    expect(tester.takeException(), isNull);
+  }, variant: _desktopPlatforms);
+
   test(
     'both desktop platforms share density, geometry and palette selection',
     () {
