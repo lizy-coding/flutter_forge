@@ -35,7 +35,7 @@
     "device_info_plus",
     "flutter_battery",
     "universal_ble",
-    "url_launcher",
+    "bluetooth_system_bridge",
     "file_picker_bridge",
     "video_player",
     "video_player_web",

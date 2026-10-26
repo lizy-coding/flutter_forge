@@ -46,12 +46,26 @@
       "packages/usb_network_bridge",
       "packages/forge_scene_viewer",
       "packages/usb_detector_bridge",
-      "packages/forge_notification_bridge"
+      "packages/forge_notification_bridge",
+      "packages/flutter_biometric",
+      "packages/bluetooth_system_bridge"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "bluetooth_system_bridge",
+      "type": "flutter_plugin_package",
+      "path": "packages/bluetooth_system_bridge",
+      "entrypoint": "lib/bluetooth_system_bridge.dart"
+    },
+    {
+      "name": "flutter_biometric",
+      "type": "flutter_plugin_package",
+      "path": "packages/flutter_biometric",
+      "entrypoint": "lib/flutter_biometric.dart"
+    },
     {
       "name": "forge_articles",
       "type": "dart_package",

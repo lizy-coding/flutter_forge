@@ -403,7 +403,9 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
                   Text(
                     [
                       if (audio[id] case final device?)
-                        '系统已连接 · ${device.profiles.join('、')}',
+                        device.error == null
+                            ? '系统已连接 · ${device.profiles.join('、')}'
+                            : '记录解析失败（${device.error}）',
                       if (session.systemDevices.containsKey(id)) '系统 BLE 已连接',
                     ].join(' · '),
                   ),

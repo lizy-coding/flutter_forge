@@ -1104,7 +1104,7 @@
       "depends": [
         "shared_learning",
         "universal_ble",
-        "url_launcher",
+        "bluetooth_system_bridge",
         "module_registry"
       ],
       "platform_support": {
@@ -1122,9 +1122,7 @@
         "required_capabilities": [
           "ble_central"
         ],
-        "unreviewed_dependencies": [
-          "url_launcher"
-        ],
+        "unreviewed_dependencies": [],
         "optional_capabilities": [],
         "reasons": [
           {
@@ -1132,7 +1130,7 @@
             "reason": "ble_central_adapters",
             "sources": [
               "apps/flutter_forge/lib/modules/platform/bluetooth_ble/module_entry.dart",
-              "apps/flutter_forge/lib/modules/platform/bluetooth_ble/state/ble_session.dart"
+              "packages/bluetooth_system_bridge/lib/bluetooth_system_bridge.dart"
             ]
           }
         ],
@@ -1261,8 +1259,8 @@
             "capability": "biometric_auth",
             "reason": "biometric_biometricprompt_localauth_adapters",
             "sources": [
-              "apps/flutter_forge/pubspec.yaml",
-              "apps/flutter_forge/lib/modules/platform/biometric_auth/module_entry.dart"
+              "packages/flutter_biometric/pubspec.yaml",
+              "packages/flutter_biometric/lib/flutter_biometric_method_channel.dart"
             ]
           }
         ],

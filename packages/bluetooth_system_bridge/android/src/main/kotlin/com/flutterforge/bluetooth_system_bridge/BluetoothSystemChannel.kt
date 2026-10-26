@@ -1,4 +1,4 @@
-package com.flutterforge.preview
+package com.flutterforge.bluetooth_system_bridge
 
 import android.Manifest
 import android.app.Activity
@@ -15,8 +15,11 @@ import io.flutter.plugin.common.MethodChannel
 
 /** Public system settings and connected audio profile queries. */
 class BluetoothSystemChannel(private val activity: Activity) {
+    private var activeCancel: (() -> Unit)? = null
+    fun close() { activeCancel?.invoke(); activeCancel = null }
     fun handle(method: String, result: MethodChannel.Result) {
         when (method) {
+            "queryCapabilities" -> result.success(mapOf("settings" to true, "audioDevices" to true))
             "openSettings" -> try {
                 activity.startActivity(Intent(Settings.ACTION_BLUETOOTH_SETTINGS))
                 result.success(null)
@@ -29,6 +32,7 @@ class BluetoothSystemChannel(private val activity: Activity) {
     }
 
     private fun queryAudioDevices(result: MethodChannel.Result) {
+        if (activeCancel != null) { result.error("request_in_progress", "Audio query already active", null); return }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
             activity.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -36,8 +40,12 @@ class BluetoothSystemChannel(private val activity: Activity) {
             return
         }
         val adapter = (activity.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
-        if (adapter == null || !adapter.isEnabled) {
-            result.success(emptyList<Map<String, Any?>>())
+        if (adapter == null) {
+            result.error("adapter_unavailable", "No Bluetooth adapter", null)
+            return
+        }
+        if (!adapter.isEnabled) {
+            result.error("bluetooth_off", "Bluetooth is powered off", null)
             return
         }
         val handler = Handler(Looper.getMainLooper())
@@ -52,18 +60,20 @@ class BluetoothSystemChannel(private val activity: Activity) {
         fun finish(error: Exception? = null) {
             if (completed) return
             completed = true
+            activeCancel = null
             handler.removeCallbacks(timeout)
-            proxies.forEach { (profile, proxy) -> adapter.closeProfileProxy(profile, proxy) }
+            proxies.forEach { (profile, proxy) -> runCatching { adapter.closeProfileProxy(profile, proxy) } }
             proxies.clear()
             if (error == null) result.success(devices.values.toList())
             else result.error("profile_query_failed", error.message, null)
         }
+        activeCancel = { finish(IllegalStateException("Activity detached")) }
         timeout = Runnable { finish(IllegalStateException("Bluetooth audio profile query timed out")) }
         handler.postDelayed(timeout, 4000)
         val listener = object : BluetoothProfile.ServiceListener {
             override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
                 if (completed) {
-                    adapter.closeProfileProxy(profile, proxy)
+                    runCatching { adapter.closeProfileProxy(profile, proxy) }
                     return
                 }
                 proxies[profile] = proxy

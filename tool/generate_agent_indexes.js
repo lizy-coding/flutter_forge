@@ -402,7 +402,7 @@ const modules = [
     id: 'bluetooth_ble',
     route: '/bluetooth-ble',
     status: 'ready',
-    depends: ['shared_learning', 'universal_ble', 'url_launcher', 'module_registry'],
+    depends: ['shared_learning', 'universal_ble', 'bluetooth_system_bridge', 'module_registry'],
     owns: ['module_entry', 'module_ui', 'module_docs', 'scan_lifecycle', 'gatt_lifecycle', 'advertisement_history'],
     validation: ['flutter analyze', 'flutter test test/modules/platform/bluetooth_ble'],
     title: 'BLE 连接生命周期',

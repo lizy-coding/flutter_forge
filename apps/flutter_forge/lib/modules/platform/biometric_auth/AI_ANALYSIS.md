@@ -33,8 +33,8 @@
         "capability": "biometric_auth",
         "reason": "biometric_biometricprompt_localauth_adapters",
         "sources": [
-          "apps/flutter_forge/pubspec.yaml",
-          "apps/flutter_forge/lib/modules/platform/biometric_auth/module_entry.dart"
+          "packages/flutter_biometric/pubspec.yaml",
+          "packages/flutter_biometric/lib/flutter_biometric_method_channel.dart"
         ]
       }
     ],

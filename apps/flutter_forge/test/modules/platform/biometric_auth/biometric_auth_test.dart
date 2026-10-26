@@ -31,6 +31,32 @@ FlutterBiometric fakeBridge(FakeBiometricPlatform platform) =>
     FlutterBiometric(platform: platform);
 
 void main() {
+  testWidgets('key operation works at 360dp with large text', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(360, 800);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final platform = FakeBiometricPlatform();
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.5)),
+          child: child!,
+        ),
+        home: BiometricAuthEntry(biometric: fakeBridge(platform)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.ensureVisible(find.text('强生物识别'));
+    await tester.tap(find.text('强生物识别'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(platform.requests, hasLength(1));
+  });
+
   group(BiometricSession, () {
     test('initialize reads runtime capabilities from the bridge', () async {
       final platform = FakeBiometricPlatform();
@@ -93,14 +119,17 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.textContaining('已录入：指纹'), findsOneWidget);
-    expect(find.text('面容认证'), findsOneWidget);
-    // Face is unavailable on this fake, so its button stays disabled.
+    expect(find.text('弱或更强生物识别'), findsOneWidget);
+    // Weak strength also accepts the enrolled strong biometric.
     final faceButton = tester.widget<FilledButton>(
-      find.ancestor(of: find.text('面容认证'), matching: find.byType(FilledButton)),
+      find.ancestor(
+        of: find.text('弱或更强生物识别'),
+        matching: find.byType(FilledButton),
+      ),
     );
-    expect(faceButton.onPressed, isNull);
+    expect(faceButton.onPressed, isNotNull);
 
-    await tester.tap(find.text('指纹认证'));
+    await tester.tap(find.text('强生物识别'));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('认证成功'), findsOneWidget);
@@ -118,7 +147,10 @@ void main() {
     await tester.pumpAndSettle();
 
     final fingerprintButton = tester.widget<FilledButton>(
-      find.ancestor(of: find.text('指纹认证'), matching: find.byType(FilledButton)),
+      find.ancestor(
+        of: find.text('强生物识别'),
+        matching: find.byType(FilledButton),
+      ),
     );
     expect(fingerprintButton.onPressed, isNull);
     expect(find.textContaining('本机未提供可用的生物识别'), findsOneWidget);

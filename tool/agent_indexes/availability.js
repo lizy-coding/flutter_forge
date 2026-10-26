@@ -40,7 +40,7 @@ const capabilities = {
   biometric_auth: {
     dependencies: ['flutter_biometric'], platforms: ['android', 'macOS'],
     reason: 'biometric_biometricprompt_localauth_adapters',
-    sources: ['apps/flutter_forge/pubspec.yaml', 'apps/flutter_forge/lib/modules/platform/biometric_auth/module_entry.dart'],
+    sources: ['packages/flutter_biometric/pubspec.yaml', 'packages/flutter_biometric/lib/flutter_biometric_method_channel.dart'],
   },
   notification_posting: {
     dependencies: ['forge_notification_bridge'], platforms: ['android', 'macOS'],
@@ -101,9 +101,9 @@ const capabilities = {
     sources: ['apps/flutter_forge/lib/modules/platform/webview/module_entry.dart'],
   },
   ble_central: {
-    dependencies: ['universal_ble'], platforms: ['android', 'macOS', 'windows'],
+    dependencies: ['universal_ble', 'bluetooth_system_bridge'], platforms: ['android', 'macOS', 'windows'],
     reason: 'ble_central_adapters',
-    sources: ['apps/flutter_forge/lib/modules/platform/bluetooth_ble/module_entry.dart', 'apps/flutter_forge/lib/modules/platform/bluetooth_ble/state/ble_session.dart'],
+    sources: ['apps/flutter_forge/lib/modules/platform/bluetooth_ble/module_entry.dart', 'packages/bluetooth_system_bridge/lib/bluetooth_system_bridge.dart'],
   },
 };
 

@@ -22,6 +22,8 @@
   "dependency_migration": {
     "layout": "pub_workspace",
     "internal_packages": [
+      "packages/bluetooth_system_bridge",
+      "packages/flutter_biometric",
       "packages/forge_articles",
       "packages/forge_scene_viewer",
       "packages/usb_network_bridge",

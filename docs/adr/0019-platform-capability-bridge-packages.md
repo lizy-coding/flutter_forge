@@ -22,5 +22,5 @@ USB、蓝牙、电池这类多端差异大的能力，早期实现路径不一�
 
 - 通道契约、原生实现、能力声明同包演进，模块可完全离线测试。
 - 复活 deferred 模块只需移除 entryRestriction：usb_detector 已按本模板完成迁移（usb_detector_bridge），限制移除后 Android 自动可用，届时再补真机验收。
-- 已知偏差：`flutter_forge/bluetooth_system` 通道仍在宿主 MainActivity（bluetooth_ble 的 Android 系统入口，单一消费者）；待该模块出现第二消费者或进一步膨胀时迁入包内。
+- `flutter_forge/bluetooth_system` 系统设置与音频连接查询已移入 `packages/bluetooth_system_bridge`，通过 FlutterPlugin 自注册；BLE 扫描、连接和 GATT 仍由 universal_ble 适配，模块保留会话状态机。生物识别插件按锁定来源内部化到 `packages/flutter_biometric`，不修改外部仓库。
 - 新增平台差异模块的评审口径：四件套齐备 + availability 能力规则 + 宿主原生代码零增长。

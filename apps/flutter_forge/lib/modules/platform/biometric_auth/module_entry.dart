@@ -46,25 +46,32 @@ class _BiometricAuthEntryState extends State<BiometricAuthEntry> {
             Text(session.outcomeText),
             if (session.loading) const LinearProgressIndicator(),
             const SizedBox(height: 12),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                Expanded(
+                SizedBox(
+                  width: 230,
                   child: FilledButton.icon(
-                    onPressed: session.hasFingerprint && !session.loading
+                    onPressed:
+                        (session.capabilities?.strongAvailable ?? false) &&
+                            !session.loading
                         ? () => session.authenticate(BiometricStrength.strong)
                         : null,
                     icon: const Icon(Icons.fingerprint),
-                    label: const Text('指纹认证'),
+                    label: const Text('强生物识别'),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
+                SizedBox(
+                  width: 230,
                   child: FilledButton.icon(
-                    onPressed: session.hasFace && !session.loading
+                    onPressed:
+                        (session.capabilities?.weakAvailable ?? false) &&
+                            !session.loading
                         ? () => session.authenticate(BiometricStrength.weak)
                         : null,
                     icon: const Icon(Icons.face),
-                    label: const Text('面容认证'),
+                    label: const Text('弱或更强生物识别'),
                   ),
                 ),
               ],
@@ -94,15 +101,14 @@ class _BiometricAuthEntryState extends State<BiometricAuthEntry> {
           CommonPitfalls(
             pitfalls: [
               '「设备支持」不等于「已录入」：canAuthenticate 的成功同时覆盖硬件与已录入状态',
-              'Android 的 BIOMETRIC_WEAK 同时包含面容与指纹，判断面容需要结合 FEATURE_FACE 硬件特征',
+              'strong/weak 表示强度，不能指定指纹或面容；硬件特征也不能证明某类生物特征已录入',
               '认证过程中不要阻塞平台主线程：BiometricPrompt 的回调与发起调用共用主线程',
               '取消、失败、锁定都不是异常：它们是类型化结果的一部分，不该抛出跨通道异常',
             ],
           ),
           ExerciseCard(
-            task: '先记录能力查询结果，再分别触发一次指纹认证与一次取消，对比原因码差异',
-            hint:
-                '取消对应 userCancel，多次失败会进入 lockout，连续错误会升级为 permanentlyLockedOut',
+            task: '先记录能力查询结果，再分别触发一次强生物识别与一次取消，对比原因码差异',
+            hint: '取消可返回 userCancel/systemCancel；锁定策略和原因码取决于系统，成功也可能不披露认证方式',
           ),
         ],
       ),

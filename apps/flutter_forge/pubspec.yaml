@@ -19,9 +19,7 @@ dependencies:
   usb_detector_bridge:
     path: ../../packages/usb_detector_bridge
   flutter_biometric:
-    git:
-      url: https://github.com/lizy-coding/flutter_biometric.git
-      ref: v0.2.0
+    path: ../../packages/flutter_biometric
   forge_notification_bridge:
     path: ../../packages/forge_notification_bridge
   gcode_core:
@@ -58,6 +56,8 @@ dependencies:
   forge_scene_viewer:
     path: ../../packages/forge_scene_viewer
   hooks: ^2.0.0
+  bluetooth_system_bridge:
+    path: ../../packages/bluetooth_system_bridge
   universal_ble: ^2.3.0
   genui: 0.10.4
   json_schema_builder: ^0.1.3

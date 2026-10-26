@@ -27,6 +27,20 @@ const categoryOwnership = {
 
 const workspacePackages = [
   {
+    name: 'bluetooth_system_bridge', kind: 'flutter_plugin_package',
+    path: 'packages/bluetooth_system_bridge', entrypoints: ['lib/bluetooth_system_bridge.dart'],
+    owns: ['bluetooth_system_settings', 'bluetooth_audio_profile_queries', 'bluetooth_system_operation_lifecycle'],
+    depends: ['flutter_sdk', 'plugin_platform_interface', 'url_launcher'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
+    name: 'flutter_biometric', kind: 'flutter_plugin_package',
+    path: 'packages/flutter_biometric', entrypoints: ['lib/flutter_biometric.dart'],
+    owns: ['biometric_capability_queries', 'biometric_auth_outcomes', 'biometric_native_lifecycle'],
+    depends: ['flutter_sdk', 'plugin_platform_interface'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'forge_articles', kind: 'dart_package',
     path: 'packages/forge_articles', entrypoints: ['lib/forge_articles.dart'],
     owns: ['article_request_api', 'synthetic_article_adapter', 'article_workflow_execution'],
