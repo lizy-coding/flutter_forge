@@ -514,7 +514,7 @@
     },
     {
       "id": "online_video_player",
-      "title": "在线视频播放",
+      "title": "视频播放与控制",
       "route": "/online-video-player",
       "supported_platforms": [
         "android",

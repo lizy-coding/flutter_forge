@@ -30,6 +30,18 @@ def wait(predicate, timeout=20):
     raise TimeoutError('Timed out waiting for an observed window state')
 
 
+def validate_application_log(text):
+    errors = {
+        'window lifecycle': r'Invalid engine handle|Communicating on a dead channel|c0000005',
+        'window startup': r'MissingPluginException[^\r\n]*(?:getWindowDefinition|mixin\.one/desktop_multi_window)|getWindowDefinition[^\r\n]*MissingPluginException|(?:startup barrier|启动屏障)[^\r\n]*(?:timed? ?out|timeout|超时)',
+        'window readiness': r'Window did not become ready|No native first frame|Native window definition was not registered|startup_failed',
+        'accessibility tree': r'Failed to update ui::AXTree',
+    }
+    for category, pattern in errors.items():
+        if re.search(pattern, text, re.I):
+            raise AssertionError(f'{category} error in captured application log')
+
+
 class Session:
     def __init__(self, exe, output, procdump=None):
         from pywinauto import Desktop, keyboard, mouse
@@ -145,9 +157,8 @@ class Session:
             if list(self.output.glob('*.dmp')):
                 raise AssertionError('Filtered first-chance dump produced')
         self.log.flush()
-        text = (self.output / 'application.log').read_text(errors='replace')
-        if re.search(r'Invalid engine handle|Communicating on a dead channel|c0000005', text, re.I):
-            raise AssertionError('Lifecycle error in captured application log')
+        text = (self.output / 'application.log').read_text(encoding='utf-8', errors='replace')
+        validate_application_log(text)
         return {'pid': self.pid, 'exitCode': code, 'applicationLogCaptured': bool(text.strip()),
                 'firstChance': 'PASS' if self.monitor else 'NOT_RUN'}
 

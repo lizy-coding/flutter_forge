@@ -1,0 +1,132 @@
+name: Windows Store candidate
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - .github/workflows/windows-store.yml
+      - tool/windows_store.py
+      - tool/windows_store_test.py
+      - tool/windows_store_requirements.txt
+      - apps/flutter_forge/windows/store/**
+      - apps/flutter_forge/pubspec.yaml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  quality:
+    uses: ./.github/workflows/quality.yml
+  package:
+    needs: quality
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.quality.outputs.source-sha }}
+          persist-credentials: false
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          channel: stable
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Resolve locked dependencies and test packaging tools
+        shell: pwsh
+        run: |
+          flutter pub get --enforce-lockfile
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency resolution failed' }
+          python -m pip install -r tool/windows_store_requirements.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Packaging dependency installation failed' }
+          python tool/windows_store_test.py
+          if ($LASTEXITCODE -ne 0) { throw 'Packaging tool tests failed' }
+      - name: Build local-test MSIX from validated source
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vs = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vs) { throw 'Visual Studio x64 C++ tools not found' }
+          $redist = Get-ChildItem "$vs\VC\Redist\MSVC" -Directory |
+            Where-Object { $_.Name -match '^\d+\.\d+\.\d+$' } |
+            Sort-Object { [version]$_.Name } -Descending |
+            ForEach-Object { Join-Path $_.FullName 'x64\Microsoft.VC143.CRT' } |
+            Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+          if (-not $redist) { throw 'Matching x64 retail VC143 CRT not found' }
+          python tool/windows_store.py package --local-test --vc-runtime-dir "$redist" --output .release/windows-store
+          if ($LASTEXITCODE -ne 0) { throw 'MSIX build failed' }
+      - name: Sign a separate copy for local installation testing
+        shell: pwsh
+        run: |
+          $directory = Join-Path $env:GITHUB_WORKSPACE '.release/windows-store'
+          $report = Get-Content "$directory/result.json" -Raw | ConvertFrom-Json
+          if ($report.package_build -ne 'PASS' -or $report.identity_kind -ne 'local-test') {
+            throw 'Expected a successfully built local-test package'
+          }
+          $original = Join-Path $directory $report.package.path
+          if ((Get-FileHash $original -Algorithm SHA256).Hash.ToLowerInvariant() -ne $report.package.sha256) {
+            throw 'Unsigned package hash mismatch'
+          }
+          $signed = Join-Path $directory (([IO.Path]::GetFileNameWithoutExtension($original)) + '-signed.msix')
+          Copy-Item -LiteralPath $original -Destination $signed
+          $cert = New-SelfSignedCertificate -Type CodeSigningCert -Subject $report.identity.publisher `
+            -CertStoreLocation Cert:\CurrentUser\My -KeyExportPolicy NonExportable `
+            -HashAlgorithm SHA256 -KeyLength 2048 -NotAfter (Get-Date).AddDays(30)
+          try {
+            $certificatePath = Join-Path $directory 'Forest-FlutterForge-LocalTest.cer'
+            Export-Certificate -Cert $cert -FilePath $certificatePath | Out-Null
+            $sdkBin = "${env:ProgramFiles(x86)}\Windows Kits\10\bin"
+            $signtool = Get-ChildItem $sdkBin -Directory |
+              Where-Object { $_.Name -match '^\d+\.\d+\.\d+\.\d+$' } |
+              Sort-Object { [version]$_.Name } -Descending |
+              ForEach-Object { Join-Path $_.FullName 'x64\signtool.exe' } |
+              Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+            if (-not $signtool) { throw 'Windows SDK SignTool not found' }
+            & $signtool sign /fd SHA256 /sha1 $cert.Thumbprint /s My $signed
+            if ($LASTEXITCODE -ne 0) { throw 'Local-test signing failed' }
+            # The certificate is self-signed, so it is deliberately not trusted on this runner.
+            # Verify signature presence, signer and a signed-file hash; trust is a local test setup step.
+            $signature = Get-AuthenticodeSignature -LiteralPath $signed
+            if (-not $signature.SignerCertificate -or $signature.SignerCertificate.Thumbprint -ne $cert.Thumbprint) {
+              throw 'Unexpected MSIX signing certificate'
+            }
+            @{
+              schema = 'flutter_forge.windows_store_test_signature.v1'
+              source_sha = $report.source.head
+              package = [IO.Path]::GetFileName($signed)
+              sha256 = (Get-FileHash $signed -Algorithm SHA256).Hash.ToLowerInvariant()
+              certificate = [IO.Path]::GetFileName($certificatePath)
+              certificate_sha256 = (Get-FileHash $certificatePath -Algorithm SHA256).Hash.ToLowerInvariant()
+              certificate_thumbprint = $cert.Thumbprint
+              certificate_subject = $cert.Subject
+              certificate_expires = $cert.NotAfter.ToUniversalTime().ToString('o')
+              signing = 'self-signed-local-test-only'
+              installation = 'NOT_RUN'
+              wack = 'NOT_RUN'
+              store_submission = 'NOT_RUN'
+            } | ConvertTo-Json | Set-Content "$directory/local-test-signature.json" -Encoding utf8
+          } finally {
+            Remove-Item -LiteralPath "Cert:\CurrentUser\My\$($cert.Thumbprint)" -DeleteKey
+          }
+      - name: Include cross-device test checklist
+        shell: pwsh
+        run: |
+          Copy-Item apps/flutter_forge/windows/store/TEST_CHECKLIST.md .release/windows-store/TEST_CHECKLIST.md
+          Copy-Item apps/flutter_forge/windows/store/README.md .release/windows-store/README.md
+      - name: Upload candidate packages and public test certificate
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-forge-msix-local-test-${{ needs.quality.outputs.source-sha }}
+          path: |
+            .release/windows-store/*.msix
+            .release/windows-store/*.cer
+            .release/windows-store/*.json
+            .release/windows-store/*.md
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

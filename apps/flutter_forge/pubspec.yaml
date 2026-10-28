@@ -1,7 +1,7 @@
 name: flutter_forge_app
 description: Flutter Forge app shell.
 publish_to: 'none'
-version: 1.2.10+4
+version: 1.2.10+5
 
 environment:
   sdk: ^3.11.5
@@ -77,6 +77,7 @@ flutter:
     enable-swift-package-manager: false
   uses-material-design: true
   assets:
+    - assets/offline/motion-study.mp4
     - flutter_scene_generated/
     - lib/modules/ui/shader_playground/shaders/uv_gradient.glsl
   shaders:

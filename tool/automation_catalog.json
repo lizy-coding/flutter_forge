@@ -1,0 +1,319 @@
+{
+  "schema": "flutter_forge.automation.v1",
+  "cases": [
+    {
+      "id": "smoke",
+      "kind": "smoke",
+      "platforms": [
+        "local",
+        "windows",
+        "macos",
+        "android",
+        "web"
+      ],
+      "targets": [
+        "integration_test/app_test.dart"
+      ],
+      "widget_target": "test/automation/smoke_test.dart",
+      "timeout": 240
+    },
+    {
+      "id": "catalog",
+      "kind": "integration",
+      "platforms": [
+        "windows",
+        "macos",
+        "android"
+      ],
+      "targets": [
+        "integration_test/module_catalog_test.dart"
+      ],
+      "timeout": 600
+    },
+    {
+      "id": "desktop-material",
+      "kind": "integration",
+      "platforms": [
+        "windows",
+        "macos"
+      ],
+      "targets": [
+        "integration_test/desktop_material_acceptance_test.dart"
+      ],
+      "timeout": 240
+    },
+    {
+      "id": "windows-file",
+      "kind": "integration",
+      "platforms": [
+        "windows"
+      ],
+      "targets": [
+        "integration_test/windows_acceptance_test.dart"
+      ],
+      "requirements": [
+        "external-file-dialog-driver"
+      ],
+      "timeout": 180
+    },
+    {
+      "id": "scene-flow",
+      "kind": "integration",
+      "platforms": [
+        "windows",
+        "macos"
+      ],
+      "targets": [
+        "integration_test/flutter_scene_3d_flow_test.dart"
+      ],
+      "timeout": 300
+    },
+    {
+      "id": "scene-diagnostics",
+      "kind": "integration",
+      "platforms": [
+        "windows",
+        "macos"
+      ],
+      "targets": [
+        "integration_test/flutter_scene_3d_diagnostics_test.dart"
+      ],
+      "timeout": 300
+    },
+    {
+      "id": "genui-soak",
+      "kind": "integration",
+      "platforms": [
+        "macos"
+      ],
+      "targets": [
+        "integration_test/genui_ax_soak_test.dart"
+      ],
+      "defines": [
+        "FORGE_AX_SOAK=true"
+      ],
+      "timeout": 1200
+    },
+    {
+      "id": "genui-live",
+      "kind": "manual",
+      "platforms": [
+        "windows",
+        "macos",
+        "android",
+        "web"
+      ],
+      "targets": [
+        "integration_test/genui_workbench_live_test.dart"
+      ],
+      "requirements": [
+        "live-model-and-token"
+      ],
+      "timeout": 300
+    },
+    {
+      "id": "discovery-live",
+      "kind": "manual",
+      "platforms": [
+        "windows",
+        "macos",
+        "android",
+        "web"
+      ],
+      "targets": [
+        "integration_test/module_discovery_live_test.dart"
+      ],
+      "requirements": [
+        "live-model-and-token"
+      ],
+      "timeout": 300
+    },
+    {
+      "id": "workflow-live",
+      "kind": "manual",
+      "platforms": [
+        "windows",
+        "macos",
+        "android",
+        "web"
+      ],
+      "targets": [
+        "integration_test/workflow_ecosystem_test.dart"
+      ],
+      "requirements": [
+        "hub-server-and-token"
+      ],
+      "timeout": 300
+    },
+    {
+      "id": "ble",
+      "kind": "integration",
+      "platforms": [
+        "windows",
+        "macos",
+        "android"
+      ],
+      "targets": [
+        "integration_test/ble_scan_controls_test.dart"
+      ],
+      "defines": [
+        "BLE_HARDWARE_ACCEPTANCE=true"
+      ],
+      "requirements": [
+        "bluetooth-hardware-and-permission"
+      ],
+      "timeout": 300
+    },
+    {
+      "id": "battery",
+      "kind": "integration",
+      "platforms": [
+        "windows",
+        "macos",
+        "android"
+      ],
+      "targets": [
+        "integration_test/battery_monitor_flow_test.dart"
+      ],
+      "timeout": 180
+    },
+    {
+      "id": "webview-macos",
+      "kind": "integration",
+      "platforms": [
+        "macos"
+      ],
+      "targets": [
+        "integration_test/webview_macos_test.dart"
+      ],
+      "timeout": 240
+    },
+    {
+      "id": "web-contracts",
+      "kind": "browser",
+      "platforms": [
+        "web"
+      ],
+      "targets": [
+        "test/shared/web_compatibility_test.dart"
+      ],
+      "timeout": 240
+    },
+    {
+      "id": "windows-lifecycle",
+      "kind": "windows-ui",
+      "platforms": [
+        "windows"
+      ],
+      "targets": [
+        "tool/windows_ui_acceptance.py"
+      ],
+      "timeout": 600
+    },
+    {
+      "id": "windows-log-tests",
+      "kind": "python",
+      "platforms": [
+        "local"
+      ],
+      "targets": [
+        "tool/windows_ui_acceptance_test.py"
+      ],
+      "timeout": 60
+    },
+    {
+      "id": "manager-tests",
+      "kind": "python",
+      "platforms": [
+        "local"
+      ],
+      "targets": [
+        "tool/automation_test.py"
+      ],
+      "timeout": 60
+    },
+    {
+      "id": "quality",
+      "kind": "command",
+      "platforms": [
+        "local"
+      ],
+      "targets": [
+        "tool/quality_gate.sh"
+      ],
+      "command": [
+        "bash",
+        "tool/quality_gate.sh"
+      ],
+      "timeout": 1200
+    },
+    {
+      "id": "source-baseline",
+      "kind": "command",
+      "platforms": [
+        "local"
+      ],
+      "targets": [
+        "tool/smoke_baseline.sh"
+      ],
+      "command": [
+        "bash",
+        "tool/smoke_baseline.sh"
+      ],
+      "timeout": 300
+    },
+    {
+      "id": "windows-posted-close",
+      "kind": "windows-close",
+      "platforms": [
+        "windows"
+      ],
+      "targets": [
+        "tool/windows_close_smoke.ps1"
+      ],
+      "timeout": 600
+    },
+    {
+      "id": "bridge-tests",
+      "kind": "python",
+      "platforms": [
+        "local"
+      ],
+      "targets": [
+        "tool/genui_codex_bridge_test.py"
+      ],
+      "timeout": 120
+    },
+    {
+      "id": "symbol-tests",
+      "kind": "python",
+      "platforms": [
+        "local"
+      ],
+      "targets": [
+        "tool/windows_symbol_bundle_test.py"
+      ],
+      "timeout": 60
+    },
+    {
+      "id": "node-tools",
+      "kind": "command",
+      "platforms": [
+        "local"
+      ],
+      "targets": [
+        "tool/agent_indexes/generator.test.js",
+        "tool/agent_indexes/availability.test.js",
+        "tool/ci_contracts.test.js"
+      ],
+      "command": [
+        "node",
+        "--test",
+        "tool/agent_indexes/generator.test.js",
+        "tool/agent_indexes/availability.test.js",
+        "tool/ci_contracts.test.js"
+      ],
+      "timeout": 120
+    }
+  ]
+}

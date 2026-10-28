@@ -70,6 +70,12 @@
 FlutterGuard（已更名 BoundaryLens）独立安装，后续仅通过外部插件或工具集按需使用，不属于依赖解析、提交、CI 或发布的强制要求。
 `tool/verify_test_layout.sh` 仅保留模块测试存在性检查；稳定路由、教学组件、注册一致性和支持声明仍是业务契约。
 
+## 自动化用例维护
+
+- 宿主集成与显式专项执行单元统一登记 `tool/automation_catalog.json`，交互标准及运行命令见 `docs/TESTING.md`。单元/Widget 测试仍由原门禁按 workspace 收集，不逐条登记。
+- 基本冒烟复用 `test/support/automation/` 的 fixture、函数与平台 adapter；默认仅运行确定性核心交互，不追加全目录、真实模型、GPU、外设或压力循环。新增差异优先扩展已有 adapter，禁止复制各平台整份流程。
+- 模拟平台、浏览器 Widget、真实宿主集成和原生/设备观察分别报告；零执行、全部跳过、缺设备或驱动不能标成该平台 PASS。CI 与门禁修改仍遵循下方授权规则。
+
 ## Git 与发布
 
 - `dev` 是开发分支；功能、修复、文档和发版准备先进入 `dev`。

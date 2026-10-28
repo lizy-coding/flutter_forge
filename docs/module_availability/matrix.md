@@ -6,42 +6,44 @@
 
 目标平台为 Android、iOS、macOS、Web、Windows。当前应用宿主目录：android、macos、web、windows。iOS 当前仅建模，尚无应用宿主。入口声明不表示安装包或设备操作已完成验收。
 
-| 模块 | 支持的目标平台 | 功能差异 | 限制依据 |
-|---|---|---|---|
-| 图形绘制背景：认识 GPU、纹理与 Shader（`/graphics-background`） | android、iOS、macOS、web、windows | — | — |
-| 绘制入门：从画形状到算颜色（`/pixel-shader-intro`） | android、iOS、macOS、web、windows | — | — |
-| 约束与声明式布局（`/constraint-layout`） | android、iOS、macOS、web、windows | — | — |
-| 三棵树与生命周期（`/tree-state`） | android、iOS、macOS、web、windows | — | — |
-| 事件循环与微任务（`/microtask`） | android、iOS、macOS、web、windows | — | — |
-| 防抖与节流（`/debounce-throttle`） | android、iOS、macOS、web、windows | — | — |
-| Stream 订阅机制（`/stream-subscription`） | android、iOS、macOS、web、windows | — | — |
-| Isolate 并发对比（`/isolate-basic`） | android、iOS、macOS、windows | — | isolates: safari_isolate_progress_unreliable |
-| 多任务 Isolate 管理器（`/isolate-stream`） | android、iOS、macOS、windows | — | isolates: safari_isolate_progress_unreliable |
-| 状态管理演进（`/status-management`） | android、iOS、macOS、web、windows | — | — |
-| Flutter IoC 容器（`/flutter-ioc`） | android、iOS、macOS、web、windows | — | — |
-| 本地持久化（`/local-persistence`） | android、iOS、macOS、web、windows | — | — |
-| G-code 解析与轨迹动画（`/gcode-visualizer`） | macOS | — | gcode_render: macos_gcode_adapter_only；file_selection: file_bridge_adapters_web_filename_only |
-| 智能吸附线画板（`/adsorption-line`） | android、iOS、macOS、web、windows | — | — |
-| 下载飞入动效（`/download-animation`） | android、iOS、macOS、web、windows | — | — |
-| 字体选择器（`/font-picker`） | android、iOS、macOS、web、windows | font_file_import: android、macOS、windows；font_preview: android、iOS、macOS、windows | font_file_import: font_import_requires_native_bytes_and_file_bridge；font_preview: web_font_page_has_no_native_preview_controls |
-| 生成式实验工作区（`/genui-workbench`） | android、iOS、macOS、web、windows | — | — |
-| 跨项目工作流实验室（`/workflow-workbench`） | android、iOS、macOS、web、windows | — | — |
-| Shader 像素绘制与交互动效（`/shader-playground`） | android、iOS、macOS、web、windows | — | — |
-| 教学型 3D 查看器（`/flutter-scene-3d`） | android、macOS、windows | scene_controls: macOS、windows | scene_render: scene_gpu_adapters；scene_controls: desktop_scene_controls_android_view_only |
-| 弹窗合集（`/popup-widgets`） | android、iOS、macOS、web、windows | — | — |
-| 弹窗与列表交互（`/popup-list-interaction`） | android、iOS、macOS、web、windows | — | — |
-| 二维滚动表格（`/scroll-table`） | android、iOS、macOS、web、windows | — | — |
-| Overlay 跟随方案对照组（`/overlay-compare`） | android、iOS、macOS、web、windows | — | — |
-| Dio 拦截器链路（`/dio-interceptor`） | android、iOS、macOS、web、windows | — | — |
-| USB 网络连接基础（`/usb-network`） | macOS、windows | — | usb_network: desktop_system_ncm_interface_bound_tcp |
-| 网络诊断：从现象到检测证据（`/network-diagnostics`） | macOS、windows | — | desktop_network_diagnostics: desktop_direct_network_probes_mobile_deferred_web_out_of_scope |
-| USB 设备检测（`/usb-detector`） | 不支持 | — | usb_detection: android_usb_manager_enumeration_only；usb_otg_learning_workflow_deferred |
-| 电池状态与事件监听（`/battery-monitor`） | android、macOS | — | battery_monitor: battery_android_macos_native_adapters |
-| BLE 连接生命周期（`/bluetooth-ble`） | android、macOS、windows | — | ble_central: ble_central_adapters |
-| 文件选择器（`/file-picker`） | android、macOS、web、windows | — | file_selection: file_bridge_adapters_web_filename_only |
-| 在线视频播放（`/online-video-player`） | android、macOS、web、windows | — | media_playback: media_backend_adapters |
-| 生物特征与本地认证（`/biometric-auth`） | android、macOS | — | biometric_auth: biometric_biometricprompt_localauth_adapters |
-| 系统通知与授权状态（`/system-notification`） | android、macOS | — | notification_posting: notification_android_macos_local_adapters |
-| 网页容器与跨平台导航（`/webview`） | android、macOS、windows | — | embedded_web: embedded_web_adapters |
+移动端与桌面端按具体平台列出，端族内支持一端不代表支持另一端；Web 独立维护。窗口宽度只影响布局，不改变平台归属。
+
+| 模块 | 移动端 | 桌面端 | Web | 功能差异 | 限制依据 |
+|---|---|---|---|---|---|
+| 图形绘制背景：认识 GPU、纹理与 Shader（`/graphics-background`） | android、iOS | macOS、windows | web | — | — |
+| 绘制入门：从画形状到算颜色（`/pixel-shader-intro`） | android、iOS | macOS、windows | web | — | — |
+| 约束与声明式布局（`/constraint-layout`） | android、iOS | macOS、windows | web | — | — |
+| 三棵树与生命周期（`/tree-state`） | android、iOS | macOS、windows | web | — | — |
+| 事件循环与微任务（`/microtask`） | android、iOS | macOS、windows | web | — | — |
+| 防抖与节流（`/debounce-throttle`） | android、iOS | macOS、windows | web | — | — |
+| Stream 订阅机制（`/stream-subscription`） | android、iOS | macOS、windows | web | — | — |
+| Isolate 并发对比（`/isolate-basic`） | android、iOS | macOS、windows | 不支持 | — | isolates: safari_isolate_progress_unreliable |
+| 多任务 Isolate 管理器（`/isolate-stream`） | android、iOS | macOS、windows | 不支持 | — | isolates: safari_isolate_progress_unreliable |
+| 状态管理演进（`/status-management`） | android、iOS | macOS、windows | web | — | — |
+| Flutter IoC 容器（`/flutter-ioc`） | android、iOS | macOS、windows | web | — | — |
+| 本地持久化（`/local-persistence`） | android、iOS | macOS、windows | web | — | — |
+| G-code 解析与轨迹动画（`/gcode-visualizer`） | 不支持 | macOS | 不支持 | — | gcode_render: macos_gcode_adapter_only；file_selection: file_bridge_adapters_web_filename_only |
+| 智能吸附线画板（`/adsorption-line`） | android、iOS | macOS、windows | web | — | — |
+| 下载飞入动效（`/download-animation`） | android、iOS | macOS、windows | web | — | — |
+| 字体选择器（`/font-picker`） | android、iOS | macOS、windows | web | font_file_import: 移动端（android），桌面端（macOS、windows），Web（不支持）；font_preview: 移动端（android、iOS），桌面端（macOS、windows），Web（不支持） | font_file_import: font_import_requires_native_bytes_and_file_bridge；font_preview: web_font_page_has_no_native_preview_controls |
+| 生成式实验工作区（`/genui-workbench`） | android、iOS | macOS、windows | web | — | — |
+| 跨项目工作流实验室（`/workflow-workbench`） | android、iOS | macOS、windows | web | — | — |
+| Shader 像素绘制与交互动效（`/shader-playground`） | android、iOS | macOS、windows | web | — | — |
+| 教学型 3D 查看器（`/flutter-scene-3d`） | android | macOS、windows | 不支持 | scene_controls: 移动端（不支持），桌面端（macOS、windows），Web（不支持） | scene_render: scene_gpu_adapters；scene_controls: desktop_scene_controls_android_view_only |
+| 弹窗合集（`/popup-widgets`） | android、iOS | macOS、windows | web | — | — |
+| 弹窗与列表交互（`/popup-list-interaction`） | android、iOS | macOS、windows | web | — | — |
+| 二维滚动表格（`/scroll-table`） | android、iOS | macOS、windows | web | — | — |
+| Overlay 跟随方案对照组（`/overlay-compare`） | android、iOS | macOS、windows | web | — | — |
+| Dio 拦截器链路（`/dio-interceptor`） | android、iOS | macOS、windows | web | — | — |
+| USB 网络连接基础（`/usb-network`） | 不支持 | macOS、windows | 不支持 | — | usb_network: desktop_system_ncm_interface_bound_tcp |
+| 网络诊断：从现象到检测证据（`/network-diagnostics`） | 不支持 | macOS、windows | 不支持 | — | desktop_network_diagnostics: desktop_direct_network_probes_mobile_deferred_web_out_of_scope |
+| USB 设备检测（`/usb-detector`） | 不支持 | 不支持 | 不支持 | — | usb_detection: android_usb_manager_enumeration_only；usb_otg_learning_workflow_deferred |
+| 电池状态与事件监听（`/battery-monitor`） | android | macOS | 不支持 | — | battery_monitor: battery_android_macos_native_adapters |
+| BLE 连接生命周期（`/bluetooth-ble`） | android | macOS、windows | 不支持 | — | ble_central: ble_central_adapters |
+| 文件选择器（`/file-picker`） | android | macOS、windows | web | — | file_selection: file_bridge_adapters_web_filename_only |
+| 视频播放与控制（`/online-video-player`） | android | macOS、windows | web | — | media_playback: media_backend_adapters |
+| 生物特征与本地认证（`/biometric-auth`） | android | macOS | 不支持 | — | biometric_auth: biometric_biometricprompt_localauth_adapters |
+| 系统通知与授权状态（`/system-notification`） | android | macOS | 不支持 | — | notification_posting: notification_android_macos_local_adapters |
+| 网页容器与跨平台导航（`/webview`） | android | macOS、windows | 不支持 | — | embedded_web: embedded_web_adapters |
 
 完整声明及限制来源见 [matrix.json](matrix.json)；维护方式见 [README](README.md)。

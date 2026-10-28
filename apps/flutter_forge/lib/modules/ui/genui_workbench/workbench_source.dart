@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'workbench_protocol.dart';
 
 import '../../../shared/genui/model_source.dart';
+import '../../../shared/platform/build_features.dart';
 export '../../../shared/genui/model_source.dart';
 
 class ReplayWorkbenchSource implements WorkbenchSource {
@@ -22,7 +23,11 @@ class ReplayWorkbenchSource implements WorkbenchSource {
     final prompt = request.prompt;
     final explain = prompt == '解释当前结果';
     if (!explain && !['宽度', '约束', 'tight', 'loose'].any(prompt.contains)) {
-      throw const FormatException('回放仅支持约束示例与“解释当前结果”。自由探索请配置真实模型。');
+      throw const FormatException(
+        offlineEdition
+            ? '离线回放支持宽度、松紧约束示例与“解释当前结果”。请选择一个约束问题。'
+            : '回放仅支持约束示例与“解释当前结果”。自由探索请配置真实模型。',
+      );
     }
     if (request.components.isEmpty) {
       for (final message in initialMessages()) {

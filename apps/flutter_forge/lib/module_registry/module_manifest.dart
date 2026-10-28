@@ -491,9 +491,9 @@ final List<ModuleEntry> moduleManifest = [
     builder: (context) => const FilePickerEntry(),
   ),
   ModuleEntry(
-    title: '在线视频播放',
+    title: '视频播放与控制',
     path: '/online-video-player',
-    subtitle: '使用 video_player 播放在线 HTTP 视频流并操控播放参数',
+    subtitle: '使用 video_player 打开视频并操控播放参数，离线版使用内置教学素材',
     category: ModuleCategory.platform,
     difficulty: Difficulty.intermediate,
     concepts: [

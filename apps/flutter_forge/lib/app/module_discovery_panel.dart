@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../module_registry/module_entry.dart';
 import '../module_registry/app_platform_snapshot.dart';
 import '../shared/genui/model_connection_dialog.dart';
+import '../shared/platform/build_features.dart';
 import 'module_discovery_replay.dart';
 import 'module_discovery_session.dart';
 import 'module_discovery_surface.dart';
@@ -94,11 +95,12 @@ class _ModuleDiscoveryPanelState extends State<ModuleDiscoveryPanel> {
                     ).textTheme.labelLarge?.copyWith(color: colors.primary),
                   ),
                   const Spacer(),
-                  IconButton(
-                    onPressed: session.busy ? null : connect,
-                    tooltip: session.connected ? '更换模型服务' : '连接真实模型',
-                    icon: const Icon(Icons.tune_rounded, size: 20),
-                  ),
+                  if (!offlineEdition)
+                    IconButton(
+                      onPressed: session.busy ? null : connect,
+                      tooltip: session.connected ? '更换模型服务' : '连接真实模型',
+                      icon: const Icon(Icons.tune_rounded, size: 20),
+                    ),
                 ],
               ),
               const SizedBox(height: 16),

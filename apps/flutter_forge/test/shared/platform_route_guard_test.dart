@@ -5,6 +5,7 @@ import 'package:flutter_forge_app/app/router/app_router.dart';
 import 'package:flutter_forge_app/app/unsupported_module_page.dart';
 import 'package:flutter_forge_app/app/theme/app_theme_controller.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_scope.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -58,5 +59,11 @@ void main() {
 
     expect(find.byType(UnsupportedModulePage), findsNothing);
     expect(find.byKey(const Key('pick-file-button')), findsOneWidget);
+    expect(
+      AppPlatformScope.of(
+        tester.element(find.byKey(const Key('pick-file-button'))),
+      ).platform,
+      AppTargetPlatform.android,
+    );
   });
 }

@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
-const text = fs.readFileSync(path.join(root, 'pubspec.yaml'), 'utf8');
+const text = fs.readFileSync(path.join(root, 'pubspec.yaml'), 'utf8').replace(/\r\n/g, '\n');
 const block = text.match(/^workspace:\n((?:[ \t].*\n|\n)+)/m);
 if (!block) throw new Error('Missing workspace members');
 const members = block[1].split('\n').filter((line) => line.trim() && !line.trim().startsWith('#')).map((line) => {

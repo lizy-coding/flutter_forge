@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../module_registry/module_catalog_utils.dart';
 import '../module_registry/module_category.dart';
 import '../module_registry/app_platform_snapshot.dart';
+import '../module_registry/app_platform_scope.dart';
 import 'module_home_page.dart';
 import 'unsupported_module_page.dart';
 import 'router/app_route_table.dart';
@@ -105,33 +106,39 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationSessionScope(
-      child: AppThemeScope(
-        controller: widget.themeController,
-        child: ListenableBuilder(
-          listenable: widget.themeController,
-          builder: (context, _) => MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routerConfig: _router,
-            title: widget.category.label,
-            theme: AppTheme.light(widget.themeController.palette),
-            darkTheme: AppTheme.dark(widget.themeController.palette),
-            highContrastTheme: AppTheme.light(AppThemePalette.graphiteForge),
-            highContrastDarkTheme: AppTheme.dark(AppThemePalette.graphiteForge),
-            themeMode: widget.themeController.themeMode,
-            builder: (context, child) => DesktopWindowHost(
-              platform: widget.platform,
-              mainWindow: false,
+    return AppPlatformScope(
+      platform: widget.platform,
+      child: NavigationSessionScope(
+        child: AppThemeScope(
+          controller: widget.themeController,
+          child: ListenableBuilder(
+            listenable: widget.themeController,
+            builder: (context, _) => MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              routerConfig: _router,
               title: widget.category.label,
-              router: _router,
-              modules: filterModulesByCategory(
-                AppRouteTable.modules,
-                widget.category,
+              theme: AppTheme.light(widget.themeController.palette),
+              darkTheme: AppTheme.dark(widget.themeController.palette),
+              highContrastTheme: AppTheme.light(AppThemePalette.graphiteForge),
+              highContrastDarkTheme: AppTheme.dark(
+                AppThemePalette.graphiteForge,
               ),
               themeMode: widget.themeController.themeMode,
-              materialEnabled:
-                  widget.themeController.palette == AppThemePalette.liquidGlass,
-              child: ForgeThemeBackdrop(child: child!),
+              builder: (context, child) => DesktopWindowHost(
+                platform: widget.platform,
+                mainWindow: false,
+                title: widget.category.label,
+                router: _router,
+                modules: filterModulesByCategory(
+                  AppRouteTable.modules,
+                  widget.category,
+                ),
+                themeMode: widget.themeController.themeMode,
+                materialEnabled:
+                    widget.themeController.palette ==
+                    AppThemePalette.liquidGlass,
+                child: ForgeThemeBackdrop(child: child!),
+              ),
             ),
           ),
         ),

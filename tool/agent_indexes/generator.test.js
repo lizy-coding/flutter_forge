@@ -93,3 +93,52 @@ test('duplicate outputs and escaping paths are rejected before writing', (t) => 
   }), /Invalid or duplicate/);
   assert.equal(fs.existsSync(path.join(dir, 'duplicate.json')), false);
 });
+
+test('manifest and lock facts accept CRLF checkouts', (t) => {
+  const dir = fixture(t);
+  for (const rel of ['pubspec.yaml', 'pubspec.lock', 'apps/flutter_forge/pubspec.yaml', ...workspacePackages.map((p) => `${p.path}/pubspec.yaml`)]) {
+    const file = path.join(dir, rel);
+    fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/\r?\n/g, '\r\n'));
+  }
+  assert.deepEqual(loadFacts(dir, modules, workspacePackages).workspaceMembers,
+    loadFacts(root, modules, workspacePackages).workspaceMembers);
+  const {execFileSync} = require('node:child_process');
+  fs.mkdirSync(path.join(dir, 'tool'));
+  fs.copyFileSync(path.join(root, 'tool/workspace_members.js'), path.join(dir, 'tool/workspace_members.js'));
+  const members = execFileSync(process.execPath, [path.join(dir, 'tool/workspace_members.js')], {encoding:'utf8'}).trim().split('\n');
+  assert.deepEqual(members, loadFacts(root, modules, workspacePackages).workspaceMembers);
+});
+
+test('document validator accepts Windows relative path separators', () => {
+  const vm = require('node:vm');
+  const {createRequire} = require('node:module');
+  const file = path.join(root, 'tool/validate_agent_docs.js');
+  const localRequire = createRequire(file);
+  const output = [];
+  vm.runInNewContext(fs.readFileSync(file, 'utf8'), {
+    __dirname: path.dirname(file),
+    require: (name) => name === 'path' ? {
+      ...path,
+      relative: (...args) => path.relative(...args).replace(/\//g, '\\'),
+      normalize: (value) => path.normalize(value).replace(/\//g, '\\'),
+    } : localRequire(name),
+    console: {log: (...args) => output.push(args.join(' ')), error: (...args) => output.push(args.join(' '))},
+    process: {stdout: {write: (value) => output.push(value)}, stderr: {write: (value) => output.push(value)}, exit: (code) => assert.fail(`validator exited ${code}: ${output.join('\n')}`)},
+  }, {filename: file});
+  assert.match(output.join('\n'), /agent_docs_valid:\d+/);
+});
+
+
+test('CRLF generated output is equivalent and check remains read-only', (t) => {
+  const dir = fixture(t);
+  const config = {root: dir, appRoot: path.join(dir, 'apps/flutter_forge')};
+  const render = ({writeJson}) => writeJson('example.json', {active: true});
+  generate(config, render);
+  const file = path.join(dir, 'example.json');
+  const crlf = fs.readFileSync(file, 'utf8').replace(/\n/g, '\r\n');
+  fs.writeFileSync(file, crlf);
+  assert.equal(generate({...config, check: true}, render).changed, 0);
+  assert.equal(fs.readFileSync(file, 'utf8'), crlf);
+  fs.writeFileSync(file, crlf.replace('true', 'false'));
+  assert.throws(() => generate({...config, check: true}, render), /Generated output drift/);
+});

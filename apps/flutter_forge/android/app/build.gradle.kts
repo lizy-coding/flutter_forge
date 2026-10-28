@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -15,8 +17,13 @@ val releaseSigningConfigured = listOf(
     androidKeyPassword,
 ).all { !it.isNullOrBlank() }
 
+val offlineEdition = (project.findProperty("dart-defines") as String?)
+    ?.split(",")
+    ?.map { String(Base64.getDecoder().decode(it), Charsets.UTF_8) }
+    ?.contains("FORGE_OFFLINE=true") == true
+
 android {
-    namespace = "com.flutterforge.preview"
+    namespace = "com.forge.forest"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -26,7 +33,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.flutterforge.preview"
+        applicationId = "com.forge.forest"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -54,6 +61,9 @@ android {
                 signingConfigs.getByName("debug")
             }
         }
+    }
+    if (offlineEdition) {
+        sourceSets.getByName("release").manifest.srcFile("src/offline/AndroidManifest.xml")
     }
 }
 

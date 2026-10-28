@@ -334,8 +334,9 @@ class ProxyEnvironmentTest(unittest.TestCase):
             return_value={"https": "http://system:7897"},
         ), patch.object(bridge, "_proxy_reachable", return_value=True):
             env = bridge.cli_environment()
-            self.assertNotIn("HTTPS_PROXY", env)
-            self.assertEqual(env["https_proxy"], "http://explicit:8080")
+            proxies = {key.lower(): value for key, value in env.items()}
+            self.assertEqual(proxies["https_proxy"], "http://explicit:8080")
+            self.assertNotIn("http://system:7897", env.values())
 
 
 if __name__ == "__main__":

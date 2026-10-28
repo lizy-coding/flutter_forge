@@ -1,4 +1,4 @@
-package com.flutterforge.preview
+package com.forge.forest
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

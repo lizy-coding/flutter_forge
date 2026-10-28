@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../shared/learning/learning_slider.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 enum _LayoutMode { row, column, wrap }
@@ -590,7 +592,7 @@ Align(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('$label：$valueLabel'),
-        Slider(
+        LearningSlider(
           key: ValueKey(sliderKey),
           value: value,
           min: min,

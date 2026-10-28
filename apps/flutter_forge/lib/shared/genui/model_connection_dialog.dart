@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'model_source.dart';
+import '../platform/build_features.dart';
 
 const _endpointPreferenceKey = 'genui.connection.endpoint';
 const _modelPreferenceKey = 'genui.connection.model';
@@ -11,10 +12,12 @@ const _defaultEndpoint = 'http://127.0.0.1:8766/v1/chat/completions';
 const _defaultModel = 'codex-default';
 
 Future<WorkbenchSource?> showModelConnection(BuildContext context) =>
-    showDialog<WorkbenchSource>(
-      context: context,
-      builder: (_) => const _ModelConnectionDialog(),
-    );
+    offlineEdition
+    ? Future.value()
+    : showDialog<WorkbenchSource>(
+        context: context,
+        builder: (_) => const _ModelConnectionDialog(),
+      );
 
 class _ModelConnectionDialog extends StatefulWidget {
   const _ModelConnectionDialog();

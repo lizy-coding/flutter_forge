@@ -9,6 +9,7 @@ import 'genui_session.dart';
 import 'workbench_protocol.dart';
 import 'workbench_source.dart';
 import '../../../shared/genui/model_connection_dialog.dart';
+import '../../../shared/platform/build_features.dart';
 
 class GenuiWorkbenchPage extends StatefulWidget {
   const GenuiWorkbenchPage({super.key, this.session});
@@ -60,10 +61,11 @@ class _GenuiWorkbenchPageState extends State<GenuiWorkbenchPage> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Chip(label: Text(_session.sourceLabel)),
-                    OutlinedButton(
-                      onPressed: _configure,
-                      child: const Text('连接模型服务'),
-                    ),
+                    if (!offlineEdition)
+                      OutlinedButton(
+                        onPressed: _configure,
+                        child: const Text('连接模型服务'),
+                      ),
                     if (!_session.isReplay)
                       TextButton(
                         onPressed: () =>

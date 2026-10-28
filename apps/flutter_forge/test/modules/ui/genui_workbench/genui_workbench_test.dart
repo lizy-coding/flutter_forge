@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_forge_app/shared/learning/learning_slider.dart';
 import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
@@ -168,7 +169,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.byType(Surface), findsOneWidget);
       expect(session.actualWidth, 120);
-      final slider = tester.widget<Slider>(
+      final slider = tester.widget<LearningSlider>(
         find.byKey(const ValueKey('genui-requestedWidth')),
       );
       slider.onChanged!(280);

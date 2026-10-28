@@ -1,129 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_forge_app/app/app.dart';
-import 'package:flutter_forge_app/app/app_platform_provider.dart';
-import 'package:flutter_forge_app/app/module_home_page.dart';
-import 'package:flutter_forge_app/app/router/app_route_table.dart';
-import 'package:flutter_forge_app/app/router/app_router.dart';
-import 'package:flutter_forge_app/app/theme/app_theme_controller.dart';
-import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
-import 'package:flutter_forge_app/modules/popup_table/popup_list_interaction/pages/popup_page.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:integration_test/integration_test.dart';
+
+import '../test/support/automation/app_fixture.dart';
+import '../test/support/automation/smoke_scenarios.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  late AppPlatformSnapshot platform;
-  late GoRouter router;
-
-  setUp(() {
-    platform = AppPlatformSnapshot.detect();
-    router = AppRouter.create(platform)..go('/');
-  });
-
-  tearDown(() => router.dispose());
-
-  Widget testApp() => ProviderScope(
-    overrides: [appPlatformProvider.overrideWithValue(platform)],
-    child: App(
-      router: router,
-      themeController: AppThemeController.forTesting(),
-    ),
-  );
-
-  testWidgets('available modules open and return', (tester) async {
-    await tester.pumpWidget(testApp());
-    await tester.pumpAndSettle();
-
-    expect(
-      find.byKey(
-        ValueKey(
-          platform.hostFamily == AppHostFamily.desktop
-              ? 'workbench-home'
-              : 'learning-home',
-        ),
-      ),
-      findsOneWidget,
-    );
-
-    final modules = AppRouteTable.modules
-        .where((module) => isModuleAvailable(module, platform))
-        .toList();
-
-    for (final module in modules) {
-      router.go('/category/${module.category.name}');
-      await tester.pumpAndSettle();
-      final tile = find.byKey(ValueKey('module:${module.path}'));
-      await tester.scrollUntilVisible(
-        tile,
-        500,
-        scrollable: find
-            .descendant(
-              of: find.byKey(ValueKey('category-page:${module.category.name}')),
-              matching: find.byType(Scrollable),
-            )
-            .first,
-      );
-      debugPrint('Android module smoke: ${module.path}');
-      await tester.tap(tile);
-      await tester.pump(const Duration(milliseconds: 600));
-
-      final moduleException = tester.takeException();
-      if (moduleException != null) {
-        fail('${module.path} raised during Android smoke: $moduleException');
-      }
-
-      expect(find.byType(Scaffold), findsWidgets, reason: module.path);
-      router.go('/category/${module.category.name}');
-      await tester.pumpAndSettle();
-    }
-  });
-
-  testWidgets('popup and list child routes open from the module page', (
-    tester,
-  ) async {
-    await tester.pumpWidget(testApp());
-    await tester.pumpAndSettle();
-
-    router.go('/popup-list-interaction');
-    await tester.pumpAndSettle();
-
-    final popupTile = find.widgetWithText(ListTile, '弹窗组件');
-    await tester.ensureVisible(popupTile);
-    await tester.tap(popupTile);
-    await tester.pumpAndSettle();
-    expect(find.byType(PopupPage), findsOneWidget);
-
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-    await tester.pump(const Duration(milliseconds: 300));
-    router.go('/popup-list-interaction');
-    await tester.pumpAndSettle();
-    router.go('/popup-list-interaction/list');
-    await tester.pumpAndSettle();
-    expect(find.text('二维滚动表格演示'), findsOneWidget);
-  });
-
-  testWidgets('mobile category drawer opens a top-level category', (
-    tester,
-  ) async {
-    if (platform.hostFamily != AppHostFamily.mobile) {
-      return;
-    }
-
-    await tester.pumpWidget(testApp());
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byTooltip('Open navigation menu'));
-    await tester.pumpAndSettle();
-    expect(find.text('探索与查阅'), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('category-drawer:platform')));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(CategoryHomePage), findsOneWidget);
-    expect(find.text('网络与平台'), findsOneWidget);
+  final platform = AppPlatformSnapshot.detect();
+  const expected = String.fromEnvironment('FORGE_AUTOMATION_PLATFORM');
+  testWidgets('smoke.core.${platform.platform.name}', (tester) async {
+    if (expected.isNotEmpty) expect(platform.platform.name, expected);
+    await withApp(tester, platform, (app) => runCoreSmoke(tester, app));
   });
 }

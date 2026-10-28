@@ -4,6 +4,7 @@ import 'package:flutter_forge_app/app/theme/app_theme_controller.dart';
 import 'package:flutter_forge_app/app/theme/app_theme_selection.dart';
 import 'package:flutter_forge_app/app/theme/forge_theme_tokens.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_scope.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -28,6 +29,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    expect(
+      AppPlatformScope.of(tester.element(find.byType(MaterialApp))),
+      same(platform),
+    );
     expect(
       tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
       ThemeMode.dark,

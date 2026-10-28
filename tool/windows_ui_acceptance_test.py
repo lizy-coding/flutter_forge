@@ -1,5 +1,9 @@
+import io
+from pathlib import Path
+import tempfile
+from types import SimpleNamespace
 import unittest
-from windows_ui_acceptance import CASES, run_case
+from windows_ui_acceptance import CASES, Session, run_case, validate_application_log
 
 
 class Window:
@@ -94,6 +98,50 @@ class ScenariosTest(unittest.TestCase):
         session=FakeSession()
         self.assertEqual(run_case(session,'reopen')['nativeHwnds'],[2,3])
         self.assertIn(('caption',2),session.actions)
+
+
+class ApplicationLogTest(unittest.TestCase):
+    def test_clean_shutdown_log_is_accepted(self):
+        validate_application_log('first frame ready\nwindow closed\nexit code 0')
+
+    def test_issue33_and_lifecycle_errors_fail_even_with_a_clean_exit(self):
+        messages = [
+            'MissingPluginException(No implementation found for method getWindowDefinition on channel mixin.one/desktop_multi_window)',
+            'startup barrier timeout after 15s',
+            '启动屏障超时',
+            'TimeoutException: Window did not become ready',
+            'TimeoutException: No native first frame',
+            'operation=startup_failed',
+            'Failed to update ui::AXTree, error: 6 will not be in the tree',
+            'Invalid engine handle',
+            'Communicating on a dead channel',
+            'Exception code: C0000005',
+        ]
+        for message in messages:
+            with self.subTest(message=message):
+                with self.assertRaises(AssertionError):
+                    validate_application_log(message + '\nexit code 0')
+
+    def test_session_finish_rejects_ax_errors_after_zero_exit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            session = Session.__new__(Session)
+            session.output = Path(directory)
+            session.pid = 42
+            session.process = SimpleNamespace(wait=lambda timeout: 0)
+            session.windows = lambda: []
+            session.monitor = None
+            session.log = io.StringIO()
+            for message, category in [
+                ('Failed to update ui::AXTree', 'accessibility tree'),
+                ('启动屏障超时', 'window startup'),
+            ]:
+                with self.subTest(message=message):
+                    (session.output / 'application.log').write_text(
+                        message + '\nexit code 0', encoding='utf-8')
+                    with self.assertRaisesRegex(AssertionError, category):
+                        session.finish(None, close=False)
+            session.log.close()
+
 
 
 if __name__ == '__main__':

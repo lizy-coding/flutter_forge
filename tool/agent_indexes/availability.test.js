@@ -113,6 +113,21 @@ test('support output is compact, escapes table cells and does not emit acceptanc
   assert.doesNotMatch(outputs.get('docs/module_availability/matrix.md'), /STALE|PENDING|PASS|FAIL/);
 });
 
+test('support summary groups hosts without widening entry or feature support', () => {
+  const outputs = new Map();
+  writeSupport({ modules, facts: { currentHosts: ['android', 'macos', 'web', 'windows'] },
+    writeJson: (rel, value) => outputs.set(rel, value), writeText: (rel, value) => outputs.set(rel, value) });
+  const markdown = outputs.get('docs/module_availability/matrix.md');
+  assert.match(markdown, /\| 模块 \| 移动端 \| 桌面端 \| Web \|/);
+  const row = (route) => markdown.split('\n').find((line) => line.includes(`（\`${route}\`）`));
+  assert.match(row('/battery-monitor'), /\| android \| macOS \| 不支持 \|/);
+  assert.match(row('/network-diagnostics'), /\| 不支持 \| macOS、windows \| 不支持 \|/);
+  assert.match(row('/file-picker'), /\| android \| macOS、windows \| web \|/);
+  assert.match(row('/usb-detector'), /\| 不支持 \| 不支持 \| 不支持 \|/);
+  assert.match(row('/flutter-scene-3d'), /\| android \| macOS、windows \| 不支持 \| scene_controls: 移动端（不支持），桌面端（macOS、windows），Web（不支持）/);
+  assert.deepEqual(outputs.get('docs/module_availability/matrix.json'), supportDeclaration(modules));
+});
+
 test('support CLI is read-only and rejects retired result commands', () => {
   const matrix = path.join(root, 'docs/module_availability/matrix.json');
   const before = fs.readFileSync(matrix, 'utf8');

@@ -1,0 +1,66 @@
+{
+  "schema_version": "dispatch-spec.v1",
+  "spec_id": "forge-platform-differences-phase1",
+  "tasks": [
+    {
+      "task_id": "platform-differences-phase1",
+      "title": "简化移动端与桌面端差异维护基础",
+      "goal": "同源生成移动端/桌面端/Web支持摘要，保留具体平台支持边界；通过公共平台快照Scope收敛3D模块交互策略，并维护新增模块规则和定向测试。权限与NFC原生实现不在范围内。",
+      "repositories": [
+        "flutter_forge"
+      ],
+      "allowed_paths_by_repository": {
+        "flutter_forge": [
+          "tool/agent_indexes/support.js",
+          "tool/agent_indexes/contracts.js",
+          "tool/agent_indexes/availability.test.js",
+          "apps/flutter_forge/lib/module_registry/app_platform_scope.dart",
+          "apps/flutter_forge/lib/module_registry/AI_ANALYSIS.md",
+          "apps/flutter_forge/lib/app/app.dart",
+          "apps/flutter_forge/lib/app/category_window_app.dart",
+          "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/module_entry.dart",
+          "apps/flutter_forge/lib/modules/ui/flutter_scene_3d/scene_interaction_mode.dart",
+          "apps/flutter_forge/test/modules/ui/flutter_scene_3d/scene_interaction_mode_test.dart",
+          "apps/flutter_forge/test/shared/platform_route_guard_test.dart",
+          "apps/flutter_forge/test/shared/category_window_lifecycle_test.dart",
+          "docs/module_availability/matrix.md",
+          "docs/module_availability/README.md",
+          "docs/PLATFORM_DIFFERENCES_PHASE1.md",
+          "docs/agent/platform-phase1.dispatch.json",
+          "apps/flutter_forge/test/modules/ui/flutter_scene_3d/flutter_scene_3d_test.dart"
+        ]
+      },
+      "validation_by_repository": {
+        "flutter_forge": [
+          {
+            "check_id": "flutter_analyze",
+            "cwd": ".",
+            "timeout_seconds": 600
+          },
+          {
+            "check_id": "flutter_test:test/modules/ui/flutter_scene_3d",
+            "cwd": "apps/flutter_forge",
+            "timeout_seconds": 600
+          },
+          {
+            "check_id": "flutter_test:test/shared/platform_route_guard_test.dart",
+            "cwd": "apps/flutter_forge"
+          },
+          {
+            "check_id": "flutter_test:test/shared/category_window_lifecycle_test.dart",
+            "cwd": "apps/flutter_forge"
+          }
+        ]
+      },
+      "depends_on": [],
+      "risk": "MEDIUM",
+      "execution_instructions": [
+        "遵循根、app及tool/agent_indexes规则，禁止手改生成物；源变化后运行生成脚本。",
+        "保持现有入口/功能支持范围、机器矩阵schema和权限行为。模块不得依赖app层。",
+        "执行并记录bash tool/quality_gate.sh，工具测试和生成物检查不能被analyze替代；本机Pub镜像不得改写依赖锁文件。",
+        "完成Debug应用启动及热重载，测试注入不表示Android/Windows真机验收。",
+        "保留用户已有文档和release/1.2.10/；禁止清理工作区或未经用户明确授权提交、推送、合并和发布。"
+      ]
+    }
+  ]
+}

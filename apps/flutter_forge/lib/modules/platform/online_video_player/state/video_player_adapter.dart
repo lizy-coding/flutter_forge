@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:video_player/video_player.dart';
+import '../../../../shared/platform/build_features.dart';
+
+const offlineVideoAsset = 'assets/offline/motion-study.mp4';
 
 const sampleStreamUrl = 'https://media.w3.org/2010/05/sintel/trailer.mp4';
 const webSampleStreamPath = 'media/flutter-forge-sample.mp4';
@@ -242,7 +245,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     duration.value = Duration.zero;
 
     final url = _mediaUri ?? defaultSampleStreamUri;
-    if (probeBeforeOpen) {
+    if (probeBeforeOpen && !offlineEdition) {
       final probe = reachabilityProbe ?? _defaultReachabilityProbe;
       final probeStopwatch = Stopwatch()..start();
       debugPrint('[video-diag] probe-start 0ms started');
@@ -272,7 +275,9 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     await _releaseCurrent();
     if (_disposed || generation != _openGeneration) return;
 
-    final controller = VideoPlayerController.networkUrl(url);
+    final controller = offlineEdition
+        ? VideoPlayerController.asset(offlineVideoAsset)
+        : VideoPlayerController.networkUrl(url);
     controller.addListener(_synchronizeState);
     _controller = controller;
     final initializeStopwatch = Stopwatch()..start();

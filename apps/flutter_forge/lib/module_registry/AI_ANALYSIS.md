@@ -10,6 +10,7 @@
   },
   "entrypoints": [
     "app_platform_snapshot.dart",
+    "app_platform_scope.dart",
     "module_entry.dart",
     "module_category.dart",
     "module_platform_support.dart",
@@ -18,6 +19,7 @@
   ],
   "owns": [
     "platform_snapshot",
+    "platform_snapshot_scope",
     "product_target_platforms",
     "module_entry_model",
     "module_category_enum",

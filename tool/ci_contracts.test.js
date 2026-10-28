@@ -43,7 +43,8 @@ test('release CLI verifies exact clean source and rejects dirty or unrelated tag
   const gitExe = process.platform === 'darwin' && fs.existsSync('/Library/Developer/CommandLineTools/usr/bin/git')
     ? '/Library/Developer/CommandLineTools/usr/bin/git' : 'git';
   const git = (...args) => execFileSync(gitExe, args, {cwd:dir, encoding:'utf8', stdio:'pipe'}).trim();
-  git('init', '-q', '-b', 'master');
+  git('init', '-q');
+  git('symbolic-ref', 'HEAD', 'refs/heads/master');
   git('config', 'user.name', 'Release fixture');
   git('config', 'user.email', 'fixture@example.invalid');
   git('add', '.');
@@ -94,9 +95,9 @@ test('release CLI verifies exact clean source and rejects dirty or unrelated tag
     fs.rmSync(staging, {recursive:true});
     if (raw) fs.rmSync(path.join(dir, raw));
   }
-  fs.symlinkSync(path.join(dir, 'apps'), staging);
+  fs.symlinkSync(path.join(dir, 'apps'), staging, 'junction');
   assert.throws(() => stage('web'), /Untracked source\/input|symlink/);
-  fs.rmSync(staging);
+  fs.unlinkSync(staging);
   fs.appendFileSync(pubspec, '# dirty\n');
   assert.throws(() => verify(), /Source changed/);
   git('add', '.');

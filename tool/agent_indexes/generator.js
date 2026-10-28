@@ -12,7 +12,7 @@ function scalar(value) {
 }
 
 function yamlBlock(source, key, indent) {
-  const lines = source.split('\n');
+  const lines = source.split(/\r?\n/);
   const start = lines.findIndex((line) => line === `${' '.repeat(indent)}${key}:`);
   if (start < 0) throw new Error(`Missing manifest block: ${key}`);
   const block = [];
@@ -119,7 +119,7 @@ function generate({ root, appRoot, check = false }, render) {
   // Complete rendering and input validation before touching any generated file.
   const changed = [...outputs].filter(([file, content]) => {
     if (fs.existsSync(file) && fs.lstatSync(file).isSymbolicLink()) throw new Error(`Generated target must not be a symlink: ${file}`);
-    return !fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== content;
+    return !fs.existsSync(file) || fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n') !== content;
   });
   if (check && changed.length) throw new Error(`Generated output drift:\n${changed.map(([file]) => path.relative(root, file)).join('\n')}`);
   if (!check) {

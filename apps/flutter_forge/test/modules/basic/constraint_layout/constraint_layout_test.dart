@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_forge_app/shared/learning/learning_slider.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/module_registry/module_manifest.dart';
 import 'package:flutter_forge_app/modules/basic/constraint_layout/module_entry.dart';
@@ -20,7 +21,7 @@ Future<void> _choose(WidgetTester tester, String label) async {
 }
 
 void _changeSlider(WidgetTester tester, String key, double value) {
-  tester.widget<Slider>(find.byKey(ValueKey(key))).onChanged!(value);
+  tester.widget<LearningSlider>(find.byKey(ValueKey(key))).onChanged!(value);
 }
 
 Finder _item(String label) => find.byKey(ValueKey('layout-item-$label'));
@@ -59,7 +60,7 @@ void main() {
       expect(tester.getSize(child), tester.getSize(parent));
       expect(
         tester
-            .widget<Slider>(find.byKey(const ValueKey('parent-height')))
+            .widget<LearningSlider>(find.byKey(const ValueKey('parent-height')))
             .value,
         tester.getSize(parent).height,
       );
@@ -76,7 +77,9 @@ void main() {
     await tester.drag(handle, const Offset(-2000, -1000));
     await tester.pumpAndSettle();
     expect(
-      tester.widget<Slider>(find.byKey(const ValueKey('parent-width'))).value,
+      tester
+          .widget<LearningSlider>(find.byKey(const ValueKey('parent-width')))
+          .value,
       0.4,
     );
     expect(
@@ -87,7 +90,9 @@ void main() {
     await tester.drag(handle, const Offset(2000, 1000));
     await tester.pumpAndSettle();
     expect(
-      tester.widget<Slider>(find.byKey(const ValueKey('parent-width'))).value,
+      tester
+          .widget<LearningSlider>(find.byKey(const ValueKey('parent-width')))
+          .value,
       1,
     );
     expect(
@@ -103,7 +108,9 @@ void main() {
     await tester.drag(widthHandle, const Offset(-600, 0));
     await tester.pumpAndSettle();
     expect(
-      tester.widget<Slider>(find.byKey(const ValueKey('parent-width'))).value,
+      tester
+          .widget<LearningSlider>(find.byKey(const ValueKey('parent-width')))
+          .value,
       0.4,
     );
     expect(
@@ -260,7 +267,9 @@ void main() {
         isTrue,
       );
       expect(
-        tester.widget<Slider>(find.byKey(const ValueKey('parent-width'))).value,
+        tester
+            .widget<LearningSlider>(find.byKey(const ValueKey('parent-width')))
+            .value,
         1,
       );
     },

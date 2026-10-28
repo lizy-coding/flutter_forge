@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../platform/build_features.dart';
 
 class WorkflowHubClient {
   WorkflowHubClient({required Uri endpoint, required String token, Dio? dio})
@@ -10,6 +11,7 @@ class WorkflowHubClient {
               receiveTimeout: const Duration(seconds: 5),
             ),
           ) {
+    if (offlineEdition) throw StateError('离线版不连接远程工作流。');
     if (endpoint.userInfo.isNotEmpty ||
         endpoint.hasQuery ||
         endpoint.hasFragment ||
