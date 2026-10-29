@@ -4,6 +4,7 @@ on:
   push:
     branches: [dev]
     paths:
+      - .gitattributes
       - .github/workflows/windows-store.yml
       - tool/windows_store.py
       - tool/windows_store_test.py

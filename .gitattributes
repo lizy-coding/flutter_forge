@@ -1,2 +1,4 @@
 # Shell entrypoints must remain executable by Git Bash and WSL after checkout.
 *.sh text eol=lf
+# This generated catalog is verified byte-for-byte against exports.json.
+artwork/branding/forge-a2-glass/ios/AppIcon.appiconset/Contents.json text eol=lf
