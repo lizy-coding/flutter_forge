@@ -85,7 +85,7 @@ python tool/windows_store.py package --local-test --vc-runtime-dir 'C:/path/to/x
 python tool/windows_store.py package --identity-config 'C:/path/to/identity.json' --vc-runtime-dir 'C:/path/to/x64/Microsoft.VC143.CRT' --output .release/windows-store-candidate
 ```
 
-每次实际打包都执行 `flutter build windows --release`，核对 PE x64 架构与必要 Release 文件，
+每次实际打包都执行 `flutter build windows --release`，核对 EXE/DLL 的 PE x64 架构、`data/app.so` 的 x64 AOT ELF 头与必要 Release 文件，
 排除 PDB/LIB/EXP 私有符号，复制完整 Flutter data/plugins/native assets，使用 MakeAppx 的正常验证打包（不使用 `/nv`）。
 报告记录源码 HEAD、脏树路径、tracked diff 摘要、payload 文件哈希与包 SHA-256；
 dirty tree 产物只是工作区候选，不能当作 HEAD 发布验收，也不能代替冻结发布来源。

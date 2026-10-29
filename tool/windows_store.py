@@ -125,6 +125,17 @@ def require_x64(file):
         raise ValueError(f"Not an x64 PE binary: {file}")
 
 
+def require_x64_aot_snapshot(file):
+    # Flutter's WindowsAotBundle is produced by AotElfRelease, not the PE linker.
+    # The embedder loads this ELF snapshot; Windows only loads the EXE/DLLs as PE.
+    with file.open("rb") as stream:
+        header = stream.read(64)
+    if (len(header) != 64 or header[:7] != b"\x7fELF\x02\x01\x01"
+            or struct.unpack_from("<HHI", header, 16) != (3, 62, 1)
+            or struct.unpack_from("<H", header, 52)[0] != 64):
+        raise ValueError(f"Not a 64-bit little-endian x64 AOT ELF snapshot: {file}")
+
+
 def stage_runtime(bundle, runtime, stage):
     for required in ("flutter_forge.exe", "flutter_windows.dll", "data/icudtl.dat", "data/app.so"):
         if not (bundle / required).is_file():
@@ -138,7 +149,9 @@ def stage_runtime(bundle, runtime, stage):
         relative = file.relative_to(bundle)
         if relative.parts[0].lower() == "assets" or relative.name.lower() == "appxmanifest.xml":
             raise ValueError(f"Reserved MSIX input name: {relative}")
-        if file.suffix.lower() in (".exe", ".dll", ".so"):
+        if relative.as_posix() == "data/app.so":
+            require_x64_aot_snapshot(file)
+        elif file.suffix.lower() in (".exe", ".dll"):
             require_x64(file)
         target = stage / relative
         target.parent.mkdir(parents=True, exist_ok=True)

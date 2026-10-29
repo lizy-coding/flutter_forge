@@ -9,16 +9,10 @@ class _BrokenServer extends MockServer {
   Future<void> start() async => throw StateError('模拟服务无法启动');
 }
 
-// Loopback round-trips can hit the client's fixed 10s receiveTimeout when
-// the whole module suite runs at full parallelism; one retry keeps the
-// contract assertions deterministic without touching production timeouts.
-Future<T> withRetry<T>(Future<T> Function() action) async {
-  try {
-    return await action();
-  } on Exception {
-    return await action();
-  }
-}
+// Lease tests exercise ownership and cleanup, not the lesson's random failures.
+MockServer _deterministicServer() => MockServer()
+  ..failureRate = 0
+  ..networkDelay = 0;
 
 void main() {
   test('module entry is constructible', () {
@@ -26,7 +20,7 @@ void main() {
   });
 
   test('leases share one session until the last close', () async {
-    final first = LessonSession.acquire();
+    final first = LessonSession.acquire(createServer: _deterministicServer);
     final second = LessonSession.acquire();
     addTearDown(first.close);
     addTearDown(second.close);
@@ -34,23 +28,21 @@ void main() {
     await first.ready;
     // The login page stores the nested token explicitly (see _login), so the
     // test walks the same path instead of relying on interceptor auto-capture.
-    final login = await withRetry(
-      () => second.api.login('admin', 'password123'),
-    );
+    final login = await second.api.login('admin', 'password123');
     second.api.setToken(((login['data'] as Map)['token']) as String);
-    final articles = await withRetry(() => second.api.getArticles());
+    final articles = await second.api.getArticles();
     expect(articles, isA<Map<dynamic, dynamic>>());
 
     await first.close();
     expect(() => first.api, throwsStateError, reason: '关闭的租约不再提供 API');
     // The other lease still owns a live session.
-    await withRetry(() => second.api.getArticles());
+    await second.api.getArticles();
 
     await second.close();
     expect(() => second.api, throwsStateError);
 
     // The pool must spin up a fresh session for the next acquire.
-    final third = LessonSession.acquire();
+    final third = LessonSession.acquire(createServer: _deterministicServer);
     await third.ready;
     await third.close();
   });
@@ -60,13 +52,11 @@ void main() {
     await expectLater(failing.ready, throwsStateError);
     await failing.close();
 
-    final healthy = LessonSession.acquire();
+    final healthy = LessonSession.acquire(createServer: _deterministicServer);
     addTearDown(healthy.close);
     await healthy.ready;
-    final login = await withRetry(
-      () => healthy.api.login('admin', 'password123'),
-    );
+    final login = await healthy.api.login('admin', 'password123');
     healthy.api.setToken(((login['data'] as Map)['token']) as String);
-    await withRetry(() => healthy.api.getArticles());
+    await healthy.api.getArticles();
   });
 }

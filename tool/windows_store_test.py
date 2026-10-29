@@ -23,6 +23,15 @@ def pe(file, machine=0x8664):
     file.write_bytes(content)
 
 
+def aot_elf(file, machine=62, elf_class=2, data_encoding=1):
+    file.parent.mkdir(parents=True, exist_ok=True)
+    content = bytearray(64)
+    content[:7] = b"\x7fELF" + bytes((elf_class, data_encoding, 1))
+    struct.pack_into("<HHI", content, 16, 3, machine, 1)
+    struct.pack_into("<H", content, 52, 64)
+    file.write_bytes(content)
+
+
 class StoreTest(unittest.TestCase):
     def test_version_reserves_store_revision(self):
         self.assertEqual(store.read_version("version: 1.2.10+5\n"), ("1.2.10+5", "1.2.10.0"))
@@ -67,8 +76,9 @@ class StoreTest(unittest.TestCase):
             directory = Path(temporary)
             bundle, runtime, stage = (directory / name for name in ("bundle", "runtime", "stage"))
             stage.mkdir()
-            for name in ("flutter_forge.exe", "flutter_windows.dll", "data/app.so"):
+            for name in ("flutter_forge.exe", "flutter_windows.dll"):
                 pe(bundle / name)
+            aot_elf(bundle / "data/app.so")
             (bundle / "data/icudtl.dat").write_bytes(b"icu")
             (bundle / "private.pdb").write_bytes(b"private")
             for name in store.RUNTIME_REQUIRED:
@@ -76,9 +86,25 @@ class StoreTest(unittest.TestCase):
             store.stage_runtime(bundle, runtime, stage)
             self.assertFalse((stage / "private.pdb").exists())
             self.assertTrue((stage / "vcruntime140_1.dll").is_file())
+            self.assertEqual((stage / "data/app.so").read_bytes(), (bundle / "data/app.so").read_bytes())
             pe(bundle / "flutter_forge.exe", 0xAA64)
             with self.assertRaisesRegex(ValueError, "Not an x64"):
                 store.stage_runtime(bundle, runtime, stage)
+
+    def test_aot_snapshot_rejects_arm64_32bit_big_endian_pe_and_truncation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            file = Path(temporary) / "app.so"
+            for options in ({"machine": 183}, {"elf_class": 1}, {"data_encoding": 2}):
+                with self.subTest(options=options):
+                    aot_elf(file, **options)
+                    with self.assertRaisesRegex(ValueError, "x64 AOT ELF"):
+                        store.require_x64_aot_snapshot(file)
+            pe(file)
+            with self.assertRaisesRegex(ValueError, "x64 AOT ELF"):
+                store.require_x64_aot_snapshot(file)
+            file.write_bytes(b"\x7fELF")
+            with self.assertRaisesRegex(ValueError, "x64 AOT ELF"):
+                store.require_x64_aot_snapshot(file)
 
     def test_missing_release_payload_is_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:
