@@ -24,6 +24,24 @@ python3 tool/automation.py run --platform android --device <android-id> --output
 
 ## 核心交互与 adapter
 
+Windows 真机报告中的开始菜单重启与原生标题栏复核使用以下显式专项，不进入默认 smoke。
+先用 `Get-AppxPackage -Name Forest.FlutterForge.LocalTest` 取得安装目录，在解锁的交互桌面执行：
+
+```powershell
+# WIN-01：每轮由测试者仅从开始菜单启动；脚本不通过 AppsFolder 或直接执行 EXE 兜底
+python tool/windows_ui_acceptance.py --exe '<InstallLocation>/flutter_forge.exe' --output C:/temp/forge-start-menu-01 --launch-mode manual-start-menu --cases main_with_child --iterations 10
+# WIN-02：仅运行主窗口与分类窗口的原生最大化/还原点击与状态对照
+python tool/automation.py run --platform windows --case windows-caption --exe '<InstallLocation>/flutter_forge.exe' --output C:/temp/forge-caption-01
+```
+
+第一条必须直接从可交互终端执行，按每轮提示操作；没有终端、已存在同路径进程或无法唯一识别新 PID 时为 BLOCKED。
+每次手工开始菜单确认最多等待 180 秒，超时为 BLOCKED。该手工入口直接执行，不受统一 runner 的进程级总时限保护；catalog 中的预算不能当成它已具备总进程超时。
+它记录测试者确认的开始菜单来源、PID、每轮时间与退出结果；不是机器自动证明开始菜单点击，也不替代 AppModel 原始激活事件。
+结束时（包括失败路径）只读采集该时间段中匹配应用路径/包身份的 AppModel/TWinUI XML，保存在 `activationEvents`；禁用、无法访问或可能截断分别标记，不开启系统日志，不把“无事件”当成成功或产品失败。
+失败后不会终止测试者启动的进程，便于继续观察。应用标准输出无法附加时 `applicationLogCaptured=false`，不能据此断言应用没有日志错误。
+第二条每次原生点击重新读取 DWM 按钮边界，并用实际最大化状态确认响应；两种窗口都保存调整前/最大化/还原截图，图标可辨性继续标为 `PENDING`，必须人工核对。
+Snap、最小化、F11、跨 DPI、主题和读屏继续按测试清单各自复核，不能由该最大化/还原专项自动判为通过。
+
 共用代码在 `apps/flutter_forge/test/support/automation/`，只属于测试层，不进入业务能力层。
 
 | 文件 | 职责 |
@@ -37,7 +55,7 @@ python3 tool/automation.py run --platform android --device <android-id> --output
 
 1. **定位**：优先已有 Key，并限定当前页面/对话框范围；多个匹配不能随意取第一个。滚动容器的 `.first` 仅用于选定页面持有的外层 Scrollable。
 2. **输入**：共用点击函数确认唯一、滚动居中并等待可命中，再调用 `tester.tap`；不直接调用 onPressed 冒充用户点击，不忽略遮挡警告。
-3. **等待**：以页面/状态断言为准并设置上限；需要推进动画时使用有界帧推进。GPU、视频或流式页面不能无界等待 settle。每个执行项还有进程级超时。
+3. **等待**：以页面/状态断言为准并设置上限；需要推进动画时使用有界帧推进。GPU、视频或流式页面不能无界等待 settle。由统一 runner 执行的项还有进程级超时；手工专项的边界按其入口说明记录。
 4. **断言**：同时检查路由和注册模块 Entry 挂载，不能只看到应用壳 Scaffold 就判定模块已打开。平台功能专项继续保留其业务、原生及设备断言。
 5. **返回**：桌面工作台返回、移动页面返回、搜索关闭各自由 adapter 处理；嵌套子页面限定到该页面的 BackButton。Android 框架返回与 ADB 物理按键证据分开描述。
 6. **释放**：通过 `withApp` 在 finally 中卸载 Widget，再释放 router/theme/history。场景内创建的硬件/网络会话仍由该场景关闭，不交给 UI fixture 偷偷管理。

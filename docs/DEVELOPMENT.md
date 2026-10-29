@@ -4,11 +4,27 @@
 
 | 组件 | 版本 | 说明 |
 |------|------|------|
-| Flutter | 3.47.2 | 见 `.fvmrc` |
-| Dart | 3.13.2 | 随 Flutter |
+| Flutter | 3.47.8 | 见 `.fvmrc` |
+| Dart | 3.13.7 | 随 Flutter |
 | Node.js | 24 | 见 `.nvmrc`（供 Agent 文档生成器） |
 | Xcode | 26+ | 仅 macOS/iOS 构建 |
 | Android SDK | 36+ | 仅 Android 构建 |
+
+Flutter 3.47.8 / Dart 3.13.7 为当前安全修复基线（GHSA-frr6-h895-5pxp）。升级后必须重建应用，既有 Windows/Android 二进制不会因更新 SDK 自动修复。
+`.fvmrc` 与各工作流固定版本保持一致。若现有全局 SDK 带本地补丁，应保留它并使用独立 SDK 验证；本轮隔离安装位于 `.release/toolchains/flutter-3.47.8`，运行项目命令前可设置：
+
+```bash
+export PATH="$PWD/.release/toolchains/flutter-3.47.8/bin:$PATH"
+```
+
+后续正式分发需依据实际新构建重新冻结 release plan，历史报告和已下载的安装包仍对应原工具链。
+
+## 隐私说明维护
+
+联网完整版的应用内来源为 `apps/flutter_forge/lib/app/full_privacy.dart`，从“关于”展开；公开页面为 `apps/flutter_forge/web/privacy.html`。
+修改后运行 `python3 tool/export_privacy.py`，用 `python3 tool/export_privacy.py --check` 核对两端一致。
+静态页面随 Web 构建提供，但本地生成不等于已部署；公开托管后核对实际 URL，再填写 Partner Center。
+Android 离线版继续使用独立的 `offline_privacy.dart` / `privacy-offline.html`。
 
 ## 快速开始
 

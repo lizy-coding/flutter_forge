@@ -100,18 +100,35 @@ def manifest(identity, version):
     return ET.tostring(root, encoding="utf-8", xml_declaration=True)
 
 
-def write_assets(directory, icon):
-    from PIL import Image, ImageOps
+def write_assets(directory):
+    from PIL import Image
     directory.mkdir()
-    with Image.open(icon) as source:
-        source = source.convert("RGBA")
-        for name, size in ASSETS.items():
-            image = Image.new("RGBA", (size, size))
-            inset = max(1, size // 10)
-            logo = ImageOps.contain(source, (size - 2 * inset, size - 2 * inset),
-                                    Image.Resampling.LANCZOS)
-            image.alpha_composite(logo, ((size - logo.width) // 2, (size - logo.height) // 2))
-            image.save(directory / name)
+    source = APP / 'windows/store/Assets'
+    for name, size in ASSETS.items():
+        with Image.open(source / name) as image:
+            if image.size != (size, size):
+                raise ValueError(f'Invalid manifest image size: {name}')
+    for file in sorted(source.glob('*.png')):
+        if file.is_symlink():
+            raise ValueError('MSIX icon source cannot be a symlink')
+        shutil.copy2(file, directory / file.name)
+
+
+def write_resource_index(stage, output, makepri):
+    config = (output / 'priconfig.xml').resolve()
+    subprocess.run([makepri, 'createconfig', '/cf', str(config), '/dq', 'lang-zh-CN', '/o'], check=True)
+    tree = ET.parse(config)
+    # Keep one self-contained package; do not produce detached resource packs.
+    for parent in tree.iter():
+        for child in list(parent):
+            if child.tag.rsplit('}', 1)[-1] == 'packaging':
+                parent.remove(child)
+    tree.write(config, encoding='utf-8', xml_declaration=True)
+    pri = (stage / 'resources.pri').resolve()
+    subprocess.run([makepri, 'new', '/pr', str(stage.resolve()), '/cf', str(config),
+                    '/mn', str((stage / 'AppxManifest.xml').resolve()), '/of', str(pri), '/o'], check=True)
+    if not pri.is_file() or not pri.stat().st_size:
+        raise ValueError('MakePri produced no resource index')
 
 
 def require_x64(file):
@@ -206,18 +223,19 @@ def main(argv=None):
     args = parser.parse_args(argv)
     config = read_identity(args.identity_config, args.local_test)
     app_version, package_version = read_version((APP / "pubspec.yaml").read_text(encoding="utf-8"))
-    makeappx = None
+    makeappx = makepri = None
     if args.mode == "package":
         if platform.system() != "Windows":
             raise ValueError("MSIX build requires a Windows host; use preview for manifest/assets only")
         if not args.vc_runtime_dir or not args.vc_runtime_dir.is_dir():
             raise ValueError("--vc-runtime-dir is required; use the runtime matching your Visual Studio compiler")
         makeappx = sdk_tool("makeappx.exe")
+        makepri = sdk_tool("makepri.exe")
     args.output.mkdir(parents=True, exist_ok=False)
     stage = args.output / "payload"
     stage.mkdir()
     (stage / "AppxManifest.xml").write_bytes(manifest(config, package_version))
-    write_assets(stage / "Assets", APP / "windows/runner/resources/app_icon.ico")
+    write_assets(stage / "Assets")
     report = {"schema": "flutter_forge.windows_store.v1", "mode": args.mode,
               "identity_kind": "local-test" if args.local_test else "partner-center-config",
               "identity": config, "app_version": app_version, "package_version": package_version,
@@ -235,6 +253,8 @@ def main(argv=None):
             # A fresh build is mandatory; no option silently packages an old binary.
             subprocess.run([flutter, "build", "windows", "--release"], cwd=APP, check=True)
             stage_runtime(APP / "build/windows/x64/runner/Release", args.vc_runtime_dir, stage)
+            write_resource_index(stage, args.output, makepri)
+            report['resource_index'] = {'path': 'resources.pri', 'sha256': digest(stage / 'resources.pri')}
             suffix = "local-test" if args.local_test else "store-unsigned"
             package = args.output / f"FlutterForge-{package_version}-windows-x64-{suffix}.msix"
             subprocess.run([makeappx, "pack", "/v", "/h", "SHA256", "/d", str(stage.resolve()),

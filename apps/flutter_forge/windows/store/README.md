@@ -27,7 +27,7 @@ python tool/windows_store_test.py
 python tool/windows_store.py preview --local-test --output .release/windows-store-preview
 ```
 
-输出 manifest、从 Windows 现有 ICO 生成的 PNG 和 `result.json`。
+输出 manifest、已导出的 Forge A2 图标资源和 `result.json`。图标源与再生成命令见 `artwork/branding/forge-a2-glass/README.md`。
 预览不包含 Windows 二进制，不生成可安装包，不代表 Windows 构建或安装通过。
 输出目录必须是新目录，工具不删除、覆盖已有产物。
 
@@ -71,7 +71,7 @@ gh run download <run-id> --name flutter-forge-msix-local-test-<sha> --dir .relea
 
 ## Windows 构建
 
-如果不用 GitHub runner，手工构建主机需要 Flutter、Git、Visual Studio C++ 桌面工具链、Windows SDK 的 MakeAppx 和 Python/Pillow。
+如果不用 GitHub runner，手工构建主机需要 Flutter、Git、Visual Studio C++ 桌面工具链、Windows SDK 的 MakeAppx/MakePri 和 Python/Pillow。
 从当前编译器对应的 Visual Studio `VC/Redist/MSVC/<version>/x64/Microsoft.VC*.CRT` 选取 retail runtime 目录，
 通过参数提供；不得使用 Debug CRT、ARM64 CRT 或从未知网站下载单个 DLL。
 工具将零散 DLL 作为 app-local runtime 打包，因此不依赖用户预先安装 VC++ runtime。
@@ -139,6 +139,7 @@ appcert.exe test -appxpackagepath '<signed-candidate.msix>' -reportoutputpath 'C
 不能仅凭 MakeAppx 成功、WACK 进程退出码或全部跳过就宣称商店审核通过。
 提交前另需准备：商店真实截图、简体中文描述、分类/年龄分级、支持联系方式、
 与 Windows 实际网络/模型/设备行为相符的公开隐私政策、`runFullTrust` 用途说明。
+完整版隐私政策从 `lib/app/full_privacy.dart` 导出到 `web/privacy.html`，可用 `python3 tool/export_privacy.py --check` 核对；发布托管后才可将实际可访问 URL 填入 Partner Center。
 Android 离线版隐私声明不能直接复用给完整 Windows 版。
 本地测试身份包不上传；注册后使用正式身份重新构建并验证。
 GitHub Release 仍遵循 Agent Hub；商店提交和公开发布分别留待授权执行。

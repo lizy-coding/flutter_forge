@@ -65,11 +65,33 @@ class StoreTest(unittest.TestCase):
     def test_assets_have_manifest_dimensions(self):
         with tempfile.TemporaryDirectory() as temporary:
             assets = Path(temporary) / "Assets"
-            store.write_assets(assets, store.APP / "windows/runner/resources/app_icon.ico")
+            store.write_assets(assets)
             for name, size in store.ASSETS.items():
                 with Image.open(assets / name) as image:
                     self.assertEqual(image.size, (size, size))
                     self.assertEqual(image.mode, "RGBA")
+            self.assertTrue((assets / 'Square44x44Logo.targetsize-16_altform-unplated.png').is_file())
+            self.assertTrue((assets / 'Square44x44Logo.targetsize-32_altform-lightunplated.png').is_file())
+            self.assertTrue((assets / 'Square150x150Logo.scale-400.png').is_file())
+
+    def test_makepri_builds_index_without_detached_resource_packaging(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            stage = output / 'payload'
+            stage.mkdir()
+            commands = []
+            def run(command, **kwargs):
+                commands.append(command)
+                if command[1] == 'createconfig':
+                    Path(command[command.index('/cf') + 1]).write_text('<resources><packaging><autoResourcePackage qualifier="Scale"/></packaging></resources>')
+                else:
+                    self.assertIsNone(ET.parse(output / 'priconfig.xml').getroot().find('packaging'))
+                    Path(command[command.index('/of') + 1]).write_bytes(b'PRI-fixture')
+            with patch.object(store.subprocess, 'run', side_effect=run):
+                store.write_resource_index(stage, output, 'makepri.exe')
+            self.assertEqual([c[1] for c in commands], ['createconfig', 'new'])
+            self.assertIn('/mn', commands[1])
+            self.assertTrue((stage / 'resources.pri').is_file())
 
     def test_payload_requires_release_and_x64_and_omits_private_symbols(self):
         with tempfile.TemporaryDirectory() as temporary:

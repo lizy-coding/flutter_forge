@@ -211,6 +211,22 @@
       "timeout": 600
     },
     {
+      "id": "windows-caption",
+      "kind": "windows-ui",
+      "platforms": ["windows"],
+      "targets": ["tool/windows_ui_acceptance.py"],
+      "native_cases": ["caption_controls"],
+      "timeout": 240
+    },
+    {
+      "id": "windows-start-menu-observation",
+      "kind": "manual",
+      "platforms": ["windows"],
+      "targets": ["tool/windows_ui_acceptance.py"],
+      "requirements": ["interactive-start-menu-observer"],
+      "timeout": 1200
+    },
+    {
       "id": "windows-log-tests",
       "kind": "python",
       "platforms": [

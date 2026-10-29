@@ -86,6 +86,11 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
               '可连接单独启动的本机 Codex 桥接，使用已有 CLI 登录。也可连接兼容 Chat Completions 流式协议的服务。端点与模型名会记住，方便下次连接；临时令牌仅当前页面有效，离开后清除；浏览器端点需允许跨域。',
             ),
             const SizedBox(height: 12),
+            const Text(
+              '真实生成会把你的问题、实验状态和必要上下文发送到所选服务，临时令牌用于请求认证。服务方的数据保留和使用方式请查看其隐私政策；固定回放无需发送模型请求。详见“关于”中的隐私说明。',
+              key: ValueKey('genui-data-use-notice'),
+            ),
+            const SizedBox(height: 12),
             TextFormField(
               controller: endpoint,
               onChanged: (_) => endpointEdited = true,

@@ -28,6 +28,15 @@ String _fieldContent(WidgetTester tester, String label) {
 }
 
 void main() {
+  testWidgets('model connection explains outgoing data before confirmation', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    await _openDialog(tester);
+    expect(find.byKey(const ValueKey('genui-data-use-notice')), findsOneWidget);
+    expect(find.textContaining('实验状态和必要上下文'), findsOneWidget);
+  });
+
   testWidgets('a saved endpoint and model are restored on reopen', (
     tester,
   ) async {

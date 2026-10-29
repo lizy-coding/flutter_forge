@@ -29,6 +29,7 @@
     "creator_home_page.dart",
     "creator_profile.dart",
     "offline_privacy.dart",
+    "full_privacy.dart",
     "module_home_page.dart",
     "unsupported_module_page.dart",
     "navigation_policy.dart",

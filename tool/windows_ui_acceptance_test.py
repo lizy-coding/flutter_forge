@@ -3,7 +3,8 @@ from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
-from windows_ui_acceptance import CASES, Session, run_case, validate_application_log
+from unittest.mock import patch, Mock
+from windows_ui_acceptance import CASES, DEFAULT_CASES, Session, Blocked, run_case, validate_application_log, manual_start_menu_pid, activation_evidence, wait_for_start_menu_acknowledgement
 
 
 class Window:
@@ -50,6 +51,10 @@ class FakeSession:
     def picture(self, child, name):
         pass
 
+    def caption_controls(self, window, name):
+        self.actions.append(('caption-controls', window.handle))
+        return {'hwnd': window.handle, 'maximizeRestore': 'PASS', 'captionVisualReview': 'PENDING'}
+
     def close(self, window, action):
         self.actions.append((action,window.handle))
         self.live = [] if window is self.main else [w for w in self.live if w is not window]
@@ -75,6 +80,15 @@ class FakeSession:
 
 
 class ScenariosTest(unittest.TestCase):
+    def test_caption_case_is_explicit_and_covers_both_windows(self):
+        self.assertNotIn('caption_controls', DEFAULT_CASES)
+        session = FakeSession()
+        result = run_case(session, 'caption_controls')
+        self.assertIn(('caption-controls', 1), session.actions)
+        self.assertIn(('caption-controls', 2), session.actions)
+        self.assertEqual(len(result['captionObservations']), 2)
+        self.assertTrue(all(r['captionVisualReview'] == 'PENDING' for r in result['captionObservations']))
+
     def test_all_scenarios_finish_owned_process(self):
         for case in CASES:
             with self.subTest(case=case):
@@ -141,6 +155,54 @@ class ApplicationLogTest(unittest.TestCase):
                     with self.assertRaisesRegex(AssertionError, category):
                         session.finish(None, close=False)
             session.log.close()
+
+
+class StartMenuObservationTest(unittest.TestCase):
+    def test_activation_collection_does_not_turn_missing_logs_into_pass(self):
+        with patch('windows_ui_acceptance.subprocess.run', return_value=SimpleNamespace(stdout='[{"status":"DISABLED","events":[]}]')):
+            result = activation_evidence(Path('app.exe'), '2026-10-29T12:00:00+08:00')
+            self.assertEqual(result['interpretation'], 'REQUIRES_REVIEW')
+            self.assertEqual(result['channels'][0]['status'], 'DISABLED')
+        with patch('windows_ui_acceptance.subprocess.run', side_effect=OSError('Access denied')):
+            self.assertEqual(activation_evidence(Path('app.exe'), 'start')['status'], 'UNAVAILABLE')
+
+    def test_attach_only_after_manual_acknowledgement_and_unique_new_process(self):
+        with patch('windows_ui_acceptance.process_ids_for_executable', side_effect=[[], [42]]), \
+                patch('windows_ui_acceptance.wait_for_start_menu_acknowledgement') as prompt, patch('windows_ui_acceptance.subprocess.Popen') as launch:
+            self.assertEqual(manual_start_menu_pid(Path('app.exe')), 42)
+            prompt.assert_called_once()
+            launch.assert_not_called()
+
+    def test_existing_or_missing_process_and_missing_console_cannot_pass(self):
+        for inventories in ([[99]], [[], []], [[], [41, 42]]):
+            with self.subTest(inventories=inventories), \
+                    patch('windows_ui_acceptance.process_ids_for_executable', side_effect=inventories), \
+                    patch('windows_ui_acceptance.wait_for_start_menu_acknowledgement'), self.assertRaises(Blocked):
+                manual_start_menu_pid(Path('app.exe'))
+        with patch('windows_ui_acceptance.process_ids_for_executable', return_value=[]), \
+                patch('windows_ui_acceptance.wait_for_start_menu_acknowledgement', side_effect=Blocked('No console')), self.assertRaises(Blocked):
+            manual_start_menu_pid(Path('app.exe'))
+
+    def test_manual_acknowledgement_is_bounded_and_requires_console(self):
+        with patch('sys.stdin.isatty', return_value=False), self.assertRaises(Blocked):
+            wait_for_start_menu_acknowledgement()
+        keyboard = SimpleNamespace(kbhit=lambda: False)
+        with patch('sys.stdin.isatty', return_value=True), patch.dict('sys.modules', {'msvcrt': keyboard}), \
+                patch('windows_ui_acceptance.time.monotonic', side_effect=[0, 181]), self.assertRaisesRegex(Blocked, 'Timed out'):
+            wait_for_start_menu_acknowledgement()
+
+    def test_manual_session_never_spawns_or_terminates_user_process(self):
+        with tempfile.TemporaryDirectory() as directory, \
+                patch.dict('sys.modules', {'pywinauto': SimpleNamespace(Desktop=Mock(), keyboard=Mock(), mouse=Mock())}), \
+                patch('windows_ui_acceptance.manual_start_menu_pid', return_value=42), \
+                patch('windows_ui_acceptance.AttachedProcess') as attached, \
+                patch('windows_ui_acceptance.subprocess.Popen') as launch:
+            attached.return_value.pid = 42
+            session = Session(Path('app.exe'), Path(directory), launch_mode='manual-start-menu')
+            session.cleanup()
+            launch.assert_not_called()
+            attached.return_value.terminate.assert_not_called()
+            attached.return_value.close.assert_called_once()
 
 
 

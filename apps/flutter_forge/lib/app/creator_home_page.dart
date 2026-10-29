@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'creator_profile.dart';
 import 'offline_privacy.dart';
+import 'full_privacy.dart';
 import '../shared/platform/build_features.dart';
 import 'theme/forge_theme_tokens.dart';
 
@@ -27,7 +28,7 @@ class CreatorHomePage extends StatelessWidget {
             const Text('可运行、可拆解、可验证的 Flutter 学习工坊。'),
             const SizedBox(height: 24),
             const _CreatorFooter(),
-            if (offlineEdition) const OfflinePrivacy(),
+            if (offlineEdition) const OfflinePrivacy() else const FullPrivacy(),
           ],
         ),
       ),

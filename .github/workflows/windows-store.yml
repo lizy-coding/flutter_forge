@@ -32,7 +32,7 @@ jobs:
           persist-credentials: false
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.47.2'
+          flutter-version: '3.47.8'
           channel: stable
       - uses: actions/setup-python@v6
         with:
@@ -46,6 +46,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Packaging dependency installation failed' }
           python tool/windows_store_test.py
           if ($LASTEXITCODE -ne 0) { throw 'Packaging tool tests failed' }
+          python tool/generate_app_icons.py --verify
+          if ($LASTEXITCODE -ne 0) { throw 'Icon export verification failed' }
+          python tool/export_privacy.py --check
+          if ($LASTEXITCODE -ne 0) { throw 'Privacy page verification failed' }
       - name: Build local-test MSIX from validated source
         shell: pwsh
         run: |
@@ -118,6 +122,24 @@ jobs:
         run: |
           Copy-Item apps/flutter_forge/windows/store/TEST_CHECKLIST.md .release/windows-store/TEST_CHECKLIST.md
           Copy-Item apps/flutter_forge/windows/store/README.md .release/windows-store/README.md
+          Copy-Item apps/flutter_forge/windows/store/RC_TEST_PLAN.md .release/windows-store/RC_TEST_PLAN.md
+          New-Item -ItemType Directory -Path .release/windows-store/recheck-tools | Out-Null
+          Copy-Item tool/windows_ui_acceptance.py,tool/windows_ui_acceptance_test.py,tool/windows_crash_events.ps1,tool/windows_acceptance_requirements.txt .release/windows-store/recheck-tools/
+      - name: Run deterministic Windows host smoke
+        shell: pwsh
+        run: |
+          python tool/automation.py run --platform windows --case smoke --output .release/windows-native-smoke
+          if ($LASTEXITCODE -ne 0) { throw 'Windows host smoke failed; inspect diagnostic artifact' }
+          Copy-Item .release/windows-native-smoke/result.json .release/windows-store/windows-host-smoke.json
+      - name: Upload Windows host smoke diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-host-smoke-${{ needs.quality.outputs.source-sha }}
+          path: .release/windows-native-smoke/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Upload candidate packages and public test certificate
         uses: actions/upload-artifact@v4
         with:
@@ -127,6 +149,7 @@ jobs:
             .release/windows-store/*.cer
             .release/windows-store/*.json
             .release/windows-store/*.md
+            .release/windows-store/recheck-tools/*
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14

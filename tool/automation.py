@@ -73,8 +73,11 @@ def command_for(case, platform, *, device=None, exe=None, output=None, ready=())
         if kind == 'windows-close':
             return ['powershell.exe', '-NoProfile', '-File', str(ROOT / case['targets'][0]),
                     '-Executable', str(Path(exe).resolve()), '-Iterations', '2'], ROOT, 'native-posted-close'
-        return [sys.executable, str(ROOT / case['targets'][0]), '--exe', str(Path(exe).resolve()),
-                '--output', str(output / 'native'), '--iterations', '1'], ROOT, 'native-ui'
+        command = [sys.executable, str(ROOT / case['targets'][0]), '--exe', str(Path(exe).resolve()),
+                   '--output', str(output / 'native'), '--iterations', '1']
+        if case.get('native_cases'):
+            command.extend(['--cases', *case['native_cases']])
+        return command, ROOT, 'native-ui'
     if kind == 'command':
         return case['command'], ROOT, 'source-checks'
     if kind == 'python':

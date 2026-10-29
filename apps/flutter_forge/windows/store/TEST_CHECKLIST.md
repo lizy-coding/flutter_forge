@@ -2,7 +2,7 @@
 
 本清单随 GitHub Actions 安装包一起提供。先填写本次包的实际版本与源码 SHA；默认所有项目为 **NOT_RUN**。
 本地测试包名为 **Flutter Forge by Forest (Local Test)**，身份为 `Forest.FlutterForge.LocalTest`，不是正式商店包。
-Flutter `1.2.10+5` 的 MSIX 版本为 `1.2.10.0`，第四段为商店保留；以本次 `result.json` 为准。
+本轮 RC 为 Flutter `1.2.11+6` / MSIX `1.2.11.0`，第四段为商店保留；以本次 `result.json` 为准。覆盖升级对象为早上的同身份 `1.2.10.0`，不能用同版本重装代替升级。
 
 ## 记录环境与产物
 

@@ -25,6 +25,7 @@
 | 0017 | [内部 3D 查看包与可观测绘制](0017-scene-viewer-package-and-render-observability.md) | accepted |
 | 0018 | [四端交互分工与原生窗口背景材质](0018-platform-interaction-and-native-materials.md) | accepted；实现待推进 |
 | 0019 | [平台能力桥接包规范](0019-platform-capability-bridge-packages.md) | accepted |
+| 0020 | [NFC 学习以卡片发现与碰卡唤起为边界](0020-nfc-learning-discovery-and-launch.md) | accepted；实现与真机验收待执行 |
 
 ## 状态定义
 

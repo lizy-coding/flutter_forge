@@ -19,6 +19,18 @@ def completed(result='success', skipped=False):
 
 
 class CatalogTest(unittest.TestCase):
+    def test_caption_specialist_does_not_expand_default_lifecycle_or_smoke(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(a.sys, 'platform', 'win32'):
+            exe = Path(directory) / 'app.exe'
+            exe.touch()
+            catalog = a.load_catalog()
+            command, _, _ = a.command_for(catalog['windows-caption'], 'windows', exe=exe, output=Path(directory))
+            self.assertEqual(command[-2:], ['--cases', 'caption_controls'])
+            command, _, _ = a.command_for(catalog['windows-lifecycle'], 'windows', exe=exe, output=Path(directory))
+            self.assertNotIn('--cases', command)
+            with self.assertRaises(a.Blocked):
+                a.command_for(catalog['windows-start-menu-observation'], 'windows', ready=['interactive-start-menu-observer'])
+
     def test_all_integration_entries_are_registered_once(self):
         catalog = a.load_catalog()
         self.assertEqual(catalog['smoke']['targets'], ['integration_test/app_test.dart'])

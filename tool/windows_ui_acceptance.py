@@ -5,6 +5,7 @@ Exit 1: failure. Exit 2: blocked desktop/UIA/tool capability. No global process 
 """
 import argparse
 import ctypes
+from datetime import datetime
 import hashlib
 import json
 import os
@@ -18,6 +19,111 @@ import traceback
 
 class Blocked(RuntimeError):
     pass
+
+
+def process_ids_for_executable(exe):
+    script = """$ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new()
+$ids = @()
+foreach ($process in @(Get-Process -Name $env:FORGE_TEST_PROCESS -ErrorAction SilentlyContinue)) {
+  if (-not $process.Path) { throw 'Cannot identify a matching process path' }
+  if ($process.Path -eq $env:FORGE_TEST_EXE) { $ids += $process.Id }
+}
+ConvertTo-Json -InputObject @($ids) -Compress
+"""
+    result = subprocess.run(['powershell.exe', '-NoProfile', '-Command', script],
+        env={**os.environ, 'FORGE_TEST_EXE': str(exe), 'FORGE_TEST_PROCESS': exe.stem},
+        capture_output=True, text=True, encoding='utf-8', timeout=20)
+    if result.returncode:
+        raise Blocked('Cannot inspect installed application processes: ' + result.stderr.strip())
+    ids = json.loads(result.stdout.lstrip('\ufeff'))
+    if not isinstance(ids, list) or any(type(pid) is not int or pid <= 0 for pid in ids):
+        raise Blocked('Invalid process inventory')
+    return ids
+
+
+def wait_for_start_menu_acknowledgement(timeout=180):
+    if timeout <= 0 or not sys.stdin.isatty():
+        raise Blocked('Start Menu observation requires an interactive console and positive timeout')
+    import msvcrt
+    print('Only launch the test app from Start Menu now; do not use AppsFolder or EXE. '
+          f'After the home window appears, return here and press Enter (within {timeout}s): ', flush=True)
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if msvcrt.kbhit():
+            key = msvcrt.getwch()
+            if key in ('\r', '\n'):
+                return
+            if key == '\x03':
+                raise KeyboardInterrupt()
+        time.sleep(.05)
+    raise Blocked('Timed out waiting for manual Start Menu confirmation')
+
+
+def manual_start_menu_pid(exe):
+    if process_ids_for_executable(exe):
+        raise Blocked('Existing process found; close the tested app normally before a restart round')
+    wait_for_start_menu_acknowledgement()
+    ids = process_ids_for_executable(exe)
+    if len(ids) != 1:
+        raise Blocked('Expected exactly one newly launched process for the installed executable')
+    return ids[0]
+
+
+class AttachedProcess:
+    """Observe the user-launched PID; never starts or terminates an application."""
+    def __init__(self, pid):
+        import win32api
+        self.pid = pid
+        self.handle = win32api.OpenProcess(0x00100000 | 0x1000, False, pid)
+
+    def poll(self):
+        import win32event
+        import win32process
+        return win32process.GetExitCodeProcess(self.handle) if win32event.WaitForSingleObject(self.handle, 0) == 0 else None
+
+    def wait(self, timeout):
+        import win32event
+        if win32event.WaitForSingleObject(self.handle, int(timeout * 1000)) != 0:
+            raise subprocess.TimeoutExpired('observed Start Menu process', timeout)
+        return self.poll()
+
+    def close(self):
+        self.handle.Close()
+
+
+def activation_evidence(exe, started):
+    # Read only: never enable a disabled channel or interpret no events as PASS.
+    script = """$ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new()
+$since = [DateTimeOffset]::Parse($env:FORGE_TEST_SINCE).LocalDateTime
+$patterns = @($env:FORGE_TEST_EXE, [IO.Path]::GetFileName($env:FORGE_TEST_EXE), 'Forest.FlutterForge.LocalTest')
+$channels = foreach ($name in @('Microsoft-Windows-AppModel-Runtime/Admin', 'Microsoft-Windows-TWinUI/Operational')) {
+  try {
+    $log = Get-WinEvent -ListLog $name -ErrorAction Stop
+    if (-not $log.IsEnabled) { @{channel=$name;status='DISABLED';events=@()}; continue }
+    $readErrors = @()
+    $events = @(Get-WinEvent -FilterHashtable @{LogName=$name;StartTime=$since} -MaxEvents 500 -ErrorAction SilentlyContinue -ErrorVariable readErrors)
+    foreach ($errorItem in $readErrors) { if ($errorItem.FullyQualifiedErrorId -notlike 'NoMatchingEventsFound*') { throw $errorItem } }
+    $matches = @($events | Where-Object {
+      $xml = $_.ToXml()
+      @($patterns | Where-Object { $xml.IndexOf($_, [StringComparison]::OrdinalIgnoreCase) -ge 0 }).Count -gt 0
+    } | ForEach-Object { @{recordId=$_.RecordId;eventId=$_.Id;time=$_.TimeCreated.ToString('o');xml=$_.ToXml()} })
+    @{channel=$name;status='READ';mayBeTruncated=($events.Count -eq 500);events=$matches}
+  } catch { @{channel=$name;status='UNAVAILABLE';reason=$_.Exception.Message;events=@()} }
+}
+ConvertTo-Json -InputObject @($channels) -Depth 6 -Compress
+"""
+    try:
+        result = subprocess.run(['powershell.exe', '-NoProfile', '-Command', script],
+            env={**os.environ, 'FORGE_TEST_EXE': str(exe), 'FORGE_TEST_SINCE': started},
+            capture_output=True, text=True, encoding='utf-8', timeout=30, check=True)
+        channels = json.loads(result.stdout.lstrip('\ufeff'))
+        if not isinstance(channels, list):
+            raise ValueError('Invalid activation event response')
+        return {'status': 'COLLECTED', 'channels': channels, 'interpretation': 'REQUIRES_REVIEW'}
+    except Exception as error:
+        return {'status': 'UNAVAILABLE', 'reason': str(error)}
 
 
 def wait(predicate, timeout=20):
@@ -43,13 +149,22 @@ def validate_application_log(text):
 
 
 class Session:
-    def __init__(self, exe, output, procdump=None):
+    def __init__(self, exe, output, procdump=None, launch_mode='direct'):
+        if launch_mode not in ('direct', 'manual-start-menu'):
+            raise ValueError('Invalid launch mode')
         from pywinauto import Desktop, keyboard, mouse
         self.desktop, self.keyboard, self.mouse = Desktop(backend='uia'), keyboard, mouse
         self.output, self.monitor = output, None
         self.log = (output / 'application.log').open('w', encoding='utf-8')
-        self.process = subprocess.Popen([str(exe)], cwd=exe.parent,
-                                        stdout=self.log, stderr=subprocess.STDOUT)
+        self.owns_process = launch_mode == 'direct'
+        self.launch_mode = launch_mode
+        try:
+            self.process = (subprocess.Popen([str(exe)], cwd=exe.parent,
+                              stdout=self.log, stderr=subprocess.STDOUT) if self.owns_process
+                            else AttachedProcess(manual_start_menu_pid(exe)))
+        except Exception:
+            self.log.close()
+            raise
         self.pid = self.process.pid
         self.windows_seen = []
         self.procdump = procdump
@@ -104,6 +219,9 @@ class Session:
         self.picture(child, name + '-teaching')
 
     def caption_close(self, window):
+        self.caption_button(window, 'close')
+
+    def caption_button(self, window, action):
         from ctypes import wintypes
         self.focus(window)
         bounds, frame = wintypes.RECT(), wintypes.RECT()
@@ -113,9 +231,29 @@ class Session:
         ctypes.windll.user32.GetWindowRect(hwnd, ctypes.byref(frame))
         if bounds.right <= bounds.left or bounds.bottom <= bounds.top:
             raise Blocked('Native caption bounds invalid')
-        x = frame.left + bounds.right - (bounds.right - bounds.left) // 6
+        if action not in ('close', 'maximize_restore'):
+            raise ValueError('Unsupported caption action')
+        # Re-query DWM for every click: restored/maximized bounds can differ.
+        fraction = 1 if action == 'close' else 3
+        x = frame.left + bounds.right - (bounds.right - bounds.left) * fraction // 6
         y = frame.top + (bounds.top + bounds.bottom) // 2
         self.mouse.click(coords=(x, y))
+
+    def caption_controls(self, window, name):
+        from ctypes import wintypes
+        user32 = ctypes.windll.user32
+        hwnd = wintypes.HWND(window.handle)
+        if user32.IsZoomed(hwnd):
+            self.caption_button(window, 'maximize_restore')
+            wait(lambda: not user32.IsZoomed(hwnd))
+        self.picture(window, name + '-restored-before')
+        self.caption_button(window, 'maximize_restore')
+        wait(lambda: bool(user32.IsZoomed(hwnd)))
+        self.picture(window, name + '-maximized')
+        self.caption_button(window, 'maximize_restore')
+        wait(lambda: not user32.IsZoomed(hwnd))
+        self.picture(window, name + '-restored-after')
+        return {'hwnd': window.handle, 'maximizeRestore': 'PASS', 'captionVisualReview': 'PENDING'}
 
     def alt_f4(self, window):
         self.focus(window)
@@ -163,9 +301,11 @@ class Session:
                 'firstChance': 'PASS' if self.monitor else 'NOT_RUN'}
 
     def cleanup(self):
-        if self.process.poll() is None:
+        if self.owns_process and self.process.poll() is None:
             self.process.terminate()  # Only this harness's own failed test process.
             self.process.wait(timeout=10)
+        if not self.owns_process:
+            self.process.close()  # Leave failed user-launched apps available for inspection.
         if self.monitor and self.monitor.poll() is None:
             self.monitor.terminate()
             self.monitor.wait(timeout=10)
@@ -174,7 +314,8 @@ class Session:
             self.monitor_log.close()
 
 
-CASES = ['caption', 'alt_f4_main', 'alt_f4_child', 'main_with_child', 'reopen', 'reuse', 'rapid_categories']
+DEFAULT_CASES = ['caption', 'alt_f4_main', 'alt_f4_child', 'main_with_child', 'reopen', 'reuse', 'rapid_categories']
+CASES = [*DEFAULT_CASES, 'caption_controls']
 
 
 def run_case(session, case):
@@ -182,10 +323,17 @@ def run_case(session, case):
     session.focus(main)
     session.attach_monitor()
     handles = []
+    observations = []
     if case == 'caption':
         session.caption_close(main)
     elif case == 'alt_f4_main':
         session.alt_f4(main)
+    elif case == 'caption_controls':
+        observations.append(session.caption_controls(main, 'main-caption'))
+        child = session.open_category(main, '基础机制')
+        handles.append(child.handle)
+        session.interactive_child(child, 'caption-child')
+        observations.append(session.caption_controls(child, 'child-caption'))
     elif case == 'rapid_categories':
         titles = ['基础机制', '异步并发', '架构与状态']
         for title in titles:
@@ -221,7 +369,8 @@ def run_case(session, case):
             if len([w for w in session.windows() if w.window_text() == '基础机制']) != 1:
                 raise AssertionError('Duplicate category window')
             wait(lambda: any('Flutter 三棵树' in c.window_text() for c in same.descendants()))
-    return {**session.finish(main, close=case not in ('caption','alt_f4_main')), 'nativeHwnds': handles}
+    return {**session.finish(main, close=case not in ('caption','alt_f4_main')), 'nativeHwnds': handles,
+            'captionObservations': observations}
 
 
 def main():
@@ -229,14 +378,18 @@ def main():
     parser.add_argument('--exe', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--iterations', type=int, default=10)
-    parser.add_argument('--cases', nargs='+', choices=CASES, default=CASES)
+    parser.add_argument('--cases', nargs='+', choices=CASES, default=DEFAULT_CASES)
+    parser.add_argument('--launch-mode', choices=['direct', 'manual-start-menu'], default='direct')
     parser.add_argument('--procdump', type=Path)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     report = {'status': 'RUNNING', 'runs': [], 'screenshotsReview': 'PENDING',
-              'engineDestruction': 'UNVERIFIED', 'windowIdKind': 'native HWND, not Dart controller UUID'}
+              'engineDestruction': 'UNVERIFIED', 'windowIdKind': 'native HWND, not Dart controller UUID',
+              'launchMode': args.launch_mode,
+              'activationEvidence': 'user-attested-start-menu' if args.launch_mode == 'manual-start-menu' else 'direct-exe'}
     exit_code = 1
-    started = time.strftime('%Y-%m-%dT%H:%M:%S')
+    started = datetime.now().astimezone().isoformat()
+    exe = None
     try:
         if sys.platform != 'win32':
             raise Blocked('Requires Windows with an unlocked interactive desktop')
@@ -254,11 +407,13 @@ def main():
             for iteration in range(args.iterations):
                 output = args.output / f'{case}-{iteration:02d}'
                 output.mkdir()
-                session = Session(exe, output, args.procdump.resolve() if args.procdump else None)
-                report['activeCase'] = {'case': case, 'iteration': iteration, 'pid': session.pid}
+                report['activeCase'] = {'case': case, 'iteration': iteration,
+                                        'startedAt': datetime.now().astimezone().isoformat()}
+                session = Session(exe, output, args.procdump.resolve() if args.procdump else None, args.launch_mode)
+                report['activeCase']['pid'] = session.pid
                 try:
                     result = run_case(session, case)
-                    report['runs'].append({'case': case, 'iteration': iteration, **result})
+                    report['runs'].append({**report['activeCase'], **result})
                     print(f'PASS {case} {iteration + 1}/{args.iterations}', flush=True)
                 finally:
                     session.cleanup()
@@ -279,6 +434,8 @@ def main():
     except Exception as error:
         report.update(status='FAIL', error=str(error), traceback=traceback.format_exc())
     finally:
+        if args.launch_mode == 'manual-start-menu' and exe is not None:
+            report['activationEvents'] = activation_evidence(exe, started)
         (args.output / 'result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps({'status': report['status'], 'report': str(args.output / 'result.json')}, ensure_ascii=False))
     return exit_code
