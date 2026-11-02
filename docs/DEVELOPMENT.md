@@ -21,10 +21,9 @@ export PATH="$PWD/.release/toolchains/flutter-3.47.8/bin:$PATH"
 
 ## 隐私说明维护
 
-联网完整版的应用内来源为 `apps/flutter_forge/lib/app/full_privacy.dart`，从“关于”展开；公开页面为 `apps/flutter_forge/web/privacy.html`。
-修改后运行 `python3 tool/export_privacy.py`，用 `python3 tool/export_privacy.py --check` 核对两端一致。
-静态页面随 Web 构建提供，但本地生成不等于已部署；公开托管后核对实际 URL，再填写 Partner Center。
-Android 离线版继续使用独立的 `offline_privacy.dart` / `privacy-offline.html`。
+政策文字统一维护在 `docs/privacy/policies.json`，由 `python3 tool/privacy_policy.py` 生成应用内常量、两版公开页面及不可变历史快照。两个原导出脚本继续兼容，均支持 `--check`。
+政策变更需新版本 ID，操作见 [隐私维护](privacy/README.md)。渠道、产物、政策绑定与后台状态统一见 [分发管理](distribution/README.md) 和 [生成总览](distribution/OVERVIEW.md)。
+公开页面本地生成不代表已经上线；部署后核对版本与实际 URL，再填写商店材料。
 
 ## 快速开始
 

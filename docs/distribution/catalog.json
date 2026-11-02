@@ -1,0 +1,261 @@
+{
+  "schema": "flutter_forge.distribution.v1",
+  "local_inventory_date": "2026-10-30",
+  "portal_freshness_days": 7,
+  "profiles": {
+    "windows-full": {
+      "platform": "windows",
+      "edition": "full",
+      "network": "user_initiated_services",
+      "dart_defines": {},
+      "policy_edition": "full",
+      "module_support_source": "docs/module_availability/matrix.json"
+    },
+    "macos-full": {
+      "platform": "macos",
+      "edition": "full",
+      "network": "user_initiated_services",
+      "dart_defines": {},
+      "policy_edition": "full",
+      "module_support_source": "docs/module_availability/matrix.json"
+    },
+    "web-full": {
+      "platform": "web",
+      "edition": "full",
+      "network": "user_initiated_services",
+      "dart_defines": {},
+      "policy_edition": "full",
+      "module_support_source": "docs/module_availability/matrix.json"
+    },
+    "android-full": {
+      "platform": "android",
+      "edition": "full",
+      "network": "user_initiated_services",
+      "dart_defines": {},
+      "policy_edition": "full",
+      "module_support_source": "docs/module_availability/matrix.json"
+    },
+    "android-offline": {
+      "platform": "android",
+      "edition": "offline",
+      "network": "no_android_internet_permission",
+      "dart_defines": {
+        "FORGE_OFFLINE": "true"
+      },
+      "policy_edition": "offline",
+      "application_id": "com.forge.forest",
+      "module_support_source": "docs/module_availability/matrix.json",
+      "certificate_sha256": "3223a7171466192ef575ab03462f5e34fb2d6c7a6b55ed34f0e87346cbc9ed46"
+    }
+  },
+  "channels": [
+    {
+      "id": "vivo",
+      "label": "vivo 应用商店",
+      "profile": "android-offline",
+      "priority": "primary",
+      "kind": "store",
+      "publication_mode": "explicit_authorization",
+      "policy_url": null,
+      "policy_url_verified_at": null,
+      "identity_evidence": null,
+      "policy_url_policy_id": null,
+      "policy_url_text_sha256": null
+    },
+    {
+      "id": "microsoft-store",
+      "label": "Microsoft Store",
+      "profile": "windows-full",
+      "priority": "primary",
+      "kind": "store",
+      "publication_mode": "explicit_authorization",
+      "policy_url": null,
+      "policy_url_verified_at": null,
+      "identity_evidence": null,
+      "policy_url_policy_id": null,
+      "policy_url_text_sha256": null
+    },
+    {
+      "id": "github-macos",
+      "label": "GitHub macOS DMG",
+      "profile": "macos-full",
+      "priority": "maintenance",
+      "kind": "github",
+      "publication_mode": "explicit_authorization",
+      "policy_url": null,
+      "policy_url_verified_at": null,
+      "identity_evidence": null,
+      "policy_url_policy_id": null,
+      "policy_url_text_sha256": null
+    },
+    {
+      "id": "github-windows",
+      "label": "GitHub Windows EXE",
+      "profile": "windows-full",
+      "priority": "maintenance",
+      "kind": "github",
+      "publication_mode": "explicit_authorization",
+      "policy_url": null,
+      "policy_url_verified_at": null,
+      "identity_evidence": null,
+      "policy_url_policy_id": null,
+      "policy_url_text_sha256": null
+    },
+    {
+      "id": "github-android",
+      "label": "GitHub Android debug APK",
+      "profile": "android-full",
+      "priority": "maintenance",
+      "kind": "github",
+      "publication_mode": "explicit_authorization",
+      "policy_url": null,
+      "policy_url_verified_at": null,
+      "identity_evidence": null,
+      "policy_url_policy_id": null,
+      "policy_url_text_sha256": null
+    },
+    {
+      "id": "github-web",
+      "label": "GitHub Web ZIP",
+      "profile": "web-full",
+      "priority": "maintenance",
+      "kind": "github",
+      "publication_mode": "explicit_authorization",
+      "policy_url": null,
+      "policy_url_verified_at": null,
+      "identity_evidence": null,
+      "policy_url_policy_id": null,
+      "policy_url_text_sha256": null
+    },
+    {
+      "id": "web-pages",
+      "label": "Web / GitHub Pages",
+      "profile": "web-full",
+      "priority": "maintenance",
+      "kind": "web",
+      "publication_mode": "explicit_authorization",
+      "policy_url": null,
+      "policy_url_verified_at": null,
+      "identity_evidence": null,
+      "policy_url_policy_id": null,
+      "policy_url_text_sha256": null
+    },
+    {
+      "id": "xiaomi",
+      "label": "小米应用商店",
+      "profile": "android-offline",
+      "priority": "deferred",
+      "kind": "store",
+      "publication_mode": "explicit_authorization",
+      "policy_url": null,
+      "policy_url_verified_at": null,
+      "identity_evidence": null,
+      "policy_url_policy_id": null,
+      "policy_url_text_sha256": null
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "github-macos-1.2.10-4",
+      "profile": "macos-full",
+      "version": "1.2.10",
+      "build_number": "4",
+      "path": "release/1.2.10/FlutterForge-1.2.10-macos-arm64.dmg",
+      "sha256": "399e8c655c7a21cee43581ccec4ca3ef8917e16726b731c1540ee2268670807b",
+      "source_sha": "46d75c0425c905d34ab05a5a674bc846303eb364",
+      "source_dirty": null,
+      "build_mode": "release",
+      "signing": "unsigned",
+      "certificate_sha256": null,
+      "policy": null,
+      "source_manifest": "release/1.2.10/RELEASE_MANIFEST-macos.json",
+      "acceptance_evidence": [],
+      "note": "历史产物；未据当前源码补写政策版本或当前验收结论。"
+    },
+    {
+      "id": "github-windows-1.2.10-4",
+      "profile": "windows-full",
+      "version": "1.2.10",
+      "build_number": "4",
+      "path": "release/1.2.10/FlutterForge-1.2.10-windows-x64.exe",
+      "sha256": "bdef3392d8cb4166df4119218924e437bc319632f414e02592d02dc2d03418a6",
+      "source_sha": "46d75c0425c905d34ab05a5a674bc846303eb364",
+      "source_dirty": null,
+      "build_mode": "release",
+      "signing": "unsigned",
+      "certificate_sha256": null,
+      "policy": null,
+      "source_manifest": "release/1.2.10/RELEASE_MANIFEST-windows.json",
+      "acceptance_evidence": [],
+      "note": "历史产物；未据当前源码补写政策版本或当前验收结论。"
+    },
+    {
+      "id": "github-android-1.2.10-4",
+      "profile": "android-full",
+      "version": "1.2.10",
+      "build_number": "4",
+      "path": "release/1.2.10/FlutterForge-1.2.10-android-arm64-v8a-debug.apk",
+      "sha256": "76bdc65a5462a334c8c53052b0ca6da91d744ca740bfdc09fbebd90c4e178a63",
+      "source_sha": "46d75c0425c905d34ab05a5a674bc846303eb364",
+      "source_dirty": null,
+      "build_mode": "debug",
+      "signing": "Android debug certificate",
+      "certificate_sha256": null,
+      "policy": null,
+      "source_manifest": "release/1.2.10/RELEASE_MANIFEST-android.json",
+      "acceptance_evidence": [],
+      "note": "历史产物；未据当前源码补写政策版本或当前验收结论。"
+    },
+    {
+      "id": "github-web-1.2.10-4",
+      "profile": "web-full",
+      "version": "1.2.10",
+      "build_number": "4",
+      "path": "release/1.2.10/FlutterForge-1.2.10-web.zip",
+      "sha256": "e2fc9006af7037f05bf5677d4f6717e33d417ae0e0ca1cc60f22cc37a3e86e82",
+      "source_sha": "46d75c0425c905d34ab05a5a674bc846303eb364",
+      "source_dirty": null,
+      "build_mode": "release",
+      "signing": "not applicable",
+      "certificate_sha256": null,
+      "policy": null,
+      "source_manifest": "release/1.2.10/RELEASE_MANIFEST-web.json",
+      "acceptance_evidence": [],
+      "note": "历史产物；未据当前源码补写政策版本或当前验收结论。"
+    },
+    {
+      "id": "vivo-1.2.10-2006",
+      "profile": "android-offline",
+      "version": "1.2.10",
+      "build_number": "2006",
+      "path": ".release/vivo/1.2.10/upload-ready-2006/FlutterForge-1.2.10-2006-arm64-offline-release.apk",
+      "sha256": "4f8cb95de323adda26c010f3a30ef3a42f4e30e1108463ae32acbe2cbba1fa57",
+      "source_sha": "3fc98c422a0b391a82d1d5d3994bc41d34fc2a56",
+      "source_dirty": true,
+      "build_mode": "release",
+      "signing": "release-certificate",
+      "certificate_sha256": "3223a7171466192ef575ab03462f5e34fb2d6c7a6b55ed34f0e87346cbc9ed46",
+      "policy": null,
+      "source_manifest": ".release/vivo/1.2.10/upload-ready-2006/manifest.json",
+      "acceptance_evidence": [],
+      "note": "历史本地清单；政策绑定及后台审核/发布状态待核对。"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "vivo-2006-import",
+      "channel": "vivo",
+      "artifact": "vivo-1.2.10-2006",
+      "listing_version": null,
+      "note": "导入本地旧记录；不据此断言当前已提交、待审或已上架。",
+      "observations": [],
+      "source_evidence": [
+        ".release/vivo/1.2.10/upload-ready-2006/submission-status.json",
+        ".release/vivo/1.2.10/upload-ready-2006/manifest.json"
+      ]
+    }
+  ],
+  "portal_access_notes": {
+    "vivo": "2026-10-30 Chrome 只读访问开发者首页显示登录，未进入已登录应用后台；状态保持待核对。"
+  }
+}

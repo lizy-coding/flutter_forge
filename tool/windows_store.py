@@ -17,6 +17,8 @@ import subprocess
 import sys
 import xml.etree.ElementTree as ET
 
+from privacy_policy import binding, generate as check_privacy
+
 ROOT = Path(__file__).resolve().parent.parent
 APP = ROOT / "apps/flutter_forge"
 FOUNDATION = "http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -221,6 +223,8 @@ def main(argv=None):
     parser.add_argument("--output", required=True, type=Path, help="New directory; never overwritten")
     parser.add_argument("--vc-runtime-dir", type=Path, help="Matching VS x64 retail Microsoft.VC*.CRT directory")
     args = parser.parse_args(argv)
+    check_privacy(check=True)
+    policy = binding('full')
     config = read_identity(args.identity_config, args.local_test)
     app_version, package_version = read_version((APP / "pubspec.yaml").read_text(encoding="utf-8"))
     makeappx = makepri = None
@@ -238,6 +242,7 @@ def main(argv=None):
     write_assets(stage / "Assets")
     report = {"schema": "flutter_forge.windows_store.v1", "mode": args.mode,
               "identity_kind": "local-test" if args.local_test else "partner-center-config",
+              "distribution_profile": "windows-full", "policy_binding": policy,
               "identity": config, "app_version": app_version, "package_version": package_version,
               "source": source_evidence(), "host": platform.platform(),
               "package_build": "NOT_RUN", "installation": "NOT_RUN", "wack": "NOT_RUN",

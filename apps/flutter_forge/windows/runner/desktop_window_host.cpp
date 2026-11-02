@@ -9,6 +9,7 @@
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -34,12 +35,13 @@ class DesktopWindowHost final : public flutter::Plugin {
       : window_(window), view_(view), channel_(std::make_unique<flutter::MethodChannel<Value>>(
             registrar->messenger(), "flutter_forge/desktop_host",
             &flutter::StandardMethodCodec::GetInstance())) {
-    SetWindowSubclass(window_, WindowProc, reinterpret_cast<UINT_PTR>(this),
-                      reinterpret_cast<DWORD_PTR>(this));
-    ConfigureFrame();
     channel_->SetMethodCallHandler([this](const auto& call, auto result) {
       const auto& method = call.method_name();
       if (method == "configure") {
+        if (!configured_) {
+          std::cerr << "[desktop_host] first configure received hwnd="
+                    << window_ << std::endl;
+        }
         configured_ = true;
         const auto* args = std::get_if<Map>(call.arguments());
         if (args) {
@@ -94,6 +96,11 @@ class DesktopWindowHost final : public flutter::Plugin {
         result->NotImplemented();
       }
     });
+    // Install the handler before frame changes can re-enter message dispatch.
+    SetWindowSubclass(window_, WindowProc, reinterpret_cast<UINT_PTR>(this),
+                      reinterpret_cast<DWORD_PTR>(this));
+    ConfigureFrame();
+    std::cerr << "[desktop_host] registered hwnd=" << window_ << std::endl;
   }
 
   ~DesktopWindowHost() override {
@@ -315,8 +322,11 @@ class DesktopWindowHost final : public flutter::Plugin {
 };
 }  // namespace
 
-void RegisterDesktopWindowHost(flutter::FlutterViewController* controller) {
-  const HWND window = GetAncestor(controller->view()->GetNativeWindow(), GA_ROOT);
+void RegisterDesktopWindowHost(flutter::FlutterViewController* controller,
+                               HWND window) {
+  if (!window) {
+    window = GetAncestor(controller->view()->GetNativeWindow(), GA_ROOT);
+  }
   auto* registrar = flutter::PluginRegistrarManager::GetInstance()
       ->GetRegistrar<flutter::PluginRegistrarWindows>(
           controller->engine()->GetRegistrarForPlugin("ForgeDesktopHost"));

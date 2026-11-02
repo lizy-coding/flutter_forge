@@ -21,6 +21,11 @@ test('artifact verification rejects absent, empty and wrong-format output', (t) 
   const data = metadata(dir, {platform:'android', toolchain:{flutter:'3.47.2',node:'24'}});
   assert.equal(data.build_mode, 'debug');
   assert.equal(data.signing, 'Android debug certificate');
+  assert.equal(data.distribution_profile, 'android-full');
+  assert.equal(data.policy_binding, null);
+  const binding = {policy_id: 'full-fixture', text_sha256: 'a'.repeat(64)};
+  const bound = metadata(dir, {platform:'android', toolchain:{flutter:'3.47.2',node:'24'}, policy_binding: binding});
+  assert.deepEqual(bound.policy_binding, binding);
   assert.equal(data.artifacts[0].size, 5);
   assert.match(data.artifacts[0].sha256, /^[a-f0-9]{64}$/);
 });

@@ -191,12 +191,14 @@ class Session:
         except Exception as error:
             (self.output / 'uia.txt').write_text(str(window.descendants()), encoding='utf-8')
             raise Blocked(f'UIA button unavailable: {name}; inspect uia.txt') from error
-        self.focus(window)
         control.click_input()  # physical input, not InvokePattern or WM_COMMAND
 
     def picture(self, window, name):
         self.focus(window)
-        image = window.capture_as_image()
+        try:
+            image = window.capture_as_image()
+        except Exception as error:
+            raise Blocked('Window screenshot unavailable on this desktop: ' + str(error)) from error
         if image is None:
             raise Blocked('Window screenshot unavailable')
         image.save(self.output / f'{name}.png')

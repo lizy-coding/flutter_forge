@@ -330,6 +330,17 @@
         "tool/ci_contracts.test.js"
       ],
       "timeout": 120
+    },
+    {
+      "id": "distribution-tests",
+      "kind": "python",
+      "platforms": [
+        "local"
+      ],
+      "targets": [
+        "tool/distribution_test.py"
+      ],
+      "timeout": 120
     }
   ]
 }

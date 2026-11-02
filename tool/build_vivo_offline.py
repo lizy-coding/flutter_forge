@@ -9,13 +9,22 @@ import re
 import shutil
 import subprocess
 
+from privacy_policy import binding, generate as check_privacy
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--signing-config', type=Path, default=Path.home() / '.local/share/flutter-forge/signing/signing-secrets.json')
+    parser.add_argument('--build-number', required=True, type=int, help='New Android versionCode; must exceed recorded offline builds')
     args = parser.parse_args()
     root = Path(__file__).resolve().parent.parent
     app = root / 'apps/flutter_forge'
+    check_privacy(check=True, root=root)
+    policy = binding('offline', root=root)
+    catalog = json.loads((root / 'docs/distribution/catalog.json').read_text())
+    previous_codes = [int(item['build_number']) for item in catalog['artifacts'] if item['profile'] == 'android-offline']
+    if args.build_number <= max(previous_codes, default=0):
+        raise SystemExit('Android versionCode must exceed recorded offline builds')
     config = json.loads(args.signing_config.read_text())
     keys = ('ANDROID_KEYSTORE_PATH', 'ANDROID_KEYSTORE_PASSWORD', 'ANDROID_KEY_ALIAS', 'ANDROID_KEY_PASSWORD')
     if any(not config.get(key) for key in keys):
@@ -29,7 +38,7 @@ def main():
     if java.is_dir():
         env['JAVA_HOME'] = str(java)
         env['PATH'] = str(java / 'bin') + os.pathsep + env['PATH']
-    subprocess.run(['flutter', 'build', 'apk', '--release', '--dart-define=FORGE_OFFLINE=true', '--target-platform', 'android-arm64', '--split-per-abi'], cwd=app, env=env, check=True)
+    subprocess.run(['flutter', 'build', 'apk', '--release', '--build-number', str(args.build_number), '--dart-define=FORGE_OFFLINE=true', '--target-platform', 'android-arm64', '--split-per-abi'], cwd=app, env=env, check=True)
     apk = app / 'build/app/outputs/flutter-apk/app-arm64-v8a-release.apk'
     sdk = Path(env.get('ANDROID_SDK_ROOT') or env.get('ANDROID_HOME') or str(Path.home() / 'Library/Android/sdk'))
     versions = sorted((sdk / 'build-tools').iterdir(), key=lambda p: tuple(int(part) for part in p.name.split('.') if part.isdigit()))
@@ -40,6 +49,8 @@ def main():
     cert_env['FORGE_STORE_PASS'] = config['ANDROID_KEYSTORE_PASSWORD']
     certificate = subprocess.check_output(['keytool', '-exportcert', '-keystore', config['ANDROID_KEYSTORE_PATH'], '-alias', config['ANDROID_KEY_ALIAS'], '-storepass:env', 'FORGE_STORE_PASS'], env=cert_env)
     certificate_sha = hashlib.sha256(certificate).hexdigest()
+    if certificate_sha != catalog['profiles']['android-offline']['certificate_sha256']:
+        raise SystemExit('Release certificate differs from the registered offline identity')
     signer_hashes = {value.lower() for value in re.findall(r'certificate SHA-256 digest: ([0-9a-fA-F]+)', signature)}
     if signer_hashes != {certificate_sha}:
         raise SystemExit('APK certificate does not match the release keystore')
@@ -50,8 +61,8 @@ def main():
     if not package or package[1] != 'com.forge.forest':
         raise SystemExit('Unexpected application identity')
     app_id, code, version = package.groups()
-    output = root / '.release/vivo' / version / 'offline'
-    output.mkdir(parents=True, exist_ok=True)
+    output = root / '.release/vivo' / version / f'offline-{code}'
+    output.mkdir(parents=True, exist_ok=False)
     target = output / f'FlutterForge-{version}-{code}-arm64-offline-release.apk'
     shutil.copy2(apk, target)
     digest = hashlib.sha256(target.read_bytes()).hexdigest()
@@ -62,6 +73,7 @@ def main():
     (output / 'manifest.json').write_text(json.dumps({
         'application_id': app_id, 'version_name': version, 'version_code': code,
         'edition': 'offline', 'build_mode': 'release', 'abi': 'arm64-v8a',
+        'distribution_profile': 'android-offline', 'policy_binding': policy,
         'internet_permission': False, 'certificate_sha256': certificate_sha,
         'apk_sha256': digest, 'device_acceptance': 'pending',
         'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),

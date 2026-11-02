@@ -30,6 +30,8 @@
     "creator_profile.dart",
     "offline_privacy.dart",
     "full_privacy.dart",
+    "privacy_data_panel.dart",
+    "privacy_policy_data.dart",
     "module_home_page.dart",
     "unsupported_module_page.dart",
     "navigation_policy.dart",

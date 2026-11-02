@@ -3,6 +3,8 @@
 
 #include <flutter/flutter_view_controller.h>
 
-void RegisterDesktopWindowHost(flutter::FlutterViewController* controller);
+// Supply the top-level HWND when the Flutter view is not parented yet.
+void RegisterDesktopWindowHost(flutter::FlutterViewController* controller,
+                               HWND window = nullptr);
 
 #endif  // RUNNER_DESKTOP_WINDOW_HOST_H_

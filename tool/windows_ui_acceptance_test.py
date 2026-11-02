@@ -79,6 +79,28 @@ class FakeSession:
         return {'exitCode':0}
 
 
+class DesktopObservationTest(unittest.TestCase):
+    def test_capture_failure_is_a_tool_blocker(self):
+        session = Session.__new__(Session)
+        session.focus = Mock()
+        window = Mock()
+        window.capture_as_image.side_effect = RuntimeError('capture timed out')
+        with self.assertRaisesRegex(Blocked, 'capture timed out'):
+            session.picture(window, 'home')
+
+    def test_focus_does_not_invalidate_fresh_button_before_click(self):
+        session = Session.__new__(Session)
+        events = []
+        session.focus = lambda _: events.append('focus')
+        control = Mock()
+        control.window_text.return_value = '基础机制'
+        control.click_input.side_effect = lambda: events.append('click')
+        window = Mock()
+        window.descendants.side_effect = lambda **_: events.append('query') or [control]
+        session.button(window, '基础机制')
+        self.assertEqual(events, ['focus', 'query', 'click'])
+
+
 class ScenariosTest(unittest.TestCase):
     def test_caption_case_is_explicit_and_covers_both_windows(self):
         self.assertNotIn('caption_controls', DEFAULT_CASES)
