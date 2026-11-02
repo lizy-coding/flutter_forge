@@ -17,10 +17,11 @@ import xml.etree.ElementTree as ET
 
 from windows_ui_acceptance import Blocked, process_ids_for_executable
 
-SCHEMA = 'flutter_forge.windows_self_test.v1'
+SCHEMA = 'flutter_forge.windows_self_test.v2'
 NATIVE_CASES = ['observation', 'caption_controls', 'main_with_child', 'reopen']
 MANUAL_IDS = ['A04', 'A05', 'B01', 'B02', 'B03', 'B04', 'B05', 'B06', 'B07',
-              'C04-visual', 'configure-log']
+              'C04-visual', 'configure-log', 'focus-F11', 'Chinese-IME', 'DPI-100-125', 'caption-minimize-main-child']
+USER_INSTALL_IDS = ['EXE-install', 'EXE-upgrade', 'EXE-uninstall', 'EXE-reinstall']
 NS = {'p': 'http://schemas.microsoft.com/appx/manifest/foundation/windows10'}
 
 
@@ -204,6 +205,14 @@ if($p.Count -ne 1){throw 'Expected exactly one installed LocalTest package for t
     return Path(package['location']) / 'flutter_forge.exe', package
 
 
+def user_execution_context():
+    import ctypes
+    # An elevated administrator run must not satisfy standard-user acceptance.
+    # This reports the current token, not whether the account could elevate.
+    return {'elevated': bool(ctypes.windll.shell32.IsUserAnAdmin()),
+            'interpretation': 'Current process token; account privileges are not inferred'}
+
+
 def interactive_desktop():
     import ctypes
     user32 = ctypes.windll.user32
@@ -225,15 +234,20 @@ def interactive_desktop():
         user32.CloseDesktop(handle)
 
 
-def manual_template():
-    return {'scope': 'User-observed results; never inferred from cloud or UIA pass',
-            'checks': [{'id': key, 'status': 'NOT_RUN', 'note': '', 'evidence': []} for key in MANUAL_IDS]}
+def manual_template(target='user-exe'):
+    ids = MANUAL_IDS + (USER_INSTALL_IDS if target == 'user-exe' else [])
+    return {'target': target, 'scope': 'User-observed results; never inferred from cloud or UIA pass',
+            'checks': [{'id': key, 'status': 'NOT_RUN', 'note': '', 'evidence': []} for key in ids]}
 
 
-def manual_results(output):
+def manual_results(output, target=None):
     data = read_json(output / 'manual-results.json')
+    target = target or data.get('target', 'user-exe')
+    if data.get('target') != target:
+        raise ValueError('Manual checklist target differs from original run')
+    expected = MANUAL_IDS + (USER_INSTALL_IDS if target == 'user-exe' else [])
     checks = data['checks']
-    if len(checks) != len(MANUAL_IDS) or {item['id'] for item in checks} != set(MANUAL_IDS):
+    if len(checks) != len(expected) or {item['id'] for item in checks} != set(expected):
         raise ValueError('Manual checklist IDs changed or duplicated')
     for item in checks:
         if not isinstance(item['note'], str) or not isinstance(item['evidence'], list):
@@ -264,10 +278,18 @@ def summarize(report, checks):
     return 'NEEDS_MANUAL_REVIEW'
 
 
+def tool_fingerprints():
+    root = Path(__file__).resolve().parent
+    return {name: digest(root / name) for name in ('windows_self_test.py', 'windows_ui_acceptance.py')}
+
+
 def write_report(output, report):
-    checks = manual_results(output)
+    checks = manual_results(output, report.get('target', 'user-exe'))
+    report['installationAcceptance'] = {'basis': 'user-observed evidence; tool did not perform installation actions',
+                                        'checks': [item for item in checks if item['id'] in USER_INSTALL_IDS]}
     report['status'] = summarize(report, checks)
     report['manual'] = checks
+    report['exportedWith'] = tool_fingerprints()
     (output / 'result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     rows = ''.join(f'<tr><td>{escape(item["id"])}</td><td>{escape(item["status"])}</td><td>{escape(item["note"])}</td></tr>' for item in checks)
     detail = escape(json.dumps({key: value for key, value in report.items() if key != 'manual'}, ensure_ascii=False, indent=2))
@@ -275,7 +297,7 @@ def write_report(output, report):
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Flutter Forge 自测报告</title>
 <style>body{{font:16px/1.6 system-ui;max-width:1000px;margin:auto;padding:24px}}td,th{{border:1px solid #ccc;padding:8px}}table{{border-collapse:collapse}}pre{{white-space:pre-wrap;overflow-wrap:anywhere}}</style>
 <h1>Flutter Forge 自测报告：{escape(report['status'])}</h1>
-<p>云端冒烟、此处自动复核和人工验收分别记录；物理设备类型由测试者声明。此报告不包含升级、卸载、WACK或商店验收。</p>
+<p>云端冒烟、此处自动复核和人工验收分别记录；物理设备类型由测试者声明。EXE 安装、升级、卸载与重装由人工记录；WACK及商店验收不包含在本报告中。</p>
 <pre>{detail}</pre><table><tr><th>人工项目</th><th>状态</th><th>说明</th></tr>{rows}</table></html>'''
     (output / 'REPORT.html').write_text(html, encoding='utf-8')
     # Bundle only this dedicated output directory. Never traverse external links.
@@ -319,8 +341,8 @@ def main(argv=None):
     if args.bundle.resolve().is_relative_to(output):
         parser.error('Output cannot contain the input bundle')
     output.mkdir(parents=True)
-    (output / 'manual-results.json').write_text(json.dumps(manual_template(), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    report = {'schema': SCHEMA, 'status': 'RUNNING', 'startedAt': datetime.now().astimezone().isoformat(),
+    (output / 'manual-results.json').write_text(json.dumps(manual_template(args.target), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    report = {'schema': SCHEMA, 'executedWith': tool_fingerprints(), 'status': 'RUNNING', 'startedAt': datetime.now().astimezone().isoformat(),
               'host': {'os': platform.platform(), 'python': platform.python_version(), 'processArchitecture': platform.machine(),
                        'processorArchitecture': os.environ.get('PROCESSOR_ARCHITECTURE'),
                        'nativeArchitectureHint': os.environ.get('PROCESSOR_ARCHITEW6432'),
@@ -339,6 +361,9 @@ def main(argv=None):
         if sys.platform != 'win32':
             raise Blocked('Integrity checked only; native self-test requires Windows')
         if args.target == 'user-exe':
+            report['userContext'] = user_execution_context()
+            if report['userContext']['elevated']:
+                raise Blocked('Standard-user acceptance requires a non-elevated terminal; relaunch normally')
             exe, report['installedPackage'] = installed_user_executable(evidence)
         else:
             signature = inspect_signature(bundle, evidence)

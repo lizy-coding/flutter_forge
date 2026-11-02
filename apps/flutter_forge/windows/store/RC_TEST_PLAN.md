@@ -5,7 +5,7 @@
 ## 候选包进入验收的条件
 
 - 源码门禁通过，实际安装包报告记录 Flutter 3.47.8 / Dart 3.13.7 或当前固定修复基线。
-- 应用与 MSIX 版本以同包 result.json 为准；本轮目标为 1.2.13+8 / 1.2.13.0，高于旧 1.2.11.0 和上一轮候选 1.2.12.0。
+- 应用与 MSIX 版本以同包 result.json 为准；本轮目标为 1.2.14+9 / 1.2.14.0，高于旧 1.2.11.0 和上一轮候选 1.2.12.0 / 1.2.13.0。
 - MakePri 与 MakeAppx 实际成功，包内有 resources.pri、新版图标与完整版隐私入口。
 - unsigned 原包、signed 测试包、公开 CER 的哈希、指纹及源码 SHA 可核对；不分发私钥。
 - 同一提交的 `windows-host-smoke.json` 为 PASS，至少运行一项真实宿主测试。它是云端 Windows Server 源码宿主集成，不能当作 MSIX 安装、开始菜单或物理 Windows 11 验收。

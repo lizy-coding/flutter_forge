@@ -51,6 +51,12 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
   TextEditingController? _queryController;
   int _selected = 0;
 
+  double get _itemExtent {
+    final scaler = MediaQuery.textScalerOf(context);
+    final scale = math.max(scaler.scale(16) / 16, scaler.scale(14) / 14);
+    return 64 * math.max(1.0, scale);
+  }
+
   List<ModuleEntry> get _matches {
     final query = _query.trim().toLowerCase();
     final matches = widget.modules.where((module) {
@@ -86,6 +92,7 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
       // navigation keys so Dialog's Escape shortcut cannot dismiss composition.
       return const [
             LogicalKeyboardKey.enter,
+            LogicalKeyboardKey.numpadEnter,
             LogicalKeyboardKey.escape,
             LogicalKeyboardKey.arrowUp,
             LogicalKeyboardKey.arrowDown,
@@ -98,7 +105,8 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
       Navigator.of(context).pop();
       return KeyEventResult.handled;
     }
-    if (event.logicalKey == LogicalKeyboardKey.enter) {
+    if (event.logicalKey == LogicalKeyboardKey.enter ||
+        event.logicalKey == LogicalKeyboardKey.numpadEnter) {
       if (matches.isNotEmpty) Navigator.of(context).pop(matches[_selected]);
       return KeyEventResult.handled;
     }
@@ -112,7 +120,7 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
       () => _selected = (_selected + delta).clamp(0, matches.length - 1),
     );
     if (_scroll.hasClients) {
-      final offset = (_selected * 64.0).clamp(
+      final offset = (_selected * _itemExtent).clamp(
         0.0,
         _scroll.position.maxScrollExtent,
       );
@@ -180,7 +188,7 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
                     ? const Center(child: Text('没有匹配模块，请尝试其他关键词'))
                     : ListView.builder(
                         controller: _scroll,
-                        itemExtent: 64,
+                        itemExtent: _itemExtent,
                         itemCount: matches.length,
                         itemBuilder: (context, index) {
                           final module = matches[index];

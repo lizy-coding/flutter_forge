@@ -321,7 +321,7 @@ class _DesktopWindowHostState extends State<DesktopWindowHost> {
         !MediaQuery.highContrastOf(context);
     final theme = Theme.of(context);
     final solid = teaching || (_enabled && !native);
-    return DesktopWindowScope(
+    final content = DesktopWindowScope(
       controller: _controller,
       child: ForgeSurfaceScope(
         nativeMaterial: native,
@@ -370,6 +370,17 @@ class _DesktopWindowHostState extends State<DesktopWindowHost> {
           ),
         ),
       ),
+    );
+    if (!_enabled) return content;
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(
+          LogicalKeyboardKey.f11,
+          includeRepeats: false,
+        ): () =>
+            unawaited(_controller.perform('toggleFullscreen')),
+      },
+      child: content,
     );
   }
 }

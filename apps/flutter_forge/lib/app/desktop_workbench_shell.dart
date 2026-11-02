@@ -197,8 +197,6 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
     final entries = _navigationEntries;
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.f11): () =>
-            unawaited(_windowAction('toggleFullscreen')),
         const SingleActivator(LogicalKeyboardKey.keyK, control: true): _search,
         const SingleActivator(LogicalKeyboardKey.keyK, meta: true): _search,
         const SingleActivator(LogicalKeyboardKey.keyF, meta: true): _search,

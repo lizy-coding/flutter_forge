@@ -158,9 +158,59 @@ void main() {
     }
   }, variant: _desktopPlatforms);
 
+  testWidgets('F11 remains a window command while quick open has focus', (
+    tester,
+  ) async {
+    final calls = _mockHost(tester);
+    final router = await _pump(tester);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    expect(calls.where((call) => call.method == 'toggleFullscreen').length, 1);
+    await tester.tap(find.byKey(const ValueKey('workbench-search')));
+    await tester.pumpAndSettle();
+    final before = calls
+        .where((call) => call.method == 'toggleFullscreen')
+        .length;
+    await tester.sendKeyEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    expect(
+      calls.where((call) => call.method == 'toggleFullscreen').length,
+      before + 1,
+    );
+    expect(find.byKey(const ValueKey('module-quick-open')), findsOneWidget);
+    expect(router.routeInformationProvider.value.uri.path, '/');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    expect(
+      calls.where((call) => call.method == 'toggleFullscreen').length,
+      before + 2,
+    );
+  }, variant: _desktopPlatforms);
+
   testWidgets('quick open does not navigate or dismiss during composition', (
     tester,
   ) async {
+    Future<void> sendKey(LogicalKeyboardKey key) async {
+      if (key == LogicalKeyboardKey.numpadEnter) {
+        // The SDK's legacy Windows raw-event map lacks this key. Use its
+        // supported Linux event encoding to test Flutter logical-key behavior;
+        // the desktop variant still selects the shell/theme under test.
+        await tester.sendKeyEvent(
+          key,
+          platform: 'linux',
+          physicalKey: PhysicalKeyboardKey.numpadEnter,
+        );
+      } else {
+        await tester.sendKeyEvent(key);
+      }
+    }
+
     _mockHost(tester);
     final router = await _pump(tester);
     await tester.tap(find.byKey(const ValueKey('workbench-search')));
@@ -178,10 +228,12 @@ void main() {
     await tester.pump();
     for (final key in [
       LogicalKeyboardKey.enter,
+      LogicalKeyboardKey.numpadEnter,
+      LogicalKeyboardKey.arrowUp,
       LogicalKeyboardKey.arrowDown,
       LogicalKeyboardKey.escape,
     ]) {
-      await tester.sendKeyEvent(key);
+      await sendKey(key);
       await tester.pump();
       expect(find.byKey(const ValueKey('module-quick-open')), findsOneWidget);
       expect(router.routeInformationProvider.value.uri.path, '/');
@@ -190,7 +242,7 @@ void main() {
       const TextEditingValue(text: '三棵树'),
     );
     await tester.pump();
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await sendKey(LogicalKeyboardKey.numpadEnter);
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('module-quick-open')), findsNothing);
     expect(

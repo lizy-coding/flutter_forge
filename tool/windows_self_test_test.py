@@ -164,7 +164,7 @@ class SelfTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             tool.main(['check', '--target', 'installed', '--bundle', str(self.bundle), '--output', str(output)])
 
-    def run_fixture(self, output, native_runs=None, signature='Valid', exe_bytes=None, active_pids=None, target=None):
+    def run_fixture(self, output, native_runs=None, signature='Valid', exe_bytes=None, active_pids=None, target=None, elevated=False):
         exe = self.root / 'installed/flutter_forge.exe'
         exe.parent.mkdir(exist_ok=True)
         exe.write_bytes(exe_bytes or self.binary)
@@ -186,11 +186,19 @@ class SelfTest(unittest.TestCase):
              patch.object(tool, 'installed_executable', return_value=(exe, {'version': '1.2.11.0'})), \
              patch.object(tool, 'installed_user_executable', return_value=(exe, {'version': '1.2.11', 'scope': 'current-user'})), \
              patch.object(tool, 'interactive_desktop', return_value={'status': 'AVAILABLE'}), \
+             patch.object(tool, 'user_execution_context', return_value={'elevated': elevated}), \
              patch.object(tool, 'process_ids_for_executable', return_value=active_pids or []), \
              patch.dict('sys.modules', {'pywinauto': SimpleNamespace(), 'PIL': SimpleNamespace()}), \
              patch.object(tool.subprocess, 'run', side_effect=native):
             code = tool.main(['run', '--bundle', str(self.bundle), '--output', str(output), '--device-kind', 'vm-x64', '--target', target or 'installed'])
         return code, tool.read_json(output / 'result.json'), calls
+
+    def test_elevated_exe_run_cannot_be_standard_user_acceptance(self):
+        code, report, commands = self.run_fixture(self.root / 'elevated', target='user-exe', elevated=True)
+        self.assertEqual(code, 2)
+        self.assertEqual(report['status'], 'BLOCKED')
+        self.assertTrue(report['userContext']['elevated'])
+        self.assertFalse(commands)
 
     def test_user_exe_run_works_without_msix_signature_report(self):
         code, report, commands = self.run_fixture(self.root / 'user-exe', target='user-exe')
@@ -236,6 +244,45 @@ class SelfTest(unittest.TestCase):
                 code, report, _ = self.run_fixture(self.root / name, native_runs=runs)
                 self.assertEqual(code, 1)
                 self.assertEqual(report['status'], 'FAIL')
+
+    def test_user_installation_omissions_cannot_produce_overall_pass(self):
+        output = self.root / 'install-incomplete'
+        output.mkdir()
+        (output / 'notes.txt').write_text('observed interaction')
+        manual = tool.manual_template('user-exe')
+        for item in manual['checks']:
+            if item['id'] not in tool.USER_INSTALL_IDS:
+                item.update(status='PASS', note='observed', evidence=['notes.txt'])
+        write_json(output / 'manual-results.json', manual)
+        report = {'schema': tool.SCHEMA, 'target': 'user-exe', 'status': 'NEEDS_MANUAL_REVIEW', 'automated': {'status': 'PASS'}}
+        tool.write_report(output, report)
+        self.assertEqual(report['status'], 'NEEDS_MANUAL_REVIEW')
+        self.assertEqual(len(report['installationAcceptance']['checks']), 4)
+        manual['checks'] = [item for item in manual['checks'] if item['id'] not in tool.USER_INSTALL_IDS]
+        write_json(output / 'manual-results.json', manual)
+        with self.assertRaisesRegex(ValueError, 'checklist IDs'):
+            tool.write_report(output, report)
+
+    def test_missing_minimize_observation_does_not_pass(self):
+        output = self.root / 'minimize-not-run'
+        output.mkdir()
+        (output / 'notes.txt').write_text('manual observations')
+        manual = tool.manual_template('user-exe')
+        for item in manual['checks']:
+            if item['id'] != 'caption-minimize-main-child':
+                item.update(status='PASS', note='Observed by tester', evidence=['notes.txt'])
+        write_json(output / 'manual-results.json', manual)
+        report = {'target': 'user-exe', 'status': 'NEEDS_MANUAL_REVIEW', 'automated': {'status': 'PASS'}}
+        tool.write_report(output, report)
+        self.assertEqual(report['status'], 'NEEDS_MANUAL_REVIEW')
+
+    def test_manual_target_cannot_be_changed_to_skip_install_checks(self):
+        output = self.root / 'target-changed'
+        output.mkdir()
+        write_json(output / 'manual-results.json', tool.manual_template('installed'))
+        report = {'target': 'user-exe', 'status': 'NEEDS_MANUAL_REVIEW', 'automated': {'status': 'PASS'}}
+        with self.assertRaisesRegex(ValueError, 'target differs'):
+            tool.write_report(output, report)
 
     def test_manual_pass_needs_evidence_and_no_external_path(self):
         output = self.root / 'manual'
