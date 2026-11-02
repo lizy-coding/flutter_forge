@@ -4,7 +4,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch, Mock
-from windows_ui_acceptance import CASES, DEFAULT_CASES, Session, Blocked, run_case, validate_application_log, manual_start_menu_pid, activation_evidence, wait_for_start_menu_acknowledgement
+from windows_ui_acceptance import CASES, DEFAULT_CASES, Session, Blocked, run_case, validate_application_log, manual_start_menu_pid, activation_evidence, wait_for_start_menu_acknowledgement, configure_diagnostics
 
 
 class Window:
@@ -101,7 +101,66 @@ class DesktopObservationTest(unittest.TestCase):
         self.assertEqual(events, ['focus', 'query', 'click'])
 
 
+    def test_duplicate_semantic_label_is_accepted_only_if_unique(self):
+        session = Session.__new__(Session)
+        session.focus = Mock()
+        candidate = Mock()
+        candidate.window_text.return_value = '基础机制. 基础机制'
+        window = Mock()
+        window.descendants.return_value = [candidate]
+        session.button(window, '基础机制')
+        candidate.click_input.assert_called_once()
+
+    def test_ambiguous_and_absent_buttons_block_without_clicking(self):
+        session = Session.__new__(Session)
+        session.focus = Mock()
+        with tempfile.TemporaryDirectory() as temporary:
+            session.output = Path(temporary)
+            first, second = Mock(), Mock()
+            first.window_text.return_value = '基础机制'
+            second.window_text.return_value = '基础机制. 基础机制'
+            window = Mock()
+            window.descendants.return_value = [first, second]
+            with self.assertRaisesRegex(Blocked, 'Ambiguous'):
+                session.button(window, '基础机制')
+            first.click_input.assert_not_called()
+            second.click_input.assert_not_called()
+            window.descendants.return_value = []
+            with patch('windows_ui_acceptance.wait', side_effect=TimeoutError('not found')):
+                with self.assertRaisesRegex(Blocked, 'unavailable'):
+                    session.button(window, '基础机制')
+
+    def test_physical_input_failure_is_a_blocker_without_retry(self):
+        session = Session.__new__(Session)
+        session.focus = Mock()
+        control = Mock()
+        control.window_text.return_value = '基础机制'
+        control.click_input.side_effect = RuntimeError('coordinate input geometry unavailable')
+        window = Mock()
+        window.descendants.return_value = [control]
+        with self.assertRaisesRegex(Blocked, 'Physical UIA click unavailable'):
+            session.button(window, '基础机制')
+        control.click_input.assert_called_once()
+
+    def test_configure_warning_is_observed_without_claiming_window_damage(self):
+        warning = 'MissingPluginException(No implementation found for method configure on channel flutter_forge/desktop_host)'
+        self.assertEqual(configure_diagnostics(warning)['status'], 'OBSERVED_NEEDS_REVIEW')
+        self.assertEqual(configure_diagnostics('')['status'], 'NOT_CAPTURED')
+        result = configure_diagnostics('[desktop_host] registered hwnd=1\n[desktop_host] first configure received hwnd=1')
+        self.assertEqual(result['status'], 'NOT_OBSERVED')
+        self.assertEqual((result['registered'], result['firstConfigure']), (1, 1))
+
+
 class ScenariosTest(unittest.TestCase):
+    def test_observation_captures_same_main_window_three_times_before_interaction(self):
+        self.assertNotIn('observation', DEFAULT_CASES)
+        session = FakeSession()
+        session.picture = Mock()
+        result = run_case(session, 'observation')
+        self.assertEqual([call.args[0] for call in session.picture.call_args_list], [session.main] * 3)
+        self.assertEqual(result['captionObservations'][0]['continuousCaptures'], 3)
+        self.assertIn(('interaction', 2), session.actions)
+
     def test_caption_case_is_explicit_and_covers_both_windows(self):
         self.assertNotIn('caption_controls', DEFAULT_CASES)
         session = FakeSession()

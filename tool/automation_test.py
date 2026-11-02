@@ -173,6 +173,28 @@ class ResultTest(unittest.TestCase):
                 self.assertEqual(launch.call_args.args[0], ['/sdk with spaces/flutter', 'test', 'a path/test.dart'])
                 self.assertFalse(launch.call_args.kwargs.get('shell', False))
 
+    def test_batch_dispatch_is_narrow_and_rejects_expansion(self):
+        with patch.object(a.shutil, 'which', return_value='C:/SDK 中文/flutter.bat'):
+            command = a.launch_command(['flutter', 'test', 'a&b (test)!^.dart'], windows=True)
+            self.assertIn('/d /v:off /s /c', command)
+            self.assertIn('"a&b (test)!^.dart"', command)
+            with self.assertRaises(a.Blocked):
+                a.launch_command(['flutter', '%PATH%'], windows=True)
+        with patch.object(a.shutil, 'which', return_value='C:/tools/python.exe'):
+            self.assertEqual(a.launch_command(['python', 'x&y'], windows=True), ['C:/tools/python.exe', 'x&y'])
+
+    @unittest.skipUnless(a.os.name == 'nt', 'Windows CMD execution requires Windows')
+    def test_actual_windows_batch_arguments_and_failure_exit(self):
+        with tempfile.TemporaryDirectory(prefix='forge 中文 ') as directory:
+            root = Path(directory)
+            script = root / 'echo args.cmd'
+            script.write_text('@echo off\n' + '"' + a.sys.executable + '" -c "import sys,json;print(json.dumps(sys.argv[1:]))" %*\nexit /b 7\n', encoding='utf-8')
+            arguments = ['a path', '中文', 'a&b', '(value)', '!literal', '^value']
+            log = root / 'run.log'
+            self.assertEqual(a.run_owned([str(script), *arguments], root, log, 15), 7)
+            lines = log.read_text(encoding='utf-8').splitlines()
+            self.assertEqual(json.loads(lines[0]), arguments)
+
     def test_owned_process_timeout_is_terminated_and_reported(self):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaises(subprocess.TimeoutExpired):

@@ -9,8 +9,13 @@ on:
       - tool/windows_store.py
       - tool/windows_store_test.py
       - tool/windows_store_requirements.txt
+      - tool/windows_self_test.py
+      - tool/windows_self_test_test.py
+      - tool/windows_ui_acceptance.py
+      - tool/windows_ui_acceptance_test.py
       - apps/flutter_forge/windows/store/**
       - apps/flutter_forge/pubspec.yaml
+      - apps/flutter_forge/windows/installer/**
   workflow_dispatch:
 
 permissions:
@@ -51,6 +56,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Icon export verification failed' }
           python tool/export_privacy.py --check
           if ($LASTEXITCODE -ne 0) { throw 'Privacy page verification failed' }
+      - name: Verify Windows automation adapters
+        shell: pwsh
+        run: |
+          python tool/automation_test.py
+          if ($LASTEXITCODE -ne 0) { throw 'Windows launcher regression failed' }
+          python tool/windows_ui_acceptance_test.py
+          if ($LASTEXITCODE -ne 0) { throw 'UIA tool regression failed' }
+          python tool/windows_self_test_test.py
+          if ($LASTEXITCODE -ne 0) { throw 'Candidate self-test regression failed' }
       - name: Build local-test MSIX from validated source
         shell: pwsh
         run: |
@@ -65,6 +79,32 @@ jobs:
           if (-not $redist) { throw 'Matching x64 retail VC143 CRT not found' }
           python tool/windows_store.py package --local-test --vc-runtime-dir "$redist" --output .release/windows-store
           if ($LASTEXITCODE -ne 0) { throw 'MSIX build failed' }
+      - name: Build per-user EXE candidate
+        shell: pwsh
+        run: |
+          choco install innosetup -y
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed' }
+          $build = Get-Content .release/windows-store/result.json -Raw | ConvertFrom-Json
+          $version = $build.app_version.Split('+')[0]
+          $compiler = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6/ISCC.exe'
+          & $compiler "/DMyAppVersion=$version" apps/flutter_forge/windows/installer/setup.iss
+          if ($LASTEXITCODE -ne 0) { throw 'Per-user installer build failed' }
+          $installer = Get-Item flutter_forge-setup-x64.exe
+          if ($installer.VersionInfo.ProductVersion -notlike "$version*") { throw 'Installer version mismatch' }
+          $destination = '.release/windows-store/FlutterForge-' + $version + '-windows-x64-user-setup.exe'
+          Copy-Item $installer.FullName $destination
+          @{
+            schema = 'flutter_forge.windows_user_installer.v1'
+            source_sha = $build.source.head
+            version = $version
+            file = [IO.Path]::GetFileName($destination)
+            sha256 = (Get-FileHash $destination -Algorithm SHA256).Hash.ToLowerInvariant()
+            install_scope = 'current-user'
+            signing = 'unsigned'
+            standard_user_installation = 'NOT_RUN'
+            upgrade = 'NOT_RUN'
+            uninstall = 'NOT_RUN'
+          } | ConvertTo-Json | Set-Content .release/windows-store/user-installer.json -Encoding utf8
       - name: Sign a separate copy for local installation testing
         shell: pwsh
         run: |
@@ -124,8 +164,15 @@ jobs:
           Copy-Item apps/flutter_forge/windows/store/TEST_CHECKLIST.md .release/windows-store/TEST_CHECKLIST.md
           Copy-Item apps/flutter_forge/windows/store/README.md .release/windows-store/README.md
           Copy-Item apps/flutter_forge/windows/store/RC_TEST_PLAN.md .release/windows-store/RC_TEST_PLAN.md
+          Copy-Item apps/flutter_forge/windows/store/START_HERE.md,apps/flutter_forge/windows/store/Start-SelfTest.ps1 .release/windows-store/
+          @{
+            schema = 'flutter_forge.candidate_origin.v1'
+            source_sha = '${{ needs.quality.outputs.source-sha }}'
+            run_url = "https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID"
+            run_attempt = $env:GITHUB_RUN_ATTEMPT
+          } | ConvertTo-Json | Set-Content .release/windows-store/candidate-origin.json -Encoding utf8
           New-Item -ItemType Directory -Path .release/windows-store/recheck-tools | Out-Null
-          Copy-Item tool/windows_ui_acceptance.py,tool/windows_ui_acceptance_test.py,tool/windows_crash_events.ps1,tool/windows_acceptance_requirements.txt .release/windows-store/recheck-tools/
+          Copy-Item tool/windows_ui_acceptance.py,tool/windows_ui_acceptance_test.py,tool/windows_self_test.py,tool/windows_self_test_test.py,tool/windows_crash_events.ps1,tool/windows_acceptance_requirements.txt .release/windows-store/recheck-tools/
       - name: Run deterministic Windows host smoke
         shell: pwsh
         run: |
@@ -147,9 +194,11 @@ jobs:
           name: flutter-forge-msix-local-test-${{ needs.quality.outputs.source-sha }}
           path: |
             .release/windows-store/*.msix
+            .release/windows-store/*.exe
             .release/windows-store/*.cer
             .release/windows-store/*.json
             .release/windows-store/*.md
+            .release/windows-store/*.ps1
             .release/windows-store/recheck-tools/*
           include-hidden-files: true
           if-no-files-found: error

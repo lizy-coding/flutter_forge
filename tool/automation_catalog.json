@@ -341,6 +341,21 @@
         "tool/distribution_test.py"
       ],
       "timeout": 120
+    },
+    {
+      "id": "windows-self-test",
+      "kind": "manual",
+      "platforms": ["windows"],
+      "targets": ["tool/windows_self_test.py", "apps/flutter_forge/windows/store/START_HERE.md"],
+      "requirements": ["verified-installed-candidate", "interactive-desktop"],
+      "timeout": 660
+    },
+    {
+      "id": "windows-self-test-tests",
+      "kind": "python",
+      "platforms": ["local"],
+      "targets": ["tool/windows_self_test_test.py"],
+      "timeout": 60
     }
   ]
 }

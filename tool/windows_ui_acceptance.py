@@ -148,6 +148,14 @@ def validate_application_log(text):
             raise AssertionError(f'{category} error in captured application log')
 
 
+def configure_diagnostics(text):
+    warnings = re.findall(r'[^\r\n]*MissingPluginException[^\r\n]*(?:flutter_forge/desktop_host|method configure)[^\r\n]*', text, re.I)
+    return {'status': 'OBSERVED_NEEDS_REVIEW' if warnings else 'NOT_OBSERVED' if text.strip() else 'NOT_CAPTURED',
+            'warnings': warnings, 'registered': text.count('[desktop_host] registered hwnd='),
+            'firstConfigure': text.count('[desktop_host] first configure received hwnd='),
+            'interpretation': 'Log observation only; does not establish window damage or full acceptance'}
+
+
 class Session:
     def __init__(self, exe, output, procdump=None, launch_mode='direct'):
         if launch_mode not in ('direct', 'manual-start-menu'):
@@ -186,12 +194,26 @@ class Session:
     def button(self, window, name):
         self.focus(window)
         try:
-            control = wait(lambda: next((c for c in window.descendants(control_type='Button')
-                if c.window_text().strip() == name and c.is_visible() and c.is_enabled()), None), 10)
+            def unique_control():
+                candidates = []
+                for candidate in window.descendants(control_type='Button'):
+                    label = candidate.window_text().strip()
+                    # Flutter may combine a semantic label with its visible text.
+                    matches = label == name or label in (f'{name}. {name}', f'{name}。 {name}')
+                    if matches and candidate.is_visible() and candidate.is_enabled():
+                        candidates.append(candidate)
+                if len(candidates) > 1:
+                    labels = [candidate.window_text() for candidate in candidates]
+                    raise Blocked(f'Ambiguous UIA button {name}: {labels}')
+                return candidates[0] if candidates else None
+            control = wait(unique_control, 10)
         except Exception as error:
             (self.output / 'uia.txt').write_text(str(window.descendants()), encoding='utf-8')
-            raise Blocked(f'UIA button unavailable: {name}; inspect uia.txt') from error
-        control.click_input()  # physical input, not InvokePattern or WM_COMMAND
+            raise Blocked(f'UIA button unavailable: {name}; {error}; inspect uia.txt') from error
+        try:
+            control.click_input()  # physical input, not InvokePattern or WM_COMMAND
+        except Exception as error:
+            raise Blocked(f'Physical UIA click unavailable: {name}: {error}') from error
 
     def picture(self, window, name):
         self.focus(window)
@@ -239,7 +261,31 @@ class Session:
         fraction = 1 if action == 'close' else 3
         x = frame.left + bounds.right - (bounds.right - bounds.left) * fraction // 6
         y = frame.top + (bounds.top + bounds.bottom) // 2
+        # Preserve the coordinate spaces used by this driver before changing
+        # native hit testing. This is diagnostic evidence, not a fix assertion.
+        user32 = ctypes.windll.user32
+        user32.SendMessageW.argtypes = [wintypes.HWND, wintypes.UINT, ctypes.c_size_t, ctypes.c_ssize_t]
+        user32.SendMessageW.restype = ctypes.c_ssize_t
+        point = wintypes.POINT()
+        user32.GetCursorPos(ctypes.byref(point))
+        packed = ((y & 0xffff) << 16) | (x & 0xffff)
+        audit = {'action': action, 'hwnd': window.handle, 'dpi': user32.GetDpiForWindow(hwnd),
+                 'frameScreen': [frame.left, frame.top, frame.right, frame.bottom],
+                 'captionWindow': [bounds.left, bounds.top, bounds.right, bounds.bottom],
+                 'targetScreen': [x, y], 'cursorBefore': [point.x, point.y],
+                 'hitTest': user32.SendMessageW(hwnd, 0x0084, 0, packed),
+                 'zoomedBefore': bool(user32.IsZoomed(hwnd)), 'iconicBefore': bool(user32.IsIconic(hwnd)),
+                 'time': datetime.now().astimezone().isoformat()}
+        path = self.output / 'caption-clicks.jsonl'
+        with path.open('a', encoding='utf-8') as stream:
+            stream.write(json.dumps({'phase': 'before', **audit}) + '\n')
         self.mouse.click(coords=(x, y))
+        user32.GetCursorPos(ctypes.byref(point))
+        with path.open('a', encoding='utf-8') as stream:
+            stream.write(json.dumps({'phase': 'immediate-after', 'action': action,
+                                    'cursorScreen': [point.x, point.y],
+                                    'zoomed': bool(user32.IsZoomed(hwnd)),
+                                    'iconic': bool(user32.IsIconic(hwnd))}) + '\n')
 
     def caption_controls(self, window, name):
         from ctypes import wintypes
@@ -300,7 +346,8 @@ class Session:
         text = (self.output / 'application.log').read_text(encoding='utf-8', errors='replace')
         validate_application_log(text)
         return {'pid': self.pid, 'exitCode': code, 'applicationLogCaptured': bool(text.strip()),
-                'firstChance': 'PASS' if self.monitor else 'NOT_RUN'}
+                'firstChance': 'PASS' if self.monitor else 'NOT_RUN',
+                'configureDiagnostics': configure_diagnostics(text)}
 
     def cleanup(self):
         if self.owns_process and self.process.poll() is None:
@@ -317,7 +364,7 @@ class Session:
 
 
 DEFAULT_CASES = ['caption', 'alt_f4_main', 'alt_f4_child', 'main_with_child', 'reopen', 'reuse', 'rapid_categories']
-CASES = [*DEFAULT_CASES, 'caption_controls']
+CASES = [*DEFAULT_CASES, 'caption_controls', 'observation']
 
 
 def run_case(session, case):
@@ -326,7 +373,14 @@ def run_case(session, case):
     session.attach_monitor()
     handles = []
     observations = []
-    if case == 'caption':
+    if case == 'observation':
+        for index in range(3):
+            session.picture(main, f'preflight-main-{index}')
+        child = session.open_category(main, '基础机制')
+        handles.append(child.handle)
+        session.interactive_child(child, 'preflight')
+        observations.append({'continuousCaptures': 3, 'freshControlClick': 'PASS', 'visualReview': 'PENDING'})
+    elif case == 'caption':
         session.caption_close(main)
     elif case == 'alt_f4_main':
         session.alt_f4(main)

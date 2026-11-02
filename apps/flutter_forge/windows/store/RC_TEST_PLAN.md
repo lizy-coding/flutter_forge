@@ -1,21 +1,26 @@
-# Windows RC 1.2.11 · 新一轮验收
+# Windows RC · 新一轮验收
 
-状态：测试候选，不是正式商店提交包。正式 Partner Center 尚未注册，本轮保持 `Forest.FlutterForge.LocalTest` / `CN=Forest Flutter Forge Local Test`，以便从旧测试包覆盖升级。
+状态：测试候选，不是正式商店提交包。正式 Partner Center 状态另行核对，本轮保持 `Forest.FlutterForge.LocalTest` / `CN=Forest Flutter Forge Local Test`，以便从旧测试包覆盖升级。
 
 ## 候选包进入验收的条件
 
 - 源码门禁通过，实际安装包报告记录 Flutter 3.47.8 / Dart 3.13.7 或当前固定修复基线。
-- app_version 为 1.2.11+6，MSIX Version 为 1.2.11.0；比早上的同身份 1.2.10.0 更高。
+- 应用与 MSIX 版本以同包 result.json 为准；本轮目标为 1.2.12+7 / 1.2.12.0，高于旧 1.2.11.0。
 - MakePri 与 MakeAppx 实际成功，包内有 resources.pri、新版图标与完整版隐私入口。
 - unsigned 原包、signed 测试包、公开 CER 的哈希、指纹及源码 SHA 可核对；不分发私钥。
 - 同一提交的 `windows-host-smoke.json` 为 PASS，至少运行一项真实宿主测试。它是云端 Windows Server 源码宿主集成，不能当作 MSIX 安装、开始菜单或物理 Windows 11 验收。
 
 若上述构建或 smoke 失败，本次不作为通过候选；诊断 artifact 供修复，不触发正式发布。
 
+## 跨设备快速开始
+
+先读同包 `START_HERE.md`；手工路径无需 Python，辅助路径只需 Python 与 UIA 依赖，无需源码开发环境。
+默认辅助执行一轮四个场景，10 轮重启仍是显式专项，不进入基本自测。若测试机已有相同 MSIX 版本，先按本次 EXE hash 确认包，不能以旧包或同版本重装填写升级通过。
+
 ## 本轮优先级与操作
 
-1. **保留旧版本升级前状态。** 在安装旧 LocalTest 1.2.10.0 的原测试用户下，记录 PackageFullName、主题偏好、最近访问及截图；正常关闭全部测试窗口。旧包不存在则先记录“升级场景缺旧包”，不要把干净安装算升级。
-2. **校验并覆盖升级。** 按同包 TEST_CHECKLIST.md 的 A 段核对新报告和 CER；该次证书每 run 不同，所有者确认后精确信任。回到原普通用户执行 Add-AppxPackage 新签名包，核对 1.2.11.0、相同 PackageFamilyName 和预期偏好保留。
+1. **保留旧版本升级前状态。** 在安装旧 LocalTest 的原测试用户下（记录实际旧版本，如 1.2.11.0），记录 PackageFullName、主题偏好、最近访问及截图；正常关闭全部测试窗口。旧包不存在则先记录“升级场景缺旧包”，不要把干净安装算升级。
+2. **校验并覆盖升级。** 按同包 TEST_CHECKLIST.md 的 A 段核对新报告和 CER；该次证书每 run 不同，所有者确认后精确信任。回到原普通用户执行 Add-AppxPackage 新签名包，核对本次 result.json 的更高包版本、相同 PackageFamilyName 和预期偏好保留。
 3. **确认新增内容。** 从开始菜单进入首页，查看新玻璃图标；在“关于”展开完整版隐私说明，在模型连接弹窗查看发送前说明，不需要输入真实令牌。
 4. **WIN-01 独立复核。** 只从开始菜单完成关闭/重开，使用 recheck-tools 的 manual-start-menu 模式，10 轮。每轮打开分类专注窗口，再关闭主窗口，记录时间、PID 与事件；不要混用 AppsFolder/直接 EXE 兜底。
 5. **WIN-02 独立复核。** 主窗口和分类窗口分别物理点击最大化/还原；审核截图中按钮是否可辨。再人工补最小化、Snap、F11、Alt+F4，对照原清单 C04，不能由最大化专项推定其他子项通过。
@@ -29,7 +34,8 @@
 py -m pip install -r ./recheck-tools/windows_acceptance_requirements.txt
 py ./recheck-tools/windows_ui_acceptance_test.py
 $pkg = Get-AppxPackage -Name Forest.FlutterForge.LocalTest
-if (-not $pkg -or $pkg.Version -ne [version]'1.2.11.0') { throw '未安装本轮 RC' }
+$expectedVersion = [version](Get-Content ./result.json -Raw | ConvertFrom-Json | Select-Object -ExpandProperty package_version)
+if (-not $pkg -or $pkg.Version -ne $expectedVersion) { throw '未安装本轮 RC' }
 $exe = Join-Path $pkg.InstallLocation flutter_forge.exe
 py ./recheck-tools/windows_ui_acceptance.py --exe $exe --output ./restart-results --launch-mode manual-start-menu --cases main_with_child --iterations 10
 # 上一套所有窗口退出后，再执行标题栏专项

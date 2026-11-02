@@ -4,6 +4,8 @@
 名称需在 Partner Center 预留后确认；本目录不伪造微软分配的包身份。
 现有 Inno Setup EXE 分发继续保留，MSIX 是独立商店路径，不修改现有 CI、门禁或 Agent Hub 冻结发布 manifest。
 
+跨设备测试先读 [START_HERE.md](START_HERE.md)：完整包已提供标准库预检、一次辅助复核和结果汇总入口；证书信任、安装及人工项目按清单执行。
+
 ## 身份与版本
 
 从 https://storedeveloper.microsoft.com/ 免费注册，创建 **MSIX or PWA app**，预留产品名称。
@@ -139,7 +141,7 @@ appcert.exe test -appxpackagepath '<signed-candidate.msix>' -reportoutputpath 'C
 不能仅凭 MakeAppx 成功、WACK 进程退出码或全部跳过就宣称商店审核通过。
 提交前另需准备：商店真实截图、简体中文描述、分类/年龄分级、支持联系方式、
 与 Windows 实际网络/模型/设备行为相符的公开隐私政策、`runFullTrust` 用途说明。
-完整版隐私政策从 `lib/app/full_privacy.dart` 导出到 `web/privacy.html`，可用 `python3 tool/export_privacy.py --check` 核对；发布托管后才可将实际可访问 URL 填入 Partner Center。
+完整版隐私政策从 `docs/privacy/policies.json` 生成应用内常量与 `web/privacy.html`，可用 `python3 tool/export_privacy.py --check` 核对；发布托管后才可将实际可访问 URL 填入 Partner Center。
 Android 离线版隐私声明不能直接复用给完整 Windows 版。
 本地测试身份包不上传；注册后使用正式身份重新构建并验证。
 GitHub Release 仍遵循 Agent Hub；商店提交和公开发布分别留待授权执行。

@@ -115,3 +115,18 @@ flutter test --no-pub test/shared/learning/learning_slider_test.dart
 ```
 
 `quality`、`source-baseline`、`node-tools` 等 case 只是这些已有入口的显式索引，没有修改 CI 或门禁脚本语义。基线脚本保留其 GenUI、工作流和窗口回归范围，不与新的基本 UI smoke 混淆。平台专项的实施背景见 [平台自动化计划](PLATFORM_AUTOMATION_TEST_PLAN.md)。
+
+
+## 无源码的 Windows 候选包自测
+
+成功候选 artifact 的 `START_HERE.md` 是另一台设备的入口。手工路径只需 PowerShell；辅助路径需要 Python/UIA，不依赖 Flutter、Git、Visual Studio。`Start-SelfTest.ps1` 只是本地 Python 入口包装，不更改执行策略。
+
+`windows_self_test.py check/run/report` 校验来源、MSIX/CER/实际 EXE hash，run 默认只执行一次 observation/caption_controls/main_with_child/reopen，采集截图、日志、原始构建报告与人工结果模板，report 重新汇总 HTML/JSON/ZIP。600 秒总时限、单独的新输出目录、明确的设备声明和 PASS/FAIL/BLOCKED/待人工状态避免结果混淆。签名信任、安装、卸载和升级不自动执行。
+
+catalog 的 `windows-self-test` 为安装包人工/辅助专项登记，按同包说明运行；`windows-self-test-tests` 为跨主机 fixture 自测，不代表 Windows 实机通过。原 UIA 入口增加 observation 显式场景，三个连续截图和最新控件查询点击用于诊断；高级默认套件与次数保持原样，由新入口显式限制基本成本。
+
+```bash
+python3 tool/automation.py run --platform local --case windows-self-test-tests --case windows-log-tests --output /tmp/forge-self-test-tools
+```
+
+工作流本次只扩展候选包附带文件、来源记录和相关触发路径，未改变质量门禁、宿主 smoke 命令、通过标准或发布权限。

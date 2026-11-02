@@ -100,7 +100,7 @@ def command_for(case, platform, *, device=None, exe=None, output=None, ready=())
 
 
 def verify_android_device(device):
-    probe = subprocess.run([shutil.which('flutter') or 'flutter', 'devices', '--machine'], capture_output=True,
+    probe = subprocess.run(launch_command(['flutter', 'devices', '--machine']), capture_output=True,
                            text=True, encoding='utf-8', timeout=30, check=True)
     try:
         devices = json.loads(probe.stdout)
@@ -135,9 +135,24 @@ def flutter_result(text):
     return status, {'passed': passed, 'failed': failed, 'skipped': skipped}
 
 
+def launch_command(command, windows=None):
+    windows = os.name == 'nt' if windows is None else windows
+    resolved = shutil.which(command[0]) or command[0]
+    arguments = [str(resolved), *map(str, command[1:])]
+    if not windows or Path(resolved).suffix.lower() not in {'.bat', '.cmd'}:
+        return arguments
+    # CMD expansion differs from CRT argument parsing. Quote every argument,
+    # disable AutoRun/delayed expansion, and reject forms needing another parse.
+    for value in arguments:
+        if any(character in value for character in ('"', '%', '\r', '\n', '\0')):
+            raise Blocked('Batch arguments containing quote, percent or line breaks are unsupported; use literal paths')
+    line = ' '.join('"' + value + '"' for value in arguments)
+    prefix = subprocess.list2cmdline([os.environ.get('COMSPEC', 'cmd.exe'), '/d', '/v:off', '/s', '/c'])
+    return prefix + ' "' + line + '"'
+
+
 def run_owned(command, cwd, log, timeout):
-    # Resolve PATHEXT (including flutter.bat) without enabling shell expansion.
-    command = [shutil.which(command[0]) or command[0], *command[1:]]
+    command = launch_command(command)
     options = {'start_new_session': True} if os.name != 'nt' else {
         'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP}
     with log.open('w', encoding='utf-8') as stream:
