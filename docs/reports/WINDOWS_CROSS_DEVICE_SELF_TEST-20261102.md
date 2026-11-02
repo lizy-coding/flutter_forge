@@ -37,3 +37,7 @@ EXE 自测适配已实现 `--target user-exe`：验证同源码安装器与 clou
 最终门禁两次在并发执行的 network_security_test 中观察到 TLS 夹具返回 unknown，单独运行通过。夹具原先立即发送明文 HTTP 并销毁 socket，存在在 ClientHello 前关闭连接的时序风险。本轮改为等待客户端数据后返回 TLS fatal handshake_failure 告警并正常关闭；保留原 suspicious 与“不绕过校验”断言，不改产品实现或门禁命令。修正后的定向 6 项通过，完整门禁另行记录。
 
 TLS 夹具修正后的完整门禁已通过，日志 `/private/tmp/forge-candidate-tls-fixed-quality.log`；工具专项 `/private/tmp/forge-candidate-tools-prepush/result.json` 为 PASS，包含 manager、UIA 与 self-test fixture。真实 Windows CMD 参数执行在本机为跳过，必须由新 Windows 候选工作流执行后再判定。
+
+后续审查修正：用户 EXE 改用 MSIX 工具验证过的 payload 打包（含 app-local VC runtime），通过明确的 SourceDir/IconPath/OutputDir 参数避免相对路径漂移。runtime_files 记录三个关键 DLL 并在用户安装预检核对；自测 fixture 20 项通过。默认入口统一为 user-exe，辅助依赖使用解压目录内 venv，无需全局 pip 写权限。上述安装器改动仍需新 Windows 编译与实际标准用户安装验证。
+
+运行库交付修正后的完整门禁已通过（`/private/tmp/forge-user-runtime-quality.log`）。随后核对 Inno 官方默认行为，发现卸载显示名默认为包含版本的 AppVerName；新包显式固定 UninstallDisplayName，自测不再将可变显示文字当产品身份，而依赖固定 HKCU AppId、版本与实际 EXE hash。相应 fixture 当前 21 项通过。

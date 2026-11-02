@@ -90,7 +90,11 @@ jobs:
           $build = Get-Content .release/windows-store/result.json -Raw | ConvertFrom-Json
           $version = $build.app_version.Split('+')[0]
           $compiler = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6/ISCC.exe'
-          & $compiler "/DMyAppVersion=$version" apps/flutter_forge/windows/installer/setup.iss
+          $payload = (Resolve-Path .release/windows-store/payload).Path
+          $icon = (Resolve-Path apps/flutter_forge/windows/runner/resources/app_icon.ico).Path
+          $runtimeFiles = @($build.files | Where-Object { $_.path -in @('msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll') })
+          if ($runtimeFiles.Count -ne 3) { throw 'Verified app-local VC runtime files missing' }
+          & $compiler "/DMyAppVersion=$version" "/DMyAppSourceDir=$payload" "/DMyAppIconPath=$icon" "/O$env:GITHUB_WORKSPACE" apps/flutter_forge/windows/installer/setup.iss
           if ($LASTEXITCODE -ne 0) { throw 'Per-user installer build failed' }
           $installer = Get-Item flutter_forge-setup-x64.exe
           if ($installer.VersionInfo.ProductVersion -notlike "$version*") { throw 'Installer version mismatch' }
@@ -103,11 +107,12 @@ jobs:
             file = [IO.Path]::GetFileName($destination)
             sha256 = (Get-FileHash $destination -Algorithm SHA256).Hash.ToLowerInvariant()
             install_scope = 'current-user'
+            runtime_files = $runtimeFiles
             signing = 'unsigned'
             standard_user_installation = 'NOT_RUN'
             upgrade = 'NOT_RUN'
             uninstall = 'NOT_RUN'
-          } | ConvertTo-Json | Set-Content .release/windows-store/user-installer.json -Encoding utf8
+          } | ConvertTo-Json -Depth 6 | Set-Content .release/windows-store/user-installer.json -Encoding utf8
       - name: Sign a separate copy for local installation testing
         shell: pwsh
         run: |

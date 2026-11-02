@@ -7,13 +7,18 @@ param(
     [switch]$ManualStartMenu
 )
 $ErrorActionPreference = 'Stop'
-if (-not (Get-Command py -ErrorAction SilentlyContinue)) {
-    throw 'Python launcher not found. Follow START_HERE.md; manual testing needs no Python.'
+$python = Join-Path $PSScriptRoot '.selftest-venv/Scripts/python.exe'
+$prefix = @()
+if (-not (Test-Path -LiteralPath $python)) {
+    $launcher = Get-Command py -ErrorAction SilentlyContinue
+    if (-not $launcher) { throw 'Python launcher not found. Follow START_HERE.md; manual testing needs no Python.' }
+    $python = $launcher.Source
+    $prefix = @('-3')
 }
 $tool = Join-Path $PSScriptRoot 'recheck-tools/windows_self_test.py'
 if (-not (Test-Path -LiteralPath $tool)) { throw 'Extract the complete candidate artifact first.' }
-$arguments = @('-3', $tool, $Mode, '--bundle', $PSScriptRoot, '--device-kind', $DeviceKind, '--target', $Target)
+$arguments = $prefix + @($tool, $Mode, '--bundle', $PSScriptRoot, '--device-kind', $DeviceKind, '--target', $Target)
 if ($Output) { $arguments += @('--output', $Output) }
 if ($ManualStartMenu) { $arguments += '--manual-start-menu' }
-& py @arguments
+& $python @arguments
 exit $LASTEXITCODE

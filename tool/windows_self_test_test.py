@@ -57,8 +57,23 @@ class SelfTest(unittest.TestCase):
         info = {'schema': 'flutter_forge.windows_user_installer.v1', 'source_sha': 'a' * 40,
                 'install_scope': 'current-user', 'version': '1.2.11', 'file': path.name,
                 'sha256': tool.digest(path), 'signing': 'unsigned'}
+        info['runtime_files'] = [{'path': name, 'sha256': hashlib.sha256(b'fixture runtime').hexdigest()} for name in ['msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll']]
+        build = tool.read_json(self.bundle / 'result.json')
+        build['files'].extend(info['runtime_files'])
+        write_json(self.bundle / 'result.json', build)
         write_json(self.bundle / 'user-installer.json', info)
         return info
+
+    def test_default_check_selects_user_exe_without_msix_evidence(self):
+        self.user_installer()
+        (self.bundle / 'local-test-signature.json').unlink()
+        output = self.root / 'default-exe'
+        with patch.object(tool.sys, 'platform', 'darwin'):
+            code = tool.main(['check', '--bundle', str(self.bundle), '--output', str(output)])
+        report = tool.read_json(output / 'result.json')
+        self.assertEqual(code, 2)
+        self.assertEqual(report['target'], 'user-exe')
+        self.assertEqual(report['candidate']['integrity'], 'PASS')
 
     def test_user_exe_integrity_does_not_depend_on_msix_trust(self):
         info = self.user_installer()
@@ -72,9 +87,26 @@ class SelfTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'installer hash'):
             tool.verify_user_bundle(self.bundle)
 
+    def test_user_installer_requires_runtime_matching_verified_payload(self):
+        info = self.user_installer()
+        info['runtime_files'][0]['sha256'] = '0' * 64
+        write_json(self.bundle / 'user-installer.json', info)
+        with self.assertRaisesRegex(ValueError, 'Runtime fingerprint'):
+            tool.verify_user_bundle(self.bundle)
+        info['runtime_files'] = []
+        write_json(self.bundle / 'user-installer.json', info)
+        with self.assertRaisesRegex(ValueError, 'runtime evidence'):
+            tool.verify_user_bundle(self.bundle)
+
+    def test_user_install_display_name_is_not_the_identity(self):
+        with patch.object(tool, 'powershell', return_value={'location': 'C:/user', 'version': '1.2.13', 'name': 'Flutter Forge 1.2.13'}):
+            exe, report = tool.installed_user_executable({'packageVersion': '1.2.13'})
+            self.assertEqual(exe.name, 'flutter_forge.exe')
+            self.assertIn('Fixed HKCU AppId', report['identityBasis'])
+
     def test_user_install_discovery_does_not_accept_wrong_version(self):
         with patch.object(tool, 'powershell', return_value={'location': 'C:/user', 'version': '1.0.0', 'name': 'Flutter Forge'}):
-            with self.assertRaisesRegex(tool.Blocked, 'version or identity'):
+            with self.assertRaisesRegex(tool.Blocked, 'version differs'):
                 tool.installed_user_executable({'packageVersion': '1.2.11'})
 
     def test_integrity_preserves_scope_dirty_state_and_missing_origin(self):
@@ -122,7 +154,7 @@ class SelfTest(unittest.TestCase):
     def test_non_windows_creates_blocked_report_and_archive(self):
         output = self.root / 'output'
         with patch.object(tool.sys, 'platform', 'darwin'):
-            code = tool.main(['check', '--bundle', str(self.bundle), '--output', str(output)])
+            code = tool.main(['check', '--target', 'installed', '--bundle', str(self.bundle), '--output', str(output)])
         report = tool.read_json(output / 'result.json')
         self.assertEqual(code, 2)
         self.assertEqual(report['status'], 'BLOCKED')
@@ -130,7 +162,7 @@ class SelfTest(unittest.TestCase):
         self.assertTrue((self.root / 'output-report.zip').is_file())
         self.assertTrue(all(item['status'] == 'NOT_RUN' for item in report['manual']))
         with self.assertRaises(SystemExit):
-            tool.main(['check', '--bundle', str(self.bundle), '--output', str(output)])
+            tool.main(['check', '--target', 'installed', '--bundle', str(self.bundle), '--output', str(output)])
 
     def run_fixture(self, output, native_runs=None, signature='Valid', exe_bytes=None, active_pids=None, target=None):
         exe = self.root / 'installed/flutter_forge.exe'
@@ -139,7 +171,9 @@ class SelfTest(unittest.TestCase):
         signer = {'signer': self.sign['certificate_thumbprint'], 'thumbprint': self.sign['certificate_thumbprint'],
                   'subject': 'CN=Fixture', 'status': signature}
         if target == 'user-exe':
-            self.user_installer()
+            info = self.user_installer()
+            for item in info['runtime_files']:
+                (exe.parent / item['path']).write_bytes(b'fixture runtime')
             (self.bundle / 'local-test-signature.json').unlink()
         calls = []
         def native(command, **kwargs):
@@ -155,7 +189,7 @@ class SelfTest(unittest.TestCase):
              patch.object(tool, 'process_ids_for_executable', return_value=active_pids or []), \
              patch.dict('sys.modules', {'pywinauto': SimpleNamespace(), 'PIL': SimpleNamespace()}), \
              patch.object(tool.subprocess, 'run', side_effect=native):
-            code = tool.main(['run', '--bundle', str(self.bundle), '--output', str(output), '--device-kind', 'vm-x64', *(['--target', target] if target else [])])
+            code = tool.main(['run', '--bundle', str(self.bundle), '--output', str(output), '--device-kind', 'vm-x64', '--target', target or 'installed'])
         return code, tool.read_json(output / 'result.json'), calls
 
     def test_user_exe_run_works_without_msix_signature_report(self):
@@ -167,7 +201,7 @@ class SelfTest(unittest.TestCase):
         self.assertEqual(report['status'], 'NEEDS_MANUAL_REVIEW')
         self.assertEqual(len(commands), 1)
 
-    def test_default_run_is_one_bounded_round_and_never_full_acceptance(self):
+    def test_msix_run_is_one_bounded_round_and_never_full_acceptance(self):
         code, report, commands = self.run_fixture(self.root / 'run')
         self.assertEqual(code, 0)
         self.assertEqual(report['automated']['executed'], 4)

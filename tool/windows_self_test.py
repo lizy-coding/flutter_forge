@@ -128,6 +128,13 @@ def verify_user_bundle(bundle):
     records = [item for item in build['files'] if item['path'] == 'flutter_forge.exe']
     if len(records) != 1 or not re.fullmatch(r'[a-f0-9]{64}', records[0]['sha256']):
         raise ValueError('Candidate executable fingerprint missing')
+    runtime = installer['runtime_files']
+    required = {'msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll'}
+    if len(runtime) != 3 or {item['path'] for item in runtime} != required:
+        raise ValueError('App-local runtime evidence missing')
+    build_hashes = {item['path']: item['sha256'] for item in build['files']}
+    if any(item['sha256'] != build_hashes.get(item['path']) for item in runtime):
+        raise ValueError('Runtime fingerprint differs from verified payload')
     origin_path = bundle / 'candidate-origin.json'
     origin = read_json(origin_path) if origin_path.exists() else {}
     if origin.get('source_sha', source) != source:
@@ -135,7 +142,7 @@ def verify_user_bundle(bundle):
     return {'sourceSha': source, 'runUrl': origin.get('run_url'), 'runAttempt': origin.get('run_attempt'),
             'appVersion': build['app_version'], 'packageVersion': installer['version'],
             'package': installer['file'], 'packageSha256': installer['sha256'],
-            'signing': installer['signing'], 'signatureTrust': 'NOT_RUN', 'integrity': 'PASS',
+            'signing': installer['signing'], 'signatureTrust': 'NOT_RUN', 'integrity': 'PASS', 'runtimeFiles': runtime,
             'executableSha256': records[0]['sha256'], 'sourceStatus': build['source'].get('status', ''),
             'cloudSmoke': {'status': 'PASS', 'passed': passed, 'scope': 'Windows Server source-host integration'}}
 
@@ -158,8 +165,9 @@ foreach($view in @([Microsoft.Win32.RegistryView]::Registry64,[Microsoft.Win32.R
 if($found.Count -ne 1){throw 'Expected one current-user Flutter Forge installation'}
 @($found.Values)[0] | ConvertTo-Json -Compress
 """)
-    if package['version'] != evidence['packageVersion'] or package['name'] != 'Flutter Forge':
-        raise Blocked('Current-user EXE installation version or identity differs from candidate')
+    if package['version'] != evidence['packageVersion']:
+        raise Blocked('Current-user EXE installation version differs from candidate')
+    package['identityBasis'] = 'Fixed HKCU AppId and verified executable hash; display name is informational'
     return Path(package['location']) / 'flutter_forge.exe', package
 
 
@@ -286,7 +294,7 @@ def main(argv=None):
     parser.add_argument('mode', choices=['check', 'run', 'report'], nargs='?', default='check')
     parser.add_argument('--bundle', type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument('--output', type=Path)
-    parser.add_argument('--target', choices=['installed', 'user-exe', 'unpacked'], default='installed')
+    parser.add_argument('--target', choices=['installed', 'user-exe', 'unpacked'], default='user-exe')
     parser.add_argument('--exe', type=Path)
     parser.add_argument('--device-kind', choices=['physical-x64', 'vm-x64', 'arm64-emulation', 'unknown'], default='unknown')
     parser.add_argument('--manual-start-menu', action='store_true')
@@ -347,6 +355,10 @@ def main(argv=None):
                 exe = args.exe.resolve(strict=True)
         if digest(exe) != evidence['executableSha256']:
             raise Blocked('Executable hash differs from candidate, even if its displayed version matches')
+        if args.target == 'user-exe':
+            for item in evidence['runtimeFiles']:
+                if digest(within(exe.parent, item['path'])) != item['sha256']:
+                    raise Blocked('Installed app-local runtime differs from candidate: ' + item['path'])
         report['executable'] = {'path': str(exe), 'sha256': digest(exe)}
         report['desktop'] = interactive_desktop()
         report['preflight'] = 'PASS'

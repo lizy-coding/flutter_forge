@@ -16,7 +16,7 @@
 
 ## 2. 选择手工或辅助路径
 
-**手工路径：不需要 Python。** 按 `TEST_CHECKLIST.md` 的 A01 核对哈希/证书，再由设备所有者确认测试证书信任和安装，完成 A04/A05、B01–B07。填写结果、保存截图与日志。此路径可以直接开始，不因没有 Python 被阻止。
+**手工路径：不需要 Python。** 普通用户优先按文末 EXE 安装轨道验证；只有显式测试 MSIX 时才按 `TEST_CHECKLIST.md` 的 A01 核对哈希/证书，再由设备所有者确认测试证书信任和安装，完成 A04/A05、B01–B07。填写结果、保存截图与日志。此路径可以直接开始，不因没有 Python 被阻止。
 
 **辅助路径：需要 Python 3.9+，建议与构建端一致使用 Python 3.12。** 在普通用户的 PowerShell 中进入解压目录：
 
@@ -35,16 +35,17 @@ py -3 .\recheck-tools\windows_self_test.py check --bundle . --output "$env:USERP
 安装 UIA 依赖需要联网；若无法安装，保留手工路径，不自动下载额外工具或外设依赖：
 
 ```powershell
-py -3 -m pip install -r .\recheck-tools\windows_acceptance_requirements.txt
-py -3 .\recheck-tools\windows_ui_acceptance_test.py
-py -3 .\recheck-tools\windows_self_test_test.py
+py -3 -m venv .selftest-venv
+.\.selftest-venv\Scripts\python.exe -m pip install -r .\recheck-tools\windows_acceptance_requirements.txt
+.\.selftest-venv\Scripts\python.exe .\recheck-tools\windows_ui_acceptance_test.py
+.\.selftest-venv\Scripts\python.exe .\recheck-tools\windows_self_test_test.py
 # 下例仅用于实际物理 x64；虚拟机改 vm-x64，Windows ARM x64 仿真改 arm64-emulation
-py -3 .\recheck-tools\windows_self_test.py run --bundle . --device-kind physical-x64 --output "$env:USERPROFILE\Documents\ForgeSelfTests\run-01"
+.\.selftest-venv\Scripts\python.exe .\recheck-tools\windows_self_test.py run --bundle . --device-kind physical-x64 --output "$env:USERPROFILE\Documents\ForgeSelfTests\run-01"
 ```
 
 也可用 `./Start-SelfTest.ps1 -Mode run -DeviceKind physical-x64 -Output <新目录>`。若本机执行策略不允许运行 PS1，使用上面的 Python 命令，不更改或绕过执行策略。
 
-默认自动定位**当前用户已安装的 LocalTest 应用**，校验实际 EXE hash。运行四个场景，每个只执行一次、各启动一次应用：
+默认自动定位**当前用户按 EXE 安装的 Flutter Forge**；MSIX 测试显式传 `--target installed`，校验实际 EXE hash。运行四个场景，每个只执行一次、各启动一次应用：
 
 1. `observation`：同一首页连续截图 3 次，再通过最新查询到的控件进入分类专注窗口和教学内容。
 2. `caption_controls`：主窗口与分类窗口的原生最大化/还原、截图与状态检查；视觉仍需人工审核。
@@ -93,7 +94,11 @@ $info | Format-List source_sha,version,install_scope,signing
 ```powershell
 # 已按用户安装 EXE 后，以普通用户运行。不要将管理员终端结果算作标准用户通过。
 py -3 .\recheck-tools\windows_self_test.py check --bundle . --target user-exe --output "$env:USERPROFILE\Documents\ForgeSelfTests\exe-preflight-01"
-py -3 .\recheck-tools\windows_self_test.py run --bundle . --target user-exe --device-kind physical-x64 --output "$env:USERPROFILE\Documents\ForgeSelfTests\exe-run-01"
+.\.selftest-venv\Scripts\python.exe .\recheck-tools\windows_self_test.py run --bundle . --target user-exe --device-kind physical-x64 --output "$env:USERPROFILE\Documents\ForgeSelfTests\exe-run-01"
 ```
 
 PS1 包装器默认 `-Target user-exe`；MSIX 安装测试显式选择 `-Target installed`。两个路径均核对实际 EXE，测试版号相同但二进制不同会阻塞。EXE 路径仍记录未签名状态，哈希检查不等于签名可信或系统策略允许安装。
+
+辅助依赖只安装到本次解压目录的 `.selftest-venv`，不需要管理员或激活脚本。PS1 自动优先使用该环境；如果未创建，则使用系统 Python。两种入口默认都是 user-exe。
+
+EXE 候选从验证过的暂存目录打包，包含应用本地 VC++ 运行库。user-installer.json 记录三个关键运行库哈希；user-exe 预检同时核对安装后的这些文件，缺少或不匹配时阻塞。此检查不要求安装全局 VC++ redistributable，也不证明干净设备实测已通过。
