@@ -5,7 +5,7 @@
 ## 候选包进入验收的条件
 
 - 源码门禁通过，实际安装包报告记录 Flutter 3.47.8 / Dart 3.13.7 或当前固定修复基线。
-- 应用与 MSIX 版本以同包 result.json 为准；本轮目标为 1.2.12+7 / 1.2.12.0，高于旧 1.2.11.0。
+- 应用与 MSIX 版本以同包 result.json 为准；本轮目标为 1.2.13+8 / 1.2.13.0，高于旧 1.2.11.0 和上一轮候选 1.2.12.0。
 - MakePri 与 MakeAppx 实际成功，包内有 resources.pri、新版图标与完整版隐私入口。
 - unsigned 原包、signed 测试包、公开 CER 的哈希、指纹及源码 SHA 可核对；不分发私钥。
 - 同一提交的 `windows-host-smoke.json` 为 PASS，至少运行一项真实宿主测试。它是云端 Windows Server 源码宿主集成，不能当作 MSIX 安装、开始菜单或物理 Windows 11 验收。
@@ -50,3 +50,12 @@ AppModel/TWinUI 读取失败、禁用或空事件不能代替成功/失败判定
 填写 TEST_CHECKLIST.md，回传对应输出目录、画面及每项实际结果。报告必须带构建 run URL、源码 SHA、新旧版本及包哈希，去除凭据。
 只有本轮新包的升级/启动/退出、核心交互及 WIN-01/02 复核确切完成后，才据实评估测试 RC 是否通过；未执行项保持 NOT_RUN，环境缺失保持 BLOCKED。
 WACK XML、正式身份、实际商店素材、实时 AI 声明与审核反馈流程仍为正式提交前单独完成项，不因本轮 RC 构建成功自动通过。
+
+
+## 本轮焦点与中文输入专项
+
+- 快速打开使用真实中文输入法组合词时，Enter/方向键/Esc 应由组合流程处理，弹窗不提前导航或关闭；提交文字后 Enter 正常进入目标模块。Widget 回归覆盖应用组合状态，工具 Unicode 注入失败仍独立记录。
+- 先在主窗口打开分类窗口，再关闭分类窗口返回主窗口；记录前台 HWND、焦点 HWND，并按 F11 往返。再对照 Alt+Tab 切换、最小化恢复和客户区点击后的行为。Windows 宿主现仅在激活且未最小化时转交焦点；不得据编译通过认定原 F11 故障解决。
+- 以上新增变更不能由旧 SHA 候选代替验收；以新包实际 SHA 和 EXE hash 为准。
+
+WM_ACTIVATE 激活/失活行为依据：[Microsoft Win32 文档](https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-activate)。

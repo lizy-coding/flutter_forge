@@ -15,6 +15,9 @@ on:
       - tool/windows_ui_acceptance_test.py
       - apps/flutter_forge/windows/store/**
       - apps/flutter_forge/pubspec.yaml
+      - apps/flutter_forge/windows/runner/**
+      - apps/flutter_forge/lib/app/**
+      - apps/flutter_forge/test/shared/desktop_workbench_test.dart
       - apps/flutter_forge/windows/installer/**
   workflow_dispatch:
 

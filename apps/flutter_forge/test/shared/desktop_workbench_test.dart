@@ -158,6 +158,47 @@ void main() {
     }
   }, variant: _desktopPlatforms);
 
+  testWidgets('quick open does not navigate or dismiss during composition', (
+    tester,
+  ) async {
+    _mockHost(tester);
+    final router = await _pump(tester);
+    await tester.tap(find.byKey(const ValueKey('workbench-search')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('quick-open-query')),
+      '三棵树',
+    );
+    tester.testTextInput.updateEditingValue(
+      const TextEditingValue(
+        text: '三棵树',
+        composing: TextRange(start: 0, end: 3),
+      ),
+    );
+    await tester.pump();
+    for (final key in [
+      LogicalKeyboardKey.enter,
+      LogicalKeyboardKey.arrowDown,
+      LogicalKeyboardKey.escape,
+    ]) {
+      await tester.sendKeyEvent(key);
+      await tester.pump();
+      expect(find.byKey(const ValueKey('module-quick-open')), findsOneWidget);
+      expect(router.routeInformationProvider.value.uri.path, '/');
+    }
+    tester.testTextInput.updateEditingValue(
+      const TextEditingValue(text: '三棵树'),
+    );
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('module-quick-open')), findsNothing);
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      AppRouteTable.modules.firstWhere((m) => m.title == '三棵树与生命周期').path,
+    );
+  }, variant: _desktopPlatforms);
+
   testWidgets('quick open searches concepts, dismisses and opens one route', (
     tester,
   ) async {

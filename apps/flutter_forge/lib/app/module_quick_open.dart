@@ -80,6 +80,19 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
     }
+    final composing = _queryController?.value.composing;
+    if (composing != null && composing.isValid && !composing.isCollapsed) {
+      // IME text updates still arrive through TextInput. Suppress application
+      // navigation keys so Dialog's Escape shortcut cannot dismiss composition.
+      return const [
+            LogicalKeyboardKey.enter,
+            LogicalKeyboardKey.escape,
+            LogicalKeyboardKey.arrowUp,
+            LogicalKeyboardKey.arrowDown,
+          ].contains(event.logicalKey)
+          ? KeyEventResult.handled
+          : KeyEventResult.ignored;
+    }
     final matches = _matches;
     if (event.logicalKey == LogicalKeyboardKey.escape) {
       Navigator.of(context).pop();
