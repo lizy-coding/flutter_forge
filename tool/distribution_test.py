@@ -127,11 +127,39 @@ class DistributionTest(unittest.TestCase):
         self.assertIn('formal_store_build_and_signing_required', report['blockers'])
 
     def test_vivo_builder_rejects_versioncode_reuse_before_signing_or_building(self):
-        with patch('sys.argv', ['build_vivo_offline.py', '--build-number', '2006']), patch('subprocess.run') as build:
+        with patch('sys.argv', ['build_vivo_offline.py', '--version-code', '2006']), patch('subprocess.run') as build:
             with self.assertRaisesRegex(SystemExit, 'versionCode'):
                 build_vivo_offline.main()
             build.assert_not_called()
 
+
+    def test_vivo_final_version_checks_include_frozen_candidates_and_other_id_is_ignored(self):
+        path = self.root / '.release/vivo/1.2.14/offline-4010/manifest.json'
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps({'application_id': 'com.forge.forest', 'version_code': '4010'}))
+        self.assertEqual(build_vivo_offline.highest_version_code(self.root, self.data), 4010)
+        other = path.parent.parent / 'other/manifest.json'
+        other.parent.mkdir()
+        other.write_text(json.dumps({'application_id': 'other.app', 'version_code': 9000}))
+        self.assertEqual(build_vivo_offline.highest_version_code(self.root, self.data), 4010)
+        with self.assertRaises(SystemExit):
+            build_vivo_offline.validate_target(4010, 4010, self.root / 'unused')
+        build_vivo_offline.validate_target(4011, 4010, self.root / 'unused')
+        with self.assertRaisesRegex(SystemExit, 'exists'):
+            build_vivo_offline.validate_target(4011, 4010, path.parent)
+
+    def test_vivo_rejects_legacy_cli_before_any_build_or_signing(self):
+        with patch('sys.argv', ['build_vivo_offline.py', '--build-number', '2011']), patch('subprocess.run') as build:
+            with self.assertRaises(SystemExit):
+                build_vivo_offline.main()
+            build.assert_not_called()
+
+    def test_vivo_badging_must_match_expected_version_identity_abi_and_offline_permissions(self):
+        valid = "package: name='com.forge.forest' versionCode='4011' versionName='1.2.14'\nnative-code: 'arm64-v8a'\n"
+        self.assertEqual(build_vivo_offline.verify_package(valid, '1.2.14', 4011), ('com.forge.forest', '4011', '1.2.14'))
+        for badging in [valid.replace('4011', '6011'), valid.replace('1.2.14', '1.2.10'), valid.replace('com.forge.forest', 'wrong.app'), valid.replace("'arm64-v8a'", "'arm64-v8a' 'x86_64'"), valid + "uses-permission: name='android.permission.INTERNET'\n"]:
+            with self.subTest(badging=badging), self.assertRaises(SystemExit):
+                build_vivo_offline.verify_package(badging, '1.2.14', 4011)
 
     def test_submission_profile_and_evidence_are_required(self):
         data = copy.deepcopy(self.data)

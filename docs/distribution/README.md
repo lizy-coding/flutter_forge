@@ -39,7 +39,7 @@ python3 tool/distribution.py register --profile android-offline --artifact-id vi
 
 ## 构建和发布边界
 
-- vivo 构建继续使用 `tool/build_vivo_offline.py --build-number <新versionCode>`，代码必须大于已登记离线包号，且实际证书匹配配置中登记的指纹。每个构建号写入新输出目录，不覆盖旧包。下一包号至少为 2007，执行前还要核对后台是否已有更高包号。
+- vivo 构建继续使用 `tool/build_vivo_offline.py --version-code <最终versionCode>`，构建号必须大于已登记和已冻结的同身份Android包号，且实际证书匹配配置中登记的指纹。每个构建号写入新输出目录，不覆盖旧包。本地最高候选从冻结记录动态计算，执行前仍需核对后台是否已有更高包号。旧--build-number参数拒绝使用，构建后必须验证APK实际versionCode与输入一致。
 - Windows Store 工具在新 result 中附带政策绑定。正式身份 MSIX 可由商店在提交过程中签名，不误套侧载签名要求，依据 [Microsoft 官方说明](https://learn.microsoft.com/en-us/windows/msix/package/sign-msix-package-guide)。`preview`、`LocalTest`、正式未签名候选及实际提交分别记录；导入 LocalTest 不使其具备商店就绪资格。
 - 通用四端发布仅给新 manifest 增加 `distribution_profile` 和 `policy_binding` 元数据，保留原校验、签名声明和发布授权。历史 manifest 不改写。Windows MSIX 构建号记录实际包版本；同一产品版本重做正式 Store 包时，必须核对商店版本规则后选择递增包版本，不把 Flutter `+build` 当成已自动映射。
 - 新渠道提交分配独立 ID；商店文案、截图等变更增加素材版本。重打包增加产物记录，提交记录仍指向当时的产物。
