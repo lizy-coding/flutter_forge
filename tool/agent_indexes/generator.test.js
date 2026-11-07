@@ -11,6 +11,7 @@ const appRoot = path.join(root, 'apps/flutter_forge');
 
 // Keep candidate/source consistency checks in the existing quality-gate entry.
 require('./module_spec.test');
+require('../web_startup_localization.test');
 
 function fixture(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-generator-'));

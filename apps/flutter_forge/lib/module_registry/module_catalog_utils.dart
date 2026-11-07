@@ -1,3 +1,4 @@
+import 'chinese_experiment.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -36,7 +37,7 @@ List<GoRoute> buildModuleRoutes(
       GoRoute(
         path: nested ? _stripLeadingSlash(module.path) : module.path,
         builder: (context, state) => isModuleAvailable(module, platform)
-            ? module.builder(context)
+            ? ChineseExperiment(child: Builder(builder: module.builder))
             : unsupportedBuilder(context, module),
         routes: isModuleAvailable(module, platform)
             ? _rebasedRoutes(module.routes)
@@ -67,7 +68,13 @@ List<RouteBase> _rebasedRoutes(List<RouteBase> routes) {
         GoRoute(
           path: _stripLeadingSlash(route.path),
           name: route.name,
-          builder: route.builder,
+          builder: route.builder == null
+              ? null
+              : (context, state) => ChineseExperiment(
+                  child: Builder(
+                    builder: (context) => route.builder!(context, state),
+                  ),
+                ),
           pageBuilder: route.pageBuilder,
           redirect: route.redirect,
           onExit: route.onExit,

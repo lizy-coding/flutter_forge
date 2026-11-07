@@ -1,3 +1,4 @@
+import 'package:flutter_forge_app/l10n/strings.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class LearningObjectives extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _Section(
-      title: '🎯 学习目标',
+      title: appStrings(context).learningObjectives,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: objectives
@@ -118,13 +119,13 @@ class CodeSnippetCard extends StatelessWidget {
                 onPressed: () {
                   unawaited(Clipboard.setData(ClipboardData(text: code)));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('已复制到剪贴板'),
-                      duration: Duration(seconds: 1),
+                    SnackBar(
+                      content: Text(appStrings(context).copied),
+                      duration: const Duration(seconds: 1),
                     ),
                   );
                 },
-                tooltip: '复制代码',
+                tooltip: appStrings(context).copyCode,
               ),
               if (explanation != null)
                 Expanded(
@@ -151,7 +152,7 @@ class StateLogView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _Section(
-      title: '📊 状态日志',
+      title: appStrings(context).statusLog,
       child: Container(
         constraints: BoxConstraints(maxHeight: maxLines * 20),
         padding: const EdgeInsets.all(8),
@@ -185,7 +186,7 @@ class CommonPitfalls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _Section(
-      title: '⚠️ 常见误区',
+      title: appStrings(context).commonMistakes,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: pitfalls
@@ -222,7 +223,7 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _Section(
-      title: '💪 练习任务',
+      title: appStrings(context).exercises,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

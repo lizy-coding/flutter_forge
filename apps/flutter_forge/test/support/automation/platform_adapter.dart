@@ -29,7 +29,7 @@ class PlatformAdapter {
           null;
 
   Future<void> openDrawer(WidgetTester tester) =>
-      tapVisible(tester, find.byTooltip('Open navigation menu'));
+      tapVisible(tester, find.byType(DrawerButton));
 
   Future<void> openCategory(
     WidgetTester tester,
@@ -94,7 +94,7 @@ class PlatformAdapter {
     if (desktop) {
       await tapVisible(tester, find.byKey(const ValueKey('workbench-back')));
     } else {
-      await tester.pageBack();
+      await tapVisible(tester, find.byType(BackButton));
       await pumpFrames(tester, const Duration(milliseconds: 450));
     }
   }

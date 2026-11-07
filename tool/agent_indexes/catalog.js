@@ -27,6 +27,12 @@ const categoryOwnership = {
 
 const workspacePackages = [
   {
+    name: 'forge_localization', kind: 'flutter_package',
+    path: 'packages/forge_localization', entrypoints: ['lib/forge_localization.dart'],
+    owns: ['locale_preference', 'locale_resolution', 'locale_change_notification'],
+    depends: ['flutter_sdk'], validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'bluetooth_system_bridge', kind: 'flutter_plugin_package',
     path: 'packages/bluetooth_system_bridge', entrypoints: ['lib/bluetooth_system_bridge.dart'],
     owns: ['bluetooth_system_settings', 'bluetooth_audio_profile_queries', 'bluetooth_system_operation_lifecycle'],

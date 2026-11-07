@@ -1,3 +1,5 @@
+import '../l10n/strings.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// 模块分类
@@ -10,6 +12,15 @@ enum ModuleCategory {
   platform('网络与平台', Icons.devices_outlined);
 
   const ModuleCategory(this.label, this.icon);
+  String labelFor(BuildContext context) => labelIn(appStrings(context));
+  String labelIn(AppLocalizations strings) => switch (this) {
+    ModuleCategory.basic => strings.basicLabel,
+    ModuleCategory.async => strings.asyncLabel,
+    ModuleCategory.state => strings.stateLabel,
+    ModuleCategory.ui => strings.uiLabel,
+    ModuleCategory.popupTable => strings.popupTableLabel,
+    ModuleCategory.platform => strings.platformLabel,
+  };
   final String label;
   final IconData icon;
 }
@@ -21,6 +32,12 @@ enum Difficulty {
   advanced('实战');
 
   const Difficulty(this.label);
+  String labelFor(BuildContext context) => labelIn(appStrings(context));
+  String labelIn(AppLocalizations strings) => switch (this) {
+    Difficulty.beginner => strings.beginnerLabel,
+    Difficulty.intermediate => strings.intermediateLabel,
+    Difficulty.advanced => strings.advancedLabel,
+  };
   final String label;
 }
 
@@ -31,5 +48,11 @@ enum ModuleStatus {
   recommended('推荐');
 
   const ModuleStatus(this.label);
+  String labelFor(BuildContext context) => labelIn(appStrings(context));
+  String labelIn(AppLocalizations strings) => switch (this) {
+    ModuleStatus.pending => strings.pendingLabel,
+    ModuleStatus.ready => strings.readyLabel,
+    ModuleStatus.recommended => strings.recommendedLabel,
+  };
   final String label;
 }

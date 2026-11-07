@@ -15,6 +15,7 @@
       "AI_ANALYSIS.md"
     ],
     "package_contract": [
+      "packages/forge_localization/AI_ANALYSIS.md",
       "packages/bluetooth_system_bridge/AI_ANALYSIS.md",
       "packages/flutter_biometric/AI_ANALYSIS.md",
       "packages/forge_articles/AI_ANALYSIS.md",

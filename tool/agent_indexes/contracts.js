@@ -202,9 +202,9 @@ function writeContracts({ appRoot, modules, workspacePackages, categoryMeta, con
       rel: 'lib/module_registry/AI_ANALYSIS.md',
       id: 'flutter_forge_app.module_registry',
       kind: 'registry_index',
-      entrypoints: ['app_platform_snapshot.dart', 'app_platform_scope.dart', 'module_entry.dart', 'module_category.dart', 'module_platform_support.dart', 'module_platform_policies.dart', 'module_catalog_utils.dart'],
+      entrypoints: ['app_platform_snapshot.dart', 'app_platform_scope.dart', 'module_entry.dart', 'module_category.dart', 'module_platform_support.dart', 'module_platform_policies.dart', 'module_catalog_utils.dart', 'chinese_experiment.dart', 'module_localizations.dart', 'concept_localizations.dart'],
       owns: ['platform_snapshot', 'platform_snapshot_scope', 'product_target_platforms', 'module_entry_model', 'module_category_enum', 'difficulty_enum', 'module_status_enum', 'excluded_platform_availability', 'capability_derived_feature_policy', 'module_catalog_filtering', 'category_route_rebasing', 'shared_guarded_route_composition', 'child_route_semantics'],
-      depends: ['flutter_material', 'go_router'],
+      depends: ['flutter_material', 'go_router', 'flutter_localizations', 'intl', 'forge_localization', 'l10n'],
     });
     writeIndex({
       rel: 'lib/shared/AI_ANALYSIS.md',

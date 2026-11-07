@@ -20,3 +20,4 @@ workspace:
   - packages/forge_notification_bridge
   - packages/flutter_biometric
   - packages/bluetooth_system_bridge
+  - packages/forge_localization

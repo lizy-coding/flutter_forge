@@ -31,6 +31,8 @@
 
 ## 状态定义
 
+新增决策：[0022 官方本地化基础与框架目录双语](0022-module-interface-localization.md) — accepted；范围修订为框架/目录双语，基础已实现，收尾与验收进行中。
+
 - `proposed` — 提议阶段，待讨论
 - `accepted` — 已接受，当前生效
 - `superseded` — 被后续 ADR 取代

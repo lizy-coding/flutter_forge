@@ -1,3 +1,4 @@
+import '../../l10n/strings.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('连接模型服务'),
+    title: Text(appStrings(context).modelServiceTitle),
     content: SingleChildScrollView(
       child: Form(
         key: formKey,
@@ -82,19 +83,19 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '可连接单独启动的本机 Codex 桥接，使用已有 CLI 登录。也可连接兼容 Chat Completions 流式协议的服务。端点与模型名会记住，方便下次连接；临时令牌仅当前页面有效，离开后清除；浏览器端点需允许跨域。',
-            ),
+            Text(appStrings(context).modelServiceIntro),
             const SizedBox(height: 12),
-            const Text(
-              '真实生成会把你的问题、实验状态和必要上下文发送到所选服务，临时令牌用于请求认证。服务方的数据保留和使用方式请查看其隐私政策；固定回放无需发送模型请求。详见“关于”中的隐私说明。',
-              key: ValueKey('genui-data-use-notice'),
+            Text(
+              appStrings(context).modelDataNotice,
+              key: const ValueKey('genui-data-use-notice'),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: endpoint,
               onChanged: (_) => endpointEdited = true,
-              decoration: const InputDecoration(labelText: '完整端点 URL'),
+              decoration: InputDecoration(
+                labelText: appStrings(context).endpointLabel,
+              ),
               validator: (text) {
                 final uri = Uri.tryParse(text?.trim() ?? '');
                 if (uri == null ||
@@ -109,7 +110,7 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
                               '127.0.0.1',
                               '::1',
                             ].contains(uri.host)))) {
-                  return '请输入 HTTPS 端点或本机 HTTP 端点。';
+                  return appStrings(context).endpointInvalid;
                 }
                 return null;
               },
@@ -117,9 +118,12 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
             TextFormField(
               controller: model,
               onChanged: (_) => modelEdited = true,
-              decoration: const InputDecoration(labelText: '模型名称'),
-              validator: (text) =>
-                  text == null || text.trim().isEmpty ? '请输入模型名称。' : null,
+              decoration: InputDecoration(
+                labelText: appStrings(context).modelName,
+              ),
+              validator: (text) => text == null || text.trim().isEmpty
+                  ? appStrings(context).modelNameRequired
+                  : null,
             ),
             TextField(
               key: const ValueKey('genui-service-token'),
@@ -127,7 +131,9 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
               obscureText: true,
               autocorrect: false,
               enableSuggestions: false,
-              decoration: const InputDecoration(labelText: '临时访问令牌（本机服务可留空）'),
+              decoration: InputDecoration(
+                labelText: appStrings(context).modelToken,
+              ),
             ),
           ],
         ),
@@ -136,7 +142,7 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: Text(appStrings(context).cancel),
       ),
       FilledButton(
         onPressed: () {
@@ -152,7 +158,7 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
             );
           }
         },
-        child: const Text('使用此服务'),
+        child: Text(appStrings(context).useService),
       ),
     ],
   );

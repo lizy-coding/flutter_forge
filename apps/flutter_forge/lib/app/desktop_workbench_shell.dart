@@ -1,3 +1,4 @@
+import '../l10n/strings.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -122,7 +123,11 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
     } on PlatformException catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('窗口操作失败：${error.message ?? action}')),
+          SnackBar(
+            content: Text(
+              appStrings(context).windowError(error.message ?? action),
+            ),
+          ),
         );
       }
     }
@@ -175,15 +180,17 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
   }
 
   String get _title {
-    if (_currentModule case final module?) return module.title;
-    if (widget.location == '/about') return '关于 Flutter Forge';
-    if (widget.focusedCategory case final category?) return category.label;
+    if (_currentModule case final module?) return module.titleFor(context);
+    if (widget.location == '/about') return appStrings(context).about;
+    if (widget.focusedCategory case final category?) {
+      return category.labelFor(context);
+    }
     for (final category in ModuleCategory.values) {
       if (widget.location == '/category/${category.name}') {
-        return category.label;
+        return category.labelFor(context);
       }
     }
-    return '学习工作台';
+    return appStrings(context).workbench;
   }
 
   @override
@@ -230,17 +237,22 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                               children: [
                                 if (widget.focusedCategory == null)
                                   ForgeNavTile(
-                                    label: '学习工作台',
+                                    label: appStrings(context).workbench,
                                     icon: Icons.space_dashboard_outlined,
                                     indent: 8,
                                     selected: widget.location == '/',
                                     onTap: () => context.go('/'),
                                   ),
-                                const Padding(
-                                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    16,
+                                    16,
+                                    8,
+                                  ),
                                   child: Text(
-                                    '学习模块',
-                                    style: TextStyle(fontSize: 12),
+                                    appStrings(context).modules,
+                                    style: const TextStyle(fontSize: 12),
                                   ),
                                 ),
                                 Expanded(
@@ -271,8 +283,12 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                                                   widget.location == '/'),
                                           trailing: IconButton(
                                             tooltip: _expandedCategory == entry
-                                                ? '收起分类'
-                                                : '展开分类',
+                                                ? appStrings(
+                                                    context,
+                                                  ).collapseCategory
+                                                : appStrings(
+                                                    context,
+                                                  ).expandCategory,
                                             onPressed: () => setState(() {
                                               _expandedCategory =
                                                   _expandedCategory == entry
@@ -294,7 +310,7 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                                         key: ValueKey(
                                           'sidebar-module:${module.path}',
                                         ),
-                                        label: module.title,
+                                        label: module.titleFor(context),
                                         indent: 20,
                                         keyboardActive: active,
                                         selected: module == _currentModule,
@@ -303,9 +319,11 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                                               widget.platform,
                                             )
                                             ? null
-                                            : const Tooltip(
-                                                message: '当前平台不可用',
-                                                child: Icon(
+                                            : Tooltip(
+                                                message: appStrings(
+                                                  context,
+                                                ).platformUnavailable,
+                                                child: const Icon(
                                                   Icons.info_outline,
                                                   size: 14,
                                                 ),
@@ -318,7 +336,7 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                                 if (widget.focusedCategory == null)
                                   ForgeNavTile(
                                     key: const ValueKey('sidebar-about'),
-                                    label: '关于 Flutter Forge',
+                                    label: appStrings(context).about,
                                     icon: Icons.info_outline,
                                     indent: 8,
                                     selected: widget.location == '/about',
@@ -402,20 +420,24 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                         : 6),
               ),
               IconButton(
-                tooltip: _sidebarVisible ? '收起侧栏' : '展开侧栏',
+                tooltip: _sidebarVisible
+                    ? appStrings(context).collapseSidebar
+                    : appStrings(context).expandSidebar,
                 onPressed: () =>
                     setState(() => _sidebarVisible = !_sidebarVisible),
                 icon: const Icon(Icons.vertical_split_outlined, size: 18),
               ),
               IconButton(
                 key: const ValueKey('workbench-back'),
-                tooltip: '返回上一页',
+                tooltip: appStrings(context).previousPage,
                 onPressed: _locations.length > 1 ? _back : null,
                 icon: const Icon(Icons.arrow_back, size: 18),
               ),
               IconButton(
                 key: const ValueKey('workbench-home-button'),
-                tooltip: widget.focusedCategory == null ? '返回工作台' : '返回分类主页',
+                tooltip: widget.focusedCategory == null
+                    ? appStrings(context).homeWorkbench
+                    : appStrings(context).homeCategory,
                 onPressed: () => context.go('/'),
                 icon: const Icon(Icons.home_outlined, size: 18),
               ),
@@ -447,7 +469,7 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                     key: const ValueKey('workbench-search'),
                     onPressed: _search,
                     icon: const Icon(Icons.search, size: 17),
-                    label: const Text('快速打开'),
+                    label: Text(appStrings(context).quickOpen),
                   ),
                 ),
               ),
@@ -455,7 +477,9 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
               const ThemeModeButton(),
               _captionButton(
                 'toggleFullscreen',
-                window?.fullscreen == true ? '退出全屏' : '进入全屏',
+                window?.fullscreen == true
+                    ? appStrings(context).exitFullscreen
+                    : appStrings(context).enterFullscreen,
                 window?.fullscreen == true
                     ? Icons.fullscreen_exit
                     : Icons.fullscreen,

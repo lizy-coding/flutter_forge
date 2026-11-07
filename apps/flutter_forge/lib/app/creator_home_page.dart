@@ -1,3 +1,5 @@
+import 'localization/language_selector.dart';
+import '../l10n/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,12 +22,13 @@ class CreatorHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const LanguageSelector(),
             Text(
-              '关于 Flutter Forge',
+              appStrings(context).about,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 12),
-            const Text('可运行、可拆解、可验证的 Flutter 学习工坊。'),
+            Text(appStrings(context).aboutIntro),
             const SizedBox(height: 24),
             const _CreatorFooter(),
             if (offlineEdition) const OfflinePrivacy() else const FullPrivacy(),

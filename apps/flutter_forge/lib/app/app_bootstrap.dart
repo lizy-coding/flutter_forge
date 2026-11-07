@@ -1,3 +1,5 @@
+import 'package:forge_localization/forge_localization.dart';
+import 'localization/app_locale_host.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -43,6 +45,64 @@ Future<void> bootstrapFlutterForgeApp() async {
         : null,
   );
 
+  final manager = MultiWindowManager.instance;
+  var localeRevision = arguments.localeRevision;
+  late final LocaleController localeControllerForSync;
+  void applyLocaleSnapshot(dynamic payload) {
+    if (payload is! Map ||
+        payload['revision'] is! int ||
+        payload['preference'] is! String) {
+      return;
+    }
+    final revision = payload['revision'] as int;
+    if (revision < localeRevision) return;
+    localeRevision = revision;
+    localeControllerForSync.applyRemotePreference(
+      payload['preference'] as String,
+    );
+  }
+
+  final localeController = await AppLocaleHost.load(
+    initialPreference: arguments.type == WindowType.category
+        ? arguments.localePreference
+        : null,
+    persist:
+        arguments.type == WindowType.category && arguments.mainWindowId != null
+        ? (value) async {
+            final response = await WindowController.fromWindowId(
+              arguments.mainWindowId!,
+            ).invokeMethod(MultiWindowManager.localeRequestMethod, value);
+            applyLocaleSnapshot(response);
+          }
+        : null,
+    onSaved: currentWindow != null && arguments.type == WindowType.main
+        ? manager.updateLocalePreference
+        : null,
+  );
+  localeControllerForSync = localeController;
+  if (currentWindow != null && arguments.type == WindowType.main) {
+    manager.configureLocale(
+      currentWindow.windowId,
+      localeController.preference,
+    );
+    await currentWindow.setWindowMethodHandler((call) async {
+      if (call.method == MultiWindowManager.localeRequestMethod) {
+        if (call.arguments is! String) {
+          throw ArgumentError('Invalid locale preference');
+        }
+        await localeController.setPreference(call.arguments as String);
+        if (localeController.saveError != null) {
+          throw StateError('Locale was not saved');
+        }
+        return manager.localeSnapshot;
+      }
+      if (call.method == MultiWindowManager.localeSnapshotMethod) {
+        return manager.localeSnapshot;
+      }
+      return null;
+    });
+  }
+
   if (currentWindow != null) {
     if (arguments.type == WindowType.category && arguments.category != null) {
       await currentWindow.setWindowMethodHandler((call) async {
@@ -50,6 +110,8 @@ Future<void> bootstrapFlutterForgeApp() async {
           await startupReady.future;
         } else if (call.method == MultiWindowManager.themeSelectionMethod) {
           themeController.applyRemoteSelection(call.arguments as String?);
+        } else if (call.method == MultiWindowManager.localeSnapshotMethod) {
+          applyLocaleSnapshot(call.arguments);
         }
       });
       root = CategoryWindowApp(
@@ -69,16 +131,19 @@ Future<void> bootstrapFlutterForgeApp() async {
   }
 
   runApp(
-    WorkbenchHistoryScope(
-      history: history,
-      child: ProviderScope(
-        overrides: [appPlatformProvider.overrideWithValue(platform)],
-        child:
-            root ??
-            App(
-              router: AppRouter.create(platform),
-              themeController: themeController,
-            ),
+    AppLocaleHost(
+      controller: localeController,
+      child: WorkbenchHistoryScope(
+        history: history,
+        child: ProviderScope(
+          overrides: [appPlatformProvider.overrideWithValue(platform)],
+          child:
+              root ??
+              App(
+                router: AppRouter.create(platform),
+                themeController: themeController,
+              ),
+        ),
       ),
     ),
   );
@@ -86,6 +151,14 @@ Future<void> bootstrapFlutterForgeApp() async {
     if (currentWindow != null && platform.hostFamily == AppHostFamily.desktop) {
       try {
         await currentWindow.markReady();
+        if (arguments.type == WindowType.category &&
+            arguments.mainWindowId != null) {
+          applyLocaleSnapshot(
+            await WindowController.fromWindowId(
+              arguments.mainWindowId!,
+            ).invokeMethod(MultiWindowManager.localeSnapshotMethod),
+          );
+        }
       } catch (error) {
         debugPrint('Native window readiness failed: $error');
         return;

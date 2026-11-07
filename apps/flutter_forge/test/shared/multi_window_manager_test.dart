@@ -414,6 +414,37 @@ void main() {
     );
   });
 
+  test(
+    'locale snapshots reach categories and new windows inherit current preference',
+    () async {
+      final platform = _FakeMultiWindowPlatform()
+        ..windows.add(_categoryWindow('existing', ModuleCategory.basic))
+        ..windows.add(
+          const MultiWindowController(
+            windowId: 'main',
+            arguments: '{"type":"main"}',
+            nativeController: null,
+          ),
+        );
+      final manager = MultiWindowManager.forTesting(platform)
+        ..configureLocale('main', 'system');
+      await manager.updateLocalePreference('en');
+      await manager.updateLocalePreference('zh');
+      expect(platform.invocations.map((value) => value.$1), [
+        'existing',
+        'existing',
+      ]);
+      expect(platform.invocations.last.$3, {'preference': 'zh', 'revision': 2});
+      await manager.createCategoryWindow(ModuleCategory.ui);
+      final arguments = MultiWindowManager.parseArguments(
+        platform.createRequests.single.arguments,
+      );
+      expect(arguments.mainWindowId, 'main');
+      expect(arguments.localePreference, 'zh');
+      expect(arguments.localeRevision, 2);
+    },
+  );
+
   test('theme changes are sent only to category windows', () async {
     final platform = _FakeMultiWindowPlatform()
       ..windows.add(_categoryWindow('category', ModuleCategory.basic))

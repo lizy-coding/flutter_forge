@@ -48,12 +48,19 @@
       "packages/usb_detector_bridge",
       "packages/forge_notification_bridge",
       "packages/flutter_biometric",
-      "packages/bluetooth_system_bridge"
+      "packages/bluetooth_system_bridge",
+      "packages/forge_localization"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "forge_localization",
+      "type": "flutter_package",
+      "path": "packages/forge_localization",
+      "entrypoint": "lib/forge_localization.dart"
+    },
     {
       "name": "bluetooth_system_bridge",
       "type": "flutter_plugin_package",

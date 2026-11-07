@@ -135,14 +135,14 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.tap(find.byType(DrawerButton));
     await tester.pumpAndSettle();
     expect(find.byType(ForgeBubbleNavigation), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('category-drawer:ui')));
     await tester.pumpAndSettle();
     expect(router.routeInformationProvider.value.uri.path, '/category/ui');
     expect(find.byKey(const ValueKey('category-page:ui')), findsOneWidget);
-    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.tap(find.byType(DrawerButton));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('category-drawer:ui')));
     await tester.pumpAndSettle();

@@ -1,3 +1,5 @@
+import '../module_registry/chinese_experiment.dart';
+import 'package:flutter_forge_app/l10n/strings.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -23,8 +25,11 @@ Future<void> showModuleQuickOpen(
     final recent = WorkbenchHistoryScope.maybeOf(context)?.recent ?? const [];
     selected = await showDialog<ModuleEntry>(
       context: context,
-      barrierLabel: '关闭快速打开',
-      builder: (_) => _QuickOpenDialog(modules: modules, recent: recent),
+      barrierLabel: appStrings(context).closeQuickOpen,
+      builder: (context) => frameworkLanguage(
+        context,
+        _QuickOpenDialog(modules: modules, recent: recent),
+      ),
     );
   } finally {
     session?.quickOpenVisible = false;
@@ -166,10 +171,10 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
                   autofocus: true,
                   focusNode: _focus,
                   decoration: InputDecoration(
-                    hintText: '搜索模块、概念或分类',
+                    hintText: appStrings(context).searchHint,
                     prefixIcon: const Icon(Icons.search, size: 20),
                     suffixIcon: IconButton(
-                      tooltip: '关闭快速打开',
+                      tooltip: appStrings(context).closeQuickOpen,
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close, size: 18),
                     ),
@@ -185,7 +190,7 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
               const Divider(height: 1),
               Expanded(
                 child: matches.isEmpty
-                    ? const Center(child: Text('没有匹配模块，请尝试其他关键词'))
+                    ? Center(child: Text(appStrings(context).quickOpenEmpty))
                     : ListView.builder(
                         controller: _scroll,
                         itemExtent: _itemExtent,
@@ -199,15 +204,17 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
                               context,
                             ).colorScheme.primary.withValues(alpha: 0.12),
                             title: Text(
-                              module.title,
+                              module.titleFor(context),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            subtitle: Text(module.category.label),
+                            subtitle: Text(
+                              '${module.category.labelFor(context)} · ${appStrings(context).chineseExperiment}',
+                            ),
                             trailing: widget.recent.contains(module.path)
-                                ? const Tooltip(
-                                    message: '最近访问',
-                                    child: Icon(Icons.history, size: 16),
+                                ? Tooltip(
+                                    message: appStrings(context).recent,
+                                    child: const Icon(Icons.history, size: 16),
                                   )
                                 : null,
                             onTap: () => Navigator.of(context).pop(module),
@@ -216,11 +223,11 @@ class _QuickOpenDialogState extends State<_QuickOpenDialog> {
                       ),
               ),
               const Divider(height: 1),
-              const Padding(
-                padding: EdgeInsets.all(10),
+              Padding(
+                padding: const EdgeInsets.all(10),
                 child: Text(
-                  '↑ ↓ 选择    Enter 打开    Esc 返回',
-                  style: TextStyle(fontSize: 12),
+                  appStrings(context).quickOpenKeys,
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
             ],

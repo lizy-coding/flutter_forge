@@ -1,3 +1,4 @@
+import 'package:flutter_forge_app/l10n/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,7 +22,7 @@ class UnsupportedModulePage extends StatelessWidget {
         .join('、');
 
     return Scaffold(
-      appBar: AppBar(title: Text(module.title)),
+      appBar: AppBar(title: Text(module.titleFor(context))),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -36,22 +37,24 @@ class UnsupportedModulePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  '当前平台暂不支持此模块',
+                  appStrings(context).unsupported,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
-                Text('当前平台：${platform.platform.label}'),
+                Text(
+                  appStrings(context).currentPlatform(platform.platform.label),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   openPlatforms.isEmpty
-                      ? '当前没有开放的目标平台'
-                      : '已开放平台：$openPlatforms',
+                      ? appStrings(context).noOpenPlatforms
+                      : appStrings(context).openPlatforms(openPlatforms),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: () => context.go('/'),
-                  child: const Text('返回模块目录'),
+                  child: Text(appStrings(context).backCatalog),
                 ),
               ],
             ),

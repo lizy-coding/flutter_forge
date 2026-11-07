@@ -15,7 +15,10 @@
     "module_category.dart",
     "module_platform_support.dart",
     "module_platform_policies.dart",
-    "module_catalog_utils.dart"
+    "module_catalog_utils.dart",
+    "chinese_experiment.dart",
+    "module_localizations.dart",
+    "concept_localizations.dart"
   ],
   "owns": [
     "platform_snapshot",
@@ -34,7 +37,11 @@
   ],
   "depends": [
     "flutter_material",
-    "go_router"
+    "go_router",
+    "flutter_localizations",
+    "intl",
+    "forge_localization",
+    "l10n"
   ],
   "children": [],
   "contracts": {

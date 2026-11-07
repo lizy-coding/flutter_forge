@@ -1,3 +1,6 @@
+import 'concept_localizations.dart';
+import '../l10n/strings.dart';
+import 'module_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,6 +22,15 @@ class ModuleEntry {
     this.routes = const [],
     required this.platformSupport,
   });
+
+  String titleFor(BuildContext context) =>
+      localizedModuleTitle(this, appStrings(context));
+  String subtitleFor(BuildContext context) =>
+      localizedModuleSubtitle(this, appStrings(context));
+
+  List<String> conceptsFor(BuildContext context) => concepts
+      .map((value) => localizedConcept(value, appStrings(context)))
+      .toList(growable: false);
 
   final String title;
   final String path;

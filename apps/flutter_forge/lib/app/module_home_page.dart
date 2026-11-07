@@ -1,3 +1,4 @@
+import '../l10n/strings.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -148,9 +149,9 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
     } catch (error) {
       debugPrint('[category-window] open failed: $error');
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('打开分类窗口失败，请重试。')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(appStrings(context).openWindowFailed)),
+        );
       }
     } finally {
       if (mounted) setState(() => _opening = false);
@@ -208,7 +209,7 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.category.label,
+                    widget.category.labelFor(context),
                     style:
                         (context.forgeColors.desktop
                                 ? Theme.of(context).textTheme.titleLarge
@@ -217,7 +218,7 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${widget.moduleCount} 个学习模块',
+                    appStrings(context).moduleCount(widget.moduleCount),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: colors.onSurfaceVariant,
                     ),
@@ -228,7 +229,7 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
             if (widget.showWindowAction) ...[
               const SizedBox(width: 16),
               Tooltip(
-                message: '在独立窗口中专注学习这个分类',
+                message: appStrings(context).focusCategory,
                 child: FilledButton.tonalIcon(
                   key: ValueKey('open-window:${widget.category.name}'),
                   onPressed: _opening ? null : () => unawaited(_openWindow()),
@@ -245,7 +246,11 @@ class _CategoryHeaderState extends State<_CategoryHeader> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.open_in_new_rounded, size: 19),
-                  label: Text(_opening ? '正在打开…' : '在新窗口打开'),
+                  label: Text(
+                    _opening
+                        ? appStrings(context).opening
+                        : appStrings(context).newWindow,
+                  ),
                 ),
               ),
             ],
@@ -265,7 +270,7 @@ class ModuleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final available = isModuleAvailable(module, platform);
-    final concepts = module.concepts.take(3);
+    final concepts = module.conceptsFor(context).take(3);
     final desktop = platform.hostFamily == AppHostFamily.desktop;
     return ForgePressableCard(
       key: ValueKey('module:${module.path}'),
@@ -281,14 +286,23 @@ class ModuleCard extends StatelessWidget {
           ? ListTile(
               minVerticalPadding: 12,
               leading: Icon(module.category.icon, size: 20),
-              title: Text(module.title),
-              subtitle: Text(
-                available ? module.subtitle : '当前平台暂不支持此模块',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              title: Text(module.titleFor(context)),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    available
+                        ? module.subtitleFor(context)
+                        : appStrings(context).unsupported,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(appStrings(context).chineseExperiment),
+                ],
               ),
+              isThreeLine: true,
               trailing: Text(
-                '${module.difficulty.label} · ${module.estimatedMinutes} 分钟',
+                '${module.difficulty.labelFor(context)} · ${appStrings(context).minutes(module.estimatedMinutes)}',
               ),
             )
           : Padding(
@@ -300,18 +314,18 @@ class ModuleCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          module.title,
+                          module.titleFor(context),
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
                       Chip(
                         visualDensity: VisualDensity.compact,
-                        label: Text(module.difficulty.label),
+                        label: Text(module.difficulty.labelFor(context)),
                       ),
                       if (platform.isWeb)
                         IconButton(
                           key: ValueKey('open-tab:${module.path}'),
-                          tooltip: '在新标签页打开',
+                          tooltip: appStrings(context).newTab,
                           visualDensity: VisualDensity.compact,
                           onPressed: () => launchUrl(
                             Uri.base.replace(fragment: module.path),
@@ -323,7 +337,9 @@ class ModuleCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    available ? module.subtitle : '当前平台暂不支持此模块',
+                    available
+                        ? module.subtitleFor(context)
+                        : appStrings(context).unsupported,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -340,8 +356,12 @@ class ModuleCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 6),
+                  Text(appStrings(context).chineseExperiment),
                   Text(
-                    '预计 ${module.estimatedMinutes} 分钟 · ${module.status.label}',
+                    appStrings(context).estimatedTime(
+                      module.estimatedMinutes,
+                      module.status.labelFor(context),
+                    ),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

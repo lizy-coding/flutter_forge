@@ -44,7 +44,7 @@ void main() {
     final title = find.descendant(of: tile, matching: find.text(module.title));
     final category = find.descendant(
       of: tile,
-      matching: find.text(module.category.label),
+      matching: find.text('${module.category.label} · 中文实验'),
     );
     final tileRect = tester.getRect(tile);
     final titleRect = tester.getRect(title);

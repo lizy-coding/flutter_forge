@@ -1,3 +1,7 @@
+import '../module_registry/chinese_experiment.dart';
+import 'package:forge_localization/forge_localization.dart';
+import '../l10n/app_localizations.dart';
+import '../l10n/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -57,12 +61,19 @@ class CategoryWindowApp extends StatefulWidget {
       routes: platform.hostFamily == AppHostFamily.desktop
           ? [
               ShellRoute(
-                builder: (context, state, child) => DesktopWorkbenchShell(
-                  modules: modules,
-                  location: state.uri.path,
-                  platform: platform,
-                  focusedCategory: category,
-                  child: child,
+                builder: (context, state, child) => frameworkLanguage(
+                  context,
+                  DesktopWorkbenchShell(
+                    modules: modules,
+                    location: state.uri.path,
+                    platform: platform,
+                    focusedCategory: category,
+                    child: ExperimentNavigatorLocale(
+                      router: GoRouter.of(context),
+                      modules: modules,
+                      child: child,
+                    ),
+                  ),
                 ),
                 routes: routes,
               ),
@@ -115,8 +126,13 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
             listenable: widget.themeController,
             builder: (context, _) => MaterialApp.router(
               debugShowCheckedModeBanner: false,
+              locale:
+                  LocaleScope.maybeOf(context)?.effectiveLocale ??
+                  const Locale('zh'),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
               routerConfig: _router,
-              title: widget.category.label,
+              title: widget.category.labelIn(frameworkStrings(context)),
               theme: AppTheme.light(widget.themeController.palette),
               darkTheme: AppTheme.dark(widget.themeController.palette),
               highContrastTheme: AppTheme.light(AppThemePalette.graphiteForge),
@@ -127,7 +143,7 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
               builder: (context, child) => DesktopWindowHost(
                 platform: widget.platform,
                 mainWindow: false,
-                title: widget.category.label,
+                title: widget.category.labelIn(frameworkStrings(context)),
                 router: _router,
                 modules: filterModulesByCategory(
                   AppRouteTable.modules,
@@ -137,7 +153,13 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
                 materialEnabled:
                     widget.themeController.palette ==
                     AppThemePalette.liquidGlass,
-                child: ForgeThemeBackdrop(child: child!),
+                child: ForgeThemeBackdrop(
+                  child: ExperimentNavigatorLocale(
+                    router: _router,
+                    modules: AppRouteTable.modules,
+                    child: child!,
+                  ),
+                ),
               ),
             ),
           ),

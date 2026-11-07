@@ -1,3 +1,4 @@
+import 'package:flutter_forge_app/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'app_theme_controller.dart';
@@ -14,7 +15,7 @@ class ThemeModeButton extends StatelessWidget {
     return MenuAnchor(
       builder: (context, menuController, child) => IconButton(
         key: const ValueKey('theme-mode-button'),
-        tooltip: '切换外观',
+        tooltip: appStrings(context).appearance,
         onPressed: () => menuController.isOpen
             ? menuController.close()
             : menuController.open(),
@@ -36,10 +37,10 @@ class ThemeModeButton extends StatelessWidget {
               onPressed: () => controller.setPalette(palette),
               child: Text(
                 palette == AppThemePalette.graphiteForge
-                    ? '实色外观'
+                    ? appStrings(context).solidAppearance
                     : context.forgeColors.desktop
-                    ? '系统材质'
-                    : '玻璃外观',
+                    ? appStrings(context).systemMaterial
+                    : appStrings(context).glassAppearance,
               ),
             ),
           const Divider(),
@@ -52,7 +53,11 @@ class ThemeModeButton extends StatelessWidget {
                 ? const Icon(Icons.check_rounded)
                 : null,
             onPressed: () => controller.setMode(mode),
-            child: Text(mode.label),
+            child: Text(switch (mode) {
+              AppThemeModePreference.system => appStrings(context).themeSystem,
+              AppThemeModePreference.light => appStrings(context).themeLight,
+              AppThemeModePreference.dark => appStrings(context).themeDark,
+            }),
           ),
       ],
     );

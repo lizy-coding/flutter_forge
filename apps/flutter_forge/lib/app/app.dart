@@ -1,3 +1,6 @@
+import '../module_registry/chinese_experiment.dart';
+import 'package:forge_localization/forge_localization.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +33,11 @@ class App extends ConsumerWidget {
             listenable: themeController,
             builder: (context, _) => MaterialApp.router(
               debugShowCheckedModeBanner: false,
+              locale:
+                  LocaleScope.maybeOf(context)?.effectiveLocale ??
+                  const Locale('zh'),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
               routerConfig: router,
               title: 'Flutter Forge',
               theme: AppTheme.light(themeController.palette),
@@ -46,7 +54,13 @@ class App extends ConsumerWidget {
                 themeMode: themeController.themeMode,
                 materialEnabled:
                     themeController.palette == AppThemePalette.liquidGlass,
-                child: ForgeThemeBackdrop(child: child!),
+                child: ForgeThemeBackdrop(
+                  child: ExperimentNavigatorLocale(
+                    router: router,
+                    modules: AppRouteTable.modules,
+                    child: child!,
+                  ),
+                ),
               ),
             ),
           ),

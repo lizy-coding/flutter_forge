@@ -10,6 +10,11 @@ environment:
 resolution: workspace
 
 dependencies:
+  forge_localization:
+    path: ../../packages/forge_localization
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   forge_articles:
     path: ../../packages/forge_articles
   usb_network_bridge:
@@ -73,6 +78,7 @@ dev_dependencies:
   video_player_platform_interface: ^6.2.1
 
 flutter:
+  generate: true
   config:
     # Keep plugin builds on CocoaPods so the scoped Xcode compiler probe applies.
     enable-swift-package-manager: false
