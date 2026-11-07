@@ -367,13 +367,18 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
 
   void _search() => unawaited(showModuleQuickOpen(context, widget.modules));
 
-  Widget _dragRegion(Widget child, {Key? key}) => GestureDetector(
-    key: key,
-    behavior: HitTestBehavior.opaque,
-    onPanStart: (_) => unawaited(_windowAction('drag')),
-    onDoubleTap: () => unawaited(_windowAction('captionDoubleClick')),
-    child: child,
-  );
+  bool get _systemFrame =>
+      widget.platform.platform == AppTargetPlatform.windows;
+
+  Widget _dragRegion(Widget child, {Key? key}) => _systemFrame
+      ? KeyedSubtree(key: key, child: child)
+      : GestureDetector(
+          key: key,
+          behavior: HitTestBehavior.opaque,
+          onPanStart: (_) => unawaited(_windowAction('drag')),
+          onDoubleTap: () => unawaited(_windowAction('captionDoubleClick')),
+          child: child,
+        );
 
   Widget _titlebar() {
     final window = DesktopWindowScope.maybeOf(context);
@@ -381,7 +386,9 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
       titlebar: true,
       edgeHighlight: true,
       child: SizedBox(
-        key: const ValueKey('immersive-titlebar'),
+        key: ValueKey(
+          _systemFrame ? 'workbench-toolbar' : 'immersive-titlebar',
+        ),
         height: 48,
         child: LayoutBuilder(
           builder: (context, constraints) => Row(
@@ -389,7 +396,7 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
               SizedBox(
                 key: const ValueKey('native-leading-controls'),
                 width:
-                    window?.leadingInset ??
+                    (_systemFrame ? 6.0 : window?.leadingInset) ??
                     (widget.platform.platform == AppTargetPlatform.macOS
                         ? 80
                         : 6),
@@ -456,11 +463,7 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
               ),
               SizedBox(
                 key: const ValueKey('native-trailing-controls'),
-                width:
-                    window?.trailingInset ??
-                    (widget.platform.platform == AppTargetPlatform.windows
-                        ? 138
-                        : 6),
+                width: (_systemFrame ? 6.0 : window?.trailingInset) ?? 6,
               ),
             ],
           ),

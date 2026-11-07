@@ -39,6 +39,25 @@
   },
   "work_queue": [
     {
+      "id": "windows_standard_system_frame",
+      "priority": 24,
+      "status": "pending",
+      "implementation_status": "implemented_simulated_widget_verified_windows_build_and_host_pending",
+      "decision": "docs/adr/0021-windows-standard-system-frame.md",
+      "targets": [
+        "apps/flutter_forge/windows/runner/desktop_window_host.cpp",
+        "apps/flutter_forge/lib/app/desktop_workbench_shell.dart",
+        "apps/flutter_forge/lib/app/desktop_window_host.dart"
+      ],
+      "acceptance": [
+        "windows_build",
+        "main_and_category_system_caption_controls",
+        "native_resize_snap_and_dpi",
+        "fullscreen_restore_and_focus",
+        "client_toolbar_navigation_and_search"
+      ]
+    },
+    {
       "id": "desktop_native_material_compatibility",
       "priority": 22,
       "status": "pending",
@@ -53,7 +72,7 @@
       "acceptance": [
         "evaluate_flutter_acrylic_without_transferring_window_control_ownership",
         "per_engine_main_and_category_window_material_binding",
-        "macos_native_material_and_windows11_mica_or_solid_fallback",
+        "macos_native_material_and_windows_standard_frame_solid_compatibility",
         "system_transparency_high_contrast_and_saved_preference_fallback",
         "independent_host_build_and_window_interaction_checks"
       ]

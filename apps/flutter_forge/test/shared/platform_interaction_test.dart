@@ -14,6 +14,57 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
+  testWidgets('Windows compatibility stays solid with a separate toolbar', (
+    tester,
+  ) async {
+    final configurations = <Map<dynamic, dynamic>>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      DesktopWindowHost.channel,
+      (call) async {
+        if (call.method == 'configure') {
+          configurations.add(call.arguments as Map);
+        }
+        return {'materialActive': true, 'trailingInset': 138.0};
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        DesktopWindowHost.channel,
+        null,
+      ),
+    );
+    final router = await _pump(
+      tester,
+      AppTargetPlatform.windows,
+      AppThemeController.forTesting(
+        const AppThemeSelection(palette: AppThemePalette.liquidGlass),
+      ),
+    );
+    expect(configurations, isNotEmpty);
+    expect(configurations.every((c) => c['materialEnabled'] == false), isTrue);
+    expect(
+      find.byKey(const ValueKey('native-material-backdrop')),
+      findsNothing,
+    );
+    expect(find.byKey(const ValueKey('workbench-toolbar')), findsOneWidget);
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('native-trailing-controls')))
+          .width,
+      6,
+    );
+    router.go('/tree-state');
+    await tester.pumpAndSettle();
+    expect(router.routeInformationProvider.value.uri.path, '/tree-state');
+    expect(
+      tester
+          .widget<ForgeSurfaceScope>(find.byType(ForgeSurfaceScope))
+          .nativeMaterial,
+      isFalse,
+    );
+    expect(tester.takeException(), isNull);
+  }, variant: const TargetPlatformVariant({TargetPlatform.windows}));
+
   testWidgets(
     'native basic pages become solid teaching without replacing router',
     (tester) async {

@@ -105,7 +105,7 @@ void main() {
     },
   );
 
-  testWidgets('immersive controls and native state work on both desktops', (
+  testWidgets('platform toolbar and fullscreen actions work on both desktops', (
     tester,
   ) async {
     final semantics = tester.ensureSemantics();
@@ -114,9 +114,33 @@ void main() {
       final calls = _mockHost(tester);
       await _pump(tester);
       expect(
-        tester.getSize(find.byKey(const ValueKey('immersive-titlebar'))).height,
+        tester
+            .getSize(
+              find.byKey(
+                ValueKey(
+                  defaultTargetPlatform == TargetPlatform.windows
+                      ? 'workbench-toolbar'
+                      : 'immersive-titlebar',
+                ),
+              ),
+            )
+            .height,
         48,
       );
+      if (defaultTargetPlatform == TargetPlatform.windows) {
+        expect(
+          tester
+              .getSize(find.byKey(const ValueKey('native-trailing-controls')))
+              .width,
+          6,
+        );
+        await tester.drag(
+          find.byKey(const ValueKey('titlebar-drag-area')),
+          const Offset(60, 0),
+        );
+        await tester.pump();
+        expect(calls.where((call) => call.method == 'drag'), isEmpty);
+      }
       expect(find.byKey(const ValueKey('workbench-home')), findsOneWidget);
       expect(find.byKey(const ValueKey('workbench-sidebar')), findsOneWidget);
       expect(find.bySemanticsLabel('快速打开'), findsOneWidget);
@@ -143,7 +167,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         calls.where((call) => call.method == 'captionDoubleClick').length,
-        beforeDoubleClick + 1,
+        beforeDoubleClick +
+            (defaultTargetPlatform == TargetPlatform.windows ? 0 : 1),
       );
       await _native(tester, 'toggleSidebar');
       await tester.pump();
@@ -374,7 +399,16 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('immersive-titlebar')), findsOneWidget);
+    expect(
+      find.byKey(
+        ValueKey(
+          defaultTargetPlatform == TargetPlatform.windows
+              ? 'workbench-toolbar'
+              : 'immersive-titlebar',
+        ),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('关于 Flutter Forge'), findsNothing);
     expect(
       calls.any(

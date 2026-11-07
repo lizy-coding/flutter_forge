@@ -68,7 +68,7 @@
     "theme_preference_persistence",
     "cross_window_theme_sync",
     "shared_desktop_window_commands",
-    "immersive_titlebar",
+    "platform_titlebar_and_client_toolbar",
     "native_fullscreen_toggle",
     "titlebar_home_navigation",
     "two_level_module_navigation",

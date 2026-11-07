@@ -27,6 +27,8 @@
 | 0019 | [平台能力桥接包规范](0019-platform-capability-bridge-packages.md) | accepted |
 | 0020 | [NFC 学习以卡片发现与碰卡唤起为边界](0020-nfc-learning-discovery-and-launch.md) | accepted；实现与真机验收待执行 |
 
+| 0021 | [Windows 系统标准边框与内容区工具栏](0021-windows-standard-system-frame.md) | accepted；Windows 构建与真机验收待执行 |
+
 ## 状态定义
 
 - `proposed` — 提议阶段，待讨论
