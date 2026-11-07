@@ -27,6 +27,13 @@ const categoryOwnership = {
 
 const workspacePackages = [
   {
+    name: 'forge_app_info', kind: 'flutter_package',
+    path: 'packages/forge_app_info', entrypoints: ['lib/forge_app_info.dart'],
+    owns: ['installed_app_version', 'app_info_outcomes'],
+    depends: ['flutter_sdk', 'package_info_plus', 'plugin_platform_interface'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'forge_localization', kind: 'flutter_package',
     path: 'packages/forge_localization', entrypoints: ['lib/forge_localization.dart'],
     owns: ['locale_preference', 'locale_resolution', 'locale_change_notification'],

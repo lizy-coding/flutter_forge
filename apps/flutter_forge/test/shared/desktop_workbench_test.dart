@@ -1,3 +1,4 @@
+import '../support/app_info_fixture.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,7 @@ const _desktopPlatforms = TargetPlatformVariant({
 const _neutral = AppThemeSelection(palette: AppThemePalette.graphiteForge);
 
 void main() {
+  setUp(useAppInfoFixture);
   testWidgets('sidebar keyboard activates categories and modules', (
     tester,
   ) async {

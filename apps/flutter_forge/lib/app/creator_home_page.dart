@@ -1,3 +1,4 @@
+import 'app_version_panel.dart';
 import 'localization/language_selector.dart';
 import '../l10n/strings.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class CreatorHomePage extends StatelessWidget {
             const SizedBox(height: 12),
             Text(appStrings(context).aboutIntro),
             const SizedBox(height: 24),
+            const AppVersionPanel(),
             const _CreatorFooter(),
             if (offlineEdition) const OfflinePrivacy() else const FullPrivacy(),
           ],

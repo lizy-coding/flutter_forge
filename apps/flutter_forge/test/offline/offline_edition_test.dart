@@ -1,3 +1,4 @@
+import '../support/app_info_fixture.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class NoNetwork extends HttpOverrides {
 }
 
 void main() {
+  setUp(useAppInfoFixture);
   TestWidgetsFlutterBinding.ensureInitialized();
   group(
     'offline distribution',

@@ -24,6 +24,7 @@
   "depends": [
     "git:https://github.com/lizy-coding/gcode_core.git#v0.2.1",
     "lib/shared/learning",
+    "packages/forge_app_info",
     "packages/forge_localization",
     "packages/bluetooth_system_bridge",
     "packages/flutter_biometric",
@@ -43,6 +44,7 @@
     "lib/module_registry/AI_ANALYSIS.md",
     "lib/shared/AI_ANALYSIS.md",
     "lib/modules/AI_ANALYSIS.md",
+    "packages/forge_app_info/AI_ANALYSIS.md",
     "packages/forge_localization/AI_ANALYSIS.md",
     "packages/bluetooth_system_bridge/AI_ANALYSIS.md",
     "packages/flutter_biometric/AI_ANALYSIS.md",

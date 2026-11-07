@@ -27,11 +27,6 @@ class LearningHomePage extends StatelessWidget {
       key: const PageStorageKey('learning-home-scroll'),
       padding: const EdgeInsets.all(24),
       children: [
-        ModuleDiscoveryPanel(
-          modules: modules,
-          platform: platform ?? AppPlatformSnapshot.detect(),
-          recentPaths: history,
-        ),
         Text(
           appStrings(context).explore,
           style: Theme.of(context).textTheme.headlineMedium,
@@ -99,6 +94,11 @@ class LearningHomePage extends StatelessWidget {
             ),
           ),
         const SizedBox(height: 24),
+        ModuleDiscoveryPanel(
+          modules: modules,
+          platform: platform ?? AppPlatformSnapshot.detect(),
+          recentPaths: history,
+        ),
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton.icon(

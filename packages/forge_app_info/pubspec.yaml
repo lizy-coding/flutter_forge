@@ -1,0 +1,15 @@
+name: forge_app_info
+description: Typed, non-throwing installed application information bridge.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+environment:
+  sdk: ^3.11.5
+dependencies:
+  flutter:
+    sdk: flutter
+  package_info_plus: ^9.0.0
+  plugin_platform_interface: ^2.1.8
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

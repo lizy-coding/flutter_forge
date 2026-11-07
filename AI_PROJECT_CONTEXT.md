@@ -49,12 +49,19 @@
       "packages/forge_notification_bridge",
       "packages/flutter_biometric",
       "packages/bluetooth_system_bridge",
-      "packages/forge_localization"
+      "packages/forge_localization",
+      "packages/forge_app_info"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "forge_app_info",
+      "type": "flutter_package",
+      "path": "packages/forge_app_info",
+      "entrypoint": "lib/forge_app_info.dart"
+    },
     {
       "name": "forge_localization",
       "type": "flutter_package",

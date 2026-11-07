@@ -22,6 +22,7 @@
   "dependency_migration": {
     "layout": "pub_workspace",
     "internal_packages": [
+      "packages/forge_app_info",
       "packages/forge_localization",
       "packages/bluetooth_system_bridge",
       "packages/flutter_biometric",

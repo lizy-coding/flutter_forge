@@ -1,3 +1,4 @@
+import '../support/app_info_fixture.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/app.dart';
 import 'package:flutter_forge_app/app/localization/language_selector.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:forge_localization/forge_localization.dart';
 
 void main() {
+  setUp(useAppInfoFixture);
   LocaleController controller({Future<void> Function(String)? save}) =>
       LocaleController(
         supportedLocales: const [Locale('zh'), Locale('en')],
@@ -50,7 +52,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('What would you like to understand?'), findsOneWidget);
+    expect(find.text('Explore and learn'), findsOneWidget);
     router.go('/tree-state');
     await tester.pumpAndSettle();
     final before = router.routeInformationProvider.value.uri;

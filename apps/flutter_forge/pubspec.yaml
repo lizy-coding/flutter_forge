@@ -10,6 +10,8 @@ environment:
 resolution: workspace
 
 dependencies:
+  forge_app_info:
+    path: ../../packages/forge_app_info
   forge_localization:
     path: ../../packages/forge_localization
   flutter_localizations:

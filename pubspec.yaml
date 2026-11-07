@@ -21,3 +21,4 @@ workspace:
   - packages/flutter_biometric
   - packages/bluetooth_system_bridge
   - packages/forge_localization
+  - packages/forge_app_info

@@ -1,3 +1,4 @@
+import '../support/app_info_fixture.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/creator_home_page.dart';
 import 'package:flutter_forge_app/app/full_privacy.dart';
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_forge_app/app/workbench_history.dart';
 
 void main() {
+  setUp(useAppInfoFixture);
   testWidgets('full edition About exposes its own privacy notice', (
     tester,
   ) async {
