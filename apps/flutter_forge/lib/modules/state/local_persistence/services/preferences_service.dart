@@ -14,35 +14,37 @@ abstract class PreferencesService {
 
 class SharedPreferencesPreferencesService implements PreferencesService {
   SharedPreferencesPreferencesService({Future<SharedPreferences>? instance})
-    : _instance = instance ?? SharedPreferences.getInstance();
+    : _instance = instance;
 
-  final Future<SharedPreferences> _instance;
+  final Future<SharedPreferences>? _instance;
+  Future<SharedPreferences> get _preferences =>
+      _instance ?? SharedPreferences.getInstance();
 
   @override
-  Future<int?> getInt(String key) async => (await _instance).getInt(key);
+  Future<int?> getInt(String key) async => (await _preferences).getInt(key);
 
   @override
-  Future<bool?> getBool(String key) async => (await _instance).getBool(key);
+  Future<bool?> getBool(String key) async => (await _preferences).getBool(key);
 
   @override
   Future<String?> getString(String key) async =>
-      (await _instance).getString(key);
+      (await _preferences).getString(key);
 
   @override
   Future<bool> setInt(String key, int value) async =>
-      (await _instance).setInt(key, value);
+      (await _preferences).setInt(key, value);
 
   @override
   Future<bool> setBool(String key, bool value) async =>
-      (await _instance).setBool(key, value);
+      (await _preferences).setBool(key, value);
 
   @override
   Future<bool> setString(String key, String value) async =>
-      (await _instance).setString(key, value);
+      (await _preferences).setString(key, value);
 
   @override
-  Future<bool> remove(String key) async => (await _instance).remove(key);
+  Future<bool> remove(String key) async => (await _preferences).remove(key);
 
   @override
-  Future<bool> clear() async => (await _instance).clear();
+  Future<bool> clear() async => (await _preferences).clear();
 }

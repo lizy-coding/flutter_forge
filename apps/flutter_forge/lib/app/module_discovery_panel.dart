@@ -122,83 +122,95 @@ class _ModuleDiscoveryPanelState extends State<ModuleDiscoveryPanel> {
                 ).textTheme.bodyLarge?.copyWith(color: colors.onSurfaceVariant),
               ),
               const SizedBox(height: 28),
-              Focus(
-                onFocusChange: (value) => setState(() => focused = value),
-                child: DiscoverySurface(
-                  highlighted: focused,
-                  radius: 24,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        TextField(
-                          key: const ValueKey('discovery-question'),
-                          controller: question,
-                          minLines: 2,
-                          maxLines: 5,
-                          maxLength: 1500,
-                          enabled: !session.busy,
-                          decoration: InputDecoration(
-                            hintText: appStrings(context).questionExample,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            counterText: '',
-                            filled: false,
+              if (!offlineEdition)
+                Focus(
+                  onFocusChange: (value) => setState(() => focused = value),
+                  child: DiscoverySurface(
+                    highlighted: focused,
+                    radius: 24,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextField(
+                            key: const ValueKey('discovery-question'),
+                            controller: question,
+                            minLines: 2,
+                            maxLines: 5,
+                            maxLength: 1500,
+                            enabled: !session.busy,
+                            decoration: InputDecoration(
+                              hintText: appStrings(context).questionExample,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              counterText: '',
+                              filled: false,
+                            ),
+                            onSubmitted: (_) => unawaited(submit()),
                           ),
-                          onSubmitted: (_) => unawaited(submit()),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Icon(
-                              session.connected
-                                  ? Icons.check_circle_outline_rounded
-                                  : Icons.replay_rounded,
-                              size: 14,
-                              color: colors.onSurfaceVariant,
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Icon(
                                 session.connected
-                                    ? appStrings(context).modelConnected
-                                    : appStrings(context).replayNoModel,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(color: colors.onSurfaceVariant),
+                                    ? Icons.check_circle_outline_rounded
+                                    : Icons.replay_rounded,
+                                size: 14,
+                                color: colors.onSurfaceVariant,
                               ),
-                            ),
-                            if (session.busy)
-                              IconButton(
-                                onPressed: session.cancel,
-                                tooltip: appStrings(context).cancelGeneration,
-                                icon: const Icon(Icons.stop_rounded),
-                              )
-                            else
-                              FilledButton(
-                                onPressed: submit,
-                                key: const ValueKey('discovery-submit'),
-                                style: FilledButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  padding: const EdgeInsets.all(14),
-                                  minimumSize: const Size(48, 48),
-                                ),
-                                child: Icon(
-                                  Icons.arrow_upward_rounded,
-                                  semanticLabel: appStrings(
-                                    context,
-                                  ).generateEntry,
-                                  size: 22,
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  session.connected
+                                      ? appStrings(context).modelConnected
+                                      : appStrings(context).replayNoModel,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: colors.onSurfaceVariant,
+                                      ),
                                 ),
                               ),
-                          ],
-                        ),
-                      ],
+                              if (session.busy)
+                                IconButton(
+                                  onPressed: session.cancel,
+                                  tooltip: appStrings(context).cancelGeneration,
+                                  icon: const Icon(Icons.stop_rounded),
+                                )
+                              else
+                                FilledButton(
+                                  onPressed: submit,
+                                  key: const ValueKey('discovery-submit'),
+                                  style: FilledButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    padding: const EdgeInsets.all(14),
+                                    minimumSize: const Size(48, 48),
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_upward_rounded,
+                                    semanticLabel: appStrings(
+                                      context,
+                                    ).generateEntry,
+                                    size: 22,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
+              if (offlineEdition) ...[
+                Text(appStrings(context).offlineReplayExamples),
+                if (session.busy)
+                  TextButton.icon(
+                    onPressed: session.cancel,
+                    icon: const Icon(Icons.stop_rounded),
+                    label: Text(appStrings(context).cancelGeneration),
+                  ),
+              ],
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -213,7 +225,11 @@ class _ModuleDiscoveryPanelState extends State<ModuleDiscoveryPanel> {
                       onPressed: session.busy
                           ? null
                           : () {
-                              question.text = entry.value;
+                              if (offlineEdition) {
+                                unawaited(session.submit(entry.value));
+                              } else {
+                                question.text = entry.value;
+                              }
                             },
                       icon: const Icon(Icons.north_east_rounded, size: 14),
                       label: Text(entry.key),

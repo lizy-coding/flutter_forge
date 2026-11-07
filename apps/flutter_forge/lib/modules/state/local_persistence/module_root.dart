@@ -41,8 +41,21 @@ class _HomePageState extends State<HomePage> {
       listenable: _controller,
       builder: (context, _) {
         if (!_controller.isLoaded) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return Scaffold(
+            body: Center(
+              child: _controller.failure == PersistenceFailure.load
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('读取本演示数据失败，请重试。'),
+                        TextButton(
+                          onPressed: _controller.load,
+                          child: const Text('重试'),
+                        ),
+                      ],
+                    )
+                  : const CircularProgressIndicator(),
+            ),
           );
         }
         if (_noteController.text != _controller.noteText) {
@@ -84,6 +97,14 @@ class _HomePageState extends State<HomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (_controller.failure != null)
+          Text(
+            _controller.failure == PersistenceFailure.clear
+                ? '部分演示数据未能清除，请重试。'
+                : '保存失败，当前修改可能未持久保存，请重试操作。',
+            key: const ValueKey('persistence-error'),
+          ),
+        if (_controller.isBusy) const Text('正在保存…'),
         Text(
           '计数器：${_controller.count}',
           style: Theme.of(context).textTheme.titleLarge,
@@ -93,15 +114,15 @@ class _HomePageState extends State<HomePage> {
           spacing: 8,
           children: [
             ElevatedButton(
-              onPressed: _controller.increment,
+              onPressed: _controller.isClearing ? null : _controller.increment,
               child: const Text('+1'),
             ),
             ElevatedButton(
-              onPressed: _controller.decrement,
+              onPressed: _controller.isClearing ? null : _controller.decrement,
               child: const Text('-1'),
             ),
             OutlinedButton(
-              onPressed: _controller.reset,
+              onPressed: _controller.isClearing ? null : _controller.reset,
               child: const Text('重置'),
             ),
           ],
@@ -110,10 +131,13 @@ class _HomePageState extends State<HomePage> {
           contentPadding: EdgeInsets.zero,
           title: const Text('启用声音'),
           value: _controller.soundEnabled,
-          onChanged: _controller.updateSoundEnabled,
+          onChanged: _controller.isClearing
+              ? null
+              : _controller.updateSoundEnabled,
         ),
         TextField(
           controller: _noteController,
+          enabled: !_controller.isClearing,
           onChanged: _controller.updateNoteText,
           decoration: const InputDecoration(
             labelText: '备注（自动保存）',
@@ -122,16 +146,20 @@ class _HomePageState extends State<HomePage> {
         ),
         const SizedBox(height: 8),
         OutlinedButton.icon(
-          onPressed: () async {
-            await _controller.clearAll();
-            if (context.mounted) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('已清除全部本地数据')));
-            }
-          },
+          onPressed: _controller.isClearing
+              ? null
+              : () async {
+                  final cleared = await _controller.clearAll();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(cleared ? '已清除本演示数据' : '清除未完成，请重试。'),
+                      ),
+                    );
+                  }
+                },
           icon: const Icon(Icons.delete_outline),
-          label: const Text('清除全部'),
+          label: const Text('清除本演示数据'),
         ),
       ],
     );
