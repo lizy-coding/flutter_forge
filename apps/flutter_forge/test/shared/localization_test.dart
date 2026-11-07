@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import '../support/app_info_fixture.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_forge_app/app/app.dart';
@@ -175,6 +176,54 @@ void main() {
       locale.dispose();
     },
   );
+
+  testWidgets('popping a Chinese demo restores English category metadata', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    SharedPreferences.setMockInitialValues({});
+    const platform = AppPlatformSnapshot(platform: AppTargetPlatform.android);
+    final locale = controller();
+    final theme = AppThemeController.forTesting();
+    final router = AppRouter.create(platform)..go('/category/state');
+    await tester.pumpWidget(
+      LocaleScope(
+        controller: locale,
+        child: ProviderScope(
+          overrides: [appPlatformProvider.overrideWithValue(platform)],
+          child: App(router: router, themeController: theme),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Architecture and state'), findsOneWidget);
+    final opened = router.push<void>('/local-persistence');
+    await tester.pumpAndSettle();
+    expect(find.text('Chinese experiment'), findsOneWidget);
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    await opened;
+    expect(find.text('Architecture and state'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Local persistence'),
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('category-page:state')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Local persistence'), findsOneWidget);
+    expect(find.text('架构与状态'), findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    router.dispose();
+    theme.dispose();
+    locale.dispose();
+  });
 
   testWidgets('save failure is visible and retryable in language selector', (
     tester,

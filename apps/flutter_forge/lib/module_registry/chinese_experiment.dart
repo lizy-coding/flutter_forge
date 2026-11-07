@@ -1,3 +1,4 @@
+import 'package:flutter/scheduler.dart';
 import '../l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:forge_localization/forge_localization.dart';
@@ -103,7 +104,7 @@ Widget frameworkLanguage(BuildContext context, Widget child) {
 }
 
 /// Places root-navigator overlays in the experiment language, including dialogs.
-class ExperimentNavigatorLocale extends StatelessWidget {
+class ExperimentNavigatorLocale extends StatefulWidget {
   const ExperimentNavigatorLocale({
     super.key,
     required this.router,
@@ -114,22 +115,77 @@ class ExperimentNavigatorLocale extends StatelessWidget {
   final List<ModuleEntry> modules;
   final Widget child;
   @override
-  Widget build(BuildContext context) => ListenableBuilder(
-    listenable: router.routeInformationProvider,
-    builder: (context, _) {
-      final path = router.routeInformationProvider.value.uri.path;
-      final experiment = modules.any(
-        (module) => path == module.path || path.startsWith('${module.path}/'),
-      );
-      return Localizations.override(
-        context: context,
-        locale: experiment
-            ? const Locale('zh')
-            : (LocaleScope.maybeOf(context)?.effectiveLocale ??
-                  const Locale('zh')),
-        delegates: AppLocalizations.localizationsDelegates,
-        child: child,
-      );
-    },
-  );
+  State<ExperimentNavigatorLocale> createState() =>
+      _ExperimentNavigatorLocaleState();
+}
+
+class _ExperimentNavigatorLocaleState extends State<ExperimentNavigatorLocale> {
+  late String _path;
+  bool _framePending = false;
+  String get _visiblePath =>
+      widget
+          .router
+          .routerDelegate
+          .currentConfiguration
+          .lastOrNull
+          ?.matchedLocation ??
+      '/';
+  @override
+  void initState() {
+    super.initState();
+    _path = _visiblePath;
+    widget.router.routerDelegate.addListener(_routeChanged);
+  }
+
+  @override
+  void didUpdateWidget(ExperimentNavigatorLocale oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.router != widget.router) {
+      oldWidget.router.routerDelegate.removeListener(_routeChanged);
+      widget.router.routerDelegate.addListener(_routeChanged);
+      _path = _visiblePath;
+    }
+  }
+
+  void _updatePath() {
+    if (!mounted) return;
+    final next = _visiblePath;
+    if (next != _path) setState(() => _path = next);
+  }
+
+  void _routeChanged() {
+    // Pop notifications can occur while Navigator is building its children.
+    if (WidgetsBinding.instance.schedulerPhase == SchedulerPhase.idle) {
+      _updatePath();
+    } else if (!_framePending) {
+      _framePending = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _framePending = false;
+        _updatePath();
+      });
+      WidgetsBinding.instance.ensureVisualUpdate();
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.router.routerDelegate.removeListener(_routeChanged);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final experiment = widget.modules.any(
+      (module) => _path == module.path || _path.startsWith('${module.path}/'),
+    );
+    return Localizations.override(
+      context: context,
+      locale: experiment
+          ? const Locale('zh')
+          : (LocaleScope.maybeOf(context)?.effectiveLocale ??
+                const Locale('zh')),
+      delegates: AppLocalizations.localizationsDelegates,
+      child: widget.child,
+    );
+  }
 }
