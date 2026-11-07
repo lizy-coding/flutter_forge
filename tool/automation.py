@@ -138,6 +138,13 @@ def flutter_result(text):
 def launch_command(command, windows=None):
     windows = os.name == 'nt' if windows is None else windows
     resolved = shutil.which(command[0]) or command[0]
+    if windows and Path(resolved).name.lower() == 'flutter':
+        # Flutter ships both a Unix script and a Windows batch entry in bin/.
+        # which() can return the Unix script even on Windows; keep this SDK.
+        batch = Path(str(resolved) + '.bat')
+        if not batch.is_file():
+            raise Blocked(f'Windows Flutter entry missing beside {resolved}: {batch}')
+        resolved = str(batch)
     arguments = [str(resolved), *map(str, command[1:])]
     if not windows or Path(resolved).suffix.lower() not in {'.bat', '.cmd'}:
         return arguments

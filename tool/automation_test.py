@@ -183,6 +183,20 @@ class ResultTest(unittest.TestCase):
         with patch.object(a.shutil, 'which', return_value='C:/tools/python.exe'):
             self.assertEqual(a.launch_command(['python', 'x&y'], windows=True), ['C:/tools/python.exe', 'x&y'])
 
+    def test_windows_prefers_batch_beside_resolved_unix_flutter(self):
+        with tempfile.TemporaryDirectory(prefix='SDK 中文 ') as directory:
+            script = Path(directory) / 'flutter'
+            script.write_text('#!/bin/sh\n', encoding='utf-8')
+            with patch.object(a.shutil, 'which', return_value=str(script)):
+                with self.assertRaises(a.Blocked):
+                    a.launch_command(['flutter', '--version'], windows=True)
+                script.with_suffix('.bat').write_text('@echo off\n', encoding='utf-8')
+                command = a.launch_command(['flutter', '--version'], windows=True)
+                self.assertIn(str(script) + '.bat', command)
+                self.assertIn('/d /v:off /s /c', command)
+                self.assertEqual(a.launch_command(['flutter', '--version'], windows=False),
+                                 [str(script), '--version'])
+
     @unittest.skipUnless(a.os.name == 'nt', 'Windows CMD execution requires Windows')
     def test_actual_windows_batch_arguments_and_failure_exit(self):
         with tempfile.TemporaryDirectory(prefix='forge 中文 ') as directory:

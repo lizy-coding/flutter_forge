@@ -79,6 +79,41 @@ class FakeSession:
         return {'exitCode':0}
 
 
+class CaptionAndEventTest(unittest.TestCase):
+    def test_maximized_client_point_is_not_clicked(self):
+        from windows_ui_acceptance import caption_target
+        target, probes = caption_target((0, -10, 300, 200), (150, 0, 300, 38),
+            'maximize_restore', lambda x, y: 9 if 200 < x < 250 and 12 < y < 29 else 1)
+        self.assertEqual(probes[0]['hitTest'], 1)
+        self.assertIsNotNone(target)
+        self.assertGreater(target[1], 12)
+
+    def test_no_button_hit_returns_diagnostics_instead_of_fallback(self):
+        from windows_ui_acceptance import caption_target
+        target, probes = caption_target((-1000, 0, -700, 200), (150, 0, 300, 38),
+            'maximize_restore', lambda x, y: 1)
+        self.assertIsNone(target)
+        self.assertEqual(len(probes), 15)
+        self.assertTrue(all(p['point'][0] < 0 for p in probes))
+
+    def test_events_use_read_only_command_and_preserve_query_errors(self):
+        from windows_ui_acceptance import crash_events
+        with patch('windows_ui_acceptance.subprocess.run') as run:
+            run.return_value = SimpleNamespace(returncode=0, stdout='{"matches":[]}', stderr='')
+            self.assertEqual(crash_events(Path('app.exe'), '2026-11-02T10:00:00+08:00', [123]), {'matches': []})
+            args, kwargs = run.call_args
+            self.assertIn('-Command', args[0])
+            self.assertNotIn('-File', args[0])
+            self.assertNotIn('-ExecutionPolicy', args[0])
+            self.assertEqual(kwargs['env']['FORGE_EVENT_PIDS'], '123')
+            run.return_value = SimpleNamespace(returncode=1, stderr='Access denied')
+            with self.assertRaisesRegex(RuntimeError, 'Access denied'):
+                crash_events(Path('app.exe'), '2026-11-02', [123])
+            run.return_value = SimpleNamespace(returncode=0, stdout='{}')
+            with self.assertRaises(ValueError):
+                crash_events(Path('app.exe'), '2026-11-02', [123])
+
+
 class DesktopObservationTest(unittest.TestCase):
     def test_capture_failure_is_a_tool_blocker(self):
         session = Session.__new__(Session)

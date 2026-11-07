@@ -21,6 +21,63 @@ class Blocked(RuntimeError):
     pass
 
 
+def caption_target(frame, bounds, action, hit_test):
+    """Find an interior point in the DWM button slot confirmed by WM_NCHITTEST."""
+    if action not in ('close', 'maximize_restore'):
+        raise ValueError('Unsupported caption action')
+    left, top, right, bottom = bounds
+    width = (right - left) / 3
+    slot = 2 if action == 'close' else 1
+    expected = 20 if action == 'close' else 9  # HTCLOSE / HTMAXBUTTON
+    probes = []
+    # DWM bounds may include an invisible frame above the maximized client.
+    # Never click HTCLIENT and never replace the physical click with a command.
+    for fy in (.5, .75, .25, .875, .125):
+        for fx in (.5, .25, .75):
+            x = frame[0] + round(left + width * (slot + fx))
+            y = frame[1] + round(top + (bottom - top) * fy)
+            hit = hit_test(x, y)
+            probes.append({'point': [x, y], 'hitTest': hit})
+            if hit == expected and all(hit_test(x + dx, y + dy) == expected
+                                       for dx, dy in ((-2, 0), (2, 0), (0, -2), (0, 2))):
+                return (x, y), probes
+    return None, probes
+
+
+def crash_events(exe, started, pids):
+    # Fixed, read-only commands, parameters in the environment. No policy
+    # changes, -ExecutionPolicy, script-file loading or Invoke-Expression.
+    script = """$ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$ids = @($env:FORGE_EVENT_PIDS.Split(',') | ForEach-Object { [long]$_ })
+$since = [DateTimeOffset]::Parse($env:FORGE_EVENT_SINCE).LocalDateTime
+Start-Sleep -Seconds 5
+$events = @(Get-WinEvent -FilterHashtable @{
+  LogName='Application'; ProviderName='Application Error'; Id=1000; StartTime=$since
+} -ErrorAction SilentlyContinue -ErrorVariable readErrors)
+foreach ($readError in $readErrors) {
+  if ($readError.FullyQualifiedErrorId -notlike 'NoMatchingEventsFound*') { throw $readError }
+}
+$matches = @($events | Where-Object {
+  $fields = @{}
+  ([xml]$_.ToXml()).Event.EventData.Data | ForEach-Object { $fields[$_.Name] = $_.InnerText }
+  $eventProcess = if ($fields['ProcessId']) { [Convert]::ToInt64(($fields['ProcessId'] -replace '^0x',''),16) } else { -1 }
+  $fields['AppPath'] -ieq $env:FORGE_EVENT_EXE -and $eventProcess -in $ids
+} | ForEach-Object { @{recordId=$_.RecordId; time=$_.TimeCreated.ToString('o'); message=$_.Message} })
+@{matches=$matches; checkedAt=(Get-Date).ToString('o')} | ConvertTo-Json -Depth 5 -Compress
+"""
+    result = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', script],
+        env={**os.environ, 'FORGE_EVENT_EXE': str(exe), 'FORGE_EVENT_SINCE': started,
+             'FORGE_EVENT_PIDS': ','.join(str(pid) for pid in pids)},
+        capture_output=True, text=True, encoding='utf-8', timeout=30)
+    if result.returncode:
+        raise RuntimeError('Crash event collection failed: ' + result.stderr.strip())
+    payload = json.loads(result.stdout.lstrip('\ufeff'))
+    if not isinstance(payload, dict) or not isinstance(payload.get('matches'), list):
+        raise ValueError('Invalid crash event response')
+    return payload
+
+
 def process_ids_for_executable(exe):
     script = """$ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
@@ -257,28 +314,31 @@ class Session:
             raise Blocked('Native caption bounds invalid')
         if action not in ('close', 'maximize_restore'):
             raise ValueError('Unsupported caption action')
-        # Re-query DWM for every click: restored/maximized bounds can differ.
-        fraction = 1 if action == 'close' else 3
-        x = frame.left + bounds.right - (bounds.right - bounds.left) * fraction // 6
-        y = frame.top + (bounds.top + bounds.bottom) // 2
-        # Preserve the coordinate spaces used by this driver before changing
-        # native hit testing. This is diagnostic evidence, not a fix assertion.
+        # Query native hit testing before sending physical input.
         user32 = ctypes.windll.user32
         user32.SendMessageW.argtypes = [wintypes.HWND, wintypes.UINT, ctypes.c_size_t, ctypes.c_ssize_t]
         user32.SendMessageW.restype = ctypes.c_ssize_t
+        def hit_test(x, y):
+            packed = ((y & 0xffff) << 16) | (x & 0xffff)
+            return user32.SendMessageW(hwnd, 0x0084, 0, packed)
+        target, probes = caption_target(
+            (frame.left, frame.top, frame.right, frame.bottom),
+            (bounds.left, bounds.top, bounds.right, bounds.bottom), action, hit_test)
         point = wintypes.POINT()
         user32.GetCursorPos(ctypes.byref(point))
-        packed = ((y & 0xffff) << 16) | (x & 0xffff)
+        x, y = target if target else (None, None)
         audit = {'action': action, 'hwnd': window.handle, 'dpi': user32.GetDpiForWindow(hwnd),
                  'frameScreen': [frame.left, frame.top, frame.right, frame.bottom],
                  'captionWindow': [bounds.left, bounds.top, bounds.right, bounds.bottom],
                  'targetScreen': [x, y], 'cursorBefore': [point.x, point.y],
-                 'hitTest': user32.SendMessageW(hwnd, 0x0084, 0, packed),
+                 'hitTest': hit_test(x, y) if target else None, 'candidateProbes': probes,
                  'zoomedBefore': bool(user32.IsZoomed(hwnd)), 'iconicBefore': bool(user32.IsIconic(hwnd)),
                  'time': datetime.now().astimezone().isoformat()}
         path = self.output / 'caption-clicks.jsonl'
         with path.open('a', encoding='utf-8') as stream:
             stream.write(json.dumps({'phase': 'before', **audit}) + '\n')
+        if target is None:
+            raise AssertionError('No native caption button hit target; inspect caption-clicks.jsonl')
         self.mouse.click(coords=(x, y))
         user32.GetCursorPos(ctypes.byref(point))
         with path.open('a', encoding='utf-8') as stream:
@@ -474,12 +534,7 @@ def main():
                 finally:
                     session.cleanup()
         # Event access errors are failures, not an empty event list.
-        event_script = Path(__file__).with_name('windows_crash_events.ps1')
-        result = subprocess.run(['powershell.exe', '-NoProfile', '-File', str(event_script),
-            '-Executable', str(exe), '-StartedAt', started,
-            '-ProcessIds', ','.join(str(r['pid']) for r in report['runs'])],
-            capture_output=True, text=True, check=True)
-        report['events'] = json.loads(result.stdout.lstrip('\ufeff'))
+        report['events'] = crash_events(exe, started, [r['pid'] for r in report['runs']])
         if report['events']['matches']:
             raise AssertionError('Application Error 1000 recorded for tested PID/path')
         report['status'], exit_code = 'PASS', 0
