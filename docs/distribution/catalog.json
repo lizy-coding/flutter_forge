@@ -267,6 +267,62 @@
         ".release/final-android-audit-20261107/result.json"
       ],
       "note": "Imported build evidence; no submission or publication performed."
+    },
+    {
+      "id": "vivo-1.2.14-4014",
+      "profile": "android-offline",
+      "version": "1.2.14",
+      "build_number": "4014",
+      "path": ".release/vivo/1.2.14/offline-4014/FlutterForge-1.2.14-4014-arm64-offline-release.apk",
+      "sha256": "076e59fbdca1aab1195b9c9e577b0950a8ccda08ad7092a566322b051c274262",
+      "source_sha": "9583e3839055b96df6363d895fad30a947bbe05e",
+      "source_dirty": true,
+      "build_mode": "release",
+      "signing": "release-certificate",
+      "certificate_sha256": "3223a7171466192ef575ab03462f5e34fb2d6c7a6b55ed34f0e87346cbc9ed46",
+      "policy": {
+        "edition": "offline",
+        "policy_id": "offline-2026-10-30.1",
+        "text_sha256": "5cee0db513fbb9f3cb31cfe03ca3347b5ccdc7d846e949b2f29b4da230a0617a",
+        "stable_path": "privacy-offline.html",
+        "version_path": "privacy/versions/offline-2026-10-30.1.html",
+        "public_url": null,
+        "url_verification": "needs_verification"
+      },
+      "source_manifest": ".release/vivo/1.2.14/offline-4014/manifest.json",
+      "acceptance_evidence": [
+        ".release/final-android-privacy-fix-20261113/result.json",
+        ".release/final-android-privacy-fix-20261113/quality-gate.log"
+      ],
+      "note": "本地隐私启动告知修复候选；source_dirty=true，已完成指定真机流程，未重新提交商店。"
+    },
+    {
+      "id": "vivo-1.2.14-4015",
+      "profile": "android-offline",
+      "version": "1.2.14",
+      "build_number": "4015",
+      "path": ".release/vivo/1.2.14/offline-4015/FlutterForge-1.2.14-4015-arm64-offline-release.apk",
+      "sha256": "57e5a5fc3dcb63e223008da2fc434c6f6570931e4ed91ad113280a5f41566b44",
+      "source_sha": "9583e3839055b96df6363d895fad30a947bbe05e",
+      "source_dirty": true,
+      "build_mode": "release",
+      "signing": "release-certificate",
+      "certificate_sha256": "3223a7171466192ef575ab03462f5e34fb2d6c7a6b55ed34f0e87346cbc9ed46",
+      "policy": {
+        "edition": "offline",
+        "policy_id": "offline-2026-11-13.1",
+        "text_sha256": "ee130056f4283f75721b5f6fc0caad28ac59b3952ecd363958314560fc71a075",
+        "stable_path": "privacy-offline.html",
+        "version_path": "privacy/versions/offline-2026-11-13.1.html",
+        "public_url": null,
+        "url_verification": "needs_verification"
+      },
+      "source_manifest": ".release/vivo/1.2.14/offline-4015/manifest.json",
+      "acceptance_evidence": [
+        ".release/final-android-permissions-20261113/result.json",
+        ".release/final-android-permissions-20261113/quality-gate.log"
+      ],
+      "note": "权限用途和蓝牙缓存说明补全的本地候选；新政策尚未部署，source_dirty=true，未提审。"
     }
   ],
   "submissions": [
@@ -298,6 +354,16 @@
             ".release/vivo/1.2.14/submission-4013-20261113/submission-result.json"
           ],
           "note": "vivo 后台显示提交成功，提示 1–3 个工作日完成审核；审核通过后立即发布。"
+        },
+        {
+          "at": "2026-11-13T14:25:56+08:00",
+          "review": "rejected",
+          "publication": "not_published",
+          "evidence": [
+            ".release/vivo/1.2.14/rejection-20261113/result.json",
+            ".release/vivo/1.2.14/rejection-20261113/rejection.png"
+          ],
+          "note": "首次启动缺少明显隐私告知弹窗；基础测试18台兼容性及静态扫描通过。旧版1.2.10仍上架，4013未发布。"
         }
       ],
       "source_evidence": [
