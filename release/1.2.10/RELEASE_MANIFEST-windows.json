@@ -1,0 +1,23 @@
+{
+  "version": "1.2.10+4",
+  "tag": "v1.2.10",
+  "source_sha": "46d75c0425c905d34ab05a5a674bc846303eb364",
+  "platform": "windows",
+  "run_id": "40073913164",
+  "run_attempt": "1",
+  "toolchain": {
+    "flutter": "3.47.2",
+    "node": "24"
+  },
+  "architecture": "x64",
+  "schema": "flutter_forge.release_manifest.v1",
+  "build_mode": "release",
+  "signing": "unsigned",
+  "artifacts": [
+    {
+      "name": "FlutterForge-1.2.10-windows-x64.exe",
+      "size": 14624613,
+      "sha256": "bdef3392d8cb4166df4119218924e437bc319632f414e02592d02dc2d03418a6"
+    }
+  ]
+}

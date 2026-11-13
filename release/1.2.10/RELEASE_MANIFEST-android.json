@@ -1,0 +1,23 @@
+{
+  "version": "1.2.10+4",
+  "tag": "v1.2.10",
+  "source_sha": "46d75c0425c905d34ab05a5a674bc846303eb364",
+  "platform": "android",
+  "run_id": "40073913164",
+  "run_attempt": "1",
+  "toolchain": {
+    "flutter": "3.47.2",
+    "node": "24"
+  },
+  "architecture": "arm64-v8a",
+  "schema": "flutter_forge.release_manifest.v1",
+  "build_mode": "debug",
+  "signing": "Android debug certificate",
+  "artifacts": [
+    {
+      "name": "FlutterForge-1.2.10-android-arm64-v8a-debug.apk",
+      "size": 108453520,
+      "sha256": "76bdc65a5462a334c8c53052b0ca6da91d744ca740bfdc09fbebd90c4e178a63"
+    }
+  ]
+}
