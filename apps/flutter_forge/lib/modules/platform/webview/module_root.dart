@@ -1,4 +1,6 @@
 import 'dart:async';
+import '../../../shared/platform/build_features.dart';
+import 'core/offline_documents.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -56,23 +58,45 @@ class _WebViewPageState extends State<WebViewPage> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  TextField(
-                    controller: _address,
-                    key: const ValueKey('webview-url'),
-                    decoration: const InputDecoration(
-                      labelText: '网页地址（http / https）',
+                  if (offlineEdition)
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        TextButton(
+                          onPressed: session.initialized
+                              ? () => session.navigate(offlineOverviewUrl)
+                              : null,
+                          child: const Text('本地内容'),
+                        ),
+                        TextButton(
+                          onPressed: session.initialized
+                              ? () => session.navigate(offlineCounterUrl)
+                              : null,
+                          child: const Text('页面交互'),
+                        ),
+                      ],
+                    )
+                  else
+                    TextField(
+                      controller: _address,
+                      key: const ValueKey('webview-url'),
+                      decoration: const InputDecoration(
+                        labelText: '网页地址（http / https）',
+                      ),
+                      onSubmitted: session.initialized
+                          ? session.navigate
+                          : null,
                     ),
-                    onSubmitted: session.initialized ? session.navigate : null,
-                  ),
                   Wrap(
                     spacing: 8,
                     children: [
-                      TextButton(
-                        onPressed: session.initialized
-                            ? () => session.navigate(_address.text)
-                            : null,
-                        child: const Text('打开'),
-                      ),
+                      if (!offlineEdition)
+                        TextButton(
+                          onPressed: session.initialized
+                              ? () => session.navigate(_address.text)
+                              : null,
+                          child: const Text('打开'),
+                        ),
                       IconButton(
                         tooltip: '网页后退',
                         onPressed: session.canBack ? session.back : null,
@@ -91,7 +115,7 @@ class _WebViewPageState extends State<WebViewPage> {
                     ],
                   ),
                   Text(
-                    session.url,
+                    offlineEdition ? '内置教学页 · 无需联网' : session.url,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

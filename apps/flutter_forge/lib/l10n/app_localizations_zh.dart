@@ -1,0 +1,975 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Chinese (`zh`).
+class AppLocalizationsZh extends AppLocalizations {
+  AppLocalizationsZh([String locale = 'zh']) : super(locale);
+
+  @override
+  String get language => '语言 / Language';
+
+  @override
+  String get systemLanguage => '跟随系统';
+
+  @override
+  String get chinese => '简体中文';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get saveLanguageFailed => '语言偏好未保存，请重试。';
+
+  @override
+  String get chineseLessons => '教学正文为中文';
+
+  @override
+  String get about => '关于 Flutter Forge';
+
+  @override
+  String get explore => '探索与查阅';
+
+  @override
+  String get searchHint => '搜索模块、概念或分类';
+
+  @override
+  String get categories => '学习分类';
+
+  @override
+  String get recent => '最近访问';
+
+  @override
+  String get homeIntro => '从一个问题或概念开始，找到可以运行的示例。';
+
+  @override
+  String get recentEmpty => '打开模块后，可以在这里快速找到它。';
+
+  @override
+  String get clearSearch => '清空搜索';
+
+  @override
+  String get back => '返回';
+
+  @override
+  String get noResults => '没有匹配模块，清空搜索';
+
+  @override
+  String get searchModules => '搜索模块';
+
+  @override
+  String get unsupported => '当前平台暂不支持此模块';
+
+  @override
+  String get backCatalog => '返回模块目录';
+
+  @override
+  String get workbench => '学习工作台';
+
+  @override
+  String get continueExploring => '随时继续探索';
+
+  @override
+  String get quickOpenModule => '快速打开模块';
+
+  @override
+  String get quickOpen => '快速打开';
+
+  @override
+  String get noHistory => '还没有访问记录，从下方分类或侧栏开始。';
+
+  @override
+  String get collapseSidebar => '收起侧栏';
+
+  @override
+  String get expandSidebar => '展开侧栏';
+
+  @override
+  String get previousPage => '返回上一页';
+
+  @override
+  String get homeWorkbench => '返回工作台';
+
+  @override
+  String get homeCategory => '返回分类主页';
+
+  @override
+  String get enterFullscreen => '进入全屏';
+
+  @override
+  String get exitFullscreen => '退出全屏';
+
+  @override
+  String get modules => '学习模块';
+
+  @override
+  String get collapseCategory => '收起分类';
+
+  @override
+  String get expandCategory => '展开分类';
+
+  @override
+  String get platformUnavailable => '当前平台不可用';
+
+  @override
+  String get newWindow => '在新窗口打开';
+
+  @override
+  String get opening => '正在打开…';
+
+  @override
+  String get focusCategory => '在独立窗口中专注学习这个分类';
+
+  @override
+  String get newTab => '在新标签页打开';
+
+  @override
+  String get openWindowFailed => '打开分类窗口失败，请重试。';
+
+  @override
+  String get aboutIntro => '可运行、可拆解、可验证的 Flutter 学习工坊。';
+
+  @override
+  String moduleCount(int count) {
+    return '$count 个学习模块';
+  }
+
+  @override
+  String minutes(int count) {
+    return '$count 分钟';
+  }
+
+  @override
+  String get moduleGraphicsBackgroundTitle => '图形绘制背景：认识 GPU、纹理与 Shader';
+
+  @override
+  String get moduleGraphicsBackgroundSubtitle =>
+      '从显示一张图片出发，分节认识像素、GPU、纹理、UV 与着色器的职责';
+
+  @override
+  String get modulePixelShaderIntroTitle => '绘制入门：从画形状到算颜色';
+
+  @override
+  String get modulePixelShaderIntroSubtitle =>
+      '用左半边涂蓝的分步实验，理解直接绘制、颜色规则和 UV 位置比例';
+
+  @override
+  String get moduleConstraintLayoutTitle => '约束与声明式布局';
+
+  @override
+  String get moduleConstraintLayoutSubtitle =>
+      '拖动父容器约束，实时观察子组件尺寸与 Row、Column、Wrap 布局变化';
+
+  @override
+  String get moduleTreeStateTitle => '三棵树与生命周期';
+
+  @override
+  String get moduleTreeStateSubtitle =>
+      '理解 Widget/Element/RenderObject 的关系与重建机制';
+
+  @override
+  String get moduleMicrotaskTitle => '事件循环与微任务';
+
+  @override
+  String get moduleMicrotaskSubtitle => '掌握 Dart 事件循环中微任务队列与事件队列的执行顺序';
+
+  @override
+  String get moduleDebounceThrottleTitle => '防抖与节流';
+
+  @override
+  String get moduleDebounceThrottleSubtitle => '对比防抖和节流的执行时序，理解适用场景';
+
+  @override
+  String get moduleStreamSubscriptionTitle => 'Stream 订阅机制';
+
+  @override
+  String get moduleStreamSubscriptionSubtitle => '学习单订阅流与广播流的区别及使用场景';
+
+  @override
+  String get moduleIsolateBasicTitle => 'Isolate 并发对比';
+
+  @override
+  String get moduleIsolateBasicSubtitle => '对比主线程与 Isolate 执行耗时计算对 UI 流畅度的影响';
+
+  @override
+  String get moduleIsolateTaskManagerTitle => '多任务 Isolate 管理器';
+
+  @override
+  String get moduleIsolateTaskManagerSubtitle =>
+      '使用 Isolate 并行处理多任务，通过 Stream 实时上报进度';
+
+  @override
+  String get moduleStatusManagementTitle => '状态管理演进';
+
+  @override
+  String get moduleStatusManagementSubtitle =>
+      '串联 setState、Provider、Riverpod、Bloc，对比不同方案';
+
+  @override
+  String get moduleFlutterIocTitle => 'Flutter IoC 容器';
+
+  @override
+  String get moduleFlutterIocSubtitle => '自研 IoC 容器实现，支持单例/瞬态/作用域生命周期';
+
+  @override
+  String get moduleLocalPersistenceTitle => '本地持久化';
+
+  @override
+  String get moduleLocalPersistenceSubtitle =>
+      '使用 shared_preferences 持久化设置项与计数器，理解异步读取与状态恢复';
+
+  @override
+  String get moduleGcodeVisualizerTitle => 'G-code 解析与轨迹动画';
+
+  @override
+  String get moduleGcodeVisualizerSubtitle => '解析 G-code 指令，绘制刀路轨迹并用动画展示执行过程';
+
+  @override
+  String get moduleAdsorptionLineTitle => '智能吸附线画板';
+
+  @override
+  String get moduleAdsorptionLineSubtitle => '类似设计工具的对齐吸附功能，学习自定义绘制与手势';
+
+  @override
+  String get moduleDownloadAnimationTitle => '下载飞入动效';
+
+  @override
+  String get moduleDownloadAnimationSubtitle =>
+      '三种实现方式对比：Custom View / CustomPaint / Overlay';
+
+  @override
+  String get moduleFontPickerTitle => '字体选择器';
+
+  @override
+  String get moduleFontPickerSubtitle => '命名列表中直观对比不同字体族与字重样式，并通过文件选择器加载本地字体';
+
+  @override
+  String get moduleGenuiWorkbenchTitle => '生成式实验工作区';
+
+  @override
+  String get moduleGenuiWorkbenchSubtitle =>
+      '提出技术问题，用 GenUI 组织可操作实验，观察真实结果并继续探索';
+
+  @override
+  String get moduleWorkflowWorkbenchTitle => '跨项目工作流实验室';
+
+  @override
+  String get moduleWorkflowWorkbenchSubtitle =>
+      'Hub 保存流程与运行记录，Forge 执行文章能力并通过 GenUI 展示结果';
+
+  @override
+  String get moduleShaderPlaygroundTitle => 'Shader 像素绘制与交互动效';
+
+  @override
+  String get moduleShaderPlaygroundSubtitle =>
+      '衔接绘制入门，分步对照 Dart 与 GLSL，从颜色规则走向渐变、卡片扫光和场景调优';
+
+  @override
+  String get moduleFlutterScene3dTitle => '教学型 3D 查看器';
+
+  @override
+  String get moduleFlutterScene3dSubtitle => '用轨道相机、部件选取与聚焦反馈理解 3D 查看器交互';
+
+  @override
+  String get modulePopupWidgetsTitle => '弹窗合集';
+
+  @override
+  String get modulePopupWidgetsSubtitle => '全面展示 Flutter 中的对话框、底部抽屉、菜单等弹窗类型';
+
+  @override
+  String get modulePopupListInteractionTitle => '弹窗与列表交互';
+
+  @override
+  String get modulePopupListInteractionSubtitle => 'Flutter 弹窗组件与二维滚动表格的综合演示';
+
+  @override
+  String get moduleScrollTableTitle => '二维滚动表格';
+
+  @override
+  String get moduleScrollTableSubtitle =>
+      '使用 two_dimensional_scrollables 实现固定表头的表格';
+
+  @override
+  String get moduleOverlayFollowCompareTitle => 'Overlay 跟随方案对照组';
+
+  @override
+  String get moduleOverlayFollowCompareSubtitle =>
+      '对比 CompositedTransformFollower 与 markNeedsBuild 两种浮层跟随方案';
+
+  @override
+  String get moduleDioInterceptorTitle => 'Dio 拦截器链路';
+
+  @override
+  String get moduleDioInterceptorSubtitle =>
+      'Auth/Error/Retry/Log 拦截器 + 本地 Mock Server 实战';
+
+  @override
+  String get moduleUsbNetworkTitle => 'USB 网络连接基础';
+
+  @override
+  String get moduleUsbNetworkSubtitle => 'CDC-NCM 网卡、绑定 TCP 与文本收发';
+
+  @override
+  String get moduleNetworkDiagnosticsTitle => '网络诊断：从现象到检测证据';
+
+  @override
+  String get moduleNetworkDiagnosticsSubtitle =>
+      '检测 DNS、TCP 与 HTTP 响应，观察延迟和间歇失败，预览并复制诊断报告';
+
+  @override
+  String get moduleUsbDetectorTitle => 'USB 设备检测';
+
+  @override
+  String get moduleUsbDetectorSubtitle => 'Android USB 设备检测与状态监控';
+
+  @override
+  String get moduleBatteryMonitorTitle => '电池状态与事件监听';
+
+  @override
+  String get moduleBatteryMonitorSubtitle => '系统变化、定期采样、会话恢复与容量诊断';
+
+  @override
+  String get moduleBluetoothBleTitle => 'BLE 连接生命周期';
+
+  @override
+  String get moduleBluetoothBleSubtitle => '观察扫描、连接、服务发现、读取与订阅、断开';
+
+  @override
+  String get moduleFilePickerTitle => '文件选择器';
+
+  @override
+  String get moduleFilePickerSubtitle =>
+      '复用 file_picker_bridge 中台能力，演示扩展过滤、取消分支与平台差异';
+
+  @override
+  String get moduleOnlineVideoPlayerTitle => '视频播放与控制';
+
+  @override
+  String get moduleOnlineVideoPlayerSubtitle =>
+      '使用 video_player 打开视频并操控播放参数，离线版使用内置教学素材';
+
+  @override
+  String get moduleBiometricAuthTitle => '生物特征与本地认证';
+
+  @override
+  String get moduleBiometricAuthSubtitle => '从能力查询到认证结果，观察指纹与面容的运行时差异';
+
+  @override
+  String get moduleSystemNotificationTitle => '系统通知与授权状态';
+
+  @override
+  String get moduleSystemNotificationSubtitle => '授权状态、授权请求与本地通知投递的运行时链路';
+
+  @override
+  String get moduleWebviewTitle => '网页容器与跨平台导航';
+
+  @override
+  String get moduleWebviewSubtitle => '学习 Android、macOS、Windows 网页导航与生命周期';
+
+  @override
+  String get basicLabel => '基础机制';
+
+  @override
+  String get asyncLabel => '异步并发';
+
+  @override
+  String get stateLabel => '架构与状态';
+
+  @override
+  String get uiLabel => 'UI 与动效';
+
+  @override
+  String get popupTableLabel => '弹窗与列表';
+
+  @override
+  String get platformLabel => '网络与平台';
+
+  @override
+  String get beginnerLabel => '入门';
+
+  @override
+  String get intermediateLabel => '进阶';
+
+  @override
+  String get advancedLabel => '实战';
+
+  @override
+  String get pendingLabel => '待整改';
+
+  @override
+  String get readyLabel => '可学习';
+
+  @override
+  String get recommendedLabel => '推荐';
+
+  @override
+  String get closeQuickOpen => '关闭快速打开';
+
+  @override
+  String get quickOpenEmpty => '没有匹配模块，请尝试其他关键词';
+
+  @override
+  String get quickOpenKeys => '↑ ↓ 选择    Enter 打开    Esc 返回';
+
+  @override
+  String get interactiveWorkshop => '可交互的 Flutter 学习现场';
+
+  @override
+  String get searchConcept => '搜索模块或概念';
+
+  @override
+  String get learningObjectives => '🎯 学习目标';
+
+  @override
+  String get copied => '已复制到剪贴板';
+
+  @override
+  String get copyCode => '复制代码';
+
+  @override
+  String get statusLog => '📊 状态日志';
+
+  @override
+  String get commonMistakes => '⚠️ 常见误区';
+
+  @override
+  String get exercises => '💪 练习任务';
+
+  @override
+  String get chineseExperiment => '中文实验';
+
+  @override
+  String get policyChinese => '政策全文为中文';
+
+  @override
+  String get appearance => '切换外观';
+
+  @override
+  String get solidAppearance => '实色外观';
+
+  @override
+  String get systemMaterial => '系统材质';
+
+  @override
+  String get glassAppearance => '玻璃外观';
+
+  @override
+  String get themeSystem => '跟随系统';
+
+  @override
+  String get themeLight => '白日模式';
+
+  @override
+  String get themeDark => '黑暗模式';
+
+  @override
+  String get privacyData => '隐私与数据';
+
+  @override
+  String get offlineEdition => '离线学习版 · 所有实验在本机进行';
+
+  @override
+  String get fullEdition => '联网完整版 · 按操作使用网络服务';
+
+  @override
+  String get privacyPermissions => '隐私说明与权限用途';
+
+  @override
+  String get privacyUsage => '隐私说明与数据使用';
+
+  @override
+  String get manageData => '管理本地数据与权限';
+
+  @override
+  String get recentScope => '最近访问只保存模块入口。清除后不影响主题、实验内容或原有文件。';
+
+  @override
+  String get recentCleared => '最近访问已清除';
+
+  @override
+  String get recentSaveFailed => '最近访问保存失败，重新打开后可能仍会显示';
+
+  @override
+  String get clearRecent => '清除最近访问';
+
+  @override
+  String get systemPermissions => '系统权限：在系统设置中查看或撤销蓝牙、通知等授权。拒绝可选权限不影响其他学习模块。';
+
+  @override
+  String get copyPrivacyEmail => '复制隐私反馈邮箱';
+
+  @override
+  String get emailCopied => '邮箱已复制，请自行发送反馈';
+
+  @override
+  String get discoveryEyebrow => '探索，从好奇开始';
+
+  @override
+  String get changeModel => '更换模型服务';
+
+  @override
+  String get connectModel => '连接真实模型';
+
+  @override
+  String get discoveryHeadline => '今天，想弄明白什么？';
+
+  @override
+  String get discoveryIntro => '从一个问题出发，找到值得动手的实验。';
+
+  @override
+  String get questionExample => '比如：异步任务为什么会卡住界面？';
+
+  @override
+  String get modelConnected => '模型已连接';
+
+  @override
+  String get replayNoModel => '固定回放 · 未调用模型';
+
+  @override
+  String get cancelGeneration => '取消生成';
+
+  @override
+  String get generateEntry => '生成探索入口';
+
+  @override
+  String get layoutTopic => '布局与尺寸';
+
+  @override
+  String get asyncTopic => '异步与并发';
+
+  @override
+  String get networkTopic => '网络与设备';
+
+  @override
+  String get preparingDiscovery => '正在为你整理探索方向…';
+
+  @override
+  String get discoveryResults => '为这次好奇，找到入口';
+
+  @override
+  String get fixedReplay => '固定回放';
+
+  @override
+  String get clearLocalFilter => '清除本地过滤，恢复完整推荐';
+
+  @override
+  String get replayChinese => '教学回放内容为中文；模型或外部内容保留原文。';
+
+  @override
+  String get noOpenPlatforms => '当前没有开放的目标平台';
+
+  @override
+  String estimatedTime(int count, String status) {
+    return '预计 $count 分钟 · $status';
+  }
+
+  @override
+  String policyVersion(String version) {
+    return '政策版本：$version';
+  }
+
+  @override
+  String currentPlatform(String platform) {
+    return '当前平台：$platform';
+  }
+
+  @override
+  String openPlatforms(String platforms) {
+    return '已开放平台：$platforms';
+  }
+
+  @override
+  String localFilter(String label) {
+    return '本地过滤：$label';
+  }
+
+  @override
+  String windowError(String message) {
+    return '窗口操作失败：$message';
+  }
+
+  @override
+  String get otherData =>
+      '其他本地数据：Android 可在系统应用设置清除应用数据；Web 可在浏览器清除站点数据。Windows 的应用重置取决于安装方式；macOS 卸载应用不保证清除全部偏好及网页数据。清理前请确认需要保留的内容。';
+
+  @override
+  String get thirdPartyData =>
+      '第三方数据：停止生成、断开连接或离开模块可停止后续操作。已发送给模型、网页或 Hub 的数据需按服务方规则管理，清除本地数据不会删除服务端数据。';
+
+  @override
+  String get concept0 => '像素';
+
+  @override
+  String get concept1 => '纹理';
+
+  @override
+  String get concept2 => '片元着色器';
+
+  @override
+  String get concept3 => '局部坐标';
+
+  @override
+  String get concept4 => '颜色规则';
+
+  @override
+  String get concept5 => 'UV 比例';
+
+  @override
+  String get concept6 => '声明式 UI';
+
+  @override
+  String get concept7 => 'Widget 树';
+
+  @override
+  String get concept8 => 'Element 树';
+
+  @override
+  String get concept9 => '生命周期';
+
+  @override
+  String get concept10 => '单订阅';
+
+  @override
+  String get concept11 => '广播流';
+
+  @override
+  String get concept12 => 'Stream 变换';
+
+  @override
+  String get concept13 => '性能优化';
+
+  @override
+  String get concept14 => '多任务';
+
+  @override
+  String get concept15 => '进度上报';
+
+  @override
+  String get concept16 => '暂停/恢复';
+
+  @override
+  String get concept17 => '状态提升';
+
+  @override
+  String get concept18 => '依赖注入';
+
+  @override
+  String get concept19 => '作用域';
+
+  @override
+  String get concept20 => '键值存储';
+
+  @override
+  String get concept21 => '异步读取';
+
+  @override
+  String get concept22 => '状态恢复';
+
+  @override
+  String get concept23 => '测试替身';
+
+  @override
+  String get concept24 => '动画控制';
+
+  @override
+  String get concept25 => '手势检测';
+
+  @override
+  String get concept26 => '吸附算法';
+
+  @override
+  String get concept27 => '状态管理';
+
+  @override
+  String get concept28 => 'Tween 动画';
+
+  @override
+  String get concept29 => '动画配置';
+
+  @override
+  String get concept30 => '字重';
+
+  @override
+  String get concept31 => '字距';
+
+  @override
+  String get concept32 => '字体 fallback';
+
+  @override
+  String get concept33 => '平台字体';
+
+  @override
+  String get concept34 => '中台复用';
+
+  @override
+  String get concept35 => '交互事件';
+
+  @override
+  String get concept36 => '工作流';
+
+  @override
+  String get concept37 => '能力注册';
+
+  @override
+  String get concept38 => '输入 Schema';
+
+  @override
+  String get concept39 => '执行租约';
+
+  @override
+  String get concept40 => '运行事件';
+
+  @override
+  String get concept41 => '扫光';
+
+  @override
+  String get concept42 => '场景选择';
+
+  @override
+  String get concept43 => '视觉调优';
+
+  @override
+  String get concept44 => '轨道相机';
+
+  @override
+  String get concept45 => '部件聚焦';
+
+  @override
+  String get concept46 => '二维滚动';
+
+  @override
+  String get concept47 => '固定表头';
+
+  @override
+  String get concept48 => '拦截器';
+
+  @override
+  String get concept49 => 'Token 刷新';
+
+  @override
+  String get concept50 => '重试机制';
+
+  @override
+  String get concept51 => '接口绑定';
+
+  @override
+  String get concept52 => 'TCP 字节流';
+
+  @override
+  String get concept53 => '资源释放';
+
+  @override
+  String get concept54 => '超时与取消';
+
+  @override
+  String get concept55 => '证据边界';
+
+  @override
+  String get concept56 => '平台接口';
+
+  @override
+  String get concept57 => '能力查询';
+
+  @override
+  String get concept58 => '类型化结果';
+
+  @override
+  String get concept59 => '系统变化';
+
+  @override
+  String get concept60 => '定期采样';
+
+  @override
+  String get concept61 => '特征值属性';
+
+  @override
+  String get concept62 => '通知订阅';
+
+  @override
+  String get concept63 => '平台桥接';
+
+  @override
+  String get concept64 => '扩展名过滤';
+
+  @override
+  String get concept65 => '取消分支';
+
+  @override
+  String get concept66 => '平台播放器';
+
+  @override
+  String get concept67 => 'HTTP 流';
+
+  @override
+  String get concept68 => '播放控制';
+
+  @override
+  String get concept69 => '倍速';
+
+  @override
+  String get concept70 => 'Controller 生命周期';
+
+  @override
+  String get concept71 => '认证原因码';
+
+  @override
+  String get concept72 => '凭据回退';
+
+  @override
+  String get concept73 => '运行时权限';
+
+  @override
+  String get concept74 => '授权状态';
+
+  @override
+  String get concept75 => '通知投递';
+
+  @override
+  String get concept76 => '加载进度';
+
+  @override
+  String get startupLoading => '正在加载应用…';
+
+  @override
+  String get startupReload => '重新加载';
+
+  @override
+  String get startupTimeout => '加载超时，请检查网络后重试。';
+
+  @override
+  String get startupFailed => '加载失败，请重新加载。';
+
+  @override
+  String get startupResources => '正在加载 Flutter 资源…';
+
+  @override
+  String get startupEngine => '正在初始化渲染引擎…';
+
+  @override
+  String get startupApp => '正在启动学习目录…';
+
+  @override
+  String get modelServiceTitle => '连接模型服务';
+
+  @override
+  String get modelServiceIntro =>
+      '可连接单独启动的本机 Codex 桥接，使用已有 CLI 登录。也可连接兼容 Chat Completions 流式协议的服务。端点与模型名会记住，方便下次连接；临时令牌仅当前页面有效，离开后清除；浏览器端点需允许跨域。';
+
+  @override
+  String get modelDataNotice =>
+      '真实生成会把你的问题、实验状态和必要上下文发送到所选服务，临时令牌用于请求认证。服务方的数据保留和使用方式请查看其隐私政策；固定回放无需发送模型请求。详见“关于”中的隐私说明。';
+
+  @override
+  String get endpointLabel => '完整端点 URL';
+
+  @override
+  String get endpointInvalid => '请输入 HTTPS 端点或本机 HTTP 端点。';
+
+  @override
+  String get modelName => '模型名称';
+
+  @override
+  String get modelNameRequired => '请输入模型名称。';
+
+  @override
+  String get modelToken => '临时访问令牌（本机服务可留空）';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get useService => '使用此服务';
+
+  @override
+  String get discoveryFailed => '探索未完成，请检查输入或模型服务后重试。';
+
+  @override
+  String get originalDetails => '原始详情';
+
+  @override
+  String get explorationRecords => '查看探索记录';
+
+  @override
+  String get loadLanguageFailed => '无法读取已保存的语言，当前跟随系统。请选择语言以重新保存。';
+
+  @override
+  String get versionInfo => '版本信息';
+
+  @override
+  String get versionLoading => '正在读取安装版本…';
+
+  @override
+  String get versionUnavailable => '暂时无法读取版本信息，请重试。';
+
+  @override
+  String get versionRetry => '重试';
+
+  @override
+  String get copyVersion => '复制版本信息';
+
+  @override
+  String get versionCopied => '版本信息已复制';
+
+  @override
+  String get versionCopyFailed => '复制失败，请重试。';
+
+  @override
+  String get editionOffline => '离线学习版';
+
+  @override
+  String get editionFull => '联网完整版';
+
+  @override
+  String installedVersion(String version, String build) {
+    return '版本 $version · 构建 $build';
+  }
+
+  @override
+  String get offlineReplayExamples => '选择一个固定示例，查看本地回放效果。';
+
+  @override
+  String get startupPrivacyTitle => '隐私说明';
+
+  @override
+  String get startupPrivacyIntro =>
+      '欢迎使用 Flutter Forge。请先了解我们的个人信息处理规则，并阅读完整隐私说明后作出选择。';
+
+  @override
+  String get startupPrivacyOffline =>
+      '本离线版无应用账号、广告、统计或云同步，不连接开发者或第三方服务器。语言、主题、最近访问、政策选择和你保存的演示内容保存在本机。universal_ble 蓝牙组件用于外设交互，会在服务发现后缓存外设地址和服务 UUID；保存与清除方式见完整说明。';
+
+  @override
+  String get startupPrivacyFull =>
+      '本应用会在本机保存偏好和演示内容；联网功能由你主动使用，相关请求和输入会发送到你选择的服务，详见完整隐私说明。';
+
+  @override
+  String get startupPrivacyPermissions =>
+      '蓝牙演示按需申请附近设备权限；Android 11 及以下扫描可能需要定位权限，不用于位置跟踪。通知权限用于你主动投递的本地测试通知；生物识别由系统验证，应用只接收结果。拒绝可选权限不影响其他演示，授权可在系统设置管理。';
+
+  @override
+  String get startupPrivacyReadPolicy => '阅读完整《隐私说明》';
+
+  @override
+  String get startupPrivacyAccept => '同意并继续';
+
+  @override
+  String get startupPrivacyDecline => '不同意并退出';
+
+  @override
+  String get startupPrivacySaving => '正在保存…';
+
+  @override
+  String get startupPrivacySaveFailed => '未能保存你的选择，请重试；尚未进入应用。';
+
+  @override
+  String get startupPrivacyLaunchFailed => '应用启动失败，请重试。';
+
+  @override
+  String get offlinePermissionsTitle => '权限用途速览';
+
+  @override
+  String get offlinePermissionPurposes =>
+      '附近设备：扫描附近 BLE 外设、查询系统连接、连接你选择的设备并读取或订阅特征值。外设名称、地址、信号与服务信息用于本机演示。\n旧 Android 定位：仅 Android 11 及以下的 BLE 扫描兼容要求，不用于位置跟踪。\n通知：你点击请求授权后，用于主动投递本地测试通知，可在通知演示或系统通知栏取消。\n生物识别：你发起认证后由系统验证，应用不读取指纹、人脸模板或锁屏密码。\n文件与字体：只处理你在系统选择器中主动选择的项目。\n媒体普通权限：网络状态与唤醒锁由媒体组件声明，离线包仍无 INTERNET 权限。\n拒绝可选权限只影响对应操作。同意隐私说明不会自动授予这些权限。蓝牙组件会在本机缓存外设地址和服务 UUID，退出模块或撤销权限不会清除缓存；清除本应用数据或卸载可删除本地副本，同时会清除其他本地数据。完整权限名称、保存期限和组件说明见上方完整政策。';
+}

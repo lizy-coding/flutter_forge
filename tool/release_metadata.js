@@ -61,7 +61,7 @@ function metadata(directory, context) {
   if (!expected || !artifacts.some((a) => a.name.endsWith(expected))) throw new Error(`Missing ${platform} artifact`);
   const architecture = {macos: 'arm64', windows: 'x64', android: 'arm64-v8a', web: 'not applicable'}[platform];
   const toolchain = releaseToolchain(context.toolchain);
-  return {...context, architecture, toolchain, schema: 'flutter_forge.release_manifest.v1', build_mode: platform === 'android' ? 'debug' : 'release', signing: platform === 'android' ? 'Android debug certificate' : platform === 'web' ? 'not applicable' : 'unsigned', artifacts};
+  return {...context, distribution_profile: `${platform}-full`, policy_binding: context.policy_binding || null, architecture, toolchain, schema: 'flutter_forge.release_manifest.v1', build_mode: platform === 'android' ? 'debug' : 'release', signing: platform === 'android' ? 'Android debug certificate' : platform === 'web' ? 'not applicable' : 'unsigned', artifacts};
 }
 if (require.main === module) {
   const mode = process.argv[2];
@@ -86,7 +86,9 @@ if (require.main === module) {
   }
   if (mode === 'stage') {
     const directory = process.argv[3];
-    const data = metadata(directory, {version, tag: tag || null, source_sha, platform: process.env.RELEASE_PLATFORM, run_id: process.env.GITHUB_RUN_ID || null, run_attempt: process.env.GITHUB_RUN_ATTEMPT || null, toolchain: installedToolchain()});
+    const policyIndex = 'docs/privacy/index.json';
+    const policy_binding = fs.existsSync(policyIndex) ? JSON.parse(fs.readFileSync(policyIndex, 'utf8')).current.full : null;
+    const data = metadata(directory, {policy_binding, version, tag: tag || null, source_sha, platform: process.env.RELEASE_PLATFORM, run_id: process.env.GITHUB_RUN_ID || null, run_attempt: process.env.GITHUB_RUN_ATTEMPT || null, toolchain: installedToolchain()});
     fs.writeFileSync(path.join(directory, `RELEASE_MANIFEST-${data.platform}.json`), JSON.stringify(data, null, 2) + '\n');
     fs.writeFileSync(path.join(directory, `SHA256SUMS-${data.platform}`), data.artifacts.map((a) => `${a.sha256}  ${a.name}`).join('\n') + '\n');
   } else if (mode !== 'verify') throw new Error('Usage: node tool/release_metadata.js verify|stage [directory]');

@@ -11,6 +11,7 @@ import '../unsupported_module_page.dart';
 import '../../module_registry/app_platform_snapshot.dart';
 import '../../module_registry/module_catalog_utils.dart';
 import '../../module_registry/module_entry.dart';
+import '../../module_registry/chinese_experiment.dart';
 import '../../module_registry/module_category.dart';
 import '../../module_registry/module_manifest.dart';
 
@@ -24,11 +25,18 @@ List<GoRoute> _moduleRoutesFor(AppPlatformSnapshot platform) =>
 
 List<RouteBase> _routesFor(AppPlatformSnapshot platform) => [
   ShellRoute(
-    builder: (context, state, child) => AdaptiveAppShell(
-      modules: moduleManifest,
-      location: state.uri.path,
-      platform: platform,
-      child: child,
+    builder: (context, state, child) => frameworkLanguage(
+      context,
+      AdaptiveAppShell(
+        modules: moduleManifest,
+        location: state.uri.path,
+        platform: platform,
+        child: ExperimentNavigatorLocale(
+          router: GoRouter.of(context),
+          modules: moduleManifest,
+          child: child,
+        ),
+      ),
     ),
     routes: [
       GoRoute(

@@ -1,0 +1,22 @@
+name: bluetooth_system_bridge
+description: System Bluetooth settings and connected audio profile queries.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+environment:
+  sdk: ^3.11.5
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+  url_launcher: ^6.3.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.flutterforge.bluetooth_system_bridge
+        pluginClass: BluetoothSystemBridgePlugin

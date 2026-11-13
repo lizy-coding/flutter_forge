@@ -8,9 +8,11 @@ import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 
 @immutable
 class ForgeNavigationDestination {
-  const ForgeNavigationDestination(this.label, this.icon);
+  const ForgeNavigationDestination(this.label, this.icon, {this.labelBuilder});
 
   final String label;
+  final String Function(BuildContext)? labelBuilder;
+  String labelFor(BuildContext context) => labelBuilder?.call(context) ?? label;
   final IconData icon;
 }
 
@@ -109,7 +111,7 @@ class _ForgeBubbleNavigationState extends State<ForgeBubbleNavigation>
               child: Semantics(
                 selected: index == widget.selectedIndex,
                 child: Tooltip(
-                  message: widget.destinations[index].label,
+                  message: widget.destinations[index].labelFor(context),
                   child: TextButton(
                     key: widget.destinationKey(index),
                     onPressed: () => _select(index),
@@ -132,7 +134,7 @@ class _ForgeBubbleNavigationState extends State<ForgeBubbleNavigation>
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Text(
-                                  widget.destinations[index].label,
+                                  widget.destinations[index].labelFor(context),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -141,7 +143,9 @@ class _ForgeBubbleNavigationState extends State<ForgeBubbleNavigation>
                           )
                         : Icon(
                             widget.destinations[index].icon,
-                            semanticLabel: widget.destinations[index].label,
+                            semanticLabel: widget.destinations[index].labelFor(
+                              context,
+                            ),
                           ),
                   ),
                 ),

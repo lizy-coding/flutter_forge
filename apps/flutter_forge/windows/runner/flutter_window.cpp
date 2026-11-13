@@ -26,16 +26,19 @@ bool FlutterWindow::OnCreate() {
   if (!flutter_controller_->engine() || !flutter_controller_->view()) {
     return false;
   }
-  RegisterPlugins(flutter_controller_->engine());
+  // Plugin registration and SetChildContent can dispatch platform messages.
+  // Bind the shell channel first, using the actual top-level HWND before the
+  // Flutter view has been parented (GA_ROOT would still be the view itself).
+  RegisterDesktopWindowHost(flutter_controller_.get(), GetHandle());
   DesktopMultiWindowSetWindowCreatedCallback([](void *controller) {
     auto *flutter_view_controller =
         reinterpret_cast<flutter::FlutterViewController *>(controller);
     auto *registry = flutter_view_controller->engine();
-    RegisterPlugins(registry);
     RegisterDesktopWindowHost(flutter_view_controller);
+    RegisterPlugins(registry);
   });
+  RegisterPlugins(flutter_controller_->engine());
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
-  RegisterDesktopWindowHost(flutter_controller_.get());
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
     this->Show();

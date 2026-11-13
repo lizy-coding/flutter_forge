@@ -21,6 +21,11 @@ test('artifact verification rejects absent, empty and wrong-format output', (t) 
   const data = metadata(dir, {platform:'android', toolchain:{flutter:'3.47.2',node:'24'}});
   assert.equal(data.build_mode, 'debug');
   assert.equal(data.signing, 'Android debug certificate');
+  assert.equal(data.distribution_profile, 'android-full');
+  assert.equal(data.policy_binding, null);
+  const binding = {policy_id: 'full-fixture', text_sha256: 'a'.repeat(64)};
+  const bound = metadata(dir, {platform:'android', toolchain:{flutter:'3.47.2',node:'24'}, policy_binding: binding});
+  assert.deepEqual(bound.policy_binding, binding);
   assert.equal(data.artifacts[0].size, 5);
   assert.match(data.artifacts[0].sha256, /^[a-f0-9]{64}$/);
 });
@@ -43,7 +48,8 @@ test('release CLI verifies exact clean source and rejects dirty or unrelated tag
   const gitExe = process.platform === 'darwin' && fs.existsSync('/Library/Developer/CommandLineTools/usr/bin/git')
     ? '/Library/Developer/CommandLineTools/usr/bin/git' : 'git';
   const git = (...args) => execFileSync(gitExe, args, {cwd:dir, encoding:'utf8', stdio:'pipe'}).trim();
-  git('init', '-q', '-b', 'master');
+  git('init', '-q');
+  git('symbolic-ref', 'HEAD', 'refs/heads/master');
   git('config', 'user.name', 'Release fixture');
   git('config', 'user.email', 'fixture@example.invalid');
   git('add', '.');
@@ -94,9 +100,9 @@ test('release CLI verifies exact clean source and rejects dirty or unrelated tag
     fs.rmSync(staging, {recursive:true});
     if (raw) fs.rmSync(path.join(dir, raw));
   }
-  fs.symlinkSync(path.join(dir, 'apps'), staging);
+  fs.symlinkSync(path.join(dir, 'apps'), staging, 'junction');
   assert.throws(() => stage('web'), /Untracked source\/input|symlink/);
-  fs.rmSync(staging);
+  fs.unlinkSync(staging);
   fs.appendFileSync(pubspec, '# dirty\n');
   assert.throws(() => verify(), /Source changed/);
   git('add', '.');

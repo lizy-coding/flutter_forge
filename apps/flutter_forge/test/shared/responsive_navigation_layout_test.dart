@@ -18,7 +18,10 @@ void main() {
     expect(find.byType(NavigationRail), findsNothing);
     expect(find.byKey(const ValueKey('expanded-sidebar')), findsNothing);
     expect(find.byKey(const ValueKey('learning-home')), findsOneWidget);
-    expect(find.byKey(const ValueKey('discovery-question')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('learning-home-search')).hitTestable(),
+      findsOneWidget,
+    );
     await tester.tap(find.byTooltip('Open navigation menu'));
     await tester.pumpAndSettle();
     expect(find.byType(NavigationDrawer), findsOneWidget);
@@ -36,7 +39,10 @@ void main() {
     await _pumpShell(tester, size: const Size(320, 700));
 
     expect(find.byKey(const ValueKey('learning-home')), findsOneWidget);
-    expect(find.byKey(const ValueKey('discovery-question')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('learning-home-search')).hitTestable(),
+      findsOneWidget,
+    );
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('learning-category:platform')),
       250,

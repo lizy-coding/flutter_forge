@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'webview_backend.dart';
+import 'offline_documents.dart';
+import '../../../../shared/platform/build_features.dart';
 
 // Adapted from webview_plugin's loading manager and navigation controller.
 class WebViewSession extends ChangeNotifier {
@@ -17,7 +19,7 @@ class WebViewSession extends ChangeNotifier {
   bool canBack = false;
   bool canForward = false;
   double progress = 0;
-  String url = 'https://example.com';
+  String url = offlineEdition ? offlineOverviewUrl : 'https://example.com';
   String? error;
   int _generation = 0;
 
@@ -108,8 +110,10 @@ class WebViewSession extends ChangeNotifier {
 
   Future<void> navigate(String value) async {
     if (_disposed || !initialized) return;
-    if (!isWebUrl(value.trim())) {
-      _fail('请输入有效的 http 或 https 地址');
+    if (offlineEdition
+        ? !isOfflineDocument(value.trim())
+        : !isWebUrl(value.trim())) {
+      _fail(offlineEdition ? '请选择内置教学页' : '请输入有效的 http 或 https 地址');
       return;
     }
     url = value.trim();

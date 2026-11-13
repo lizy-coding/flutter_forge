@@ -1,153 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:universal_ble/universal_ble.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class SystemAudioDevice {
-  const SystemAudioDevice({
-    required this.id,
-    required this.name,
-    required this.profiles,
-  });
-  final String id;
-  final String? name;
-  final List<String> profiles;
-}
+import 'ble_client.dart';
 
-abstract class BleClient {
-  Stream<BleDevice> get scanResults;
-  Stream<AvailabilityState> get availabilityChanges;
-  Stream<bool> connectionChanges(String id);
-  Stream<Uint8List> values(String id, String characteristic);
-  Future<AvailabilityState> availability();
-  Future<bool> hasPermissions();
-  Future<void> requestPermissions();
-  Future<bool> enableBluetooth();
-  Future<void> openBluetoothSettings();
-  Future<List<SystemAudioDevice>> getConnectedAudioDevices();
-  Future<void> startScan();
-  Future<void> stopScan();
-  Future<bool> isScanning();
-  Future<List<BleDevice>> getSystemDevices();
-  Future<void> connect(String id);
-  Future<void> disconnect(String id);
-  Future<BleConnectionState> connectionState(String id);
-  Future<List<BleService>> discover(String id);
-  Future<Uint8List> read(String id, String service, String characteristic);
-  Future<void> subscribe(
-    String id,
-    String service,
-    String characteristic, {
-    required bool indicate,
-  });
-  Future<void> unsubscribe(String id, String service, String characteristic);
-}
+export 'ble_client.dart';
 
-class UniversalBleClient implements BleClient {
-  static const _systemChannel = MethodChannel('flutter_forge/bluetooth_system');
-  @override
-  Future<void> openBluetoothSettings() async {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      await _systemChannel.invokeMethod<void>('openSettings');
-      return;
-    }
-    final uri = switch (defaultTargetPlatform) {
-      TargetPlatform.macOS => Uri.parse(
-        'x-apple.systempreferences:com.apple.BluetoothSettings',
-      ),
-      TargetPlatform.windows => Uri.parse('ms-settings:bluetooth'),
-      _ => throw UnsupportedError('当前平台不提供系统蓝牙设置入口'),
-    };
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      throw StateError('系统未能打开蓝牙设置');
-    }
-  }
-
-  @override
-  Future<List<SystemAudioDevice>> getConnectedAudioDevices() async {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return [];
-    final result =
-        await _systemChannel.invokeListMethod<Map<Object?, Object?>>(
-          'connectedAudioDevices',
-        ) ??
-        [];
-    return result
-        .map(
-          (item) => SystemAudioDevice(
-            id: item['id'] as String,
-            name: item['name'] as String?,
-            profiles: (item['profiles'] as List).cast<String>(),
-          ),
-        )
-        .toList();
-  }
-
-  @override
-  Stream<BleDevice> get scanResults => UniversalBle.scanStream;
-  @override
-  Stream<AvailabilityState> get availabilityChanges =>
-      UniversalBle.availabilityStream;
-  @override
-  Stream<bool> connectionChanges(String id) =>
-      UniversalBle.connectionStream(id);
-  @override
-  Stream<Uint8List> values(String id, String characteristic) =>
-      UniversalBle.characteristicValueStream(id, characteristic);
-  @override
-  Future<AvailabilityState> availability() =>
-      UniversalBle.getBluetoothAvailabilityState();
-  @override
-  Future<bool> hasPermissions() => UniversalBle.hasPermissions();
-  @override
-  Future<void> requestPermissions() => UniversalBle.requestPermissions();
-  @override
-  Future<bool> enableBluetooth() =>
-      UniversalBle.enableBluetooth(timeout: BleSession.operationTimeout);
-  @override
-  Future<void> startScan() => UniversalBle.startScan();
-  @override
-  Future<void> stopScan() => UniversalBle.stopScan();
-  @override
-  Future<bool> isScanning() => UniversalBle.isScanning();
-  @override
-  Future<List<BleDevice>> getSystemDevices() => UniversalBle.getSystemDevices();
-  @override
-  Future<void> connect(String id) =>
-      UniversalBle.connect(id, timeout: const Duration(seconds: 15));
-  @override
-  Future<void> disconnect(String id) => UniversalBle.disconnect(
-    id,
-    timeout: const Duration(seconds: 8),
-    queueId: 'ble-control/$id',
-  );
-  @override
-  Future<BleConnectionState> connectionState(String id) =>
-      UniversalBle.getConnectionState(
-        id,
-        timeout: const Duration(seconds: 3),
-        queueId: 'ble-control/$id',
-      );
-  @override
-  Future<List<BleService>> discover(String id) =>
-      UniversalBle.discoverServices(id);
-  @override
-  Future<Uint8List> read(String id, String service, String characteristic) =>
-      UniversalBle.read(id, service, characteristic);
-  @override
-  Future<void> subscribe(
-    String id,
-    String service,
-    String characteristic, {
-    required bool indicate,
-  }) => indicate
-      ? UniversalBle.subscribeIndications(id, service, characteristic)
-      : UniversalBle.subscribeNotifications(id, service, characteristic);
-  @override
-  Future<void> unsubscribe(String id, String service, String characteristic) =>
-      UniversalBle.unsubscribe(id, service, characteristic);
-}
+part 'ble_gatt_control.dart';
+part 'ble_scan_control.dart';
 
 enum BleScanPhase { idle, starting, running, stopping, unconfirmed }
 
@@ -164,8 +25,12 @@ enum BleLinkPhase {
 
 enum BleAdvertisementState { currentRound, previousRound, expired }
 
+/// Session state machine for one BLE learning page: scan rounds, a single
+/// device link and GATT access share generation counters so stale radio
+/// callbacks never clobber newer user intent. Scan round control lives in
+/// [BleScanControl], GATT access in [BleGattControl] (same library parts).
 class BleSession extends ChangeNotifier {
-  static const operationTimeout = Duration(seconds: 8);
+  static const operationTimeout = bleOperationTimeout;
   BleSession(
     this.client, {
     this.scanDuration = const Duration(seconds: 10),
@@ -243,10 +108,6 @@ class BleSession extends ChangeNotifier {
   int _scanGeneration = 0;
   int _connectionQueryGeneration = 0;
 
-  bool get scanning =>
-      scanPhase == BleScanPhase.running ||
-      scanPhase == BleScanPhase.stopping ||
-      scanPhase == BleScanPhase.unconfirmed;
   bool get busy =>
       _radioBusy ||
       _scanStartInFlight ||
@@ -268,16 +129,6 @@ class BleSession extends ChangeNotifier {
       availabilityState != AvailabilityState.unauthorized &&
       linkPhase != BleLinkPhase.disconnectUnconfirmed &&
       scanPhase != BleScanPhase.unconfirmed;
-  bool get canStartScan =>
-      !_closed &&
-      !busy &&
-      !scanning &&
-      _active &&
-      connectedId == null &&
-      linkPhase != BleLinkPhase.disconnectUnconfirmed &&
-      availabilityState != AvailabilityState.poweredOff &&
-      availabilityState != AvailabilityState.unsupported &&
-      availabilityState != AvailabilityState.resetting;
   bool get canCancelConnection =>
       linkPhase == BleLinkPhase.connecting ||
       linkPhase == BleLinkPhase.discovering;
@@ -286,23 +137,6 @@ class BleSession extends ChangeNotifier {
       canConnect &&
       linkPhase == BleLinkPhase.failed &&
       connectionTarget != null;
-  int get scanSecondsRemaining {
-    final remaining = _scanDeadline?.difference(_now()).inMilliseconds ?? 0;
-    return remaining <= 0 ? 0 : (remaining / 1000).ceil();
-  }
-
-  Duration? ageOf(String id) {
-    final seen = lastSeen[id];
-    return seen == null ? null : _now().difference(seen);
-  }
-
-  BleAdvertisementState advertisementState(String id) {
-    final age = ageOf(id);
-    if (age == null || age >= staleAfter) return BleAdvertisementState.expired;
-    return currentRoundIds.contains(id)
-        ? BleAdvertisementState.currentRound
-        : BleAdvertisementState.previousRound;
-  }
 
   void _notify() {
     if (!_closed) notifyListeners();
@@ -419,146 +253,6 @@ class BleSession extends ChangeNotifier {
       error = '打开系统蓝牙设置失败：$e';
       _log(error!);
     }
-  }
-
-  Future<void> startScan({Duration? duration}) async {
-    if (!canStartScan) return;
-    final limit = duration ?? scanDuration;
-    if (limit <= Duration.zero || limit > const Duration(seconds: 60)) {
-      error = '扫描时长应大于 0 且不超过 60 秒';
-      _notify();
-      return;
-    }
-    final generation = ++_scanGeneration;
-    _scanStartInFlight = true;
-    scanPhase = BleScanPhase.starting;
-    currentRoundIds.clear();
-    error = null;
-    scanSummary = '正在检查权限并启动扫描';
-    _notify();
-    var nativeRequested = false;
-    try {
-      await client.requestPermissions().timeout(operationLimit);
-      final granted = await client.hasPermissions().timeout(operationLimit);
-      if (_closed || generation != _scanGeneration || !_active) return;
-      permissionGranted = granted;
-      if (!granted) throw StateError('蓝牙权限未授予');
-      final state = await client.availability().timeout(operationLimit);
-      if (_closed || generation != _scanGeneration || !_active) return;
-      _applyAvailability(state);
-      if (state != AvailabilityState.poweredOn) throw StateError('请先开启蓝牙');
-      nativeRequested = true;
-      final nativeStart = client.startScan();
-      unawaited(
-        nativeStart.then<void>((_) {
-          if (_closed ||
-              generation != _scanGeneration ||
-              scanPhase == BleScanPhase.idle ||
-              scanPhase == BleScanPhase.unconfirmed) {
-            unawaited(_releaseLateScan(generation));
-          }
-        }, onError: (Object error, StackTrace stack) {}),
-      );
-      await nativeStart.timeout(operationLimit);
-      if (_closed || generation != _scanGeneration || !_active) {
-        return;
-      }
-      scanPhase = BleScanPhase.running;
-      _scanDeadline = _now().add(limit);
-      scanSummary = '扫描中';
-      _startHeartbeat();
-      _log('开始扫描，${limit.inSeconds} 秒后自动停止；保留历史结果');
-      _scanTimer = Timer(limit, () => stopScan(reason: '限时结束'));
-    } catch (e) {
-      if (_closed || generation != _scanGeneration) return;
-      scanPhase = BleScanPhase.idle;
-      scanSummary = '扫描启动失败';
-      error = '扫描失败或权限被拒绝：$e';
-      if (nativeRequested) {
-        try {
-          await client.stopScan().timeout(operationLimit);
-          if (await client.isScanning().timeout(operationLimit)) {
-            throw StateError('适配器仍在扫描');
-          }
-        } catch (cleanupError) {
-          if (_closed || generation != _scanGeneration) return;
-          scanPhase = BleScanPhase.unconfirmed;
-          scanSummary = '启动失败后的停止尚未确认';
-          error = '$error；停止未确认：$cleanupError';
-        }
-      }
-      if (_closed || generation != _scanGeneration) return;
-      _log(error!);
-    } finally {
-      _scanStartInFlight = false;
-      _notify();
-    }
-  }
-
-  Future<void> _releaseLateScan(int generation) async {
-    // A newer scan attempt owns the adapter now.
-    if (!_closed &&
-        generation != _scanGeneration &&
-        (scanPhase == BleScanPhase.running ||
-            scanPhase == BleScanPhase.starting)) {
-      return;
-    }
-    final cleanupGeneration = _scanGeneration;
-    try {
-      await client.stopScan().timeout(operationLimit);
-      if (await client.isScanning().timeout(operationLimit)) {
-        throw StateError('适配器仍在扫描');
-      }
-    } catch (e) {
-      if (_closed || cleanupGeneration != _scanGeneration) return;
-      scanPhase = BleScanPhase.unconfirmed;
-      scanSummary = '迟到扫描的停止尚未确认';
-      error = '停止扫描未确认：$e';
-      _log(error!);
-    }
-  }
-
-  Future<void> stopScan({String reason = '手动停止'}) async {
-    if (scanPhase == BleScanPhase.idle || scanPhase == BleScanPhase.stopping) {
-      return;
-    }
-    final generation = ++_scanGeneration;
-    _scanTimer?.cancel();
-    _scanTimer = null;
-    _scanDeadline = null;
-    scanPhase = BleScanPhase.stopping;
-    scanSummary = '正在确认扫描停止';
-    _notify();
-    try {
-      await client.stopScan().timeout(operationLimit);
-      if (await client.isScanning().timeout(operationLimit)) {
-        throw StateError('适配器仍在扫描');
-      }
-      if (_closed || generation != _scanGeneration) return;
-      scanPhase = BleScanPhase.idle;
-      if (error?.startsWith('停止扫描未确认') ?? false) error = null;
-      scanSummary = '$reason · 本轮 ${currentRoundIds.length} 台';
-      _log(
-        currentRoundIds.isEmpty
-            ? '$reason：未发现 BLE 外设'
-            : '$reason：本轮 ${currentRoundIds.length} 台设备',
-      );
-    } catch (e) {
-      if (_closed || generation != _scanGeneration) return;
-      scanPhase = BleScanPhase.unconfirmed;
-      scanSummary = '停止尚未确认，可再次停止';
-      error = '停止扫描未确认：$e';
-      _log(error!);
-    }
-  }
-
-  void clearScanHistory() {
-    if (scanning || _scanStartInFlight) return;
-    devices.removeWhere((id, _) => id != connectedId);
-    lastSeen.clear();
-    discoveryOrder.clear();
-    currentRoundIds.clear();
-    _notify();
   }
 
   Future<void> loadSystemDevices({bool requestPermission = true}) async {
@@ -793,100 +487,6 @@ class BleSession extends ChangeNotifier {
       linkPhase = BleLinkPhase.disconnectUnconfirmed;
       error = '断开未确认：$e；请重试确认断开。';
       _log(error!);
-    }
-  }
-
-  Future<void> read(
-    BleService service,
-    BleCharacteristic characteristic,
-  ) async {
-    final id = connectedId;
-    if (!gattReady ||
-        id == null ||
-        !characteristic.properties.contains(CharacteristicProperty.read)) {
-      return;
-    }
-    final generation = _generation;
-    final key = '${service.uuid}/${characteristic.uuid}';
-    if (!pendingCharacteristics.add(key)) return;
-    _notify();
-    try {
-      final value = await client
-          .read(id, service.uuid, characteristic.uuid)
-          .timeout(operationLimit);
-      if (!_currentLink(generation) || connectedId != id || !gattReady) return;
-      values[key] = value;
-      _log('读取 ${characteristic.uuid}：${hex(value)}');
-    } catch (e) {
-      if (!_currentLink(generation)) return;
-      error = '读取失败：$e';
-      _log(error!);
-    } finally {
-      if (_currentLink(generation)) {
-        pendingCharacteristics.remove(key);
-        _notify();
-      }
-    }
-  }
-
-  Future<void> toggleSubscription(
-    BleService service,
-    BleCharacteristic characteristic,
-  ) async {
-    final id = connectedId;
-    if (!gattReady || id == null) return;
-    final key = '${service.uuid}/${characteristic.uuid}';
-    final generation = _generation;
-    final indicate = characteristic.properties.contains(
-      CharacteristicProperty.indicate,
-    );
-    if (!indicate &&
-        !characteristic.properties.contains(CharacteristicProperty.notify)) {
-      return;
-    }
-    if (!pendingCharacteristics.add(key)) return;
-    _notify();
-    try {
-      if (subscriptions.contains(key)) {
-        await client
-            .unsubscribe(id, service.uuid, characteristic.uuid)
-            .timeout(operationLimit);
-        if (!_currentLink(generation)) return;
-        await _valueSubscriptions.remove(key)?.cancel();
-        subscriptions.remove(key);
-        _log('停止订阅 ${characteristic.uuid}');
-      } else {
-        final listener = client.values(id, characteristic.uuid).listen((data) {
-          if (!_currentLink(generation) || connectedId != id) return;
-          values[key] = data;
-          _log('收到 ${characteristic.uuid}：${hex(data)}');
-        });
-        _valueSubscriptions[key] = listener;
-        await client
-            .subscribe(
-              id,
-              service.uuid,
-              characteristic.uuid,
-              indicate: indicate,
-            )
-            .timeout(operationLimit);
-        if (!_currentLink(generation)) {
-          await listener.cancel();
-          return;
-        }
-        subscriptions.add(key);
-        _log('订阅 ${characteristic.uuid}');
-      }
-    } catch (e) {
-      if (!_currentLink(generation)) return;
-      await _valueSubscriptions.remove(key)?.cancel();
-      error = '订阅操作失败：$e';
-      _log(error!);
-    } finally {
-      if (_currentLink(generation)) {
-        pendingCharacteristics.remove(key);
-        _notify();
-      }
     }
   }
 

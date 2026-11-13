@@ -10,7 +10,12 @@ import 'module_discovery_session.dart';
 
 typedef _ReplayCard = (String path, String reason);
 typedef _ReplayStep = (String path, String goal, String fallbackReason);
-typedef _ReplayChoice = (String id, String label, String? prompt);
+typedef _ReplayChoice = (
+  String id,
+  String label,
+  String? prompt,
+  String? difficulty,
+);
 typedef _ReplayTopic = (
   List<String> keywords,
   String note,
@@ -35,8 +40,6 @@ class ReplayDiscoverySource implements WorkbenchSource {
 
   final List<ModuleEntry> modules;
   final AppPlatformSnapshot platform;
-
-  static const _filterByDifficulty = {'by': 'difficulty', 'value': '入门'};
 
   @override
   String get label => '固定回放 · 未调用模型';
@@ -142,7 +145,8 @@ class ReplayDiscoverySource implements WorkbenchSource {
           'component': 'RefineChoice',
           'label': choice.$2,
           if (choice.$3 != null) 'prompt': choice.$3!,
-          if (choice.$3 == null) 'filter': _filterByDifficulty,
+          if (choice.$4 != null)
+            'filter': {'by': 'difficulty', 'value': choice.$4!},
         },
     ];
     final recents = [
@@ -185,7 +189,7 @@ const _topics = <_ReplayTopic>[
     ['/constraint-layout', '/tree-state'],
     '约束决定尺寸的可用范围，三棵树解释尺寸如何被采纳与重建',
     <_ReplayStep>[],
-    <_ReplayChoice>[('refine', '换个角度：看异步为什么会卡界面', '请推荐异步并发方向的模块')],
+    <_ReplayChoice>[('refine', '换个角度：看异步为什么会卡界面', '请推荐异步并发方向的模块', null)],
   ),
   (
     ['网络', '诊断', 'dns', 'http', '请求'],
@@ -203,8 +207,8 @@ const _topics = <_ReplayTopic>[
       ('/dio-interceptor', '在拦截器层处理重试、Token 刷新与错误分支', '再学拦截器层的重试与错误处理'),
     ],
     <_ReplayChoice>[
-      ('filter', '只看进阶难度（本地执行）', null),
-      ('refine', '我想看更基础的入门内容', '请优先推荐入门难度的模块'),
+      ('filter', '只看进阶难度（本地执行）', null, '进阶'),
+      ('refine', '我想看更基础的入门内容', '请优先推荐入门难度的模块', null),
     ],
   ),
   (
@@ -222,8 +226,8 @@ const _topics = <_ReplayTopic>[
       ('/isolate-basic', '用 Isolate 对比耗时任务的执行位置', '再对比 Isolate 中耗时任务的执行位置'),
     ],
     <_ReplayChoice>[
-      ('filter', '只看入门难度（本地执行）', null),
-      ('refine', '想看网络请求卡住的场景', '请优先推荐网络与平台分类的模块'),
+      ('filter', '只看入门难度（本地执行）', null, '入门'),
+      ('refine', '想看网络请求卡住的场景', '请优先推荐网络与平台分类的模块', null),
     ],
   ),
 ];

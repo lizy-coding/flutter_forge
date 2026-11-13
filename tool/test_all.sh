@@ -19,4 +19,7 @@ fi
 if ! dart tool/module_scaffold_test.dart; then
   FAILED=$((FAILED + 1))
 fi
+if ! python3 tool/genui_codex_bridge_test.py; then
+  FAILED=$((FAILED + 1))
+fi
 [ "$FAILED" -eq 0 ]

@@ -3,8 +3,8 @@
     "short_name": "Flutter Forge",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
+    "background_color": "#121820",
+    "theme_color": "#121820",
     "description": "Flutter Forge modular learning app.",
     "prefer_related_applications": false,
     "icons": [

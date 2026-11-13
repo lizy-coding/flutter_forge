@@ -1,21 +1,34 @@
 name: flutter_forge_app
 description: Flutter Forge app shell.
 publish_to: 'none'
-version: 1.2.10+4
+version: 1.2.15+10
 
 environment:
   sdk: ^3.11.5
-  flutter: '>=3.47.2'
+  flutter: '>=3.47.8'
 
 resolution: workspace
 
 dependencies:
+  forge_app_info:
+    path: ../../packages/forge_app_info
+  forge_localization:
+    path: ../../packages/forge_localization
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   forge_articles:
     path: ../../packages/forge_articles
   usb_network_bridge:
     path: ../../packages/usb_network_bridge
   flutter_battery:
     path: ../../packages/flutter_battery
+  usb_detector_bridge:
+    path: ../../packages/usb_detector_bridge
+  flutter_biometric:
+    path: ../../packages/flutter_biometric
+  forge_notification_bridge:
+    path: ../../packages/forge_notification_bridge
   gcode_core:
     git:
       url: https://github.com/lizy-coding/gcode_core.git
@@ -26,6 +39,7 @@ dependencies:
     path: ../../packages/flutter_ioc_core
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.9
   go_router: ^14.2.0
   provider: ^6.1.5+1
   flutter_riverpod: ^2.5.1
@@ -50,6 +64,8 @@ dependencies:
   forge_scene_viewer:
     path: ../../packages/forge_scene_viewer
   hooks: ^2.0.0
+  bluetooth_system_bridge:
+    path: ../../packages/bluetooth_system_bridge
   universal_ble: ^2.3.0
   genui: 0.10.4
   json_schema_builder: ^0.1.3
@@ -64,11 +80,13 @@ dev_dependencies:
   video_player_platform_interface: ^6.2.1
 
 flutter:
+  generate: true
   config:
     # Keep plugin builds on CocoaPods so the scoped Xcode compiler probe applies.
     enable-swift-package-manager: false
   uses-material-design: true
   assets:
+    - assets/offline/motion-study.mp4
     - flutter_scene_generated/
     - lib/modules/ui/shader_playground/shaders/uv_gradient.glsl
   shaders:

@@ -24,8 +24,14 @@
 | 0016 | [通用桌面工作台与沉浸式标题栏](0016-shared-desktop-workbench.md) | accepted；材质范围与默认外观由 0018 取代 |
 | 0017 | [内部 3D 查看包与可观测绘制](0017-scene-viewer-package-and-render-observability.md) | accepted |
 | 0018 | [四端交互分工与原生窗口背景材质](0018-platform-interaction-and-native-materials.md) | accepted；实现待推进 |
+| 0019 | [平台能力桥接包规范](0019-platform-capability-bridge-packages.md) | accepted |
+| 0020 | [NFC 学习以卡片发现与碰卡唤起为边界](0020-nfc-learning-discovery-and-launch.md) | accepted；实现与真机验收待执行 |
+
+| 0021 | [Windows 系统标准边框与内容区工具栏](0021-windows-standard-system-frame.md) | accepted；Windows 构建与真机验收待执行 |
 
 ## 状态定义
+
+新增决策：[0022 官方本地化基础与框架目录双语](0022-module-interface-localization.md) — accepted；范围修订为框架/目录双语，基础已实现，收尾与验收进行中。
 
 - `proposed` — 提议阶段，待讨论
 - `accepted` — 已接受，当前生效

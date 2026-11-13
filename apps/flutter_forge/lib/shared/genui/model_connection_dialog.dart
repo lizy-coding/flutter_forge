@@ -1,11 +1,24 @@
+import '../../l10n/strings.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'model_source.dart';
+import '../platform/build_features.dart';
+
+const _endpointPreferenceKey = 'genui.connection.endpoint';
+const _modelPreferenceKey = 'genui.connection.model';
+const _defaultEndpoint = 'http://127.0.0.1:8766/v1/chat/completions';
+const _defaultModel = 'codex-default';
 
 Future<WorkbenchSource?> showModelConnection(BuildContext context) =>
-    showDialog<WorkbenchSource>(
-      context: context,
-      builder: (_) => const _ModelConnectionDialog(),
-    );
+    offlineEdition
+    ? Future.value()
+    : showDialog<WorkbenchSource>(
+        context: context,
+        builder: (_) => const _ModelConnectionDialog(),
+      );
 
 class _ModelConnectionDialog extends StatefulWidget {
   const _ModelConnectionDialog();
@@ -14,12 +27,43 @@ class _ModelConnectionDialog extends StatefulWidget {
 }
 
 class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
-  final endpoint = TextEditingController(
-    text: 'http://127.0.0.1:8766/v1/chat/completions',
-  );
-  final model = TextEditingController(text: 'codex-default');
+  // Programmatic updates from stored preferences must not clobber typing
+  // that starts before the async load completes.
+  bool endpointEdited = false;
+  bool modelEdited = false;
+  late final TextEditingController endpoint;
+  late final TextEditingController model;
   final token = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    endpoint = TextEditingController(text: _defaultEndpoint);
+    model = TextEditingController(text: _defaultModel);
+    unawaited(_restoreSavedConfiguration());
+  }
+
+  Future<void> _restoreSavedConfiguration() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    final savedEndpoint = prefs.getString(_endpointPreferenceKey);
+    final savedModel = prefs.getString(_modelPreferenceKey);
+    if (savedEndpoint != null && savedEndpoint.isNotEmpty && !endpointEdited) {
+      endpoint.text = savedEndpoint;
+    }
+    if (savedModel != null && savedModel.isNotEmpty && !modelEdited) {
+      model.text = savedModel;
+    }
+  }
+
+  // The access token is deliberately excluded: it stays in the returned
+  // source object for the current page only, never in preferences or logs.
+  Future<void> _rememberConfiguration() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_endpointPreferenceKey, endpoint.text.trim());
+    await prefs.setString(_modelPreferenceKey, model.text.trim());
+  }
 
   @override
   void dispose() {
@@ -31,7 +75,7 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('连接模型服务'),
+    title: Text(appStrings(context).modelServiceTitle),
     content: SingleChildScrollView(
       child: Form(
         key: formKey,
@@ -39,13 +83,19 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '可连接单独启动的本机 Codex 桥接，使用已有 CLI 登录。也可连接兼容 Chat Completions 流式协议的服务。配置仅用于当前页面，离开后清除；浏览器端点需允许跨域。',
+            Text(appStrings(context).modelServiceIntro),
+            const SizedBox(height: 12),
+            Text(
+              appStrings(context).modelDataNotice,
+              key: const ValueKey('genui-data-use-notice'),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: endpoint,
-              decoration: const InputDecoration(labelText: '完整端点 URL'),
+              onChanged: (_) => endpointEdited = true,
+              decoration: InputDecoration(
+                labelText: appStrings(context).endpointLabel,
+              ),
               validator: (text) {
                 final uri = Uri.tryParse(text?.trim() ?? '');
                 if (uri == null ||
@@ -60,16 +110,20 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
                               '127.0.0.1',
                               '::1',
                             ].contains(uri.host)))) {
-                  return '请输入 HTTPS 端点或本机 HTTP 端点。';
+                  return appStrings(context).endpointInvalid;
                 }
                 return null;
               },
             ),
             TextFormField(
               controller: model,
-              decoration: const InputDecoration(labelText: '模型名称'),
-              validator: (text) =>
-                  text == null || text.trim().isEmpty ? '请输入模型名称。' : null,
+              onChanged: (_) => modelEdited = true,
+              decoration: InputDecoration(
+                labelText: appStrings(context).modelName,
+              ),
+              validator: (text) => text == null || text.trim().isEmpty
+                  ? appStrings(context).modelNameRequired
+                  : null,
             ),
             TextField(
               key: const ValueKey('genui-service-token'),
@@ -77,7 +131,9 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
               obscureText: true,
               autocorrect: false,
               enableSuggestions: false,
-              decoration: const InputDecoration(labelText: '临时访问令牌（本机服务可留空）'),
+              decoration: InputDecoration(
+                labelText: appStrings(context).modelToken,
+              ),
             ),
           ],
         ),
@@ -86,11 +142,12 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: Text(appStrings(context).cancel),
       ),
       FilledButton(
         onPressed: () {
           if (formKey.currentState!.validate()) {
+            unawaited(_rememberConfiguration());
             Navigator.pop(
               context,
               OpenAiWorkbenchSource(
@@ -101,7 +158,7 @@ class _ModelConnectionDialogState extends State<_ModelConnectionDialog> {
             );
           }
         },
-        child: const Text('使用此服务'),
+        child: Text(appStrings(context).useService),
       ),
     ],
   );

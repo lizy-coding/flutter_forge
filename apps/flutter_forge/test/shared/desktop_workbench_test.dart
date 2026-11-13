@@ -1,3 +1,4 @@
+import '../support/app_info_fixture.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,48 @@ const _desktopPlatforms = TargetPlatformVariant({
 const _neutral = AppThemeSelection(palette: AppThemePalette.graphiteForge);
 
 void main() {
+  setUp(useAppInfoFixture);
+  testWidgets('sidebar keyboard activates categories and modules', (
+    tester,
+  ) async {
+    _mockHost(tester);
+    final router = await _pump(tester);
+    final module = AppRouteTable.modules.firstWhere(
+      (module) => module.category == ModuleCategory.basic,
+    );
+    await tester.tap(find.byKey(const ValueKey('sidebar-category:basic')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    // Entering a category replaces the route's focus scope. Arm its sidebar
+    // after the category page has mounted, then navigate using real key events.
+    await tester.tap(find.byKey(const ValueKey('sidebar-category:basic')));
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(
+      tester
+          .widget<ForgeNavTile>(
+            find.byKey(ValueKey('sidebar-module:${module.path}')),
+          )
+          .keyboardActive,
+      isTrue,
+    );
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(router.routeInformationProvider.value.uri.path, module.path);
+
+    await tester.tap(find.byKey(ValueKey('sidebar-module:${module.path}')));
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.home);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(router.routeInformationProvider.value.uri.path, '/category/basic');
+    expect(tester.takeException(), isNull);
+  }, variant: _desktopPlatforms);
+
   test(
     'both desktop platforms share density, geometry and palette selection',
     () {
@@ -64,7 +107,7 @@ void main() {
     },
   );
 
-  testWidgets('immersive controls and native state work on both desktops', (
+  testWidgets('platform toolbar and fullscreen actions work on both desktops', (
     tester,
   ) async {
     final semantics = tester.ensureSemantics();
@@ -73,9 +116,33 @@ void main() {
       final calls = _mockHost(tester);
       await _pump(tester);
       expect(
-        tester.getSize(find.byKey(const ValueKey('immersive-titlebar'))).height,
+        tester
+            .getSize(
+              find.byKey(
+                ValueKey(
+                  defaultTargetPlatform == TargetPlatform.windows
+                      ? 'workbench-toolbar'
+                      : 'immersive-titlebar',
+                ),
+              ),
+            )
+            .height,
         48,
       );
+      if (defaultTargetPlatform == TargetPlatform.windows) {
+        expect(
+          tester
+              .getSize(find.byKey(const ValueKey('native-trailing-controls')))
+              .width,
+          6,
+        );
+        await tester.drag(
+          find.byKey(const ValueKey('titlebar-drag-area')),
+          const Offset(60, 0),
+        );
+        await tester.pump();
+        expect(calls.where((call) => call.method == 'drag'), isEmpty);
+      }
       expect(find.byKey(const ValueKey('workbench-home')), findsOneWidget);
       expect(find.byKey(const ValueKey('workbench-sidebar')), findsOneWidget);
       expect(find.bySemanticsLabel('快速打开'), findsOneWidget);
@@ -102,7 +169,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         calls.where((call) => call.method == 'captionDoubleClick').length,
-        beforeDoubleClick + 1,
+        beforeDoubleClick +
+            (defaultTargetPlatform == TargetPlatform.windows ? 0 : 1),
       );
       await _native(tester, 'toggleSidebar');
       await tester.pump();
@@ -115,6 +183,99 @@ void main() {
     } finally {
       semantics.dispose();
     }
+  }, variant: _desktopPlatforms);
+
+  testWidgets('F11 remains a window command while quick open has focus', (
+    tester,
+  ) async {
+    final calls = _mockHost(tester);
+    final router = await _pump(tester);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    expect(calls.where((call) => call.method == 'toggleFullscreen').length, 1);
+    await tester.tap(find.byKey(const ValueKey('workbench-search')));
+    await tester.pumpAndSettle();
+    final before = calls
+        .where((call) => call.method == 'toggleFullscreen')
+        .length;
+    await tester.sendKeyEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    expect(
+      calls.where((call) => call.method == 'toggleFullscreen').length,
+      before + 1,
+    );
+    expect(find.byKey(const ValueKey('module-quick-open')), findsOneWidget);
+    expect(router.routeInformationProvider.value.uri.path, '/');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.f11);
+    await tester.pump();
+    expect(
+      calls.where((call) => call.method == 'toggleFullscreen').length,
+      before + 2,
+    );
+  }, variant: _desktopPlatforms);
+
+  testWidgets('quick open does not navigate or dismiss during composition', (
+    tester,
+  ) async {
+    Future<void> sendKey(LogicalKeyboardKey key) async {
+      if (key == LogicalKeyboardKey.numpadEnter) {
+        // The SDK's legacy Windows raw-event map lacks this key. Use its
+        // supported Linux event encoding to test Flutter logical-key behavior;
+        // the desktop variant still selects the shell/theme under test.
+        await tester.sendKeyEvent(
+          key,
+          platform: 'linux',
+          physicalKey: PhysicalKeyboardKey.numpadEnter,
+        );
+      } else {
+        await tester.sendKeyEvent(key);
+      }
+    }
+
+    _mockHost(tester);
+    final router = await _pump(tester);
+    await tester.tap(find.byKey(const ValueKey('workbench-search')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('quick-open-query')),
+      '三棵树',
+    );
+    tester.testTextInput.updateEditingValue(
+      const TextEditingValue(
+        text: '三棵树',
+        composing: TextRange(start: 0, end: 3),
+      ),
+    );
+    await tester.pump();
+    for (final key in [
+      LogicalKeyboardKey.enter,
+      LogicalKeyboardKey.numpadEnter,
+      LogicalKeyboardKey.arrowUp,
+      LogicalKeyboardKey.arrowDown,
+      LogicalKeyboardKey.escape,
+    ]) {
+      await sendKey(key);
+      await tester.pump();
+      expect(find.byKey(const ValueKey('module-quick-open')), findsOneWidget);
+      expect(router.routeInformationProvider.value.uri.path, '/');
+    }
+    tester.testTextInput.updateEditingValue(
+      const TextEditingValue(text: '三棵树'),
+    );
+    await tester.pump();
+    await sendKey(LogicalKeyboardKey.numpadEnter);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('module-quick-open')), findsNothing);
+    expect(
+      router.routeInformationProvider.value.uri.path,
+      AppRouteTable.modules.firstWhere((m) => m.title == '三棵树与生命周期').path,
+    );
   }, variant: _desktopPlatforms);
 
   testWidgets('quick open searches concepts, dismisses and opens one route', (
@@ -240,7 +401,16 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('immersive-titlebar')), findsOneWidget);
+    expect(
+      find.byKey(
+        ValueKey(
+          defaultTargetPlatform == TargetPlatform.windows
+              ? 'workbench-toolbar'
+              : 'immersive-titlebar',
+        ),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('关于 Flutter Forge'), findsNothing);
     expect(
       calls.any(

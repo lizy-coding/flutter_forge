@@ -436,6 +436,16 @@
       "title": "USB 设备检测",
       "route": "/usb-detector",
       "supported_platforms": [],
+      "limitations": [
+        {
+          "capability": "usb_detection",
+          "reason": "android_usb_manager_enumeration_only",
+          "sources": [
+            "packages/usb_detector_bridge/pubspec.yaml",
+            "packages/usb_detector_bridge/lib/usb_detector_method_channel.dart"
+          ]
+        }
+      ],
       "restriction": {
         "reason": "usb_otg_learning_workflow_deferred",
         "sources": [
@@ -477,7 +487,7 @@
           "reason": "ble_central_adapters",
           "sources": [
             "apps/flutter_forge/lib/modules/platform/bluetooth_ble/module_entry.dart",
-            "apps/flutter_forge/lib/modules/platform/bluetooth_ble/state/ble_session.dart"
+            "packages/bluetooth_system_bridge/lib/bluetooth_system_bridge.dart"
           ]
         }
       ]
@@ -504,7 +514,7 @@
     },
     {
       "id": "online_video_player",
-      "title": "在线视频播放",
+      "title": "视频播放与控制",
       "route": "/online-video-player",
       "supported_platforms": [
         "android",
@@ -519,6 +529,44 @@
           "sources": [
             "apps/flutter_forge/lib/modules/platform/online_video_player/module_entry.dart",
             "apps/flutter_forge/pubspec.yaml"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "biometric_auth",
+      "title": "生物特征与本地认证",
+      "route": "/biometric-auth",
+      "supported_platforms": [
+        "android",
+        "macOS"
+      ],
+      "limitations": [
+        {
+          "capability": "biometric_auth",
+          "reason": "biometric_biometricprompt_localauth_adapters",
+          "sources": [
+            "packages/flutter_biometric/pubspec.yaml",
+            "packages/flutter_biometric/lib/flutter_biometric_method_channel.dart"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "system_notification",
+      "title": "系统通知与授权状态",
+      "route": "/system-notification",
+      "supported_platforms": [
+        "android",
+        "macOS"
+      ],
+      "limitations": [
+        {
+          "capability": "notification_posting",
+          "reason": "notification_android_macos_local_adapters",
+          "sources": [
+            "packages/forge_notification_bridge/pubspec.yaml",
+            "packages/forge_notification_bridge/lib/forge_notification_method_channel.dart"
           ]
         }
       ]

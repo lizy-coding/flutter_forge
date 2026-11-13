@@ -5,6 +5,7 @@ import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:video_player/video_player.dart';
 
 import 'state/video_player_adapter.dart';
+import '../../../shared/platform/build_features.dart';
 import 'widgets/video_player_controls.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return LearningScaffold(
-      title: widget.title,
+      title: offlineEdition ? '本地视频播放实验' : widget.title,
       floatingActionButton: FloatingActionButton(
         tooltip: '重新加载视频',
         onPressed: _adapter.openAndPlay,
@@ -58,7 +59,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       return _VideoPlaceholder(
                         key: const Key('video-error-placeholder'),
                         icon: Icons.error_outline,
-                        message: '视频加载失败，请检查网络后重试',
+                        message: offlineEdition
+                            ? '本地视频加载失败，请重试'
+                            : '视频加载失败，请检查网络后重试',
                         onRetry: _adapter.openAndPlay,
                       );
                     }
@@ -66,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         state == PlayerUiState.loading) {
                       return const _VideoPlaceholder(
                         icon: Icons.ondemand_video,
-                        message: '正在连接视频源…',
+                        message: offlineEdition ? '正在打开内置视频…' : '正在连接视频源…',
                       );
                     }
                     final controller = _adapter.videoController;
@@ -89,7 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
           VideoPlayerControls(adapter: _adapter),
           const SizedBox(height: 8),
           SelectableText(
-            '示例地址：$defaultSampleStreamUri',
+            offlineEdition
+                ? '内置素材：运动与颜色实验（随应用安装）'
+                : '示例地址：$defaultSampleStreamUri',
             style: const TextStyle(fontSize: 12),
           ),
         ],

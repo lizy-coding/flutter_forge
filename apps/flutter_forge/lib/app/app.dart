@@ -1,7 +1,11 @@
+import '../module_registry/chinese_experiment.dart';
+import 'package:forge_localization/forge_localization.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../module_registry/app_platform_scope.dart';
 import 'theme/app_theme.dart';
 import 'theme/app_theme_controller.dart';
 import 'theme/forge_glass.dart';
@@ -20,28 +24,44 @@ class App extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final platform = ref.watch(appPlatformProvider);
-    return NavigationSessionScope(
-      child: AppThemeScope(
-        controller: themeController,
-        child: ListenableBuilder(
-          listenable: themeController,
-          builder: (context, _) => MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            routerConfig: router,
-            title: 'Flutter Forge',
-            theme: AppTheme.light(themeController.palette),
-            darkTheme: AppTheme.dark(themeController.palette),
-            highContrastTheme: AppTheme.light(AppThemePalette.graphiteForge),
-            highContrastDarkTheme: AppTheme.dark(AppThemePalette.graphiteForge),
-            themeMode: themeController.themeMode,
-            builder: (context, child) => DesktopWindowHost(
-              platform: platform,
-              router: router,
-              modules: AppRouteTable.modules,
+    return AppPlatformScope(
+      platform: platform,
+      child: NavigationSessionScope(
+        child: AppThemeScope(
+          controller: themeController,
+          child: ListenableBuilder(
+            listenable: themeController,
+            builder: (context, _) => MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              locale:
+                  LocaleScope.maybeOf(context)?.effectiveLocale ??
+                  const Locale('zh'),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              routerConfig: router,
+              title: 'Flutter Forge',
+              theme: AppTheme.light(themeController.palette),
+              darkTheme: AppTheme.dark(themeController.palette),
+              highContrastTheme: AppTheme.light(AppThemePalette.graphiteForge),
+              highContrastDarkTheme: AppTheme.dark(
+                AppThemePalette.graphiteForge,
+              ),
               themeMode: themeController.themeMode,
-              materialEnabled:
-                  themeController.palette == AppThemePalette.liquidGlass,
-              child: ForgeThemeBackdrop(child: child!),
+              builder: (context, child) => DesktopWindowHost(
+                platform: platform,
+                router: router,
+                modules: AppRouteTable.modules,
+                themeMode: themeController.themeMode,
+                materialEnabled:
+                    themeController.palette == AppThemePalette.liquidGlass,
+                child: ForgeThemeBackdrop(
+                  child: ExperimentNavigatorLocale(
+                    router: router,
+                    modules: AppRouteTable.modules,
+                    child: child!,
+                  ),
+                ),
+              ),
             ),
           ),
         ),

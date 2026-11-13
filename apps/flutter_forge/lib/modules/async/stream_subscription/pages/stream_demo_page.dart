@@ -164,11 +164,11 @@ _controller.close();''',
               child: const Text('停止推送'),
             ),
             ElevatedButton(
-              onPressed: !controller.isSubscribed ? null : controller.subscribe,
+              onPressed: controller.isSubscribed ? null : controller.subscribe,
               child: const Text('订阅'),
             ),
             ElevatedButton(
-              onPressed: controller.isSubscribed
+              onPressed: !controller.isSubscribed
                   ? null
                   : controller.unsubscribe,
               child: const Text('取消订阅'),

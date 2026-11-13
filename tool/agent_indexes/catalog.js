@@ -27,6 +27,33 @@ const categoryOwnership = {
 
 const workspacePackages = [
   {
+    name: 'forge_app_info', kind: 'flutter_package',
+    path: 'packages/forge_app_info', entrypoints: ['lib/forge_app_info.dart'],
+    owns: ['installed_app_version', 'app_info_outcomes'],
+    depends: ['flutter_sdk', 'package_info_plus', 'plugin_platform_interface'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
+    name: 'forge_localization', kind: 'flutter_package',
+    path: 'packages/forge_localization', entrypoints: ['lib/forge_localization.dart'],
+    owns: ['locale_preference', 'locale_resolution', 'locale_change_notification'],
+    depends: ['flutter_sdk'], validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
+    name: 'bluetooth_system_bridge', kind: 'flutter_plugin_package',
+    path: 'packages/bluetooth_system_bridge', entrypoints: ['lib/bluetooth_system_bridge.dart'],
+    owns: ['bluetooth_system_settings', 'bluetooth_audio_profile_queries', 'bluetooth_system_operation_lifecycle'],
+    depends: ['flutter_sdk', 'plugin_platform_interface', 'url_launcher'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
+    name: 'flutter_biometric', kind: 'flutter_plugin_package',
+    path: 'packages/flutter_biometric', entrypoints: ['lib/flutter_biometric.dart'],
+    owns: ['biometric_capability_queries', 'biometric_auth_outcomes', 'biometric_native_lifecycle'],
+    depends: ['flutter_sdk', 'plugin_platform_interface'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
     name: 'forge_articles', kind: 'dart_package',
     path: 'packages/forge_articles', entrypoints: ['lib/forge_articles.dart'],
     owns: ['article_request_api', 'synthetic_article_adapter', 'article_workflow_execution'],
@@ -44,6 +71,20 @@ const workspacePackages = [
     path: 'packages/usb_network_bridge', entrypoints: ['lib/usb_network_bridge.dart'],
     owns: ['ncm_interface_enumeration', 'interface_bound_tcp', 'native_relay_lifecycle'],
     depends: ['flutter_sdk', 'ffi'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
+    name: 'usb_detector_bridge', kind: 'flutter_plugin_package',
+    path: 'packages/usb_detector_bridge', entrypoints: ['lib/usb_detector_bridge.dart'],
+    owns: ['usb_device_enumeration', 'usb_permission_gated_descriptors', 'usb_detection_capabilities', 'usb_detection_outcomes'],
+    depends: ['flutter_sdk', 'plugin_platform_interface'],
+    validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
+  },
+  {
+    name: 'forge_notification_bridge', kind: 'flutter_plugin_package',
+    path: 'packages/forge_notification_bridge', entrypoints: ['lib/forge_notification_bridge.dart'],
+    owns: ['notification_capability_queries', 'notification_permission_states', 'notification_post_outcomes', 'notification_channel_contract'],
+    depends: ['flutter_sdk', 'plugin_platform_interface'],
     validation: ['flutter analyze', 'flutter test'], test_status: 'configured',
   },
   {

@@ -1,7 +1,13 @@
+import 'app_version_panel.dart';
+import 'localization/language_selector.dart';
+import '../l10n/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'creator_profile.dart';
+import 'offline_privacy.dart';
+import 'full_privacy.dart';
+import '../shared/platform/build_features.dart';
 import 'theme/forge_theme_tokens.dart';
 
 class CreatorHomePage extends StatelessWidget {
@@ -17,14 +23,17 @@ class CreatorHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const LanguageSelector(),
             Text(
-              '关于 Flutter Forge',
+              appStrings(context).about,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 12),
-            const Text('可运行、可拆解、可验证的 Flutter 学习工坊。'),
+            Text(appStrings(context).aboutIntro),
             const SizedBox(height: 24),
+            const AppVersionPanel(),
             const _CreatorFooter(),
+            if (offlineEdition) const OfflinePrivacy() else const FullPrivacy(),
           ],
         ),
       ),
@@ -168,30 +177,31 @@ class _CreatorDetails extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 18),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: [
-            _ProfileLink(
-              key: const ValueKey('profile-github-link'),
-              icon: Icons.code_rounded,
-              label: 'GitHub',
-              uri: profile.githubUri,
-            ),
-            _ProfileLink(
-              key: const ValueKey('profile-juejin-link'),
-              icon: Icons.article_outlined,
-              label: '掘金 · 人形打码机',
-              uri: profile.juejinUri,
-            ),
-            _ProfileLink(
-              key: const ValueKey('profile-yuque-link'),
-              icon: Icons.menu_book_outlined,
-              label: '语雀',
-              uri: profile.yuqueUri,
-            ),
-          ],
-        ),
+        if (!offlineEdition)
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _ProfileLink(
+                key: const ValueKey('profile-github-link'),
+                icon: Icons.code_rounded,
+                label: 'GitHub',
+                uri: profile.githubUri,
+              ),
+              _ProfileLink(
+                key: const ValueKey('profile-juejin-link'),
+                icon: Icons.article_outlined,
+                label: '掘金 · 人形打码机',
+                uri: profile.juejinUri,
+              ),
+              _ProfileLink(
+                key: const ValueKey('profile-yuque-link'),
+                icon: Icons.menu_book_outlined,
+                label: '语雀',
+                uri: profile.yuqueUri,
+              ),
+            ],
+          ),
       ],
     );
   }

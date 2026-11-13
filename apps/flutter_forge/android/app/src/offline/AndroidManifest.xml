@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Higher-priority release overlay also removes permissions from plugins. -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+</manifest>

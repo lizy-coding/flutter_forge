@@ -1,3 +1,4 @@
+import '../l10n/strings.dart';
 import 'module_discovery_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,8 +22,7 @@ class WorkbenchHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final paths =
-        WorkbenchHistoryScope.maybeOf(context)?.recent ?? const <String>[];
+    final paths = WorkbenchHistoryScope.maybeOf(context)?.recent ?? <String>[];
     final byPath = {for (final module in modules) module.path: module};
     final recent = [
       for (final path in paths)
@@ -42,24 +42,27 @@ class WorkbenchHomePage extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                '随时继续探索',
+                appStrings(context).continueExploring,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             TextButton.icon(
               onPressed: () => showModuleQuickOpen(context, modules),
               icon: const Icon(Icons.search, size: 16),
-              label: const Text('快速打开模块'),
+              label: Text(appStrings(context).quickOpenModule),
             ),
           ],
         ),
         const SizedBox(height: 20),
-        Text('最近访问', style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          appStrings(context).recent,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const SizedBox(height: 12),
         if (recent.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text('还没有访问记录，从下方分类或侧栏开始。'),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Text(appStrings(context).noHistory),
           ),
         for (final module in recent)
           Padding(
@@ -70,14 +73,19 @@ class WorkbenchHomePage extends StatelessWidget {
               onTap: () => context.go(module.path),
               child: ListTile(
                 leading: Icon(module.category.icon, size: 20),
-                title: Text(module.title),
-                subtitle: Text(module.category.label),
+                title: Text(module.titleFor(context)),
+                subtitle: Text(
+                  '${module.category.labelFor(context)} · ${appStrings(context).chineseExperiment}',
+                ),
                 trailing: const Icon(Icons.arrow_forward, size: 18),
               ),
             ),
           ),
         const SizedBox(height: 24),
-        Text('学习分类', style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          appStrings(context).categories,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const SizedBox(height: 12),
         for (final category in ModuleCategory.values)
           Padding(
@@ -88,9 +96,13 @@ class WorkbenchHomePage extends StatelessWidget {
               onTap: () => context.go('/category/${category.name}'),
               child: ListTile(
                 leading: Icon(category.icon, size: 20),
-                title: Text(category.label),
+                title: Text(category.labelFor(context)),
                 trailing: Text(
-                  '${modules.where((module) => module.category == category).length} 个模块',
+                  appStrings(context).moduleCount(
+                    modules
+                        .where((module) => module.category == category)
+                        .length,
+                  ),
                 ),
               ),
             ),

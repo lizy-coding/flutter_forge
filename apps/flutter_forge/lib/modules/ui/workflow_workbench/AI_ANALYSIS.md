@@ -54,7 +54,8 @@
     "module_entry",
     "workflow_executor_session",
     "schema_driven_inputs",
-    "hub_result_surface"
+    "hub_result_surface",
+    "offline_local_article_workflow"
   ],
   "depends": [
     "shared_learning",

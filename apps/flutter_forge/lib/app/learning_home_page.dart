@@ -1,3 +1,4 @@
+import '../l10n/strings.dart';
 import '../module_registry/app_platform_snapshot.dart';
 import 'module_discovery_panel.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class LearningHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final history = WorkbenchHistoryScope.maybeOf(context)?.recent ?? const [];
+    final history = WorkbenchHistoryScope.maybeOf(context)?.recent ?? [];
     final session = NavigationSessionScope.maybeOf(context);
     final recent = [
       for (final path in history)
@@ -26,15 +27,13 @@ class LearningHomePage extends StatelessWidget {
       key: const PageStorageKey('learning-home-scroll'),
       padding: const EdgeInsets.all(24),
       children: [
-        ModuleDiscoveryPanel(
-          modules: modules,
-          platform: platform ?? AppPlatformSnapshot.detect(),
-          recentPaths: history,
+        Text(
+          appStrings(context).explore,
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
-        Text('探索与查阅', style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 8),
         Text(
-          '从一个问题或概念开始，找到可以运行的示例。',
+          appStrings(context).homeIntro,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -44,53 +43,68 @@ class LearningHomePage extends StatelessWidget {
           key: const ValueKey('learning-home-search'),
           readOnly: true,
           onTap: () => showModuleSearch(context, modules),
-          decoration: const InputDecoration(
-            hintText: '搜索模块、概念或分类',
-            prefixIcon: Icon(Icons.search),
+          decoration: InputDecoration(
+            hintText: appStrings(context).searchHint,
+            prefixIcon: const Icon(Icons.search),
           ),
         ),
         const SizedBox(height: 28),
-        Text('学习分类', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          appStrings(context).categories,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 12),
         for (final category in ModuleCategory.values)
           Card(
             child: ListTile(
               key: ValueKey('learning-category:${category.name}'),
               leading: Icon(category.icon),
-              title: Text(category.label),
+              title: Text(category.labelFor(context)),
               subtitle: Text(
-                '${modules.where((module) => module.category == category).length} 个学习模块',
+                appStrings(context).moduleCount(
+                  modules.where((module) => module.category == category).length,
+                ),
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.go('/category/${category.name}'),
             ),
           ),
         const SizedBox(height: 28),
-        Text('最近访问', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          appStrings(context).recent,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 12),
         if (recent.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Text('打开模块后，可以在这里快速找到它。'),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text(appStrings(context).recentEmpty),
           ),
         for (final module in recent)
           Card(
             child: ListTile(
               key: ValueKey('recent:${module.path}'),
               leading: const Icon(Icons.history),
-              title: Text(module.title),
-              subtitle: Text(module.category.label),
+              title: Text(module.titleFor(context)),
+              subtitle: Text(
+                '${module.category.labelFor(context)} · ${appStrings(context).chineseExperiment}',
+              ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push(module.path),
             ),
           ),
         const SizedBox(height: 24),
+        ModuleDiscoveryPanel(
+          modules: modules,
+          platform: platform ?? AppPlatformSnapshot.detect(),
+          recentPaths: history,
+        ),
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
             onPressed: () => context.go('/about'),
             icon: const Icon(Icons.info_outline),
-            label: const Text('关于 Flutter Forge'),
+            label: Text(appStrings(context).about),
           ),
         ),
       ],

@@ -2,6 +2,8 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_forge_app/shared/learning/learning_slider.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
@@ -86,4 +88,27 @@ void main() {
 
     expect(find.textContaining('Web'), findsWidgets);
   });
+  testWidgets('Web on a Windows browser retains the Material slider', (
+    tester,
+  ) async {
+    var value = 0.5;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) => LearningSlider(
+              value: value,
+              onChanged: (next) => setState(() => value = next),
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.byType(Slider), findsOneWidget);
+    expect(find.byType(CupertinoSlider), findsNothing);
+    await tester.drag(find.byType(Slider), const Offset(100, 0));
+    await tester.pumpAndSettle();
+    expect(value, greaterThan(0.5));
+    expect(tester.takeException(), isNull);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 }

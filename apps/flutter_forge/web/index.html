@@ -24,7 +24,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Flutter Forge">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
@@ -82,12 +82,25 @@
       重新加载
     </button>
   </div>
+  <script src="startup_localizations.js"></script>
   <script>
     (() => {
+      let preference = 'system';
+      try {
+        preference = JSON.parse(localStorage.getItem('flutter.flutter_forge.locale')) || 'system';
+      } catch (_) { /* Storage may be unavailable; use the system language. */ }
+      if (!['system', 'zh', 'en'].includes(preference)) preference = 'system';
+      const candidates = preference === 'system' ? (navigator.languages || [navigator.language]) : [preference];
+      const language = candidates.map(value => value.toLowerCase().split(/[-_]/)[0]).find(value => value === 'zh' || value === 'en') || 'zh';
+      const messages = window.forgeStartupMessages?.[language] || {};
+      const message = key => messages[key];
+      document.documentElement.lang = language;
       const startedAt = performance.now();
       const loading = document.getElementById('flutter-forge-loading');
       const status = document.getElementById('flutter-forge-loading-status');
       const reload = document.getElementById('flutter-forge-reload');
+      status.textContent = message('startupLoading') || status.textContent;
+      reload.textContent = message('startupReload') || reload.textContent;
       const marks = {};
       const mark = (stage, message) => {
         marks[stage] = Math.round(performance.now() - startedAt);
@@ -95,11 +108,12 @@
         if (message) status.textContent = message;
       };
       const timeout = setTimeout(() => {
-        mark('timeout', '加载超时，请检查网络后重试。');
+        mark('timeout', message('startupTimeout') || '加载超时，请检查网络后重试。');
         reload.style.display = 'inline-block';
       }, 10000);
       window.flutterForgeLoading = {
         mark,
+        message,
         complete() {
           clearTimeout(timeout);
           mark('first-frame');
@@ -108,7 +122,7 @@
         },
         fail(error) {
           clearTimeout(timeout);
-          mark('failed', '加载失败，请重新加载。');
+          mark('failed', message('startupFailed') || '加载失败，请重新加载。');
           reload.style.display = 'inline-block';
           console.error('[flutter-forge-startup]', error, marks);
         },

@@ -2,6 +2,13 @@
   #error Pass /DMyAppVersion with the version from pubspec.yaml
 #endif
 
+#ifndef MyAppSourceDir
+  #define MyAppSourceDir "..\..\build\windows\x64\runner\Release"
+#endif
+#ifndef MyAppIconPath
+  #define MyAppIconPath "..\..\..\..\..\windows\runner\resources\app_icon.ico"
+#endif
+
 [Setup]
 AppId={{48C090B8-E508-4D2C-929F-4FA25EFB255D}
 AppName=Flutter Forge
@@ -11,10 +18,11 @@ PrivilegesRequired=lowest
 DefaultDirName={userpf}\Flutter Forge
 DefaultGroupName=Flutter Forge
 DisableProgramGroupPage=yes
-SourceDir=..\..\build\windows\x64\runner\Release
+SourceDir={#MyAppSourceDir}
 OutputDir=..\..\..\..\..\..\..
 OutputBaseFilename=flutter_forge-setup-x64
-SetupIconFile=..\..\..\..\..\windows\runner\resources\app_icon.ico
+SetupIconFile={#MyAppIconPath}
+UninstallDisplayName=Flutter Forge
 UninstallDisplayIcon={app}\flutter_forge.exe
 Uninstallable=yes
 ArchitecturesAllowed=x64compatible

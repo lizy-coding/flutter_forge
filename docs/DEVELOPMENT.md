@@ -4,11 +4,26 @@
 
 | 组件 | 版本 | 说明 |
 |------|------|------|
-| Flutter | 3.47.2 | 见 `.fvmrc` |
-| Dart | 3.13.2 | 随 Flutter |
+| Flutter | 3.47.8 | 见 `.fvmrc` |
+| Dart | 3.13.7 | 随 Flutter |
 | Node.js | 24 | 见 `.nvmrc`（供 Agent 文档生成器） |
 | Xcode | 26+ | 仅 macOS/iOS 构建 |
 | Android SDK | 36+ | 仅 Android 构建 |
+
+Flutter 3.47.8 / Dart 3.13.7 为当前安全修复基线（GHSA-frr6-h895-5pxp）。升级后必须重建应用，既有 Windows/Android 二进制不会因更新 SDK 自动修复。
+`.fvmrc` 与各工作流固定版本保持一致。若现有全局 SDK 带本地补丁，应保留它并使用独立 SDK 验证；本轮隔离安装位于 `.release/toolchains/flutter-3.47.8`，运行项目命令前可设置：
+
+```bash
+export PATH="$PWD/.release/toolchains/flutter-3.47.8/bin:$PATH"
+```
+
+后续正式分发需依据实际新构建重新冻结 release plan，历史报告和已下载的安装包仍对应原工具链。
+
+## 隐私说明维护
+
+政策文字统一维护在 `docs/privacy/policies.json`，由 `python3 tool/privacy_policy.py` 生成应用内常量、两版公开页面及不可变历史快照。两个原导出脚本继续兼容，均支持 `--check`。
+政策变更需新版本 ID，操作见 [隐私维护](privacy/README.md)。渠道、产物、政策绑定与后台状态统一见 [分发管理](distribution/README.md) 和 [生成总览](distribution/OVERVIEW.md)。
+公开页面本地生成不代表已经上线；部署后核对版本与实际 URL，再填写商店材料。
 
 ## 快速开始
 
@@ -39,18 +54,22 @@ lib/
 │   ├── multi_window/          # 桌面多窗口
 │   └── platform/              # 平台边界
 └── modules/                   # 学习模块
-    ├── basic/                 # 基础机制 (3)
+    ├── basic/                 # 基础机制 (6)
     ├── async/                 # 异步并发 (3)
-    ├── state/                 # 状态管理 (2)
-    ├── ui/                    # UI 与动效 (3)
+    ├── state/                 # 状态管理 (3)
+    ├── ui/                    # UI 与动效 (8)
     ├── popup_table/           # 弹窗与列表 (4)
-    └── platform/              # 网络与平台 (2)
+    └── platform/              # 网络与平台 (9)
 
 packages/
-├── gcode_core/                # G-code 解析
-├── flutter_study_learning/    # 教学模板组件
+├── desktop_multi_window/      # 桌面多窗口宿主
 ├── file_picker_bridge/        # 文件选择桥接
-└── flutter_ioc_core/          # IoC 容器
+├── flutter_battery/           # 电池监控
+├── flutter_ioc_core/          # IoC 容器
+├── forge_articles/            # 文章工作流
+├── forge_scene_viewer/        # 3D 场景查看
+├── usb_network_bridge/        # USB 网络桥接
+└── video_player_win/          # Windows 视频播放
 
 tool/
 ├── bootstrap.sh               # 环境自举

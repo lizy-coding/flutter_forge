@@ -4,6 +4,7 @@ import 'mock_server/mock_server.dart'
     if (dart.library.js_interop) 'mock_server/mock_server_web.dart';
 import 'network/api/api_service.dart';
 import 'network/http_client.dart';
+import '../../../shared/platform/build_features.dart';
 
 // The pool is isolate-local: separate window engines never share a TCP port.
 // Each mounted lesson/login page retains a lease until it leaves navigation.
@@ -34,6 +35,7 @@ class LessonSession {
   }
 
   Future<void> _start() async {
+    if (offlineEdition) return;
     try {
       await _server.start();
       if (_closed) throw StateError('学习会话已关闭');

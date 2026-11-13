@@ -133,6 +133,11 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    await Scrollable.ensureVisible(
+      tester.element(find.byKey(const ValueKey('learning-category:basic'))),
+      alignment: 0.5,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('learning-category:basic')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('category-page:basic')), findsOneWidget);

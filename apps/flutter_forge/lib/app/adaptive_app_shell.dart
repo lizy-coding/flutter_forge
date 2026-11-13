@@ -1,3 +1,4 @@
+import 'package:flutter_forge_app/l10n/strings.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -149,7 +150,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                       actions: [
                         const ThemeModeButton(),
                         IconButton(
-                          tooltip: '搜索模块',
+                          tooltip: appStrings(context).searchModules,
                           onPressed: _showSearch,
                           icon: const Icon(Icons.search),
                         ),
@@ -186,7 +187,7 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                                       'category-drawer:${_destinations.indexOf(destination) == 0 ? 'home' : ModuleCategory.values[_destinations.indexOf(destination) - 1].name}',
                                     ),
                                     icon: Icon(destination.icon),
-                                    label: Text(destination.label),
+                                    label: Text(destination.labelFor(context)),
                                   ),
                                 )
                                 .toList(),
@@ -222,14 +223,18 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                                     leading: Column(
                                       children: [
                                         IconButton(
-                                          tooltip: '展开侧栏',
+                                          tooltip: appStrings(
+                                            context,
+                                          ).expandSidebar,
                                           onPressed: () => setState(
                                             () => _sidebarExpanded = true,
                                           ),
                                           icon: const Icon(Icons.menu_open),
                                         ),
                                         IconButton(
-                                          tooltip: '搜索模块',
+                                          tooltip: appStrings(
+                                            context,
+                                          ).searchModules,
                                           onPressed: _showSearch,
                                           icon: const Icon(Icons.search),
                                         ),
@@ -241,7 +246,9 @@ class _AdaptiveAppShellState extends State<AdaptiveAppShell> {
                                           (destination) =>
                                               NavigationRailDestination(
                                                 icon: Icon(destination.icon),
-                                                label: Text(destination.label),
+                                                label: Text(
+                                                  destination.labelFor(context),
+                                                ),
                                               ),
                                         )
                                         .toList(),
@@ -315,13 +322,13 @@ class _Sidebar extends StatelessWidget {
                 else
                   ListTile(
                     title: const Text('Flutter Forge'),
-                    subtitle: const Text('可交互的 Flutter 学习现场'),
+                    subtitle: Text(appStrings(context).interactiveWorkshop),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const ThemeModeButton(),
                         IconButton(
-                          tooltip: '收起侧栏',
+                          tooltip: appStrings(context).collapseSidebar,
                           onPressed: onCollapse,
                           icon: const Icon(Icons.menu_open),
                         ),
@@ -336,7 +343,7 @@ class _Sidebar extends StatelessWidget {
                     onTap: onSearch,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.search),
-                      hintText: '搜索模块或概念',
+                      hintText: appStrings(context).searchConcept,
                       suffixIconConstraints: const BoxConstraints.tightFor(
                         width: 40,
                         height: 36,
@@ -393,7 +400,7 @@ class _Sidebar extends StatelessWidget {
                               ),
                               child: ForgeNavTile(
                                 key: ValueKey('sidebar-destination:$index'),
-                                label: destination.label,
+                                label: destination.labelFor(context),
                                 icon: destination.icon,
                                 keyboardActive: keyboardActive,
                                 selected: index == selectedIndex,
@@ -413,9 +420,17 @@ class _Sidebar extends StatelessWidget {
 }
 
 final List<ForgeNavigationDestination> _destinations = [
-  const ForgeNavigationDestination('探索与查阅', Icons.home_outlined),
+  ForgeNavigationDestination(
+    '探索与查阅',
+    Icons.home_outlined,
+    labelBuilder: (context) => appStrings(context).explore,
+  ),
   for (final category in ModuleCategory.values)
-    ForgeNavigationDestination(category.label, category.icon),
+    ForgeNavigationDestination(
+      category.label,
+      category.icon,
+      labelBuilder: (context) => category.labelFor(context),
+    ),
 ];
 
 class _BubbleRail extends StatelessWidget {
@@ -440,12 +455,12 @@ class _BubbleRail extends StatelessWidget {
         child: Column(
           children: [
             IconButton(
-              tooltip: '展开侧栏',
+              tooltip: appStrings(context).expandSidebar,
               onPressed: onExpand,
               icon: const Icon(Icons.menu_open),
             ),
             IconButton(
-              tooltip: '搜索模块',
+              tooltip: appStrings(context).searchModules,
               onPressed: onSearch,
               icon: const Icon(Icons.search),
             ),

@@ -172,7 +172,10 @@ class _DesktopWindowHostState extends State<DesktopWindowHost> {
       'mainWindow': widget.mainWindow,
       'title': widget.title,
       'themeMode': widget.themeMode.name,
-      'materialEnabled': widget.materialEnabled && !highContrast,
+      'materialEnabled':
+          widget.materialEnabled &&
+          widget.platform.platform != AppTargetPlatform.windows &&
+          !highContrast,
       'teaching': teaching,
     };
     final signature = arguments.toString();
@@ -315,13 +318,14 @@ class _DesktopWindowHostState extends State<DesktopWindowHost> {
     );
     final native =
         _enabled &&
+        widget.platform.platform != AppTargetPlatform.windows &&
         widget.materialEnabled &&
         _controller.materialActive &&
         _controller.transparencyAllowed &&
         !MediaQuery.highContrastOf(context);
     final theme = Theme.of(context);
     final solid = teaching || (_enabled && !native);
-    return DesktopWindowScope(
+    final content = DesktopWindowScope(
       controller: _controller,
       child: ForgeSurfaceScope(
         nativeMaterial: native,
@@ -370,6 +374,17 @@ class _DesktopWindowHostState extends State<DesktopWindowHost> {
           ),
         ),
       ),
+    );
+    if (!_enabled) return content;
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(
+          LogicalKeyboardKey.f11,
+          includeRepeats: false,
+        ): () =>
+            unawaited(_controller.perform('toggleFullscreen')),
+      },
+      child: content,
     );
   }
 }

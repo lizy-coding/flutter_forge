@@ -29,8 +29,12 @@ Future<void> main() async {
       '--output',
       output.path,
     ];
-    Future<ProcessResult> run(List<String> args) =>
-        Process.run(dart, ['run', script.path, ...args]);
+    Future<ProcessResult> run(List<String> args) => Process.run(
+      dart,
+      ['run', script.path, ...args],
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
 
     final preview = await run(base);
     _check(preview.exitCode == 0, 'preview failed: ${preview.stderr}');
@@ -116,7 +120,12 @@ Future<void> main() async {
     literalTest.writeAsStringSync(
       "import 'dart:convert'; import 'dart:io'; void main() { stdout.write(jsonEncode($literal)); }",
     );
-    final roundTrip = await Process.run(dart, ['run', literalTest.path]);
+    final roundTrip = await Process.run(
+      dart,
+      ['run', literalTest.path],
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
     _check(roundTrip.exitCode == 0, 'emitted title literal did not execute');
     _check(
       jsonDecode(roundTrip.stdout as String) == title,

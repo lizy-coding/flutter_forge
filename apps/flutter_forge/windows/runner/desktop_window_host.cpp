@@ -1,14 +1,13 @@
 #include "desktop_window_host.h"
 
 #include <windows.h>
-#include <windowsx.h>
-#include <algorithm>
 #include <commctrl.h>
 #include <dwmapi.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -30,16 +29,17 @@ bool SupportsSystemBackdrop() {
 
 class DesktopWindowHost final : public flutter::Plugin {
  public:
-  DesktopWindowHost(flutter::PluginRegistrarWindows* registrar, HWND window, HWND view)
-      : window_(window), view_(view), channel_(std::make_unique<flutter::MethodChannel<Value>>(
+  DesktopWindowHost(flutter::PluginRegistrarWindows* registrar, HWND window)
+      : window_(window), channel_(std::make_unique<flutter::MethodChannel<Value>>(
             registrar->messenger(), "flutter_forge/desktop_host",
             &flutter::StandardMethodCodec::GetInstance())) {
-    SetWindowSubclass(window_, WindowProc, reinterpret_cast<UINT_PTR>(this),
-                      reinterpret_cast<DWORD_PTR>(this));
-    ConfigureFrame();
     channel_->SetMethodCallHandler([this](const auto& call, auto result) {
       const auto& method = call.method_name();
       if (method == "configure") {
+        if (!configured_) {
+          std::cerr << "[desktop_host] first configure received hwnd="
+                    << window_ << std::endl;
+        }
         configured_ = true;
         const auto* args = std::get_if<Map>(call.arguments());
         if (args) {
@@ -60,12 +60,8 @@ class DesktopWindowHost final : public flutter::Plugin {
               theme_mode_ = *mode;
             }
           }
-          const auto material = args->find(Value("materialEnabled"));
-          material_requested_ = material != args->end() &&
-              std::get_if<bool>(&material->second) && std::get<bool>(material->second);
         }
         ApplyTheme();
-        RefreshChrome();
         result->Success(State());
       } else if (method == "minimize") {
         ShowWindow(window_, SW_MINIMIZE);
@@ -94,6 +90,11 @@ class DesktopWindowHost final : public flutter::Plugin {
         result->NotImplemented();
       }
     });
+    // Install the handler before frame changes can re-enter message dispatch.
+    SetWindowSubclass(window_, WindowProc, reinterpret_cast<UINT_PTR>(this),
+                      reinterpret_cast<DWORD_PTR>(this));
+    ConfigureFrame();
+    std::cerr << "[desktop_host] registered hwnd=" << window_ << std::endl;
   }
 
   ~DesktopWindowHost() override {
@@ -116,70 +117,16 @@ class DesktopWindowHost final : public flutter::Plugin {
         WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME);
     SetWindowPos(window_, nullptr, 0, 0, 0, 0,
         SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-    RefreshChrome();
-  }
-
-  int ResizeBorder() const {
-    const UINT dpi = GetDpiForWindow(window_);
-    return GetSystemMetricsForDpi(SM_CYSIZEFRAME, dpi) +
-           GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
-  }
-
-  bool CaptionBounds(RECT* bounds) const {
-    if (fullscreen_ || !IsWindowVisible(window_) || IsIconic(window_) ||
-        FAILED(DwmGetWindowAttribute(window_, DWMWA_CAPTION_BUTTON_BOUNDS,
-                                     bounds, sizeof(*bounds))) ||
-        bounds->right <= bounds->left || bounds->bottom <= bounds->top) {
-      return false;
-    }
-    RECT frame{};
-    GetWindowRect(window_, &frame);
-    POINT top_left{frame.left + bounds->left, frame.top + bounds->top};
-    POINT bottom_right{frame.left + bounds->right, frame.top + bounds->bottom};
-    ScreenToClient(view_, &top_left);
-    ScreenToClient(view_, &bottom_right);
-    *bounds = RECT{top_left.x, top_left.y, bottom_right.x, bottom_right.y};
-    return true;
-  }
-
-  void RefreshChrome() {
-    if (!IsWindow(view_) || IsIconic(window_)) return;
-    const int top = fullscreen_ ? 0 : MulDiv(48, GetDpiForWindow(window_), 96);
-    const MARGINS margins = material_active_
-        ? MARGINS{-1, -1, -1, -1} : MARGINS{0, 0, top, 0};
-    DwmExtendFrameIntoClientArea(window_, &margins);
-    if (fullscreen_) {
-      SetWindowRgn(view_, nullptr, TRUE);
-      return;
-    }
-    RECT client{};
-    GetClientRect(view_, &client);
-    // The child must leave native buttons visible, not just forward their input.
-    const int border = IsZoomed(window_) ? 0 : ResizeBorder();
-    HRGN region = CreateRectRgn(0, border, client.right, client.bottom);
-    RECT caption{};
-    if (CaptionBounds(&caption)) {
-      HRGN buttons = CreateRectRgnIndirect(&caption);
-      CombineRgn(region, region, buttons, RGN_DIFF);
-      DeleteObject(buttons);
-    }
-    if (!SetWindowRgn(view_, region, TRUE)) DeleteObject(region);
   }
 
   Value State() const {
-    RECT client{};
-    RECT caption{};
-    GetClientRect(view_, &client);
-    const double scale = static_cast<double>(GetDpiForWindow(window_)) / 96.0;
-    const double trailing = fullscreen_ ? 6.0 : CaptionBounds(&caption)
-        ? std::max(0.0, static_cast<double>(client.right - caption.left) / scale)
-        : 138.0;
     return Value(Map{
         {Value("active"), Value(GetForegroundWindow() == window_)},
         {Value("leadingInset"), Value(6.0)},
-        {Value("trailingInset"), Value(trailing)},
+        {Value("trailingInset"), Value(6.0)},
         {Value("fullscreen"), Value(fullscreen_)},
-        {Value("materialActive"), Value(material_active_)},
+        {Value("frameMode"), Value("system")},
+        {Value("materialActive"), Value(false)},
         {Value("systemBackdropSupported"), Value(supports_system_backdrop_)},
         {Value("transparencyAllowed"), Value(TransparencyAllowed())},
     });
@@ -209,7 +156,6 @@ class DesktopWindowHost final : public flutter::Plugin {
       SetWindowPos(window_, nullptr, 0, 0, 0, 0,
           SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
     }
-    RefreshChrome();
   }
 
   void ApplyTheme() {
@@ -223,15 +169,12 @@ class DesktopWindowHost final : public flutter::Plugin {
     const BOOL dark = theme_mode_ == "dark" ||
                      (theme_mode_ == "system" && light == 0);
     DwmSetWindowAttribute(window_, 20, &dark, sizeof(dark));
-    if (!supports_system_backdrop_) {
-      material_active_ = false;
-      return;
+    // Compatibility mode keeps the standard non-client frame and an opaque
+    // client area. Do not extend DWM into the Flutter view or activate Mica.
+    if (supports_system_backdrop_) {
+      const int backdrop = 1;  // DWMSBT_NONE
+      DwmSetWindowAttribute(window_, 38, &backdrop, sizeof(backdrop));
     }
-    const int backdrop = material_requested_ && TransparencyAllowed() ? 2 : 1;
-    // Public DWMWA_SYSTEMBACKDROP_TYPE (Windows 11 22H2+). Failure leaves
-    // older Windows on the existing opaque background; no undocumented APIs.
-    material_active_ = SUCCEEDED(DwmSetWindowAttribute(window_, 38, &backdrop,
-                                                     sizeof(backdrop))) && backdrop == 2;
   }
 
   bool TransparencyAllowed() const {
@@ -256,30 +199,8 @@ class DesktopWindowHost final : public flutter::Plugin {
       host->DetachWindowSubclass();
       return DefSubclassProc(window, message, wparam, lparam);
     }
-    LRESULT dwm_result = 0;
-    if (!host->fullscreen_ &&
-        DwmDefWindowProc(window, message, wparam, lparam, &dwm_result)) {
-      return dwm_result;
-    }
-    if (message == WM_NCCALCSIZE && wparam && !host->fullscreen_) {
-      auto* params = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
-      const LONG proposed_top = params->rgrc[0].top;
-      const auto result = DefSubclassProc(window, message, wparam, lparam);
-      params->rgrc[0].top = proposed_top + (IsZoomed(window) ? host->ResizeBorder() : 0);
-      return result;
-    }
-    if (message == WM_NCHITTEST && !host->fullscreen_ && !IsZoomed(window)) {
-      RECT frame{};
-      GetWindowRect(window, &frame);
-      const LONG y = GET_Y_LPARAM(lparam);
-      if (y >= frame.top && y < frame.top + host->ResizeBorder()) {
-        const LONG x = GET_X_LPARAM(lparam);
-        const int border = host->ResizeBorder();
-        if (x < frame.left + border) return HTTOPLEFT;
-        if (x >= frame.right - border) return HTTOPRIGHT;
-        return HTTOP;
-      }
-    }
+    // The standard system frame owns WM_NCCALCSIZE, WM_NCHITTEST and all
+    // non-client button messages. Never overlap or cut holes in the view.
     if (message == WM_SIZE || message == WM_ACTIVATE || message == WM_DPICHANGED ||
         message == WM_SHOWWINDOW || message == WM_SETTINGCHANGE ||
         message == WM_DWMCOLORIZATIONCOLORCHANGED) {
@@ -289,7 +210,6 @@ class DesktopWindowHost final : public flutter::Plugin {
       const auto result = DefSubclassProc(window, message, wparam, lparam);
       if (!*alive) return result;
       host->ApplyTheme();
-      host->RefreshChrome();
       if (host->configured_) {
         host->channel_->InvokeMethod("windowState", std::make_unique<Value>(host->State()));
       }
@@ -301,13 +221,10 @@ class DesktopWindowHost final : public flutter::Plugin {
   }
 
   HWND window_;
-  HWND view_;
   const std::shared_ptr<bool> alive_ = std::make_shared<bool>(true);
   const bool supports_system_backdrop_ = SupportsSystemBackdrop();
   bool fullscreen_ = false;
   bool configured_ = false;
-  bool material_requested_ = false;
-  bool material_active_ = false;
   WINDOWPLACEMENT placement_{};
   LONG_PTR saved_style_ = 0;
   std::unique_ptr<flutter::MethodChannel<Value>> channel_;
@@ -315,11 +232,13 @@ class DesktopWindowHost final : public flutter::Plugin {
 };
 }  // namespace
 
-void RegisterDesktopWindowHost(flutter::FlutterViewController* controller) {
-  const HWND window = GetAncestor(controller->view()->GetNativeWindow(), GA_ROOT);
+void RegisterDesktopWindowHost(flutter::FlutterViewController* controller,
+                               HWND window) {
+  if (!window) {
+    window = GetAncestor(controller->view()->GetNativeWindow(), GA_ROOT);
+  }
   auto* registrar = flutter::PluginRegistrarManager::GetInstance()
       ->GetRegistrar<flutter::PluginRegistrarWindows>(
           controller->engine()->GetRegistrarForPlugin("ForgeDesktopHost"));
-  registrar->AddPlugin(std::make_unique<DesktopWindowHost>(registrar, window,
-      controller->view()->GetNativeWindow()));
+  registrar->AddPlugin(std::make_unique<DesktopWindowHost>(registrar, window));
 }

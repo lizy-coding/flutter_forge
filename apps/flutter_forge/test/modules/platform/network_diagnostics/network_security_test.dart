@@ -107,8 +107,20 @@ void main() {
       final server = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
       addTearDown(server.close);
       server.listen((socket) {
-        socket.add('HTTP/1.1 400 Bad Request\r\n\r\n'.codeUnits);
-        unawaited(socket.flush().whenComplete(socket.destroy));
+        var replied = false;
+        socket.listen(
+          (_) {
+            if (replied) return;
+            replied = true;
+            // Wait for ClientHello, then send a TLS fatal handshake_failure
+            // alert. A pre-emptive plain HTTP reply plus reset can race the
+            // client's handshake and surface as an ordinary socket failure.
+            socket.add([21, 3, 3, 0, 2, 2, 40]);
+            unawaited(socket.flush().then((_) => socket.close()));
+          },
+          onError: (Object _) => socket.destroy(),
+          onDone: socket.destroy,
+        );
       });
       final cancellation = DiagnosticCancellation();
       addTearDown(cancellation.cancel);

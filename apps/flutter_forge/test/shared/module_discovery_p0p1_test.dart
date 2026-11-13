@@ -69,6 +69,142 @@ Widget host(Widget child) => MaterialApp(
 const macOSPlatform = AppPlatformSnapshot(platform: AppTargetPlatform.macOS);
 
 void main() {
+  testWidgets('local filter narrows composite entries and restores them', (
+    tester,
+  ) async {
+    final source = ScriptedSource([
+      [
+        createMessage(),
+        updateMessage([
+          {
+            'id': 'root',
+            'component': 'Group',
+            'children': ['compare', 'path', 'recent', 'choice'],
+          },
+          {
+            'id': 'compare',
+            'component': 'CompareTable',
+            'moduleIds': ['/microtask', '/isolate-basic', '/constraint-layout'],
+            'focus': '比较执行位置',
+          },
+          {
+            'id': 'path',
+            'component': 'LearningPath',
+            'steps': [
+              {'moduleId': '/microtask', 'goal': '理解事件队列'},
+              {'moduleId': '/isolate-basic', 'goal': '比较并发'},
+              {'moduleId': '/constraint-layout', 'goal': '理解约束'},
+            ],
+          },
+          {'id': 'recent', 'component': 'RecentHint'},
+          {
+            'id': 'choice',
+            'component': 'RefineChoice',
+            'label': '只看基础',
+            'filter': {'by': 'category', 'value': '基础机制'},
+          },
+        ]),
+      ],
+    ]);
+    final session = ModuleDiscoverySession(
+      modules: moduleManifest,
+      platform: macOSPlatform,
+      recentPaths: const ['/isolate-basic', '/microtask', '/constraint-layout'],
+      openModule: (_) {},
+      source: source,
+    );
+    await tester.pumpWidget(
+      host(
+        ModuleDiscoveryPanel(
+          modules: moduleManifest,
+          platform: macOSPlatform,
+          session: session,
+        ),
+      ),
+    );
+    await tester.runAsync(() => session.submit('异步'));
+    await settle(tester, session);
+    final original = jsonEncode(session.components);
+    await tester.ensureVisible(find.text('只看基础'));
+    await tester.tap(find.text('只看基础'));
+    await tester.pumpAndSettle();
+    expect(session.error, isNull);
+    expect(session.components['compare']!['moduleIds'], [
+      '/microtask',
+      '/constraint-layout',
+    ]);
+    expect((session.components['path']!['steps'] as List).length, 2);
+    expect(find.text('Isolate 并发对比'), findsNothing);
+
+    session.applyLocalFilter(by: 'concept', value: 'Microtask', label: '微任务');
+    await tester.pumpAndSettle();
+    for (final id in ['compare', 'path']) {
+      expect(session.components[id]!['component'], 'ModuleCard');
+      expect(session.components[id]!['moduleId'], '/microtask');
+    }
+    expect(session.components['path']!['reason'], '理解事件队列');
+    expect(session.components['recent']!['moduleIds'], ['/microtask']);
+    expect(find.text('Isolate 并发对比'), findsNothing);
+    expect(find.text('事件循环与微任务'), findsNWidgets(3));
+    expect(source.calls, 1);
+    expect(tester.takeException(), isNull);
+    session.clearLocalFilter();
+    await tester.pumpAndSettle();
+    expect(jsonEncode(session.components), original);
+    expect(find.text('Isolate 并发对比'), findsNWidgets(3));
+    expect(source.calls, 1);
+    await tester.pumpWidget(const SizedBox());
+    session.dispose();
+  });
+
+  for (final (question, difficulty, retainedPath) in [
+    ('网络诊断', '进阶', '/dio-interceptor'),
+    ('异步卡界面', '入门', '/microtask'),
+  ]) {
+    testWidgets('replay $question filters by the difficulty in its button', (
+      tester,
+    ) async {
+      final session = ModuleDiscoverySession(
+        modules: moduleManifest,
+        platform: macOSPlatform,
+        openModule: (_) {},
+        source: ReplayDiscoverySource(
+          modules: moduleManifest,
+          platform: macOSPlatform,
+        ),
+      );
+      await tester.pumpWidget(
+        host(
+          ModuleDiscoveryPanel(
+            modules: moduleManifest,
+            platform: macOSPlatform,
+            session: session,
+          ),
+        ),
+      );
+      await tester.runAsync(() => session.submit(question));
+      await settle(tester, session);
+      final label = '只看$difficulty难度（本地执行）';
+      await tester.ensureVisible(find.text(label));
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+      expect(session.error, isNull);
+      expect(session.localFilterLabel, label);
+      final cards = session.components.values.where(
+        (node) => node['component'] == 'ModuleCard',
+      );
+      expect(cards, isNotEmpty);
+      expect(cards.map((node) => node['moduleId']), everyElement(retainedPath));
+      expect(
+        session.records.where((record) => record.startsWith('请求：')).length,
+        1,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      session.dispose();
+    });
+  }
+
   testWidgets('progressive apply keeps the valid prefix on invalid tail', (
     tester,
   ) async {
@@ -212,13 +348,21 @@ void main() {
           {
             'id': 'root',
             'component': 'Group',
-            'children': ['card'],
+            'children': ['card', 'note', 'choice', 'recent'],
           },
           {
             'id': 'card',
             'component': 'ModuleCard',
             'moduleId': '/microtask',
             'reason': '入门的事件循环',
+          },
+          {'id': 'note', 'component': 'Note', 'text': '说明不会作为匹配模块'},
+          {'id': 'recent', 'component': 'RecentHint'},
+          {
+            'id': 'choice',
+            'component': 'RefineChoice',
+            'label': '只看实战',
+            'filter': {'by': 'difficulty', 'value': '实战'},
           },
         ]),
       ],
@@ -240,11 +384,11 @@ void main() {
     );
     await tester.runAsync(() => session.submit('异步'));
     await settle(tester, session);
-    // A card-only tree cannot satisfy a mismatching filter: nothing survives,
-    // so the tree is kept and the mismatch is explained instead.
+    final original = jsonEncode(session.components);
     session.applyLocalFilter(by: 'difficulty', value: '实战', label: '只看实战难度');
     await tester.pumpAndSettle();
     expect(session.error, contains('没有匹配'));
+    expect(jsonEncode(session.components), original);
     expect(find.text('事件循环与微任务'), findsOneWidget);
     expect(session.localFilterLabel, isNull);
     expect(find.byKey(const ValueKey('discovery-filter-chip')), findsNothing);

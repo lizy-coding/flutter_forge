@@ -98,6 +98,20 @@ const modulePlatformPolicies = <String, ModulePlatformSupport>{
   'online_video_player': ModulePlatformSupport(
     excludedPlatforms: {AppTargetPlatform.iOS},
   ),
+  'biometric_auth': ModulePlatformSupport(
+    excludedPlatforms: {
+      AppTargetPlatform.iOS,
+      AppTargetPlatform.web,
+      AppTargetPlatform.windows,
+    },
+  ),
+  'system_notification': ModulePlatformSupport(
+    excludedPlatforms: {
+      AppTargetPlatform.iOS,
+      AppTargetPlatform.web,
+      AppTargetPlatform.windows,
+    },
+  ),
   'webview': ModulePlatformSupport(
     excludedPlatforms: {AppTargetPlatform.iOS, AppTargetPlatform.web},
   ),

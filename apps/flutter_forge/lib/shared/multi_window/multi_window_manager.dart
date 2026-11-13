@@ -42,6 +42,35 @@ class MultiWindowManager {
 
   static const themeSelectionMethod = 'themeSelectionChanged';
   static const readyMethod = 'windowReady';
+  static const localeRequestMethod = 'localePreferenceRequest';
+  static const localeSnapshotMethod = 'localeSnapshot';
+  String? _mainWindowId;
+  String _localePreference = 'system';
+  int _localeRevision = 0;
+  Map<String, Object> get localeSnapshot => {
+    'preference': _localePreference,
+    'revision': _localeRevision,
+  };
+
+  void configureLocale(String mainWindowId, String preference) {
+    _mainWindowId = mainWindowId;
+    _localePreference = preference;
+  }
+
+  Future<void> updateLocalePreference(String preference) async {
+    _localePreference = preference;
+    _localeRevision++;
+    final snapshot = localeSnapshot;
+    for (final controller in await _platform.getAllWindows()) {
+      if (parseArguments(controller.arguments).type == WindowType.category) {
+        await _platform.invokeMethod(
+          controller,
+          localeSnapshotMethod,
+          snapshot,
+        );
+      }
+    }
+  }
 
   /// Starts window lifecycle observation and removes stale category entries.
   Future<void> initialize() async {
@@ -115,6 +144,9 @@ class MultiWindowManager {
       'type': 'category',
       'category': category.name,
       'themeSelection': _themeSelectionPayload,
+      'mainWindowId': _mainWindowId,
+      'localePreference': _localePreference,
+      'localeRevision': _localeRevision,
     });
 
     final config = WindowConfiguration(
@@ -435,11 +467,17 @@ class WindowArguments {
   final WindowType type;
   final ModuleCategory? category;
   final String themeSelectionPayload;
+  final String? mainWindowId;
+  final String localePreference;
+  final int localeRevision;
 
   const WindowArguments({
     required this.type,
     this.category,
     this.themeSelectionPayload = 'system',
+    this.mainWindowId,
+    this.localePreference = 'system',
+    this.localeRevision = 0,
   });
 
   factory WindowArguments.fromJson(Map<String, dynamic> json) {
@@ -455,6 +493,9 @@ class WindowArguments {
     return WindowArguments(
       type: type,
       category: category,
+      mainWindowId: json['mainWindowId'] as String?,
+      localePreference: json['localePreference'] as String? ?? 'system',
+      localeRevision: json['localeRevision'] as int? ?? 0,
       themeSelectionPayload:
           json['themeSelection'] as String? ??
           json['themeMode'] as String? ??

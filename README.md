@@ -1,5 +1,7 @@
 # Flutter Forge
 
+<img src="artwork/branding/forge-a2-glass/app-icon-rounded-1024.png" width="96" height="96" alt="Flutter Forge · A2 Clear Glass">
+
 **简体中文** · [English](README.en.md)
 
 > 跨平台 Flutter 工程实践：架构设计、图形绘制与性能治理。
@@ -101,7 +103,7 @@ flowchart LR
 
 ## 快速开始
 
-Flutter `>=3.47.2` · Dart `^3.11.5`
+Flutter `>=3.47.8` · Dart `^3.11.5`
 
 锁文件与 CI 统一使用官方 `pub.dev`。以下命令显式指定包源，避免本机镜像环境变量改写锁文件。
 

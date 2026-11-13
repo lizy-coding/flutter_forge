@@ -89,13 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            // TODO(identity): 发布前替换为真实 bundle id / 公司名 / 版权
-            VALUE "CompanyName", "Flutter Forge Team" "\0"
+            VALUE "CompanyName", "Forest" "\0"
             VALUE "FileDescription", "Flutter Forge" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "flutter_forge" "\0"
-            // TODO(identity): 发布前替换为真实 bundle id / 公司名 / 版权
-            VALUE "LegalCopyright", "Copyright © 2026 Flutter Forge Team" "\0"
+            VALUE "LegalCopyright", "Copyright © 2026 Forest" "\0"
             VALUE "OriginalFilename", "flutter_forge.exe" "\0"
             VALUE "ProductName", "Flutter Forge" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

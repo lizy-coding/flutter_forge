@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../shared/learning/learning_slider.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
@@ -55,7 +57,7 @@ Catalog buildWorkbenchCatalog(GenuiSession session) {
             Text(
               '${field == 'parentWidth' ? '父容器最大宽度' : '子组件期望宽度'}：${value.round()} dp',
             ),
-            Slider(
+            LearningSlider(
               key: ValueKey('genui-$field'),
               min: 60,
               max: 300,

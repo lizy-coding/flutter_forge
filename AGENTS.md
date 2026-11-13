@@ -43,14 +43,15 @@
 
 - 平台限制用 `ModulePlatformSupport.excludedPlatforms` 表达；普通模块使用空排除集合。
 - 平台限制由 `tool/agent_indexes/availability.js` 的共用能力适配规则推导；模块仅声明可选能力或带依据的产品级禁用例外，禁止重复手填平台名单。
+- 平台差异能力（原生通道、FFI、平台行为差异）经 `packages/` 桥接包接入，遵循 `docs/adr/0019-platform-capability-bridge-packages.md` 的 flutter_battery 模板：平台接口、不抛出的能力查询、类型化 Outcome、通道契约测试；宿主 App 原生代码只保留应用壳通道，禁止承载模块功能通道。
 - 日常维护仅生成入口支持范围、必要功能差异与限制依据；`tool/module_availability.js list` 只读查看支持声明。测试结果、源码指纹和历史验收状态不进入维护矩阵，也不作为日常健康判定标准；专项报告按需保留，CI 测试继续作为开发反馈。
 - 目录和路由统一通过 `module_registry` 判定；模块页面不得自行决定目录可见性。
 - 不支持的平台保留稳定模块路径，并进入统一不可用说明页。
 - 平台可用性与 `ModuleStatus.pending/ready/recommended` 相互独立。
 - Android、iOS、Web 和小于 `600dp` 的窗口使用应用内导航。
-- 桌面主框架遵循 `docs/adr/0016-shared-desktop-workbench.md`：macOS/Windows 共用 Flutter 沉浸式标题栏、工作台首页、两层分类／模块导航和快速打开；内容区共用布局；窗口控制遵循平台规范，macOS 左侧原生红黄绿按钮，Windows 右侧原生窗口按钮。
-- 标题栏主页按钮进入当前窗口根路由；空白区双击遵循系统习惯；独立全屏按钮和 F11 切换真实全屏／窗口模式，不改变原生最大化按钮语义。主窗口关闭退出应用，分类窗口关闭仅影响自身。
-- 四端交互遵循 `docs/adr/0018-platform-interaction-and-native-materials.md`，实施状态见生成计划。桌面基础导航页面默认原生材质；教学内容与侧栏实色、标题栏最低强度。现有 DesktopWindowHost 提供每窗口系统材质，macOS 使用系统模糊，Windows 使用公开 Mica 接口；旧系统／能力缺失／关闭透明或高对比度时回退实色，保持用户实色偏好。新增插件仍须先验证每引擎绑定与窗口控制兼容性。
+- 桌面主框架遵循 `docs/adr/0016-shared-desktop-workbench.md`：macOS/Windows 共用工作台首页、两层分类／模块导航和快速打开；内容区共用布局；窗口控制遵循平台规范，macOS 左侧原生红黄绿按钮，Windows 依 ADR 0021 使用系统标准标题栏与边框、内容区 Flutter 工具栏。
+- 标题栏／内容区工具栏的主页按钮进入当前窗口根路由；系统标题栏空白区双击遵循系统习惯，Windows 内容区工具栏不承担拖窗或双击最大化；独立全屏按钮和 F11 切换真实全屏／窗口模式，不改变原生最大化按钮语义。主窗口关闭退出应用，分类窗口关闭仅影响自身。
+- 四端交互遵循 `docs/adr/0018-platform-interaction-and-native-materials.md`，实施状态见生成计划。macOS 基础导航页面默认原生材质，Windows 使用实色兼容路径；教学内容与侧栏实色。现有 DesktopWindowHost 提供每窗口系统材质，macOS 使用系统模糊，Windows 依 ADR 0021 使用实色兼容路径并停用 Mica 与客户区边框扩展；旧系统／能力缺失／关闭透明或高对比度时回退实色，保持用户实色偏好。新增插件仍须先验证每引擎绑定与窗口控制兼容性。
 - Web／移动首页为搜索、分类、最近访问，作者资料进入关于；移动以快速查阅为主，不新增底部标签栏。四端检索标题、简介、分类与概念，同会话返回保留检索词与目录位置；Web 保留浏览器历史语义。最近访问只持久保存模块入口，不恢复实验任务。
 - 本期调整 app 入口、导航、表面与阅读容器，复用既有教学内容；模块内部重排后续单独推进，阻碍阅读和操作的溢出纳入本期修正。目标规则不能作为已实现或已验收事实。
 - 仅桌面窗口且多窗口能力可用时，由用户显式打开分类专注窗口；普通分类与模块点击使用应用内导航。
@@ -68,6 +69,12 @@
 质量门禁必须通过：全部生成物无漂移、Dart 格式合规、bare `flutter analyze` 无 issue、workspace 全量测试和工具测试通过、模块测试存在性合规。通用目录命名、测试顶层目录与源码依赖扫描不属于本仓库门禁；
 FlutterGuard（已更名 BoundaryLens）独立安装，后续仅通过外部插件或工具集按需使用，不属于依赖解析、提交、CI 或发布的强制要求。
 `tool/verify_test_layout.sh` 仅保留模块测试存在性检查；稳定路由、教学组件、注册一致性和支持声明仍是业务契约。
+
+## 自动化用例维护
+
+- 宿主集成与显式专项执行单元统一登记 `tool/automation_catalog.json`，交互标准及运行命令见 `docs/TESTING.md`。单元/Widget 测试仍由原门禁按 workspace 收集，不逐条登记。
+- 基本冒烟复用 `test/support/automation/` 的 fixture、函数与平台 adapter；默认仅运行确定性核心交互，不追加全目录、真实模型、GPU、外设或压力循环。新增差异优先扩展已有 adapter，禁止复制各平台整份流程。
+- 模拟平台、浏览器 Widget、真实宿主集成和原生/设备观察分别报告；零执行、全部跳过、缺设备或驱动不能标成该平台 PASS。CI 与门禁修改仍遵循下方授权规则。
 
 ## Git 与发布
 

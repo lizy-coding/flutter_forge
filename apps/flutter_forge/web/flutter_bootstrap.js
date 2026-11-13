@@ -2,7 +2,7 @@
 {{flutter_build_config}}
 
 const loading = window.flutterForgeLoading;
-loading?.mark('loading-script', '正在加载 Flutter 资源…');
+loading?.mark('loading-script', loading?.message('startupResources'));
 
 async function unregisterLegacyServiceWorkers() {
   if (!('serviceWorker' in navigator)) return false;
@@ -25,9 +25,9 @@ async function unregisterLegacyServiceWorkers() {
     _flutter.loader.load({
       onEntrypointLoaded: async (engineInitializer) => {
         try {
-          loading?.mark('initializing-engine', '正在初始化渲染引擎…');
+          loading?.mark('initializing-engine', loading?.message('startupEngine'));
           const appRunner = await engineInitializer.initializeEngine();
-          loading?.mark('running-app', '正在启动学习目录…');
+          loading?.mark('running-app', loading?.message('startupApp'));
           await appRunner.runApp();
           loading?.complete();
         } catch (error) {

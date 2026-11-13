@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -8,7 +11,98 @@ void main() {
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 
-  tearDown(() => messenger.setMockMethodCallHandler(channel, null));
+  tearDown(() {
+    messenger.setMockMethodCallHandler(channel, null);
+    debugDefaultTargetPlatformOverride = null;
+  });
+
+  test('Windows startup waits for child channel registration', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    var calls = 0;
+    messenger.setMockMethodCallHandler(channel, (_) async {
+      if (++calls < 3) throw MissingPluginException();
+      return {'windowId': 'child', 'windowArgument': 'category:basic'};
+    });
+    final window = await WindowController.fromCurrentEngine();
+    expect(window.windowId, 'child');
+    expect(window.arguments, 'category:basic');
+    expect(calls, 3);
+  });
+
+  test('Windows missing plugin wait is bounded', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    var calls = 0;
+    messenger.setMockMethodCallHandler(channel, (_) async {
+      calls++;
+      throw MissingPluginException();
+    });
+    await expectLater(
+      WindowController.fromCurrentEngine(),
+      throwsA(isA<MissingPluginException>()),
+    );
+    expect(calls, 41);
+  });
+
+  test('startup propagates platform failures without retry', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    var calls = 0;
+    messenger.setMockMethodCallHandler(channel, (_) async {
+      calls++;
+      throw PlatformException(code: 'broken');
+    });
+    await expectLater(
+      WindowController.fromCurrentEngine(),
+      throwsA(isA<PlatformException>()),
+    );
+    expect(calls, 1);
+  });
+
+  test('other platforms do not retry missing plugins', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    var calls = 0;
+    messenger.setMockMethodCallHandler(channel, (_) async {
+      calls++;
+      throw MissingPluginException();
+    });
+    await expectLater(
+      WindowController.fromCurrentEngine(),
+      throwsA(isA<MissingPluginException>()),
+    );
+    expect(calls, 1);
+  });
+
+  test('an unresponsive native startup channel times out', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    messenger.setMockMethodCallHandler(
+      channel,
+      (_) => Completer<Object?>().future,
+    );
+    await expectLater(
+      WindowController.fromCurrentEngine(),
+      throwsA(isA<TimeoutException>()),
+    );
+  });
+
+  for (final definition in [
+    null,
+    <String, Object?>{},
+    {'windowId': '', 'windowArgument': ''},
+    {'windowId': 'child', 'windowArgument': 42},
+  ]) {
+    test('invalid window definition fails explicitly: $definition', () async {
+      messenger.setMockMethodCallHandler(channel, (_) async => definition);
+      await expectLater(
+        WindowController.fromCurrentEngine(),
+        throwsA(
+          isA<PlatformException>().having(
+            (error) => error.code,
+            'code',
+            'WINDOW_DEFINITION_INVALID',
+          ),
+        ),
+      );
+    });
+  }
 
   for (final invalidId in [null, '']) {
     test(

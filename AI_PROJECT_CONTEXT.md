@@ -44,12 +44,42 @@
       "packages/desktop_multi_window",
       "packages/flutter_battery",
       "packages/usb_network_bridge",
-      "packages/forge_scene_viewer"
+      "packages/forge_scene_viewer",
+      "packages/usb_detector_bridge",
+      "packages/forge_notification_bridge",
+      "packages/flutter_biometric",
+      "packages/bluetooth_system_bridge",
+      "packages/forge_localization",
+      "packages/forge_app_info"
     ],
     "resolution_status": "active",
     "resolution_blocker": "none"
   },
   "internal_packages": [
+    {
+      "name": "forge_app_info",
+      "type": "flutter_package",
+      "path": "packages/forge_app_info",
+      "entrypoint": "lib/forge_app_info.dart"
+    },
+    {
+      "name": "forge_localization",
+      "type": "flutter_package",
+      "path": "packages/forge_localization",
+      "entrypoint": "lib/forge_localization.dart"
+    },
+    {
+      "name": "bluetooth_system_bridge",
+      "type": "flutter_plugin_package",
+      "path": "packages/bluetooth_system_bridge",
+      "entrypoint": "lib/bluetooth_system_bridge.dart"
+    },
+    {
+      "name": "flutter_biometric",
+      "type": "flutter_plugin_package",
+      "path": "packages/flutter_biometric",
+      "entrypoint": "lib/flutter_biometric.dart"
+    },
     {
       "name": "forge_articles",
       "type": "dart_package",
@@ -67,6 +97,18 @@
       "type": "flutter_plugin_package",
       "path": "packages/usb_network_bridge",
       "entrypoint": "lib/usb_network_bridge.dart"
+    },
+    {
+      "name": "usb_detector_bridge",
+      "type": "flutter_plugin_package",
+      "path": "packages/usb_detector_bridge",
+      "entrypoint": "lib/usb_detector_bridge.dart"
+    },
+    {
+      "name": "forge_notification_bridge",
+      "type": "flutter_plugin_package",
+      "path": "packages/forge_notification_bridge",
+      "entrypoint": "lib/forge_notification_bridge.dart"
     },
     {
       "name": "flutter_battery",
@@ -196,7 +238,7 @@
   "platform_rules": {
     "router_platform_api": "forbidden",
     "module_host_navigation": "forbidden",
-    "desktop_window_policy": "lib/app/category_navigation.dart",
+    "desktop_window_policy": "lib/app/module_home_page.dart",
     "navigation_policy": "lib/app/navigation_policy.dart",
     "compact_width_breakpoint_dp": 600,
     "desktop_shell": {
@@ -205,12 +247,12 @@
         "windows"
       ],
       "rendering": "shared_flutter_workbench",
-      "titlebar": "immersive_flutter_48dp_with_native_window_controls",
+      "titlebar": "macos_immersive_flutter_windows_system_frame_with_client_toolbar",
       "titlebar_home": "main_workbench_or_focused_category_root",
       "titlebar_double_click": "platform_system_preference",
       "window_controls": "native_macos_leading_traffic_lights_windows_trailing_caption",
-      "fullscreen_entry": "separate_native_fullscreen_button_and_f11",
-      "native_control_layout": "host_reported_logical_insets",
+      "fullscreen_entry": "separate_toolbar_fullscreen_button_and_f11",
+      "native_control_layout": "macos_host_insets_windows_controls_outside_client",
       "window_host": "lib/app/desktop_window_host.dart",
       "native_hosts": [
         "macos/Runner/AppDelegate.swift",
@@ -224,11 +266,11 @@
       "glass_scope": "native_basic_pages_solid_teaching_minimal_titlebar",
       "material_backend": "per_engine_DesktopWindowHost_native_extension",
       "macos_material": "NSVisualEffectView_sidebar_behindWindow",
-      "windows_material": "public_DWM_mica_windows11_22h2_else_solid",
+      "windows_material": "solid_standard_frame_compatibility",
       "main_window_close": "exit_application",
       "category_window_close": "close_current_window",
       "decision": "docs/adr/0018-platform-interaction-and-native-materials.md",
-      "window_decision": "docs/adr/0016-shared-desktop-workbench.md"
+      "window_decision": "docs/adr/0021-windows-standard-system-frame.md"
     },
     "mobile_window_policy": "in_app_navigation_only",
     "web_window_policy": "in_app_navigation_only",
@@ -274,9 +316,9 @@
         "about"
       ],
       "page_classification": "semantic_role_not_url_depth",
-      "default_material": "native_material_follow_system_with_user_opt_out",
+      "default_material": "macos_native_material_windows_solid_compatibility",
       "macos_material": "validate_system_visual_effect",
-      "windows_material": "validate_windows11_mica_else_solid",
+      "windows_material": "solid_standard_frame_compatibility_pending_host_validation",
       "mica_semantics": "opaque_wallpaper_tint_not_behind_window_transparency",
       "fallback": "solid_on_unsupported_error_system_transparency_off_or_high_contrast",
       "preference_migration": "preserve_explicit_solid_and_brightness",

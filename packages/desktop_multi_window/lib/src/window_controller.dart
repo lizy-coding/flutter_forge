@@ -52,14 +52,38 @@ class WindowController {
   }
 
   static Future<WindowController> fromCurrentEngine() async {
-    final definition = await _channel.invokeMethod<Map<dynamic, dynamic>>(
-      'getWindowDefinition',
-    );
-    if (definition == null) {
-      throw Exception('Failed to get window definition');
+    Map<dynamic, dynamic>? definition;
+    final elapsed = Stopwatch()..start();
+    const startupTimeout = Duration(seconds: 3);
+    // Windows starts Dart while constructing the view controller, before the
+    // caller can register plugins. Yield only for that transient missing channel.
+    const retryDelay = Duration(milliseconds: 50);
+    for (var attempt = 0; ; attempt++) {
+      try {
+        final remaining = startupTimeout - elapsed.elapsed;
+        if (remaining <= Duration.zero) {
+          throw TimeoutException('Native window definition was not registered');
+        }
+        definition = await _channel
+            .invokeMethod<Map<dynamic, dynamic>>('getWindowDefinition')
+            .timeout(remaining);
+        break;
+      } on MissingPluginException {
+        if (defaultTargetPlatform != TargetPlatform.windows || attempt >= 40) {
+          rethrow;
+        }
+        await Future<void>.delayed(retryDelay);
+      }
     }
-    final windowId = definition['windowId'] as String;
-    final windowArgument = definition['windowArgument'] as String;
+    final windowId = definition?['windowId'];
+    final windowArgument = definition?['windowArgument'];
+    if (windowId is! String || windowId.isEmpty || windowArgument is! String) {
+      throw PlatformException(
+        code: 'WINDOW_DEFINITION_INVALID',
+        message:
+            'Native window definition must contain an identity and arguments',
+      );
+    }
     return WindowController._(windowId, windowArgument);
   }
 

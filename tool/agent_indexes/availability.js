@@ -32,6 +32,21 @@ const capabilities = {
     reason: 'desktop_system_ncm_interface_bound_tcp',
     sources: ['packages/usb_network_bridge/pubspec.yaml', 'packages/usb_network_bridge/lib/src/backend_native.dart'],
   },
+  usb_detection: {
+    dependencies: ['usb_detector_bridge'], platforms: ['android'],
+    reason: 'android_usb_manager_enumeration_only',
+    sources: ['packages/usb_detector_bridge/pubspec.yaml', 'packages/usb_detector_bridge/lib/usb_detector_method_channel.dart'],
+  },
+  biometric_auth: {
+    dependencies: ['flutter_biometric'], platforms: ['android', 'macOS'],
+    reason: 'biometric_biometricprompt_localauth_adapters',
+    sources: ['packages/flutter_biometric/pubspec.yaml', 'packages/flutter_biometric/lib/flutter_biometric_method_channel.dart'],
+  },
+  notification_posting: {
+    dependencies: ['forge_notification_bridge'], platforms: ['android', 'macOS'],
+    reason: 'notification_android_macos_local_adapters',
+    sources: ['packages/forge_notification_bridge/pubspec.yaml', 'packages/forge_notification_bridge/lib/forge_notification_method_channel.dart'],
+  },
   battery_monitor: {
     dependencies: ['flutter_battery'], platforms: ['android', 'macOS'],
     reason: 'battery_android_macos_native_adapters',
@@ -86,9 +101,9 @@ const capabilities = {
     sources: ['apps/flutter_forge/lib/modules/platform/webview/module_entry.dart'],
   },
   ble_central: {
-    dependencies: ['universal_ble'], platforms: ['android', 'macOS', 'windows'],
+    dependencies: ['universal_ble', 'bluetooth_system_bridge'], platforms: ['android', 'macOS', 'windows'],
     reason: 'ble_central_adapters',
-    sources: ['apps/flutter_forge/lib/modules/platform/bluetooth_ble/module_entry.dart', 'apps/flutter_forge/lib/modules/platform/bluetooth_ble/state/ble_session.dart'],
+    sources: ['apps/flutter_forge/lib/modules/platform/bluetooth_ble/module_entry.dart', 'packages/bluetooth_system_bridge/lib/bluetooth_system_bridge.dart'],
   },
 };
 

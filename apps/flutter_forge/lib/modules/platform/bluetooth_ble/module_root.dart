@@ -209,6 +209,16 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (_isAndroid) ...[
+          const Text(
+            '权限用途：附近设备权限用于扫描 BLE 外设、查询系统连接及连接你选择的设备，'
+            '处理外设名称、地址、广播、信号和 GATT 服务信息。Android 11 及以下扫描'
+            '可能需要定位权限，不用于位置跟踪。拒绝只影响相应蓝牙操作。'
+            '蓝牙组件会在本机缓存外设地址与服务 UUID；退出或撤销权限不删除缓存，'
+            '清除应用数据或卸载可删除本地副本，详见“关于 → 隐私与数据”。',
+          ),
+          const SizedBox(height: 12),
+        ],
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -403,7 +413,9 @@ class _BluetoothBlePageState extends State<BluetoothBlePage>
                   Text(
                     [
                       if (audio[id] case final device?)
-                        '系统已连接 · ${device.profiles.join('、')}',
+                        device.error == null
+                            ? '系统已连接 · ${device.profiles.join('、')}'
+                            : '记录解析失败（${device.error}）',
                       if (session.systemDevices.containsKey(id)) '系统 BLE 已连接',
                     ].join(' · '),
                   ),

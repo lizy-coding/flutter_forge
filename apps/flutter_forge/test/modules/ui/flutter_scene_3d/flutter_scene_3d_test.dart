@@ -6,13 +6,60 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
+import 'package:flutter_forge_app/module_registry/app_platform_scope.dart';
 import 'package:flutter_forge_app/module_registry/module_catalog_utils.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/module_root.dart';
+import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/module_entry.dart';
 import 'package:forge_scene_viewer/forge_scene_viewer.dart';
 import 'package:flutter_forge_app/modules/ui/flutter_scene_3d/scene_interaction_mode.dart';
 
 void main() {
+  for (final platform in [AppTargetPlatform.android, AppTargetPlatform.macOS]) {
+    for (final width in [360.0, 1280.0]) {
+      testWidgets('entry uses injected $platform identity at ${width}dp', (
+        tester,
+      ) async {
+        tester.view.physicalSize = Size(width, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final runtime = FakeSceneRuntime();
+        addTearDown(runtime.dispose);
+
+        await tester.pumpWidget(
+          AppPlatformScope(
+            platform: AppPlatformSnapshot(platform: platform),
+            child: MaterialApp(home: FlutterScene3dEntry(runtime: runtime)),
+          ),
+        );
+        await tester.pump();
+
+        final interactive = platform == AppTargetPlatform.macOS;
+        expect(
+          tester
+              .widget<FlutterScene3dPage>(find.byType(FlutterScene3dPage))
+              .interactionMode,
+          interactive
+              ? SceneInteractionMode.interactive
+              : SceneInteractionMode.viewOnly,
+        );
+        expect(
+          find.byTooltip('暂停环绕'),
+          interactive ? findsOneWidget : findsNothing,
+        );
+        if (!interactive) {
+          expect(
+            find.byKey(const Key('android-view-only-notice')),
+            findsOneWidget,
+          );
+        }
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox.shrink());
+      });
+    }
+  }
+
   testWidgets('shows title, learning content, and semantic controls', (
     tester,
   ) async {

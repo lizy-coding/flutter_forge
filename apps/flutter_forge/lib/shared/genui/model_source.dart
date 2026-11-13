@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import '../platform/build_features.dart';
 
 class WorkbenchRequest {
   const WorkbenchRequest({
@@ -49,6 +50,7 @@ class OpenAiWorkbenchSource implements WorkbenchSource {
     WorkbenchRequest request,
     CancelToken cancelToken,
   ) async* {
+    if (offlineEdition) throw StateError('离线版仅提供固定教学回放。');
     if (endpoint.scheme != 'https' &&
         !(endpoint.scheme == 'http' &&
             ['localhost', '127.0.0.1', '::1'].contains(endpoint.host))) {

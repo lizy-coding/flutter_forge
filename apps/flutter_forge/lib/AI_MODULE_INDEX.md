@@ -1,7 +1,7 @@
 {
   "schema": "flutter_forge.agent_docs.module_index.v1",
   "registry": "lib/module_registry/module_manifest.dart",
-  "count": 33,
+  "count": 35,
   "modules": [
     {
       "id": "graphics_background",
@@ -1005,6 +1005,7 @@
       "status": "ready",
       "depends": [
         "shared_learning",
+        "usb_detector_bridge",
         "device_info_plus",
         "module_registry"
       ],
@@ -1023,12 +1024,23 @@
           "web",
           "windows"
         ],
-        "required_capabilities": [],
+        "required_capabilities": [
+          "usb_detection"
+        ],
         "unreviewed_dependencies": [
           "device_info_plus"
         ],
         "optional_capabilities": [],
-        "reasons": [],
+        "reasons": [
+          {
+            "capability": "usb_detection",
+            "reason": "android_usb_manager_enumeration_only",
+            "sources": [
+              "packages/usb_detector_bridge/pubspec.yaml",
+              "packages/usb_detector_bridge/lib/usb_detector_method_channel.dart"
+            ]
+          }
+        ],
         "restriction": {
           "reason": "usb_otg_learning_workflow_deferred",
           "sources": [
@@ -1092,7 +1104,7 @@
       "depends": [
         "shared_learning",
         "universal_ble",
-        "url_launcher",
+        "bluetooth_system_bridge",
         "module_registry"
       ],
       "platform_support": {
@@ -1110,9 +1122,7 @@
         "required_capabilities": [
           "ble_central"
         ],
-        "unreviewed_dependencies": [
-          "url_launcher"
-        ],
+        "unreviewed_dependencies": [],
         "optional_capabilities": [],
         "reasons": [
           {
@@ -1120,7 +1130,7 @@
             "reason": "ble_central_adapters",
             "sources": [
               "apps/flutter_forge/lib/modules/platform/bluetooth_ble/module_entry.dart",
-              "apps/flutter_forge/lib/modules/platform/bluetooth_ble/state/ble_session.dart"
+              "packages/bluetooth_system_bridge/lib/bluetooth_system_bridge.dart"
             ]
           }
         ],
@@ -1214,6 +1224,94 @@
         "features": {}
       },
       "analysis": "lib/modules/platform/online_video_player/AI_ANALYSIS.md"
+    },
+    {
+      "id": "biometric_auth",
+      "category": "platform",
+      "path": "lib/modules/platform/biometric_auth",
+      "route": "/biometric-auth",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "flutter_biometric",
+        "module_registry"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web",
+          "windows"
+        ],
+        "required_capabilities": [
+          "biometric_auth"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "biometric_auth",
+            "reason": "biometric_biometricprompt_localauth_adapters",
+            "sources": [
+              "packages/flutter_biometric/pubspec.yaml",
+              "packages/flutter_biometric/lib/flutter_biometric_method_channel.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/platform/biometric_auth/AI_ANALYSIS.md"
+    },
+    {
+      "id": "system_notification",
+      "category": "platform",
+      "path": "lib/modules/platform/system_notification",
+      "route": "/system-notification",
+      "status": "ready",
+      "depends": [
+        "shared_learning",
+        "forge_notification_bridge",
+        "module_registry"
+      ],
+      "platform_support": {
+        "target_platforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "web",
+          "windows"
+        ],
+        "excluded_platforms": [
+          "iOS",
+          "web",
+          "windows"
+        ],
+        "required_capabilities": [
+          "notification_posting"
+        ],
+        "unreviewed_dependencies": [],
+        "optional_capabilities": [],
+        "reasons": [
+          {
+            "capability": "notification_posting",
+            "reason": "notification_android_macos_local_adapters",
+            "sources": [
+              "packages/forge_notification_bridge/pubspec.yaml",
+              "packages/forge_notification_bridge/lib/forge_notification_method_channel.dart"
+            ]
+          }
+        ],
+        "restriction": null,
+        "features": {}
+      },
+      "analysis": "lib/modules/platform/system_notification/AI_ANALYSIS.md"
     },
     {
       "id": "webview",

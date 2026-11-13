@@ -15,6 +15,22 @@ class WorkbenchHistory extends ChangeNotifier {
   List<String> get recent => List.unmodifiable(_recent);
   Future<void> _pendingWrite = Future.value();
 
+  Future<void> clear() {
+    _recent.clear();
+    final write = _pendingWrite.then((_) async {
+      final removed = await _preferences?.remove(preferenceKey);
+      if (removed == false) {
+        throw StateError('Recent module preference could not be removed');
+      }
+    });
+    // Preserve queue ordering after a failed write; the caller observes failure.
+    _pendingWrite = write.catchError((Object error) {
+      debugPrint('Recent module preference could not be cleared: $error');
+    });
+    notifyListeners();
+    return write;
+  }
+
   void record(String path) {
     if (_recent.isNotEmpty && _recent.first == path) return;
     _recent.remove(path);

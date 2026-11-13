@@ -70,12 +70,15 @@ std::string MultiWindowManager::Create(const flutter::EncodableMap* args) {
   managed_flutter_windows_[window_id] = std::move(flutter_window);
 
   try {
-    if (_g_window_created_callback) {
-      _g_window_created_callback(controller);
-    }
+    // Bind the child identity before other plugins can pump platform messages.
+    // RegisterPlugins may re-enter the public registration entry; the managed
+    // wrapper above makes that entry a no-op for this HWND.
     auto registrar = controller->engine()->GetRegistrarForPlugin("DesktopMultiWindowPlugin");
     InternalMultiWindowPluginRegisterWithRegistrar(registrar,
                                                    windows_[window_id].get());
+    if (_g_window_created_callback) {
+      _g_window_created_callback(controller);
+    }
     controller->engine()->SetNextFrameCallback([window_id, config]() {
       MultiWindowManager::Instance()->MarkFirstFrameReady(window_id,
                                                          !config.hidden_at_launch);

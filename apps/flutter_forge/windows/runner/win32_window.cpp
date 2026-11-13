@@ -208,7 +208,10 @@ Win32Window::MessageHandler(HWND hwnd,
     }
 
     case WM_ACTIVATE:
-      if (child_content_ != nullptr) {
+      // This message is sent for deactivation too. Do not move keyboard focus
+      // into a child of the window that is losing activation or is minimized.
+      if (LOWORD(wparam) != WA_INACTIVE && !IsIconic(hwnd) &&
+          child_content_ != nullptr) {
         SetFocus(child_content_);
       }
       return 0;

@@ -1,3 +1,8 @@
+import '../module_registry/chinese_experiment.dart';
+import '../module_registry/concept_localizations.dart';
+import '../l10n/app_localizations.dart';
+import '../l10n/strings.dart';
+import '../module_registry/module_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +14,13 @@ bool matchesModule(ModuleEntry module, String query) => [
   module.subtitle,
   module.category.label,
   ...module.concepts,
+  module.category.labelIn(lookupAppLocalizations(const Locale('en'))),
+  ...module.concepts.map(
+    (value) =>
+        localizedConcept(value, lookupAppLocalizations(const Locale('en'))),
+  ),
+  localizedModuleTitle(module, lookupAppLocalizations(const Locale('en'))),
+  localizedModuleSubtitle(module, lookupAppLocalizations(const Locale('en'))),
 ].join(' ').toLowerCase().contains(query.trim().toLowerCase());
 
 Future<void> showModuleSearch(
@@ -21,7 +33,11 @@ Future<void> showModuleSearch(
     final selected = await showSearch<String?>(
       context: context,
       query: session?.searchQuery ?? '',
-      delegate: ModuleSearchDelegate(modules, session: session),
+      delegate: ModuleSearchDelegate(
+        modules,
+        session: session,
+        searchLabel: frameworkStrings(context).searchHint,
+      ),
     );
     if (selected == null || !context.mounted) return;
     await context.push(selected);
@@ -29,19 +45,24 @@ Future<void> showModuleSearch(
 }
 
 class ModuleSearchDelegate extends SearchDelegate<String?> {
-  ModuleSearchDelegate(this.modules, {this.session});
+  ModuleSearchDelegate(
+    this.modules, {
+    this.session,
+    this.searchLabel = '搜索模块、概念或分类',
+  });
 
+  final String searchLabel;
   final List<ModuleEntry> modules;
   final NavigationSession? session;
 
   @override
-  String get searchFieldLabel => '搜索模块、概念或分类';
+  String get searchFieldLabel => searchLabel;
 
   @override
   List<Widget> buildActions(BuildContext context) => [
     if (query.isNotEmpty)
       IconButton(
-        tooltip: '清空搜索',
+        tooltip: frameworkStrings(context).clearSearch,
         onPressed: () => query = '',
         icon: const Icon(Icons.clear),
       ),
@@ -49,7 +70,7 @@ class ModuleSearchDelegate extends SearchDelegate<String?> {
 
   @override
   Widget buildLeading(BuildContext context) => IconButton(
-    tooltip: '返回',
+    tooltip: frameworkStrings(context).back,
     onPressed: () => close(context, null),
     icon: const Icon(Icons.arrow_back),
   );
@@ -60,7 +81,10 @@ class ModuleSearchDelegate extends SearchDelegate<String?> {
   @override
   Widget buildSuggestions(BuildContext context) => _results(context);
 
-  Widget _results(BuildContext context) {
+  Widget _results(BuildContext context) =>
+      frameworkLanguage(context, Builder(builder: _localizedResults));
+
+  Widget _localizedResults(BuildContext context) {
     final normalized = query.trim().toLowerCase();
     session?.searchQuery = query;
     final matches = normalized.isEmpty
@@ -72,7 +96,7 @@ class ModuleSearchDelegate extends SearchDelegate<String?> {
       return Center(
         child: TextButton(
           onPressed: () => query = '',
-          child: const Text('没有匹配模块，清空搜索'),
+          child: Text(frameworkStrings(context).noResults),
         ),
       );
     }
@@ -82,8 +106,10 @@ class ModuleSearchDelegate extends SearchDelegate<String?> {
       itemBuilder: (context, index) {
         final module = matches[index];
         return ListTile(
-          title: Text(module.title),
-          subtitle: Text(module.category.label),
+          title: Text(module.titleFor(context)),
+          subtitle: Text(
+            '${module.category.labelFor(context)} · ${frameworkStrings(context).chineseExperiment}',
+          ),
           onTap: () {
             close(context, module.path);
           },

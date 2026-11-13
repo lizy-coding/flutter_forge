@@ -9,11 +9,12 @@
     "status": "transition"
   },
   "entrypoints": [
-    "AI_ANALYSIS.md"
+    "build_features.dart"
   ],
   "owns": [
     "platform_boundary",
-    "host_channel_registry"
+    "host_channel_registry",
+    "compile_time_offline_distribution_policy"
   ],
   "depends": [
     "packages/file_picker_bridge",

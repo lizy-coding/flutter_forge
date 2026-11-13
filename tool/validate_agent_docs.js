@@ -32,7 +32,7 @@ function collectAnalysisFiles(dir, base = dir) {
     if (entry.isDirectory()) {
       result.push(...collectAnalysisFiles(absolute, base));
     } else if (entry.name === 'AI_ANALYSIS.md') {
-      result.push(path.relative(base, absolute));
+      result.push(path.relative(base, absolute).replace(/\\/g, '/'));
     }
   }
   return result;
@@ -43,7 +43,8 @@ function fileExists(rel) {
 }
 
 function resolveProjectPath(rel) {
-  return path.join(rel === 'lib' || rel.startsWith('lib/') ? appRoot : root, rel);
+  const normalized = rel.replace(/\\/g, '/');
+  return path.join(normalized === 'lib' || normalized.startsWith('lib/') ? appRoot : root, normalized);
 }
 
 function grepInFile(rel, pattern) {

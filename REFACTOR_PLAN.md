@@ -22,9 +22,15 @@
   "dependency_migration": {
     "layout": "pub_workspace",
     "internal_packages": [
+      "packages/forge_app_info",
+      "packages/forge_localization",
+      "packages/bluetooth_system_bridge",
+      "packages/flutter_biometric",
       "packages/forge_articles",
       "packages/forge_scene_viewer",
       "packages/usb_network_bridge",
+      "packages/usb_detector_bridge",
+      "packages/forge_notification_bridge",
       "packages/flutter_battery",
       "packages/file_picker_bridge",
       "packages/flutter_ioc_core",
@@ -34,6 +40,25 @@
     "workspace_resolution_blocker": "none"
   },
   "work_queue": [
+    {
+      "id": "windows_standard_system_frame",
+      "priority": 24,
+      "status": "pending",
+      "implementation_status": "implemented_simulated_widget_verified_windows_build_and_host_pending",
+      "decision": "docs/adr/0021-windows-standard-system-frame.md",
+      "targets": [
+        "apps/flutter_forge/windows/runner/desktop_window_host.cpp",
+        "apps/flutter_forge/lib/app/desktop_workbench_shell.dart",
+        "apps/flutter_forge/lib/app/desktop_window_host.dart"
+      ],
+      "acceptance": [
+        "windows_build",
+        "main_and_category_system_caption_controls",
+        "native_resize_snap_and_dpi",
+        "fullscreen_restore_and_focus",
+        "client_toolbar_navigation_and_search"
+      ]
+    },
     {
       "id": "desktop_native_material_compatibility",
       "priority": 22,
@@ -49,7 +74,7 @@
       "acceptance": [
         "evaluate_flutter_acrylic_without_transferring_window_control_ownership",
         "per_engine_main_and_category_window_material_binding",
-        "macos_native_material_and_windows11_mica_or_solid_fallback",
+        "macos_native_material_and_windows_standard_frame_solid_compatibility",
         "system_transparency_high_contrast_and_saved_preference_fallback",
         "independent_host_build_and_window_interaction_checks"
       ]
@@ -292,7 +317,7 @@
       "targets": [
         "desktop_multi_window",
         "lib/shared/multi_window",
-        "lib/app/category_navigation"
+        "lib/app/module_home_page.dart"
       ],
       "acceptance": [
         "three_category_windows",
@@ -538,7 +563,6 @@
     "teaching_ui_change:visual_evidence"
   ],
   "deferred_queue": [
-    "popup_widgets_decomposition",
     "widget_test_coverage",
     "recommended_module_visual_evidence",
     "flutter_scene_3d_model_loading",

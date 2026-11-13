@@ -16,3 +16,9 @@ workspace:
   - packages/flutter_battery
   - packages/usb_network_bridge
   - packages/forge_scene_viewer
+  - packages/usb_detector_bridge
+  - packages/forge_notification_bridge
+  - packages/flutter_biometric
+  - packages/bluetooth_system_bridge
+  - packages/forge_localization
+  - packages/forge_app_info

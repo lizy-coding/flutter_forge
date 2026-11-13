@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../../shared/learning/learning_slider.dart';
+
 import '../state/video_player_adapter.dart';
 
 class VideoPlayerControls extends StatelessWidget {
@@ -74,7 +76,7 @@ class VideoPlayerControls extends StatelessWidget {
                   child: ValueListenableBuilder<double>(
                     valueListenable: adapter.volume,
                     builder: (context, volume, child) {
-                      return Slider(
+                      return LearningSlider(
                         key: const Key('video-volume'),
                         value: volume,
                         onChanged: adapter.setVolume,
@@ -156,7 +158,7 @@ class _SeekBar extends StatelessWidget {
               0.0,
               maxMilliseconds == 0 ? 0.0 : maxMilliseconds,
             );
-            return Slider(
+            return LearningSlider(
               key: const Key('video-seek'),
               value: currentMilliseconds,
               max: maxMilliseconds == 0 ? 1 : maxMilliseconds,

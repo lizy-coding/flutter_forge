@@ -23,6 +23,7 @@ test('existing entry policy is preserved while shared requirements are discovere
     usb_network: ['android', 'iOS', 'web'],
     network_diagnostics: ['android', 'iOS', 'web'],
     bluetooth_ble: ['iOS', 'web'], file_picker: ['iOS'], online_video_player: ['iOS'], webview: ['iOS', 'web'],
+    biometric_auth: ['iOS', 'web', 'windows'], system_notification: ['iOS', 'web', 'windows'],
   };
   for (const module of modules) assert.deepEqual(module.excludedPlatforms, expected[module.id] ?? [], module.id);
   assert.deepEqual(modules.find((module) => module.id === 'isolate_basic').platformPolicy.required_capabilities, ['isolates']);
@@ -110,6 +111,21 @@ test('support output is compact, escapes table cells and does not emit acceptanc
   assert.match(outputs.get('docs/module_availability/matrix.md'), /学习 \\\| 模块 新行/);
   assert.match(outputs.get('docs/module_availability/matrix.md'), /iOS 当前仅建模/);
   assert.doesNotMatch(outputs.get('docs/module_availability/matrix.md'), /STALE|PENDING|PASS|FAIL/);
+});
+
+test('support summary groups hosts without widening entry or feature support', () => {
+  const outputs = new Map();
+  writeSupport({ modules, facts: { currentHosts: ['android', 'macos', 'web', 'windows'] },
+    writeJson: (rel, value) => outputs.set(rel, value), writeText: (rel, value) => outputs.set(rel, value) });
+  const markdown = outputs.get('docs/module_availability/matrix.md');
+  assert.match(markdown, /\| 模块 \| 移动端 \| 桌面端 \| Web \|/);
+  const row = (route) => markdown.split('\n').find((line) => line.includes(`（\`${route}\`）`));
+  assert.match(row('/battery-monitor'), /\| android \| macOS \| 不支持 \|/);
+  assert.match(row('/network-diagnostics'), /\| 不支持 \| macOS、windows \| 不支持 \|/);
+  assert.match(row('/file-picker'), /\| android \| macOS、windows \| web \|/);
+  assert.match(row('/usb-detector'), /\| 不支持 \| 不支持 \| 不支持 \|/);
+  assert.match(row('/flutter-scene-3d'), /\| android \| macOS、windows \| 不支持 \| scene_controls: 移动端（不支持），桌面端（macOS、windows），Web（不支持）/);
+  assert.deepEqual(outputs.get('docs/module_availability/matrix.json'), supportDeclaration(modules));
 });
 
 test('support CLI is read-only and rejects retired result commands', () => {
