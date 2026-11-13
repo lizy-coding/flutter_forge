@@ -83,6 +83,7 @@ test-results/
 .DS_Store
 
 # Local build artifacts / downloads
+/release/
 .release/
 **/android/*.jks
 **/android/key.properties
