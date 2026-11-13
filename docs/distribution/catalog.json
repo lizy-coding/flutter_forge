@@ -56,11 +56,11 @@
       "priority": "primary",
       "kind": "store",
       "publication_mode": "explicit_authorization",
-      "policy_url": null,
-      "policy_url_verified_at": null,
-      "identity_evidence": null,
-      "policy_url_policy_id": null,
-      "policy_url_text_sha256": null
+      "policy_url": "https://lizy-coding.github.io/flutter_forge/privacy-offline.html",
+      "policy_url_verified_at": "2026-11-13T10:44:01+08:00",
+      "identity_evidence": ".release/vivo/1.2.14/submission-4013-20261113/vivo-submit-success.png",
+      "policy_url_policy_id": "offline-2026-10-30.1",
+      "policy_url_text_sha256": "5cee0db513fbb9f3cb31cfe03ca3347b5ccdc7d846e949b2f29b4da230a0617a"
     },
     {
       "id": "microsoft-store",
@@ -239,6 +239,34 @@
       "source_manifest": ".release/vivo/1.2.10/upload-ready-2006/manifest.json",
       "acceptance_evidence": [],
       "note": "历史本地清单；政策绑定及后台审核/发布状态待核对。"
+    },
+    {
+      "id": "vivo-1.2.14-4013",
+      "profile": "android-offline",
+      "version": "1.2.14",
+      "build_number": "4013",
+      "path": ".release/vivo/1.2.14/offline-4013/FlutterForge-1.2.14-4013-arm64-offline-release.apk",
+      "sha256": "0fec537fb5aca0cb0ad5d880fc7e25dae89906f5e8bc1753c36bd99f2fbc39fa",
+      "source_sha": "3ed9f939ef03cd3c971ad5f0d88edaed740e610c",
+      "source_dirty": false,
+      "build_mode": "release",
+      "signing": "release-certificate",
+      "certificate_sha256": "3223a7171466192ef575ab03462f5e34fb2d6c7a6b55ed34f0e87346cbc9ed46",
+      "policy": {
+        "edition": "offline",
+        "policy_id": "offline-2026-10-30.1",
+        "text_sha256": "5cee0db513fbb9f3cb31cfe03ca3347b5ccdc7d846e949b2f29b4da230a0617a",
+        "stable_path": "privacy-offline.html",
+        "version_path": "privacy/versions/offline-2026-10-30.1.html",
+        "public_url": null,
+        "url_verification": "needs_verification"
+      },
+      "source_manifest": ".release/vivo/1.2.14/offline-4013/manifest.json",
+      "acceptance_evidence": [
+        ".release/final-android-audit-20261107/device-acceptance-4013/result.json",
+        ".release/final-android-audit-20261107/result.json"
+      ],
+      "note": "Imported build evidence; no submission or publication performed."
     }
   ],
   "submissions": [
@@ -253,9 +281,32 @@
         ".release/vivo/1.2.10/upload-ready-2006/submission-status.json",
         ".release/vivo/1.2.10/upload-ready-2006/manifest.json"
       ]
+    },
+    {
+      "id": "vivo-4013-20261113",
+      "channel": "vivo",
+      "artifact": "vivo-1.2.14-4013",
+      "listing_version": "4013-20261113",
+      "note": "用户授权提交并确认审核通过后立即发布；更新图标、五张真机截图及演示应用简介。",
+      "observations": [
+        {
+          "at": "2026-11-13T10:44:01+08:00",
+          "review": "submitted",
+          "publication": "not_published",
+          "evidence": [
+            ".release/vivo/1.2.14/submission-4013-20261113/vivo-submit-success.png",
+            ".release/vivo/1.2.14/submission-4013-20261113/submission-result.json"
+          ],
+          "note": "vivo 后台显示提交成功，提示 1–3 个工作日完成审核；审核通过后立即发布。"
+        }
+      ],
+      "source_evidence": [
+        ".release/vivo/1.2.14/submission-4013-20261113/submission-result.json",
+        ".release/vivo/1.2.14/submission-4013-20261113/screenshots.json"
+      ]
     }
   ],
   "portal_access_notes": {
-    "vivo": "2026-10-30 Chrome 只读访问开发者首页显示登录，未进入已登录应用后台；状态保持待核对。"
+    "vivo": "2026-11-13T10:44:01+08:00 已登录应用后台并完成 1.2.14/4013 提交，成功页显示提交成功；尚未观察到审核通过或发布。"
   }
 }

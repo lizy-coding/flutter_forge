@@ -82,9 +82,10 @@ class DistributionTest(unittest.TestCase):
     def test_artifact_import_verifies_bytes_and_freezes_manifest_policy(self):
         artifact = self.root / 'candidate.apk'
         artifact.write_bytes(b'fixture only, not real APK acceptance')
+        next_code = build_vivo_offline.highest_version_code(self.root, self.data) + 1
         manifest = {'distribution_profile': 'android-offline', 'apk_sha256': hashlib.sha256(artifact.read_bytes()).hexdigest(),
                     'internet_permission': False, 'build_mode': 'release', 'certificate_sha256': self.data['profiles']['android-offline']['certificate_sha256'],
-                    'application_id': 'com.forge.forest', 'version_name': '1.2.11', 'version_code': 2007,
+                    'application_id': 'com.forge.forest', 'version_name': '1.2.11', 'version_code': next_code,
                     'source_commit': 'b' * 40, 'source_dirty': False, 'policy_binding': policy.binding('offline')}
         file = self.root / 'manifest.json'
         file.write_text(json.dumps(manifest))
@@ -134,14 +135,15 @@ class DistributionTest(unittest.TestCase):
 
 
     def test_vivo_final_version_checks_include_frozen_candidates_and_other_id_is_ignored(self):
+        frozen_code = build_vivo_offline.highest_version_code(self.root, self.data) + 1
         path = self.root / '.release/vivo/1.2.14/offline-4010/manifest.json'
         path.parent.mkdir(parents=True)
-        path.write_text(json.dumps({'application_id': 'com.forge.forest', 'version_code': '4010'}))
-        self.assertEqual(build_vivo_offline.highest_version_code(self.root, self.data), 4010)
+        path.write_text(json.dumps({'application_id': 'com.forge.forest', 'version_code': str(frozen_code)}))
+        self.assertEqual(build_vivo_offline.highest_version_code(self.root, self.data), frozen_code)
         other = path.parent.parent / 'other/manifest.json'
         other.parent.mkdir()
-        other.write_text(json.dumps({'application_id': 'other.app', 'version_code': 9000}))
-        self.assertEqual(build_vivo_offline.highest_version_code(self.root, self.data), 4010)
+        other.write_text(json.dumps({'application_id': 'other.app', 'version_code': frozen_code + 1000}))
+        self.assertEqual(build_vivo_offline.highest_version_code(self.root, self.data), frozen_code)
         with self.assertRaises(SystemExit):
             build_vivo_offline.validate_target(4010, 4010, self.root / 'unused')
         build_vivo_offline.validate_target(4011, 4010, self.root / 'unused')
