@@ -293,5 +293,18 @@
   "editionOffline": "Offline edition",
   "editionFull": "Full edition",
   "installedVersion": "Version {version} · Build {build}",
-  "offlineReplayExamples": "Choose a fixed example to view its local replay."
+  "offlineReplayExamples": "Choose a fixed example to view its local replay.",
+  "startupPrivacyTitle": "Privacy notice",
+  "startupPrivacyIntro": "Welcome to Flutter Forge. Please review how information is handled and read the full privacy notice before choosing.",
+  "startupPrivacyOffline": "This offline edition has no app accounts, ads, analytics or cloud sync and does not connect to developer or third-party servers. Preferences, recent visits, policy choices and saved demo content stay on this device. The universal_ble component supports peripheral interactions and caches peripheral addresses and service UUIDs after discovery. See the full notice for retention and deletion details.",
+  "startupPrivacyFull": "Preferences and demo content are stored on this device. When you use online features, requests and inputs are sent to the service you select. See the full privacy notice for details.",
+  "startupPrivacyPermissions": "Bluetooth demos request nearby-device access when needed; Android 11 and earlier may require location access for BLE scanning, without location tracking. Notifications are local tests you post. The system verifies biometrics and returns only results. Declining optional access does not affect other demos. Manage access in system settings.",
+  "startupPrivacyReadPolicy": "Read the full Privacy Notice",
+  "startupPrivacyAccept": "Agree and continue",
+  "startupPrivacyDecline": "Decline and exit",
+  "startupPrivacySaving": "Saving…",
+  "startupPrivacySaveFailed": "Your choice could not be saved. Please retry; the app has not started.",
+  "startupPrivacyLaunchFailed": "The app could not start. Please retry.",
+  "offlinePermissionsTitle": "Permission purposes at a glance",
+  "offlinePermissionPurposes": "Nearby devices: scan BLE peripherals, query system connections, connect to a selected device and read or subscribe to characteristics. Peripheral names, addresses, signal and service information support local demos.\nLocation on older Android: needed only for BLE scanning on Android 11 and earlier, without location tracking.\nNotifications: requested when you tap the authorization button, for local test notifications you post. Cancel them in the demo or system notification area.\nBiometrics: verified by the system when you start authentication. The app cannot read fingerprint or face templates or lock-screen passwords.\nFiles and fonts: only items you select in the system picker are processed.\nOrdinary media permissions: network-state and wake-lock declarations come from media components. This offline APK still has no INTERNET permission.\nDeclining optional access affects only the related operation. Agreeing to the privacy notice does not grant these permissions. The Bluetooth component caches peripheral addresses and service UUIDs locally; leaving the module or revoking permission does not erase the cache. Clearing app data or uninstalling removes local copies along with other local data. See the full policy above for permission names, retention and component details."
 }

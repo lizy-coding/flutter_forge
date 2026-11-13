@@ -928,4 +928,48 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get offlineReplayExamples => '选择一个固定示例，查看本地回放效果。';
+
+  @override
+  String get startupPrivacyTitle => '隐私说明';
+
+  @override
+  String get startupPrivacyIntro =>
+      '欢迎使用 Flutter Forge。请先了解我们的个人信息处理规则，并阅读完整隐私说明后作出选择。';
+
+  @override
+  String get startupPrivacyOffline =>
+      '本离线版无应用账号、广告、统计或云同步，不连接开发者或第三方服务器。语言、主题、最近访问、政策选择和你保存的演示内容保存在本机。universal_ble 蓝牙组件用于外设交互，会在服务发现后缓存外设地址和服务 UUID；保存与清除方式见完整说明。';
+
+  @override
+  String get startupPrivacyFull =>
+      '本应用会在本机保存偏好和演示内容；联网功能由你主动使用，相关请求和输入会发送到你选择的服务，详见完整隐私说明。';
+
+  @override
+  String get startupPrivacyPermissions =>
+      '蓝牙演示按需申请附近设备权限；Android 11 及以下扫描可能需要定位权限，不用于位置跟踪。通知权限用于你主动投递的本地测试通知；生物识别由系统验证，应用只接收结果。拒绝可选权限不影响其他演示，授权可在系统设置管理。';
+
+  @override
+  String get startupPrivacyReadPolicy => '阅读完整《隐私说明》';
+
+  @override
+  String get startupPrivacyAccept => '同意并继续';
+
+  @override
+  String get startupPrivacyDecline => '不同意并退出';
+
+  @override
+  String get startupPrivacySaving => '正在保存…';
+
+  @override
+  String get startupPrivacySaveFailed => '未能保存你的选择，请重试；尚未进入应用。';
+
+  @override
+  String get startupPrivacyLaunchFailed => '应用启动失败，请重试。';
+
+  @override
+  String get offlinePermissionsTitle => '权限用途速览';
+
+  @override
+  String get offlinePermissionPurposes =>
+      '附近设备：扫描附近 BLE 外设、查询系统连接、连接你选择的设备并读取或订阅特征值。外设名称、地址、信号与服务信息用于本机演示。\n旧 Android 定位：仅 Android 11 及以下的 BLE 扫描兼容要求，不用于位置跟踪。\n通知：你点击请求授权后，用于主动投递本地测试通知，可在通知演示或系统通知栏取消。\n生物识别：你发起认证后由系统验证，应用不读取指纹、人脸模板或锁屏密码。\n文件与字体：只处理你在系统选择器中主动选择的项目。\n媒体普通权限：网络状态与唤醒锁由媒体组件声明，离线包仍无 INTERNET 权限。\n拒绝可选权限只影响对应操作。同意隐私说明不会自动授予这些权限。蓝牙组件会在本机缓存外设地址和服务 UUID，退出模块或撤销权限不会清除缓存；清除本应用数据或卸载可删除本地副本，同时会清除其他本地数据。完整权限名称、保存期限和组件说明见上方完整政策。';
 }

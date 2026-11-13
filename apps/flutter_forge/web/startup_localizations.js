@@ -7,7 +7,18 @@ window.forgeStartupMessages = {
     "startupFailed": "加载失败，请重新加载。",
     "startupResources": "正在加载 Flutter 资源…",
     "startupEngine": "正在初始化渲染引擎…",
-    "startupApp": "正在启动学习目录…"
+    "startupApp": "正在启动学习目录…",
+    "startupPrivacyTitle": "隐私说明",
+    "startupPrivacyIntro": "欢迎使用 Flutter Forge。请先了解我们的个人信息处理规则，并阅读完整隐私说明后作出选择。",
+    "startupPrivacyOffline": "本离线版无应用账号、广告、统计或云同步，不连接开发者或第三方服务器。语言、主题、最近访问、政策选择和你保存的演示内容保存在本机。universal_ble 蓝牙组件用于外设交互，会在服务发现后缓存外设地址和服务 UUID；保存与清除方式见完整说明。",
+    "startupPrivacyFull": "本应用会在本机保存偏好和演示内容；联网功能由你主动使用，相关请求和输入会发送到你选择的服务，详见完整隐私说明。",
+    "startupPrivacyPermissions": "蓝牙演示按需申请附近设备权限；Android 11 及以下扫描可能需要定位权限，不用于位置跟踪。通知权限用于你主动投递的本地测试通知；生物识别由系统验证，应用只接收结果。拒绝可选权限不影响其他演示，授权可在系统设置管理。",
+    "startupPrivacyReadPolicy": "阅读完整《隐私说明》",
+    "startupPrivacyAccept": "同意并继续",
+    "startupPrivacyDecline": "不同意并退出",
+    "startupPrivacySaving": "正在保存…",
+    "startupPrivacySaveFailed": "未能保存你的选择，请重试；尚未进入应用。",
+    "startupPrivacyLaunchFailed": "应用启动失败，请重试。"
   },
   "en": {
     "startupLoading": "Loading application…",
@@ -16,6 +27,17 @@ window.forgeStartupMessages = {
     "startupFailed": "Loading failed. Please reload.",
     "startupResources": "Loading Flutter resources…",
     "startupEngine": "Initializing the rendering engine…",
-    "startupApp": "Opening the learning catalog…"
+    "startupApp": "Opening the learning catalog…",
+    "startupPrivacyTitle": "Privacy notice",
+    "startupPrivacyIntro": "Welcome to Flutter Forge. Please review how information is handled and read the full privacy notice before choosing.",
+    "startupPrivacyOffline": "This offline edition has no app accounts, ads, analytics or cloud sync and does not connect to developer or third-party servers. Preferences, recent visits, policy choices and saved demo content stay on this device. The universal_ble component supports peripheral interactions and caches peripheral addresses and service UUIDs after discovery. See the full notice for retention and deletion details.",
+    "startupPrivacyFull": "Preferences and demo content are stored on this device. When you use online features, requests and inputs are sent to the service you select. See the full privacy notice for details.",
+    "startupPrivacyPermissions": "Bluetooth demos request nearby-device access when needed; Android 11 and earlier may require location access for BLE scanning, without location tracking. Notifications are local tests you post. The system verifies biometrics and returns only results. Declining optional access does not affect other demos. Manage access in system settings.",
+    "startupPrivacyReadPolicy": "Read the full Privacy Notice",
+    "startupPrivacyAccept": "Agree and continue",
+    "startupPrivacyDecline": "Decline and exit",
+    "startupPrivacySaving": "Saving…",
+    "startupPrivacySaveFailed": "Your choice could not be saved. Please retry; the app has not started.",
+    "startupPrivacyLaunchFailed": "The app could not start. Please retry."
   }
 };

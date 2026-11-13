@@ -52,6 +52,12 @@ class _SystemNotificationEntryState extends State<SystemNotificationEntry> {
         interactiveDemo: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Text(
+              '权限用途：点击“请求授权”后申请系统通知权限，用于投递你主动填写的本地测试通知。'
+              '通知可能显示在通知栏或锁屏，请勿填写敏感信息；拒绝或关闭通知只影响通知投递，'
+              '其他模块仍可使用。已投递通知可在此取消或由系统清除。',
+            ),
+            const SizedBox(height: 12),
             Text(session.permissionText),
             Text('当前状态：${session.permissionStateName}'),
             if (session.loading) const LinearProgressIndicator(),

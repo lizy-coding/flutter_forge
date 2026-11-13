@@ -41,6 +41,12 @@ class _BiometricAuthEntryState extends State<BiometricAuthEntry> {
         interactiveDemo: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Text(
+              '认证用途：点击认证按钮后由系统验证生物特征或系统凭据，应用只接收认证结果，'
+              '不读取或保存指纹、人脸模板和锁屏密码。取消认证不影响其他演示；'
+              '生物识别与凭据由系统安全设置管理。',
+            ),
+            const SizedBox(height: 12),
             Text(session.capabilityText),
             const SizedBox(height: 12),
             Text(session.outcomeText),

@@ -90,7 +90,7 @@ class DistributionTest(unittest.TestCase):
         file = self.root / 'manifest.json'
         file.write_text(json.dumps(manifest))
         data = ledger.import_artifact(self.data, file, artifact, 'android-offline', 'fixture-2007', self.root)
-        self.assertEqual(data['artifacts'][-1]['policy']['policy_id'], 'offline-2026-10-30.1')
+        self.assertEqual(data['artifacts'][-1]['policy']['policy_id'], policy.binding('offline')['policy_id'])
         with self.assertRaisesRegex(ValueError, 'immutable'):
             ledger.import_artifact(data, file, artifact, 'android-offline', 'fixture-2007', self.root)
         artifact.write_bytes(b'changed')

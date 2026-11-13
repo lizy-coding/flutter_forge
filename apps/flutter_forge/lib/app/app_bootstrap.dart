@@ -1,5 +1,7 @@
 import 'package:forge_localization/forge_localization.dart';
+
 import 'localization/app_locale_host.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -7,9 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+
 import '../module_registry/app_platform_snapshot.dart';
 import '../shared/multi_window/multi_window_manager.dart';
 import 'app.dart';
+import 'android_privacy_consent.dart';
 import 'app_platform_provider.dart';
 import 'category_window_app.dart';
 import 'router/app_router.dart';
@@ -21,7 +25,24 @@ import 'workbench_history.dart';
 Future<void> bootstrapFlutterForgeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   final platform = AppPlatformSnapshot.detect();
+  if (platform.platform == AppTargetPlatform.android) {
+    final consent = AndroidPrivacyConsent(
+      await SharedPreferences.getInstance(),
+    );
+    if (!consent.accepted) {
+      runApp(
+        AndroidPrivacyConsentApp(
+          saveConsent: consent.accept,
+          onAccepted: () => _startFlutterForgeApp(platform),
+        ),
+      );
+      return;
+    }
+  }
+  await _startFlutterForgeApp(platform);
+}
 
+Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
   Widget? root;
   final startupReady = Completer<void>();
   WindowController? currentWindow;

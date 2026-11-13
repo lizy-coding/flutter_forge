@@ -29,6 +29,7 @@
     "creator_home_page.dart",
     "creator_profile.dart",
     "offline_privacy.dart",
+    "android_privacy_consent.dart",
     "full_privacy.dart",
     "privacy_data_panel.dart",
     "privacy_policy_data.dart",
@@ -47,6 +48,7 @@
   ],
   "owns": [
     "host_bootstrap",
+    "android_startup_privacy_consent",
     "platform_snapshot_injection",
     "material_app_router",
     "router",

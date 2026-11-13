@@ -12,10 +12,10 @@
     },
     "offline": {
       "edition": "offline",
-      "policy_id": "offline-2026-10-30.1",
-      "text_sha256": "5cee0db513fbb9f3cb31cfe03ca3347b5ccdc7d846e949b2f29b4da230a0617a",
+      "policy_id": "offline-2026-11-13.1",
+      "text_sha256": "ee130056f4283f75721b5f6fc0caad28ac59b3952ecd363958314560fc71a075",
       "stable_path": "privacy-offline.html",
-      "version_path": "privacy/versions/offline-2026-10-30.1.html",
+      "version_path": "privacy/versions/offline-2026-11-13.1.html",
       "public_url": null,
       "url_verification": "needs_verification"
     }
@@ -44,6 +44,12 @@
       "text_sha256": "5cee0db513fbb9f3cb31cfe03ca3347b5ccdc7d846e949b2f29b4da230a0617a",
       "html_sha256": "f4b984bd5771e8e3888e1a9510b0ed7709bb25fab82c26de0d5455ea08e18bb0",
       "path": "privacy/versions/offline-2026-10-30.1.html"
+    },
+    "offline-2026-11-13.1": {
+      "edition": "offline",
+      "text_sha256": "ee130056f4283f75721b5f6fc0caad28ac59b3952ecd363958314560fc71a075",
+      "html_sha256": "e5b6d2a9bf75f3cb849bafbb0053dbdeaa9066920d78cabe2571dc2d1f51d4a4",
+      "path": "privacy/versions/offline-2026-11-13.1.html"
     }
   }
 }

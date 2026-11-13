@@ -53,6 +53,14 @@ class PrivacyDataPanel extends StatelessWidget {
             ),
           ],
         ),
+        if (offline)
+          ExpansionTile(
+            key: const ValueKey('offline-permission-purposes'),
+            title: Text(appStrings(context).offlinePermissionsTitle),
+            childrenPadding: const EdgeInsets.all(16),
+            expandedCrossAxisAlignment: CrossAxisAlignment.start,
+            children: [Text(appStrings(context).offlinePermissionPurposes)],
+          ),
         ExpansionTile(
           key: const ValueKey('privacy-data-controls'),
           title: Text(appStrings(context).manageData),
