@@ -56,11 +56,11 @@
       "priority": "primary",
       "kind": "store",
       "publication_mode": "explicit_authorization",
-      "policy_url": "https://lizy-coding.github.io/flutter_forge/privacy-offline.html",
-      "policy_url_verified_at": "2026-11-13T10:44:01+08:00",
+      "policy_url": "https://lizy-coding.github.io/flutter_forge/privacy/versions/offline-2026-11-13.1.html",
+      "policy_url_verified_at": "2026-11-13T18:24:27+08:00",
       "identity_evidence": ".release/vivo/1.2.14/submission-4013-20261113/vivo-submit-success.png",
-      "policy_url_policy_id": "offline-2026-10-30.1",
-      "policy_url_text_sha256": "5cee0db513fbb9f3cb31cfe03ca3347b5ccdc7d846e949b2f29b4da230a0617a"
+      "policy_url_policy_id": "offline-2026-11-13.1",
+      "policy_url_text_sha256": "ee130056f4283f75721b5f6fc0caad28ac59b3952ecd363958314560fc71a075"
     },
     {
       "id": "microsoft-store",
@@ -323,6 +323,33 @@
         ".release/final-android-permissions-20261113/quality-gate.log"
       ],
       "note": "权限用途和蓝牙缓存说明补全的本地候选；新政策尚未部署，source_dirty=true，未提审。"
+    },
+    {
+      "id": "vivo-1.2.15-4016",
+      "profile": "android-offline",
+      "version": "1.2.15",
+      "build_number": "4016",
+      "path": ".release/vivo/1.2.15/offline-4016/FlutterForge-1.2.15-4016-arm64-offline-release.apk",
+      "sha256": "473b30c56f5eb7d3ef1d3843effaa47cac35f0d743ba1117a30dc6dbb953b01d",
+      "source_sha": "67d77ae82451377775a9ce055048aaf5f7d9f0eb",
+      "source_dirty": true,
+      "build_mode": "release",
+      "signing": "release-certificate",
+      "certificate_sha256": "3223a7171466192ef575ab03462f5e34fb2d6c7a6b55ed34f0e87346cbc9ed46",
+      "policy": {
+        "edition": "offline",
+        "policy_id": "offline-2026-11-13.1",
+        "text_sha256": "ee130056f4283f75721b5f6fc0caad28ac59b3952ecd363958314560fc71a075",
+        "stable_path": "privacy-offline.html",
+        "version_path": "privacy/versions/offline-2026-11-13.1.html",
+        "public_url": null,
+        "url_verification": "needs_verification"
+      },
+      "source_manifest": ".release/vivo/1.2.15/offline-4016/manifest.json",
+      "acceptance_evidence": [
+        ".release/vivo/1.2.15/submission-4016-20261113/submission-result.json"
+      ],
+      "note": "正式签名离线包；应用源码已提交，dirty仅为用户既有.gitignore；最终包真机补验经用户明确豁免，vivo已提交。"
     }
   ],
   "submissions": [
@@ -369,6 +396,29 @@
       "source_evidence": [
         ".release/vivo/1.2.14/submission-4013-20261113/submission-result.json",
         ".release/vivo/1.2.14/submission-4013-20261113/screenshots.json"
+      ]
+    },
+    {
+      "id": "vivo-4016-20261113",
+      "channel": "vivo",
+      "artifact": "vivo-1.2.15-4016",
+      "listing_version": "4016-20261113",
+      "source_evidence": [
+        ".release/vivo/1.2.15/submission-4016-20261113/submission-result.json",
+        ".release/vivo/1.2.15/submission-4016-20261113/screenshot-material.json"
+      ],
+      "note": "修复首次启动隐私告知；新政策版本固定链接；审核通过后立即发布。",
+      "observations": [
+        {
+          "at": "2026-11-13T18:24:27+08:00",
+          "review": "submitted",
+          "publication": "not_published",
+          "evidence": [
+            ".release/vivo/1.2.15/submission-4016-20261113/vivo-submit-success.png",
+            ".release/vivo/1.2.15/submission-4016-20261113/submission-result.json"
+          ],
+          "note": "后台显示提交成功，预计1–3个工作日审核。"
+        }
       ]
     }
   ],
