@@ -15,6 +15,8 @@ PODS:
   - FlutterMacOS (1.0.0)
   - forge_notification_bridge (0.1.0):
     - FlutterMacOS
+  - package_info_plus (0.0.1):
+    - FlutterMacOS
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -41,6 +43,7 @@ DEPENDENCIES:
   - flutter_biometric (from `Flutter/ephemeral/.symlinks/plugins/flutter_biometric/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - forge_notification_bridge (from `Flutter/ephemeral/.symlinks/plugins/forge_notification_bridge/macos`)
+  - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - universal_ble (from `Flutter/ephemeral/.symlinks/plugins/universal_ble/darwin`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
@@ -65,6 +68,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   forge_notification_bridge:
     :path: Flutter/ephemeral/.symlinks/plugins/forge_notification_bridge/macos
+  package_info_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
   shared_preferences_foundation:
     :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin
   universal_ble:
@@ -87,11 +92,12 @@ SPEC CHECKSUMS:
   flutter_biometric: 37990d2b733eb3f3eddcae2f191347903515aefc
   FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
   forge_notification_bridge: 0b205537904893cb3e03705f523cf847e5071c02
+  package_info_plus: f0052d280d17aa382b932f399edf32507174e870
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   universal_ble: a322ebabee64f0ec27a313e89a5dd6967f37a60f
   url_launcher_macos: f87a979182d112f911de6820aefddaf56ee9fbfd
   usb_network_bridge: 7a6a501f218ef1d35e5b7408682395ed8432bd4e
-  video_player_avfoundation: 3453f792138786248960ca029747fcd9f318ef52
+  video_player_avfoundation: bc5f800d1e1c4f389bc5d51778a4f89dd1bf4a77
   webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
 
 PODFILE CHECKSUM: 1e95c36afbfd1cb6423ceca4de7a8e1b256fb6ac

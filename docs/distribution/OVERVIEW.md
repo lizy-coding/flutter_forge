@@ -6,7 +6,7 @@
 
 | 渠道 | 优先级 | 发行配置 | 最新登记提交 | 审核 | 发布 | 最后后台核对 |
 | --- | --- | --- | --- | --- | --- | --- |
-| vivo 应用商店 | primary | android-offline | vivo-4013-20261113 | rejected | not_published | 2026-11-13T14:25:56+08:00 |
+| vivo 应用商店 | primary | android-offline | vivo-4016-20261113 | submitted | not_published | 2026-11-13T18:24:27+08:00 |
 | Microsoft Store | primary | windows-full | 尚未登记 | needs_verification | needs_verification | 未核对 |
 | GitHub macOS DMG | maintenance | macos-full | 尚未登记 | needs_verification | needs_verification | 未核对 |
 | GitHub Windows EXE | maintenance | windows-full | 尚未登记 | needs_verification | needs_verification | 未核对 |
@@ -27,6 +27,7 @@
 | vivo-1.2.14-4013 | 1.2.14 / 4013 | release-certificate | offline-2026-10-30.1 |
 | vivo-1.2.14-4014 | 1.2.14 / 4014 | release-certificate | offline-2026-10-30.1 |
 | vivo-1.2.14-4015 | 1.2.14 / 4015 | release-certificate | offline-2026-11-13.1 |
+| vivo-1.2.15-4016 | 1.2.15 / 4016 | release-certificate | offline-2026-11-13.1 |
 
 历史产物登记不代表当前发布或验收通过。iOS 尚未建立宿主，不创建商店就绪记录。
 
