@@ -3,15 +3,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/modules/ui/gcode_visualizer/pages/gcode_visualizer_page.dart';
 
 void main() {
-  // The parse pipeline is an async* stream: drive it with real async like
-  // the integration host does, then settle the resulting frames. The
-  // previous single-pump coverage never saw the parsed timeline, inspector
-  // and playback row that the overflow regression lives in.
+  // Background loading crosses isolate and frame queues; wait for observable
+  // completion with a bounded deadline instead of a fixed startup delay.
+  Future<void> waitForParsed(WidgetTester tester) async {
+    for (var i = 0; i < 50; i++) {
+      await tester.pump();
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pump();
+      if (find.textContaining('指令列表').evaluate().isNotEmpty) return;
+    }
+    fail('G-code did not finish loading within five seconds');
+  }
+
   testWidgets('parsed gcode page does not overflow at 800x600', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: GcodeVisualizerPage()));
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 300)),
-    );
+    await waitForParsed(tester);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.textContaining('指令列表'), findsOneWidget);
@@ -25,9 +33,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(const MaterialApp(home: GcodeVisualizerPage()));
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 300)),
-    );
+    await waitForParsed(tester);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.textContaining('指令列表'), findsOneWidget);
@@ -42,9 +48,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(const MaterialApp(home: GcodeVisualizerPage()));
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 300)),
-    );
+    await waitForParsed(tester);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     final canvas = tester.getTopLeft(find.byType(CustomPaint).first);

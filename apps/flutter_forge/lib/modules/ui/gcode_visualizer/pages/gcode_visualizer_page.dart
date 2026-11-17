@@ -102,11 +102,15 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
                     flex: 2,
                     child: SizedBox(
                       height: 320,
-                      child: GcodeCanvas(
-                        segments: _controller.segments,
-                        progress: _controller.progress,
-                        errorCount: _controller.errorCount,
-                        commandCount: _controller.totalCommands,
+                      child: ListenableBuilder(
+                        listenable: _controller.playback,
+                        builder: (context, _) => GcodeCanvas(
+                          segments: _controller.segments,
+                          bounds: _controller.bounds,
+                          progress: _controller.progress,
+                          errorCount: _controller.errorCount,
+                          commandCount: _controller.totalCommands,
+                        ),
                       ),
                     ),
                   ),
@@ -119,11 +123,15 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
                 children: [
                   SizedBox(
                     height: 280,
-                    child: GcodeCanvas(
-                      segments: _controller.segments,
-                      progress: _controller.progress,
-                      errorCount: _controller.errorCount,
-                      commandCount: _controller.totalCommands,
+                    child: ListenableBuilder(
+                      listenable: _controller.playback,
+                      builder: (context, _) => GcodeCanvas(
+                        segments: _controller.segments,
+                        bounds: _controller.bounds,
+                        progress: _controller.progress,
+                        errorCount: _controller.errorCount,
+                        commandCount: _controller.totalCommands,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -155,33 +163,40 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
           loadMessage: _controller.loadMessage,
         ),
         const SizedBox(height: 8),
-        PlaybackControls(
-          isPlaying: _controller.isPlaying,
-          progress: _controller.progress,
-          speedMultiplier: _controller.speedMultiplier,
-          onPlay: _controller.play,
-          onPause: _controller.pause,
-          onReset: _controller.reset,
-          onSeek: _controller.seek,
-          onSpeedChange: _controller.setSpeed,
+        ListenableBuilder(
+          listenable: _controller.playback,
+          builder: (context, _) => Column(
+            children: [
+              PlaybackControls(
+                isPlaying: _controller.isPlaying,
+                progress: _controller.progress,
+                speedMultiplier: _controller.speedMultiplier,
+                onPlay: _controller.play,
+                onPause: _controller.pause,
+                onReset: _controller.reset,
+                onSeek: _controller.seek,
+                onSpeedChange: _controller.setSpeed,
+              ),
+              if (_controller.totalCommands > 0) ...[
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 140,
+                  child: CommandTimeline(
+                    commands: _controller.parseResult?.commands ?? [],
+                    errors: _controller.parseResult?.errors ?? [],
+                    currentIndex: _controller.currentCommandIndex,
+                    maxHeight: 140,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                CurrentSegmentInspector(
+                  segment: _controller.currentSegment,
+                  progress: _controller.currentSegmentProgress,
+                ),
+              ],
+            ],
+          ),
         ),
-        if (_controller.totalCommands > 0) ...[
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 140,
-            child: CommandTimeline(
-              commands: _controller.parseResult?.commands ?? [],
-              errors: _controller.parseResult?.errors ?? [],
-              currentIndex: _controller.currentCommandIndex,
-              maxHeight: 140,
-            ),
-          ),
-          const SizedBox(height: 8),
-          CurrentSegmentInspector(
-            segment: _controller.currentSegment,
-            progress: _controller.currentSegmentProgress,
-          ),
-        ],
       ],
     );
   }

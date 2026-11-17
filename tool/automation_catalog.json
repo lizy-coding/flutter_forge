@@ -356,6 +356,17 @@
       "platforms": ["local"],
       "targets": ["tool/windows_self_test_test.py"],
       "timeout": 60
+    },
+    {
+      "id": "gcode-refresh",
+      "kind": "integration",
+      "platforms": [
+        "macos"
+      ],
+      "targets": [
+        "integration_test/gcode_refresh_test.dart"
+      ],
+      "timeout": 300
     }
   ]
 }

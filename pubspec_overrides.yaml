@@ -1,0 +1,3 @@
+dependency_overrides:
+  gcode_core:
+    path: .local/gcode_core
