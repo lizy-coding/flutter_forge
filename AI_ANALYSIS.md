@@ -22,7 +22,7 @@
     "host_integrations"
   ],
   "depends": [
-    "git:https://github.com/lizy-coding/gcode_core.git#v0.2.1",
+    "git:https://github.com/lizy-coding/gcode_core.git#v0.3.0",
     "lib/shared/learning",
     "packages/forge_app_info",
     "packages/forge_localization",

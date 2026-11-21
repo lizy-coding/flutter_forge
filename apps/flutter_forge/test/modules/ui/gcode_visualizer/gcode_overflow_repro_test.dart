@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gcode_core/gcode_core.dart';
+import 'package:flutter_forge_app/modules/ui/gcode_visualizer/widgets/gcode_editor_panel.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/modules/ui/gcode_visualizer/pages/gcode_visualizer_page.dart';
 
@@ -55,4 +57,51 @@ void main() {
     final editor = tester.getTopLeft(find.text('G-code 编辑器'));
     expect(editor.dy, greaterThan(canvas.dy));
   });
+  testWidgets(
+    'timeline and editor stay unchanged within one segment and during seek',
+    (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: GcodeVisualizerPage()));
+      await waitForParsed(tester);
+      tester.widget<PlaybackControls>(find.byType(PlaybackControls)).onPlay();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      final editor = tester.widget<GcodeEditorPanel>(
+        find.byType(GcodeEditorPanel),
+      );
+      final timeline = tester.widget<CommandTimeline>(
+        find.byType(CommandTimeline),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(
+        identical(
+          timeline,
+          tester.widget<CommandTimeline>(find.byType(CommandTimeline)),
+        ),
+        isTrue,
+      );
+      expect(
+        identical(
+          editor,
+          tester.widget<GcodeEditorPanel>(find.byType(GcodeEditorPanel)),
+        ),
+        isTrue,
+      );
+      tester.widget<PlaybackControls>(find.byType(PlaybackControls)).onPause();
+      await tester.pump();
+      final beforeSeek = tester.widget<CommandTimeline>(
+        find.byType(CommandTimeline),
+      );
+      tester
+          .widget<PlaybackControls>(find.byType(PlaybackControls))
+          .onSeek(.04);
+      await tester.pump();
+      expect(
+        identical(
+          beforeSeek,
+          tester.widget<CommandTimeline>(find.byType(CommandTimeline)),
+        ),
+        isTrue,
+      );
+    },
+  );
 }

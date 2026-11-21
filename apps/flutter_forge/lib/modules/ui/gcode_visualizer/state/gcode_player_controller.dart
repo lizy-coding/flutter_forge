@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:file_picker_bridge/file_picker_bridge.dart';
 import 'package:gcode_core/gcode_core.dart';
@@ -80,6 +81,13 @@ class GcodePlayerController extends ChangeNotifier {
   String _loadMessage = '';
   final List<String> _logs = [];
   final ValueNotifier<double> playback = ValueNotifier(0);
+  final ValueNotifier<int> commandSelection = ValueNotifier(-1);
+  int? _seekFrame;
+  double? _pendingSeek;
+  bool _applyingSeek = false;
+  int _commandCount = 0;
+  int _errorCount = 0;
+  int _segmentCount = 0;
   GcodeBounds? bounds;
   bool _previewInstalled = false;
   Map<int, int> _commandIndices = {};
@@ -97,8 +105,9 @@ class GcodePlayerController extends ChangeNotifier {
   String get loadMessage => _loadMessage;
   List<String> get logs => List.unmodifiable(_logs);
 
-  int get totalCommands => _parseResult?.commands.length ?? 0;
-  int get errorCount => _parseResult?.errors.length ?? 0;
+  int get totalCommands => _commandCount;
+  int get errorCount => _errorCount;
+  int get totalSegments => _segmentCount;
 
   ToolpathSegment? get currentSegment {
     if (_segments.isEmpty) return null;
@@ -200,6 +209,8 @@ class GcodePlayerController extends ChangeNotifier {
     if (_disposed) return Future.value();
     final generation = ++_parseGeneration;
     _cancelLoad();
+    _cancelPendingSeek();
+    _commandCount = _errorCount = _segmentCount = 0;
     _previewInstalled = false;
     _segments = [];
     _parseResult = null;
@@ -207,7 +218,7 @@ class GcodePlayerController extends ChangeNotifier {
     _commandIndices.clear();
     bounds = null;
     final completion = _loadCompletion = Completer<void>();
-    _currentCommandIndex = -1;
+    _setCurrentCommandIndex(-1);
     _progress = 0;
     _isPlaying = false;
     _animationController.stop();
@@ -242,10 +253,11 @@ class GcodePlayerController extends ChangeNotifier {
           if (!isCurrent()) return;
           _loadStage = snapshot.stage;
           _linesRead = snapshot.linesRead;
+          _commandCount = snapshot.commandCount;
+          _errorCount = snapshot.errorCount;
+          _segmentCount = snapshot.segmentCount;
           if (snapshot.stage != GcodeLoadStage.parsing || !_previewInstalled) {
-            _previewInstalled =
-                snapshot.stage == GcodeLoadStage.parsing &&
-                snapshot.linesRead >= 2000;
+            _previewInstalled = snapshot.previewLineLimit != null;
             _parseResult = snapshot.toParseResult();
             _segments = snapshot.segments;
             bounds = snapshot.bounds;
@@ -257,10 +269,8 @@ class GcodePlayerController extends ChangeNotifier {
               };
             }
           }
-          _loadMessage =
-              snapshot.stage == GcodeLoadStage.parsing &&
-                  snapshot.linesRead >= 2000
-              ? '${snapshot.message}（仅显示前 2000 条预览，完成后显示全部）'
+          _loadMessage = snapshot.previewLineLimit != null
+              ? '${snapshot.message}（仅显示前 ${snapshot.previewLineLimit} 行预览，完成后显示全部）'
               : snapshot.message;
           if (snapshot.stage == GcodeLoadStage.ready) {
             _addLog(
@@ -312,6 +322,7 @@ class GcodePlayerController extends ChangeNotifier {
 
   void play() {
     if (_disposed) return;
+    _flushPendingSeek();
     if (_segments.isEmpty) return;
     if (_progress >= 1.0) {
       _progress = 0;
@@ -328,6 +339,7 @@ class GcodePlayerController extends ChangeNotifier {
 
   void pause() {
     if (_disposed) return;
+    _flushPendingSeek();
     _isPlaying = false;
     _animationController.stop();
     _addLog('暂停播放 (进度: ${(_progress * 100).toStringAsFixed(1)}%)');
@@ -336,9 +348,10 @@ class GcodePlayerController extends ChangeNotifier {
 
   void reset() {
     if (_disposed) return;
+    _cancelPendingSeek();
     _isPlaying = false;
     _progress = 0;
-    _currentCommandIndex = -1;
+    _setCurrentCommandIndex(-1);
     _animationController.stop();
     _animationController.value = 0;
     _loadStage = _parseResult == null
@@ -359,11 +372,35 @@ class GcodePlayerController extends ChangeNotifier {
   }
 
   void seek(double value) {
-    if (_disposed) return;
-    _progress = value.clamp(0.0, 1.0);
-    _animationController.value = _progress;
-    _updateCurrentCommandIndex();
-    notifyListeners();
+    if (_disposed || !value.isFinite) return;
+    _pendingSeek = value.clamp(0.0, 1.0);
+    _seekFrame ??= SchedulerBinding.instance.scheduleFrameCallback((_) {
+      _seekFrame = null;
+      _flushPendingSeek();
+    });
+  }
+
+  void _cancelPendingSeek() {
+    if (_seekFrame != null) {
+      SchedulerBinding.instance.cancelFrameCallbackWithId(_seekFrame!);
+    }
+    _seekFrame = null;
+    _pendingSeek = null;
+  }
+
+  void _flushPendingSeek() {
+    final next = _pendingSeek;
+    _cancelPendingSeek();
+    if (next == null || _disposed) return;
+    final resume = _isPlaying && next < 1;
+    _isPlaying = resume;
+    _applyingSeek = true;
+    try {
+      _animationController.value = next;
+      if (resume) _animationController.forward();
+    } finally {
+      _applyingSeek = false;
+    }
   }
 
   void loadSample() {
@@ -381,7 +418,7 @@ class GcodePlayerController extends ChangeNotifier {
   }
 
   void _onAnimationStatusChanged(AnimationStatus status) {
-    if (_disposed) return;
+    if (_disposed || _applyingSeek) return;
     if (status != AnimationStatus.completed) return;
     _isPlaying = false;
     _progress = 1.0;
@@ -392,14 +429,19 @@ class GcodePlayerController extends ChangeNotifier {
 
   void _updateCurrentCommandIndex() {
     if (_segments.isEmpty) {
-      _currentCommandIndex = -1;
+      _setCurrentCommandIndex(-1);
       return;
     }
     final totalSegments = _segments.length;
     final idx = (_progress * totalSegments).floor().clamp(0, totalSegments - 1);
     final cmd = _segments[idx].command;
     final cmdIdx = _commandIndices[cmd.lineNumber] ?? -1;
-    _currentCommandIndex = cmdIdx;
+    _setCurrentCommandIndex(cmdIdx);
+  }
+
+  void _setCurrentCommandIndex(int value) {
+    _currentCommandIndex = value;
+    commandSelection.value = value;
   }
 
   void _addLog(String message) {
@@ -416,8 +458,10 @@ class GcodePlayerController extends ChangeNotifier {
     _disposed = true;
     ++_parseGeneration;
     _cancelLoad();
+    _cancelPendingSeek();
     _animationController.dispose();
     playback.dispose();
+    commandSelection.dispose();
     _previewInstalled = false;
     _segments = [];
     _parseResult = null;

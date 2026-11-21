@@ -156,7 +156,7 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
           onResetSample: _onResetSample,
           errorCount: _controller.errorCount,
           commandCount: _controller.totalCommands,
-          segmentCount: _controller.segments.length,
+          segmentCount: _controller.totalSegments,
           hasParsed: _controller.parseResult != null,
           linesRead: _controller.linesRead,
           loadStageLabel: _loadStageLabel(_controller.loadStage),
@@ -165,38 +165,40 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
         const SizedBox(height: 8),
         ListenableBuilder(
           listenable: _controller.playback,
-          builder: (context, _) => Column(
-            children: [
-              PlaybackControls(
-                isPlaying: _controller.isPlaying,
-                progress: _controller.progress,
-                speedMultiplier: _controller.speedMultiplier,
-                onPlay: _controller.play,
-                onPause: _controller.pause,
-                onReset: _controller.reset,
-                onSeek: _controller.seek,
-                onSpeedChange: _controller.setSpeed,
-              ),
-              if (_controller.totalCommands > 0) ...[
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 140,
-                  child: CommandTimeline(
-                    commands: _controller.parseResult?.commands ?? [],
-                    errors: _controller.parseResult?.errors ?? [],
-                    currentIndex: _controller.currentCommandIndex,
-                    maxHeight: 140,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                CurrentSegmentInspector(
-                  segment: _controller.currentSegment,
-                  progress: _controller.currentSegmentProgress,
-                ),
-              ],
-            ],
+          builder: (context, _) => PlaybackControls(
+            isPlaying: _controller.isPlaying,
+            progress: _controller.progress,
+            speedMultiplier: _controller.speedMultiplier,
+            onPlay: _controller.play,
+            onPause: _controller.pause,
+            onReset: _controller.reset,
+            onSeek: _controller.seek,
+            onSpeedChange: _controller.setSpeed,
           ),
         ),
+        if (_controller.totalCommands > 0) ...[
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 140,
+            child: ValueListenableBuilder<int>(
+              valueListenable: _controller.commandSelection,
+              builder: (context, index, _) => CommandTimeline(
+                commands: _controller.parseResult?.commands ?? [],
+                errors: _controller.parseResult?.errors ?? [],
+                currentIndex: index,
+                maxHeight: 140,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          ListenableBuilder(
+            listenable: _controller.playback,
+            builder: (context, _) => CurrentSegmentInspector(
+              segment: _controller.currentSegment,
+              progress: _controller.currentSegmentProgress,
+            ),
+          ),
+        ],
       ],
     );
   }
