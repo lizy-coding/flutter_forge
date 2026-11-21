@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/app/module_home_page.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';

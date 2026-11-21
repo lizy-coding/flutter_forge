@@ -1,5 +1,5 @@
 import '../support/app_info_fixture.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/app/creator_home_page.dart';
 import 'package:flutter_forge_app/app/full_privacy.dart';
 import 'package:flutter_forge_app/app/offline_privacy.dart';

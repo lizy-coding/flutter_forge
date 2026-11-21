@@ -1,6 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+// gcode_core v0.3.0 still uses the SDK Material widget types.
+// ignore: deprecated_member_use
+import 'package:flutter/material.dart'
+    as sdk_material
+    show Material, MaterialType;
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:gcode_core/gcode_core.dart';
 
@@ -165,15 +170,18 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
         const SizedBox(height: 8),
         ListenableBuilder(
           listenable: _controller.playback,
-          builder: (context, _) => PlaybackControls(
-            isPlaying: _controller.isPlaying,
-            progress: _controller.progress,
-            speedMultiplier: _controller.speedMultiplier,
-            onPlay: _controller.play,
-            onPause: _controller.pause,
-            onReset: _controller.reset,
-            onSeek: _controller.seek,
-            onSpeedChange: _controller.setSpeed,
+          builder: (context, _) => sdk_material.Material(
+            type: sdk_material.MaterialType.transparency,
+            child: PlaybackControls(
+              isPlaying: _controller.isPlaying,
+              progress: _controller.progress,
+              speedMultiplier: _controller.speedMultiplier,
+              onPlay: _controller.play,
+              onPause: _controller.pause,
+              onReset: _controller.reset,
+              onSeek: _controller.seek,
+              onSpeedChange: _controller.setSpeed,
+            ),
           ),
         ),
         if (_controller.totalCommands > 0) ...[
@@ -182,11 +190,14 @@ class _GcodeVisualizerPageState extends State<GcodeVisualizerPage>
             height: 140,
             child: ValueListenableBuilder<int>(
               valueListenable: _controller.commandSelection,
-              builder: (context, index, _) => CommandTimeline(
-                commands: _controller.parseResult?.commands ?? [],
-                errors: _controller.parseResult?.errors ?? [],
-                currentIndex: index,
-                maxHeight: 140,
+              builder: (context, index, _) => sdk_material.Material(
+                type: sdk_material.MaterialType.transparency,
+                child: CommandTimeline(
+                  commands: _controller.parseResult?.commands ?? [],
+                  errors: _controller.parseResult?.errors ?? [],
+                  currentIndex: index,
+                  maxHeight: 140,
+                ),
               ),
             ),
           ),

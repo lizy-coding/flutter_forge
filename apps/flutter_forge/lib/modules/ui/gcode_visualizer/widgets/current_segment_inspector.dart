@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:gcode_core/gcode_core.dart';
 
 class CurrentSegmentInspector extends StatelessWidget {

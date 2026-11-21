@@ -3,7 +3,7 @@ import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/modules/popup_table/popup_widgets/widgets/context_menu_demo.dart';
 import 'package:flutter_forge_app/modules/popup_table/popup_widgets/widgets/demo_section.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_forge_app/modules/popup_table/popup_widgets/module_entry.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/modules/popup_table/overlay_follow_compare/module_root.dart';
 import 'package:flutter_forge_app/modules/popup_table/overlay_follow_compare/widgets/follower_demo.dart';
 import 'package:flutter_forge_app/modules/popup_table/overlay_follow_compare/widgets/manual_demo.dart';

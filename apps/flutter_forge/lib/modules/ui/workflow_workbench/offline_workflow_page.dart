@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:forge_articles/forge_articles.dart';
 import '../../../shared/learning/learning_scaffold.dart';
 

@@ -179,7 +179,7 @@ function resolvePolicy(module, { imports = [], names = [] } = {}, rules = capabi
   const platformPolicy = {
     required_capabilities: required,
     unreviewed_dependencies: [...new Set(imports.filter((uri) => uri.startsWith('package:')).map((uri) => uri.slice(8).split('/')[0]))]
-      .filter((dep) => !['flutter', 'flutter_forge_app', 'go_router', 'provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core', 'shared_preferences', 'vector_math', 'dio'].includes(dep) &&
+      .filter((dep) => !['flutter', 'material_ui', 'cupertino_ui', 'flutter_forge_app', 'go_router', 'provider', 'flutter_riverpod', 'flutter_bloc', 'flutter_ioc_core', 'shared_preferences', 'vector_math', 'dio'].includes(dep) &&
         !Object.values(rules).some((rule) => (rule.dependencies ?? []).includes(dep)))
       .sort(),
     optional_capabilities: optional,

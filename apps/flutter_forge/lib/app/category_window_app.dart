@@ -1,8 +1,9 @@
 import '../module_registry/chinese_experiment.dart';
 import 'package:forge_localization/forge_localization.dart';
 import '../l10n/app_localizations.dart';
+import '../l10n/forge_localization_delegates.dart';
 import '../l10n/strings.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 import '../module_registry/module_catalog_utils.dart';
@@ -129,7 +130,7 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
               locale:
                   LocaleScope.maybeOf(context)?.effectiveLocale ??
                   const Locale('zh'),
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              localizationsDelegates: forgeLocalizationDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               routerConfig: _router,
               title: widget.category.labelIn(frameworkStrings(context)),

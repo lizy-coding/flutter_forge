@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 /// CustomPainter 的布局/重绘示例，日志标记了 build、shouldRepaint、paint 调用。

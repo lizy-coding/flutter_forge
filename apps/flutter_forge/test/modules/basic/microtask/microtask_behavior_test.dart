@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/modules/basic/microtask/models/event_log.dart';
 import 'package:flutter_forge_app/modules/basic/microtask/pages/microtask_queue_page.dart';
 import 'package:flutter_forge_app/modules/basic/microtask/widgets/event_log_view.dart';

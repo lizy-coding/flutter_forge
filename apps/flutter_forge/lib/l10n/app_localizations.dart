@@ -1,3 +1,6 @@
+// gen-l10n emits Flutter SDK delegates used by legacy dependencies.
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';

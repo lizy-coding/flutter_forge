@@ -3,7 +3,7 @@ import '../module_registry/concept_localizations.dart';
 import '../l10n/app_localizations.dart';
 import '../l10n/strings.dart';
 import '../module_registry/module_localizations.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 import '../module_registry/module_entry.dart';

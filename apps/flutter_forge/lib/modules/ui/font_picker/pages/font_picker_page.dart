@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker_bridge/file_picker_bridge.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import 'package:go_router/go_router.dart';
 

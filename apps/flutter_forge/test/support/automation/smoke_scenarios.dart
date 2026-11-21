@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/modules/popup_table/popup_list_interaction/pages/popup_page.dart';
 import 'package:flutter_test/flutter_test.dart';

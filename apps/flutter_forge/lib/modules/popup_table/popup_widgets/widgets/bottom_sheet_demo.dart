@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PersistentBottomSheetBar extends StatelessWidget {
   const PersistentBottomSheetBar({super.key, required this.onClose});

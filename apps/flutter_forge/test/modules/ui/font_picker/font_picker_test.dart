@@ -1,6 +1,6 @@
 import 'package:file_picker_bridge/file_picker_bridge.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/modules/ui/font_picker/data/font_catalog.dart';
 import 'package:flutter_forge_app/modules/ui/font_picker/pages/font_picker_page.dart';

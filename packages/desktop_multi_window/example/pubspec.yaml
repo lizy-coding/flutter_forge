@@ -37,6 +37,8 @@ dependencies:
       path: packages/window_manager
       ref: 6fae92d21b4c80ce1b8f71c1190d7970cf722bd4
   fvp: ^0.35.0
+  material_ui: ^1.0.0
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:

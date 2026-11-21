@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Overlay 下载动画项的数据模型
 class OverlayDownloadItem {

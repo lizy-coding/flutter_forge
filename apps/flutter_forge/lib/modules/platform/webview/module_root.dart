@@ -3,7 +3,7 @@ import '../../../shared/platform/build_features.dart';
 import 'core/offline_documents.dart';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../../shared/learning/learning_scaffold.dart';
 import 'core/webview_backend.dart';
 import 'core/webview_session.dart';

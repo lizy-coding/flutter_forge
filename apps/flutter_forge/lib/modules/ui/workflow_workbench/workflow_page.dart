@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:a2ui_core/a2ui_core.dart' as a2ui;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:genui/genui.dart' as genui;
 import 'package:json_schema_builder/json_schema_builder.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/shared/learning/learning_slider.dart';
 import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_forge_app/module_registry/module_manifest.dart';

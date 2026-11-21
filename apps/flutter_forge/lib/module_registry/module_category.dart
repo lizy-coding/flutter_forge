@@ -1,6 +1,6 @@
 import '../l10n/strings.dart';
 import '../l10n/app_localizations.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// 模块分类
 enum ModuleCategory {

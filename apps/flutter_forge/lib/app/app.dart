@@ -1,7 +1,8 @@
 import '../module_registry/chinese_experiment.dart';
 import 'package:forge_localization/forge_localization.dart';
 import '../l10n/app_localizations.dart';
-import 'package:flutter/material.dart';
+import '../l10n/forge_localization_delegates.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,7 +37,7 @@ class App extends ConsumerWidget {
               locale:
                   LocaleScope.maybeOf(context)?.effectiveLocale ??
                   const Locale('zh'),
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              localizationsDelegates: forgeLocalizationDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               routerConfig: router,
               title: 'Flutter Forge',

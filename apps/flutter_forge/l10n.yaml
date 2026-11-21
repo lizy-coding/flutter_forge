@@ -4,3 +4,6 @@ output-localization-file: app_localizations.dart
 output-class: AppLocalizations
 nullable-getter: false
 untranslated-messages-file: build/l10n_missing.json
+header: |
+  // gen-l10n emits Flutter SDK delegates used by legacy dependencies.
+  // ignore_for_file: deprecated_member_use

@@ -1,11 +1,10 @@
 import 'package:flutter/scheduler.dart';
-import '../l10n/app_localizations.dart';
+import '../l10n/forge_localization_delegates.dart';
 import 'package:go_router/go_router.dart';
 import 'package:forge_localization/forge_localization.dart';
 import 'module_entry.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../l10n/strings.dart';
 
@@ -45,7 +44,7 @@ class ChineseExperiment extends StatelessWidget {
               locale: const Locale('zh'),
               delegates: [
                 _ChineseNavigationDelegate(frameworkStrings(context).back),
-                ...AppLocalizations.localizationsDelegates,
+                ...forgeLocalizationDelegates,
               ],
               child: child,
             ),
@@ -98,7 +97,7 @@ Widget frameworkLanguage(BuildContext context, Widget child) {
   return Localizations.override(
     context: context,
     locale: controller.effectiveLocale,
-    delegates: AppLocalizations.localizationsDelegates,
+    delegates: forgeLocalizationDelegates,
     child: child,
   );
 }
@@ -184,7 +183,7 @@ class _ExperimentNavigatorLocaleState extends State<ExperimentNavigatorLocale> {
           ? const Locale('zh')
           : (LocaleScope.maybeOf(context)?.effectiveLocale ??
                 const Locale('zh')),
-      delegates: AppLocalizations.localizationsDelegates,
+      delegates: forgeLocalizationDelegates,
       child: widget.child,
     );
   }

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/modules/platform/network_diagnostics/diagnostic_models.dart';
 import 'package:flutter_forge_app/modules/platform/network_diagnostics/module_entry.dart';

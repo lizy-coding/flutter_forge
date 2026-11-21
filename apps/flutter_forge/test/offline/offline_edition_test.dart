@@ -1,7 +1,7 @@
 import '../support/app_info_fixture.dart';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_forge_app/app/creator_home_page.dart';
 import 'package:flutter_forge_app/modules/platform/dio_interceptor/lesson_session.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/app/app_version_panel.dart';
 import 'package:flutter_forge_app/shared/platform/build_features.dart';

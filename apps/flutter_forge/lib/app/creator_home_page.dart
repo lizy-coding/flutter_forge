@@ -1,7 +1,7 @@
 import 'app_version_panel.dart';
 import 'localization/language_selector.dart';
 import '../l10n/strings.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'creator_profile.dart';

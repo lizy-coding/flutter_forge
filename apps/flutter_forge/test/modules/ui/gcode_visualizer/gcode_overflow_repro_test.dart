@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:gcode_core/gcode_core.dart';
 import 'package:flutter_forge_app/modules/ui/gcode_visualizer/widgets/gcode_editor_panel.dart';
 import 'package:flutter_test/flutter_test.dart';

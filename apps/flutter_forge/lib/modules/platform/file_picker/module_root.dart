@@ -1,5 +1,5 @@
 import 'package:file_picker_bridge/file_picker_bridge.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'pages/file_picker_page.dart';
 import 'state/file_picker_controller.dart';

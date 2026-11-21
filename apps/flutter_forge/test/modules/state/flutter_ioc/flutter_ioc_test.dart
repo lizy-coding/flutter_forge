@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/modules/state/flutter_ioc/module_entry.dart';
 import 'package:flutter_forge_app/modules/state/flutter_ioc/model/counter_model.dart';
 import 'package:flutter_forge_app/modules/state/flutter_ioc/module_root.dart';

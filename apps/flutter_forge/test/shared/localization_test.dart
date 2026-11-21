@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../support/app_info_fixture.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/app/app.dart';
 import 'package:flutter_forge_app/app/localization/language_selector.dart';
 import 'package:flutter_forge_app/app/module_search.dart';
@@ -10,6 +10,7 @@ import 'package:flutter_forge_app/app/app_platform_provider.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';
 import 'package:flutter_forge_app/module_registry/module_manifest.dart';
 import 'package:flutter_forge_app/l10n/app_localizations.dart';
+import 'package:flutter_forge_app/l10n/forge_localization_delegates.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forge_localization/forge_localization.dart';
@@ -236,7 +237,7 @@ void main() {
           listenable: locale,
           builder: (_, _) => MaterialApp(
             locale: locale.effectiveLocale,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            localizationsDelegates: forgeLocalizationDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: const Scaffold(body: LanguageSelector()),
           ),

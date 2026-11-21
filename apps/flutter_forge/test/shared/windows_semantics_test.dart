@@ -1,8 +1,8 @@
 import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_forge_app/modules/basic/constraint_layout/module_entry.dart';
 import 'package:flutter_forge_app/modules/platform/online_video_player/state/video_player_adapter.dart';
 import 'package:flutter_forge_app/modules/platform/online_video_player/widgets/video_player_controls.dart';

@@ -1,3 +1,6 @@
+// gen-l10n emits Flutter SDK delegates used by legacy dependencies.
+// ignore_for_file: deprecated_member_use
+
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';

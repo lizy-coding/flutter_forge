@@ -1,8 +1,8 @@
 @TestOn('browser')
 library;
 
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_forge_app/shared/learning/learning_slider.dart';
 import 'package:flutter_forge_app/app/router/app_route_table.dart';
 import 'package:flutter_forge_app/module_registry/app_platform_snapshot.dart';

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 
 /// 对比使用/不使用 RepaintBoundary 时的重绘范围，方便解释 RenderObject 分叉。

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'pages/gcode_visualizer_page.dart'
     if (dart.library.js_interop) 'pages/gcode_visualizer_web_page.dart';

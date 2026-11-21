@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../shared/learning/learning_slider.dart';
 import 'package:genui/genui.dart';

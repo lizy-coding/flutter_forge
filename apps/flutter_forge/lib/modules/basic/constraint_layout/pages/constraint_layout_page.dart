@@ -1,5 +1,5 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../shared/learning/learning_slider.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';

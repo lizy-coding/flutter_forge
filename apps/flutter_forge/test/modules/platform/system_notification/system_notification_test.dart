@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/modules/platform/system_notification/module_entry.dart';
 import 'package:flutter_forge_app/modules/platform/system_notification/notification_session.dart';
 import 'package:flutter_test/flutter_test.dart';

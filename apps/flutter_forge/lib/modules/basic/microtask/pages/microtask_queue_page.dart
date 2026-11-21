@@ -1,7 +1,7 @@
 // Queue-order demonstrations intentionally schedule Futures without waiting.
 // ignore_for_file: unawaited_futures, discarded_futures
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 import '../models/event_log.dart';
 import '../widgets/event_log_view.dart';

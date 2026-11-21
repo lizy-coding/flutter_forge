@@ -1,5 +1,5 @@
 import 'package:flutter_forge_app/l10n/strings.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import 'privacy_policy_data.dart';

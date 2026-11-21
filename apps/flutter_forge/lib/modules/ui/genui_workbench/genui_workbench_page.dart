@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:genui/genui.dart';
 import 'package:flutter_forge_app/shared/learning/learning_scaffold.dart';
 

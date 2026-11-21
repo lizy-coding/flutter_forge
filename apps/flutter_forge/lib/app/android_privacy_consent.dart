@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/app_localizations.dart';
+import '../l10n/forge_localization_delegates.dart';
 import '../shared/platform/build_features.dart';
 import 'privacy_policy_data.dart';
 
@@ -110,7 +111,7 @@ class _AndroidPrivacyConsentAppState extends State<AndroidPrivacyConsentApp> {
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
     title: 'Flutter Forge',
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    localizationsDelegates: forgeLocalizationDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     localeListResolutionCallback: (locales, supported) {
       for (final locale in locales ?? const <Locale>[]) {
