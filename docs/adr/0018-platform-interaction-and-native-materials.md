@@ -1,5 +1,7 @@
 # 四端交互分工与原生窗口背景材质
 
+[ADR 0023](0023-module-focus-windows.md) · 模块专注窗口沿用本 ADR 的每窗口材质与交互规则。
+
 2026-11-02 更新：Windows 标题栏、边框与背景材质约定由 [ADR 0021](0021-windows-standard-system-frame.md) 取代；其余平台与导航、生命周期约定继续有效。
 
 状态：accepted，2026-10-21 用户确认全部推荐。本文定义实现规则；本轮实现及各平台验证范围见 [实施与 macOS 验收记录](../reports/PLATFORM_INTERACTION_MACOS_ACCEPTANCE-20261021.md)，不能从规则本身推定所有平台均已验收。

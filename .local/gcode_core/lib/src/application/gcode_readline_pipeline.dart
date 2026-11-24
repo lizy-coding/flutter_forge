@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import '../data/readers/gcode_line_reader.dart';
+import '../core/gcode_bounds.dart';
 import '../data/readers/file_gcode_line_reader.dart';
 import '../data/readers/string_gcode_line_reader.dart';
 import '../domain/gcode_load_snapshot.dart';
@@ -24,8 +25,10 @@ class GcodeReadlineOptions {
 
   final int snapshotBatchSize;
 
-  /// Caps intermediate geometry; terminal snapshots always contain all data.
-  /// Null preserves cumulative snapshots for existing consumers.
+  /// The source-line limit of intermediate geometry and parser diagnostics.
+  ///
+  /// Timing diagnostic previews are capped to the same number of entries.
+  /// Terminal snapshots contain all data. `null` preserves cumulative snapshots.
   final int? previewLimit;
 
   /// Minimum interval for intermediate snapshots; terminal events are immediate.
@@ -92,6 +95,7 @@ class GcodeReadlinePipeline {
     List<GcodeCommand>? previewCommands;
     List<GcodeParseError>? previewErrors;
     List<ToolpathSegment>? previewSegments;
+    GcodeBounds? previewBounds;
 
     builder.reset();
 
@@ -124,25 +128,38 @@ class GcodeReadlinePipeline {
             break;
         }
 
+        if (previewLimit != null &&
+            linesRead >= previewLimit &&
+            previewSegments == null) {
+          previewCommands = List.unmodifiable(
+              commands.takeWhile((c) => c.lineNumber <= previewLimit));
+          previewErrors = List.unmodifiable(
+              errors.takeWhile((e) => e.lineNumber <= previewLimit));
+          previewSegments = List.unmodifiable(
+              segments.takeWhile((s) => s.command.lineNumber <= previewLimit));
+          previewBounds = GcodeBounds.zero;
+          for (final segment in previewSegments) {
+            previewBounds = previewBounds!
+                .expand(segment.start.x, segment.start.y)
+                .expand(segment.end.x, segment.end.y);
+          }
+        }
         changedSinceSnapshot++;
         if (changedSinceSnapshot >= options.snapshotBatchSize &&
             snapshotClock.elapsed >= options.minimumSnapshotInterval) {
           snapshotClock.reset();
           changedSinceSnapshot = 0;
-          if (previewLimit != null &&
-              linesRead >= previewLimit &&
-              previewSegments == null) {
-            previewCommands = List.unmodifiable(commands.take(previewLimit));
-            previewErrors = List.unmodifiable(errors.take(previewLimit));
-            previewSegments = List.unmodifiable(segments.take(previewLimit));
-          }
           yield _snapshot(
-            builder: builder,
+            bounds: previewBounds ?? builder.bounds,
+            previewLineLimit: previewSegments == null ? null : previewLimit,
+            commandCount: commands.length,
+            errorCount: errors.length,
+            segmentCount: segments.length,
             stage: GcodeLoadStage.parsing,
             commands: previewCommands ?? commands,
             errors: previewErrors ?? errors,
             segments: previewSegments ?? segments,
-            timeEstimate: estimator.snapshot,
+            timeEstimate: estimator.snapshotWithIssueLimit(previewLimit),
             linesRead: linesRead,
             message: '已读取 $linesRead 行',
           );
@@ -150,7 +167,7 @@ class GcodeReadlinePipeline {
       }
 
       yield _snapshot(
-        builder: builder,
+        bounds: builder.bounds,
         stage: GcodeLoadStage.ready,
         commands: commands,
         errors: errors,
@@ -163,7 +180,7 @@ class GcodeReadlinePipeline {
       );
     } catch (error) {
       yield _snapshot(
-        builder: builder,
+        bounds: builder.bounds,
         stage: GcodeLoadStage.failed,
         commands: commands,
         errors: errors,
@@ -245,7 +262,11 @@ class GcodeReadlinePipeline {
   }
 
   GcodeLoadSnapshot _snapshot({
-    required IncrementalToolpathBuilder builder,
+    required GcodeBounds bounds,
+    int? previewLineLimit,
+    int? commandCount,
+    int? errorCount,
+    int? segmentCount,
     required GcodeLoadStage stage,
     required List<GcodeCommand> commands,
     required List<GcodeParseError> errors,
@@ -254,29 +275,26 @@ class GcodeReadlinePipeline {
     required int linesRead,
     required String message,
   }) {
-    final b = builder.bounds;
     return GcodeLoadSnapshot(
       stage: stage,
-      commands: stage == GcodeLoadStage.parsing &&
-              options.previewLimit != null &&
-              linesRead >= options.previewLimit!
-          ? commands
-          : List.unmodifiable(commands),
-      errors: stage == GcodeLoadStage.parsing &&
-              options.previewLimit != null &&
-              linesRead >= options.previewLimit!
-          ? errors
-          : List.unmodifiable(errors),
-      segments: stage == GcodeLoadStage.parsing &&
-              options.previewLimit != null &&
-              linesRead >= options.previewLimit!
-          ? segments
-          : List.unmodifiable(segments),
+      commands:
+          previewLineLimit != null ? commands : List.unmodifiable(commands),
+      errors: previewLineLimit != null ? errors : List.unmodifiable(errors),
+      segments:
+          previewLineLimit != null ? segments : List.unmodifiable(segments),
+      previewLineLimit: previewLineLimit,
+      commandCount: commandCount,
+      errorCount: errorCount,
+      segmentCount: segmentCount,
       timeEstimate: timeEstimate,
       linesRead: linesRead,
       message: message,
-      bounds:
-          b.minX != 0 || b.maxX != 0 || b.minY != 0 || b.maxY != 0 ? b : null,
+      bounds: bounds.minX != 0 ||
+              bounds.maxX != 0 ||
+              bounds.minY != 0 ||
+              bounds.maxY != 0
+          ? bounds
+          : null,
     );
   }
 

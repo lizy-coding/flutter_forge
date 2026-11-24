@@ -27,10 +27,10 @@ class MultiWindowManager {
 
   static bool get isSupported => multiWindowPlatformSupported;
 
-  final Map<ModuleCategory, String> _categoryWindows = {};
-  final Map<ModuleCategory, Future<String?>> _pendingCategoryWindows = {};
+  final Map<String, String> _readyWindows = {};
+  final Map<String, Future<String?>> _pendingWindows = {};
   final Set<String> _unreadyWindowIds = {};
-  final Map<ModuleCategory, MultiWindowController> _failedStartupWindows = {};
+  final Map<String, MultiWindowController> _failedStartupWindows = {};
   int _windowStateVersion = 0;
   final MultiWindowPlatform _platform;
   final Duration _startupTimeout;
@@ -41,6 +41,7 @@ class MultiWindowManager {
   String _themeSelectionPayload = 'system';
 
   static const themeSelectionMethod = 'themeSelectionChanged';
+  static const openRouteMethod = 'openRouteInMain';
   static const readyMethod = 'windowReady';
   static const localeRequestMethod = 'localePreferenceRequest';
   static const localeSnapshotMethod = 'localeSnapshot';
@@ -62,7 +63,7 @@ class MultiWindowManager {
     _localeRevision++;
     final snapshot = localeSnapshot;
     for (final controller in await _platform.getAllWindows()) {
-      if (parseArguments(controller.arguments).type == WindowType.category) {
+      if (parseArguments(controller.arguments).type != WindowType.main) {
         await _platform.invokeMethod(
           controller,
           localeSnapshotMethod,
@@ -72,46 +73,83 @@ class MultiWindowManager {
     }
   }
 
-  /// Starts window lifecycle observation and removes stale category entries.
+  /// Starts window lifecycle observation and removes stale entries.
   Future<void> initialize() async {
     if (!isSupported) return;
     _windowCloseListener ??= onWindowsChanged.listen((_) {
-      unawaited(_calibrateCategoryWindows());
+      unawaited(_calibrateWindows());
     });
-    await _calibrateCategoryWindows();
+    await _calibrateWindows();
   }
 
   Future<String?> createCategoryWindow(ModuleCategory category) {
-    if (!isSupported) return Future.value(null);
+    return _openWindow(
+      WindowArguments(type: WindowType.category, category: category),
+    );
+  }
 
-    return _pendingCategoryWindows.putIfAbsent(category, () async {
+  Future<String?> createModuleWindow(String path, {String? initialLocation}) =>
+      _openWindow(
+        WindowArguments(
+          type: WindowType.module,
+          modulePath: path,
+          initialLocation: initialLocation,
+        ),
+      );
+
+  Future<List<MultiWindowController>> moduleWindows() async {
+    await _calibrateWindows();
+    return (await _platform.getAllWindows()).where((controller) {
+      final args = parseArguments(controller.arguments);
+      final key = args.reuseKey;
+      return args.type == WindowType.module &&
+          !_pendingWindows.containsKey(key) &&
+          _readyWindows[key] == controller.windowId;
+    }).toList();
+  }
+
+  Future<void> manageModuleWindow(String id, {required bool close}) async {
+    for (final controller in await moduleWindows()) {
+      if (controller.windowId != id) continue;
+      await (close
+              ? _platform.closeWindow(controller)
+              : _platform.showWindow(controller))
+          .timeout(_startupTimeout);
+      return;
+    }
+  }
+
+  Future<String?> _openWindow(WindowArguments definition) {
+    if (!isSupported) return Future.value(null);
+    final key = definition.reuseKey!;
+    return _pendingWindows.putIfAbsent(key, () async {
       try {
-        return await _createCategoryWindow(category);
+        return await _createWindow(key, definition);
       } finally {
         // The removed future is already returned to the callers.
-        unawaited(_pendingCategoryWindows.remove(category));
+        unawaited(_pendingWindows.remove(key));
       }
     });
   }
 
-  Future<String> _createCategoryWindow(ModuleCategory category) async {
+  Future<String> _createWindow(String key, WindowArguments definition) async {
     final stopwatch = Stopwatch()..start();
-    final failed = _failedStartupWindows[category];
+    final failed = _failedStartupWindows[key];
     if (failed != null) {
       await _platform.closeWindow(failed).timeout(const Duration(seconds: 3));
-      _failedStartupWindows.remove(category);
+      _failedStartupWindows.remove(key);
     }
-    await _calibrateCategoryWindows();
+    await _calibrateWindows();
 
-    if (_categoryWindows.containsKey(category)) {
-      final existingId = _categoryWindows[category]!;
+    if (_readyWindows.containsKey(key)) {
+      final existingId = _readyWindows[key]!;
       final controllers = await _platform.getAllWindows();
       for (final c in controllers) {
         if (c.windowId == existingId) {
           try {
             await _platform.showWindow(c);
             _recordDiagnostic(
-              category: category,
+              key: key,
               arguments: c.arguments,
               controllerId: existingId,
               operation: 'reuse_window',
@@ -120,7 +158,7 @@ class MultiWindowManager {
             return existingId;
           } catch (error, stackTrace) {
             _recordDiagnostic(
-              category: category,
+              key: key,
               arguments: c.arguments,
               controllerId: existingId,
               operation: 'show_window_failed',
@@ -132,17 +170,20 @@ class MultiWindowManager {
                 .map((controller) => controller.windowId)
                 .toSet();
             if (liveWindowIds.contains(existingId)) rethrow;
-            _removeCategoryWindow(category);
+            _removeReadyWindow(key);
             break;
           }
         }
       }
-      _removeCategoryWindow(category);
+      _removeReadyWindow(key);
     }
 
     final args = jsonEncode({
-      'type': 'category',
-      'category': category.name,
+      'type': definition.type.name,
+      if (definition.category case final category?) 'category': category.name,
+      if (definition.modulePath case final path?) 'modulePath': path,
+      if (definition.initialLocation case final location?)
+        'initialLocation': location,
       'themeSelection': _themeSelectionPayload,
       'mainWindowId': _mainWindowId,
       'localePreference': _localePreference,
@@ -163,7 +204,7 @@ class MultiWindowManager {
         _unreadyWindowIds.add(controller.windowId);
         _windowStateVersion++;
         if (!await _closeFailedWindow(controller)) {
-          _failedStartupWindows[category] = controller;
+          _failedStartupWindows[key] = controller;
         }
       }
       return controller;
@@ -186,12 +227,12 @@ class MultiWindowManager {
       await _platform.waitUntilReady(controller).timeout(_startupTimeout);
       await _platform.showWindow(controller).timeout(_startupTimeout);
     } catch (error, stackTrace) {
-      _removeCategoryWindow(category);
+      _removeReadyWindow(key);
       if (!await _closeFailedWindow(controller)) {
-        _failedStartupWindows[category] = controller;
+        _failedStartupWindows[key] = controller;
       }
       _recordDiagnostic(
-        category: category,
+        key: key,
         arguments: controller.arguments,
         controllerId: controller.windowId,
         operation: 'startup_failed',
@@ -203,10 +244,10 @@ class MultiWindowManager {
     }
 
     _unreadyWindowIds.remove(controller.windowId);
-    _categoryWindows[category] = controller.windowId;
+    _readyWindows[key] = controller.windowId;
     _windowStateVersion++;
     _recordDiagnostic(
-      category: category,
+      key: key,
       arguments: controller.arguments,
       controllerId: controller.windowId,
       operation: 'create_window',
@@ -229,7 +270,7 @@ class MultiWindowManager {
     }
   }
 
-  Future<void> _calibrateCategoryWindows() async {
+  Future<void> _calibrateWindows() async {
     final version = _windowStateVersion;
     final controllers = await _platform.getAllWindows();
     // A list captured before a concurrent mutation cannot replace newer state.
@@ -238,30 +279,30 @@ class MultiWindowManager {
         .map((controller) => controller.windowId)
         .toSet();
     _unreadyWindowIds.retainWhere(liveIds.contains);
-    final liveCategoryWindows = <ModuleCategory, String>{};
+    final liveWindows = <String, String>{};
     for (final controller in controllers) {
       final arguments = parseArguments(controller.arguments);
-      if (arguments.type == WindowType.category && arguments.category != null) {
+      if (arguments.reuseKey case final key?) {
         // Native inventory includes hidden windows still starting. They must
         // not be advertised as reusable until their startup barrier completes.
         if (_unreadyWindowIds.contains(controller.windowId)) continue;
-        liveCategoryWindows[arguments.category!] = controller.windowId;
+        liveWindows[key] = controller.windowId;
       }
     }
     // Even an unchanged accepted snapshot supersedes older pending snapshots.
     _windowStateVersion++;
-    if (mapEquals(_categoryWindows, liveCategoryWindows)) return;
-    _categoryWindows
+    if (mapEquals(_readyWindows, liveWindows)) return;
+    _readyWindows
       ..clear()
-      ..addAll(liveCategoryWindows);
+      ..addAll(liveWindows);
   }
 
-  void _removeCategoryWindow(ModuleCategory category) {
-    if (_categoryWindows.remove(category) != null) _windowStateVersion++;
+  void _removeReadyWindow(String key) {
+    if (_readyWindows.remove(key) != null) _windowStateVersion++;
   }
 
   void _recordDiagnostic({
-    required ModuleCategory category,
+    required String key,
     required Object? arguments,
     required String controllerId,
     required String operation,
@@ -270,7 +311,8 @@ class MultiWindowManager {
     StackTrace? stackTrace,
   }) {
     _diagnosticSink({
-      'category': category.name,
+      if (key.startsWith('category:')) 'category': key.substring(9),
+      if (key.startsWith('module:')) 'modulePath': key.substring(7),
       'argumentsType': arguments.runtimeType.toString(),
       'controllerId': controllerId,
       'operation': operation,
@@ -281,7 +323,7 @@ class MultiWindowManager {
   }
 
   bool isCategoryOpen(ModuleCategory category) =>
-      _categoryWindows.containsKey(category);
+      _readyWindows.containsKey('category:${category.name}');
 
   void setThemeSelectionPayload(String payload) {
     _themeSelectionPayload = payload;
@@ -292,7 +334,7 @@ class MultiWindowManager {
     final controllers = await _platform.getAllWindows();
     for (final controller in controllers) {
       final arguments = parseArguments(controller.arguments);
-      if (arguments.type == WindowType.category) {
+      if (arguments.type != WindowType.main) {
         try {
           await _platform.invokeMethod(
             controller,
@@ -461,11 +503,19 @@ class DesktopMultiWindowPlatform implements MultiWindowPlatform {
   ) => controller.nativeController!.invokeMethod<void>(method, arguments);
 }
 
-enum WindowType { main, category }
+enum WindowType { main, category, module }
 
 class WindowArguments {
   final WindowType type;
   final ModuleCategory? category;
+  final String? modulePath;
+  final String? initialLocation;
+
+  String? get reuseKey => switch (type) {
+    WindowType.category when category != null => 'category:${category!.name}',
+    WindowType.module when modulePath != null => 'module:$modulePath',
+    _ => null,
+  };
   final String themeSelectionPayload;
   final String? mainWindowId;
   final String localePreference;
@@ -474,6 +524,8 @@ class WindowArguments {
   const WindowArguments({
     required this.type,
     this.category,
+    this.modulePath,
+    this.initialLocation,
     this.themeSelectionPayload = 'system',
     this.mainWindowId,
     this.localePreference = 'system',
@@ -482,7 +534,11 @@ class WindowArguments {
 
   factory WindowArguments.fromJson(Map<String, dynamic> json) {
     final typeStr = json['type'] as String? ?? 'main';
-    final type = typeStr == 'category' ? WindowType.category : WindowType.main;
+    final type = switch (typeStr) {
+      'category' => WindowType.category,
+      'module' => WindowType.module,
+      _ => WindowType.main,
+    };
     ModuleCategory? category;
     if (type == WindowType.category && json['category'] != null) {
       category = ModuleCategory.values.firstWhere(
@@ -493,6 +549,8 @@ class WindowArguments {
     return WindowArguments(
       type: type,
       category: category,
+      modulePath: json['modulePath'] as String?,
+      initialLocation: json['initialLocation'] as String?,
       mainWindowId: json['mainWindowId'] as String?,
       localePreference: json['localePreference'] as String? ?? 'system',
       localeRevision: json['localeRevision'] as int? ?? 0,

@@ -16,7 +16,13 @@ class GcodeLoadSnapshot {
     this.diagnosticMessage = '',
     this.bounds,
     this.timeEstimate,
-  });
+    this.previewLineLimit,
+    int? commandCount,
+    int? errorCount,
+    int? segmentCount,
+  })  : _commandCount = commandCount,
+        _errorCount = errorCount,
+        _segmentCount = segmentCount;
 
   factory GcodeLoadSnapshot.empty() {
     return const GcodeLoadSnapshot(
@@ -36,6 +42,24 @@ class GcodeLoadSnapshot {
   final String message;
   final String diagnosticMessage;
   final GcodeBounds? bounds;
+
+  /// The source-line cutoff of a frozen intermediate preview, or `null`.
+  ///
+  /// Commands, segments and bounds describe this same prefix. Terminal
+  /// snapshots always contain complete data and have no preview cutoff.
+  final int? previewLineLimit;
+  final int? _commandCount;
+  final int? _errorCount;
+  final int? _segmentCount;
+
+  /// The total command count, including commands omitted from the preview.
+  int get commandCount => _commandCount ?? commands.length;
+
+  /// The total parser error count, including errors omitted from the preview.
+  int get errorCount => _errorCount ?? errors.length;
+
+  /// The total segment count, including segments omitted from the preview.
+  int get segmentCount => _segmentCount ?? segments.length;
 
   /// Timing of the source prefix; independent of the renderer parse subset.
   final GcodeTimeEstimate? timeEstimate;

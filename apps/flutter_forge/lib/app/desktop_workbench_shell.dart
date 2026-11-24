@@ -1,3 +1,7 @@
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import '../shared/multi_window/multi_window_manager.dart';
+import 'module_home_page.dart';
+import 'navigation_policy.dart';
 import '../l10n/strings.dart';
 import 'dart:async';
 
@@ -25,12 +29,16 @@ class DesktopWorkbenchShell extends StatefulWidget {
     required this.platform,
     required this.child,
     this.focusedCategory,
+    this.focusedModule,
+    this.mainWindowId,
   });
   final List<ModuleEntry> modules;
   final String location;
   final AppPlatformSnapshot platform;
   final Widget child;
   final ModuleCategory? focusedCategory;
+  final ModuleEntry? focusedModule;
+  final String? mainWindowId;
 
   @override
   State<DesktopWorkbenchShell> createState() => _DesktopWorkbenchShellState();
@@ -103,8 +111,18 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
     }
   }
 
+  bool get _canGoBack {
+    final root = widget.focusedModule?.path;
+    if (root == null) return _locations.length > 1;
+    return widget.location != root;
+  }
+
   void _back() {
-    if (_locations.length < 2) return;
+    if (!_canGoBack) return;
+    if (_locations.length < 2) {
+      context.go(widget.focusedModule!.path);
+      return;
+    }
     _locations.removeLast();
     _goingBack = true;
     context.go(_locations.last);
@@ -134,14 +152,17 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
   }
 
   List<Object> get _navigationEntries => [
-    for (final category
-        in widget.focusedCategory == null
-            ? ModuleCategory.values
-            : [widget.focusedCategory!]) ...[
-      category,
-      if (_expandedCategory == category)
-        ...widget.modules.where((module) => module.category == category),
-    ],
+    if (widget.focusedModule case final module?)
+      module
+    else
+      for (final category
+          in widget.focusedCategory == null
+              ? ModuleCategory.values
+              : [widget.focusedCategory!]) ...[
+        category,
+        if (_expandedCategory == category)
+          ...widget.modules.where((module) => module.category == category),
+      ],
   ];
 
   int get _selectedEntryIndex {
@@ -430,15 +451,17 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
               IconButton(
                 key: const ValueKey('workbench-back'),
                 tooltip: appStrings(context).previousPage,
-                onPressed: _locations.length > 1 ? _back : null,
+                onPressed: _canGoBack ? _back : null,
                 icon: const Icon(Icons.arrow_back, size: 18),
               ),
               IconButton(
                 key: const ValueKey('workbench-home-button'),
                 tooltip: widget.focusedCategory == null
                     ? appStrings(context).homeWorkbench
+                    : widget.focusedModule != null
+                    ? '返回模块首页'
                     : appStrings(context).homeCategory,
-                onPressed: () => context.go('/'),
+                onPressed: () => context.go(widget.focusedModule?.path ?? '/'),
                 icon: const Icon(Icons.home_outlined, size: 18),
               ),
               Expanded(
@@ -461,18 +484,64 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
                   key: const ValueKey('titlebar-drag-area'),
                 ),
               ),
-              SizedBox(
-                width: constraints.maxWidth >= 1000 ? 280 : 170,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: OutlinedButton.icon(
-                    key: const ValueKey('workbench-search'),
-                    onPressed: _search,
-                    icon: const Icon(Icons.search, size: 17),
-                    label: Text(appStrings(context).quickOpen),
+              if (constraints.maxWidth < 680)
+                IconButton(
+                  tooltip: appStrings(context).quickOpen,
+                  onPressed: _search,
+                  icon: const Icon(Icons.search, size: 17),
+                )
+              else
+                SizedBox(
+                  width: constraints.maxWidth >= 1000 ? 280 : 170,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: OutlinedButton.icon(
+                      key: const ValueKey('workbench-search'),
+                      onPressed: _search,
+                      icon: const Icon(Icons.search, size: 17),
+                      label: Text(appStrings(context).quickOpen),
+                    ),
                   ),
                 ),
-              ),
+              if (widget.focusedModule != null &&
+                  widget.mainWindowId != null) ...[
+                IconButton(
+                  tooltip: '聚焦主窗口',
+                  icon: const Icon(Icons.flip_to_front, size: 18),
+                  onPressed: () => unawaited(_mainWindowAction()),
+                ),
+                IconButton(
+                  tooltip: '在主窗口打开工作台',
+                  icon: const Icon(Icons.dashboard_outlined, size: 18),
+                  onPressed: () => unawaited(_mainWindowAction('/')),
+                ),
+              ],
+              if (widget.focusedCategory == null &&
+                  MultiWindowManager.isSupported &&
+                  window?.ready == true &&
+                  MediaQuery.sizeOf(context).width >=
+                      NavigationPolicy.compactWidthBreakpoint) ...[
+                if (_currentModule case final module?
+                    when module.isSupportedOn(widget.platform))
+                  IconButton(
+                    tooltip: '在专注窗口打开',
+                    icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                    onPressed: () => unawaited(
+                      openModuleFocusWindow(
+                        context,
+                        module,
+                        initialLocation: GoRouterState.of(
+                          context,
+                        ).uri.toString(),
+                      ),
+                    ),
+                  ),
+                IconButton(
+                  tooltip: '管理专注窗口',
+                  icon: const Icon(Icons.window_outlined, size: 18),
+                  onPressed: () => unawaited(_manageWindows()),
+                ),
+              ],
               _dragRegion(const SizedBox(width: 24, height: 48)),
               const ThemeModeButton(),
               _captionButton(
@@ -494,6 +563,98 @@ class _DesktopWorkbenchShellState extends State<DesktopWorkbenchShell> {
         ),
       ),
     );
+  }
+
+  Future<void> _mainWindowAction([String? route]) => _runWindowAction(() async {
+    final main = WindowController.fromWindowId(widget.mainWindowId!);
+    if (route == null) {
+      await main.show();
+    } else {
+      await main.invokeMethod<void>(MultiWindowManager.openRouteMethod, route);
+    }
+  });
+
+  Future<void> _manageWindows() => _runWindowAction(() async {
+    final manager = MultiWindowManager.instance;
+    final windows = await manager.moduleWindows();
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('模块专注窗口'),
+        content: SizedBox(
+          width: 420,
+          child: windows.isEmpty
+              ? const Text('当前没有已打开的专注窗口。')
+              : SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final window in windows)
+                        ListTile(
+                          title: Text(_windowTitle(window)),
+                          onTap: () {
+                            Navigator.of(dialogContext).pop();
+                            unawaited(
+                              _runWindowAction(
+                                () => manager.manageModuleWindow(
+                                  window.windowId,
+                                  close: false,
+                                ),
+                              ),
+                            );
+                          },
+                          trailing: IconButton(
+                            tooltip: '关闭专注窗口',
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop();
+                              unawaited(
+                                _runWindowAction(
+                                  () => manager.manageModuleWindow(
+                                    window.windowId,
+                                    close: true,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('完成'),
+          ),
+        ],
+      ),
+    );
+  });
+
+  String _windowTitle(MultiWindowController window) {
+    final path = MultiWindowManager.parseArguments(window.arguments).modulePath;
+    return widget.modules
+            .where((module) => module.path == path)
+            .firstOrNull
+            ?.titleFor(context) ??
+        path ??
+        window.windowId;
+  }
+
+  Future<void> _runWindowAction(Future<void> Function() action) async {
+    try {
+      await action();
+    } catch (error) {
+      debugPrint('[multi-window] action failed: $error');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('窗口操作失败，请重试。')));
+      }
+    }
   }
 
   Widget _captionButton(

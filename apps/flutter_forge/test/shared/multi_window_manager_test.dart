@@ -11,6 +11,44 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
+    'module windows reuse by path and support targeted management',
+    () async {
+      final platform = _FakeMultiWindowPlatform();
+      final manager = MultiWindowManager.forTesting(platform);
+      if (!MultiWindowManager.isSupported) return;
+
+      final first = await manager.createModuleWindow(
+        '/first',
+        initialLocation: '/first/lesson',
+      );
+      final second = await manager.createModuleWindow('/second');
+      expect(
+        await manager.createModuleWindow(
+          '/first',
+          initialLocation: '/first/other',
+        ),
+        first,
+      );
+      expect(platform.createRequests, hasLength(2));
+      final windows = await manager.moduleWindows();
+      expect(
+        windows.map((window) => window.windowId),
+        unorderedEquals([first, second]),
+      );
+      final definition = MultiWindowManager.parseArguments(
+        windows.firstWhere((window) => window.windowId == first).arguments,
+      );
+      expect(definition.initialLocation, '/first/lesson');
+
+      await manager.manageModuleWindow(second!, close: false);
+      expect(platform.shownWindowIds.last, second);
+      await manager.manageModuleWindow(first!, close: true);
+      expect(platform.closedWindowIds, [first]);
+      expect((await manager.moduleWindows()).single.windowId, second);
+    },
+  );
+
+  test(
     'native cleanup waits for inventory removal, not just the close reply',
     () async {
       const channel = MethodChannel('mixin.one/desktop_multi_window');

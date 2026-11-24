@@ -1,5 +1,7 @@
 # 通用桌面工作台与沉浸式标题栏
 
+[ADR 0023](0023-module-focus-windows.md) · 专注窗口范围由 ADR 0023 更新。主窗口退出语义和桌面工作台规则继续适用。
+
 2026-11-02 更新：Windows 标题栏、边框与背景材质约定由 [ADR 0021](0021-windows-standard-system-frame.md) 取代；其余平台与导航、生命周期约定继续有效。
 
 状态：accepted，2026-10-17 用户确认；材质范围、默认外观和移动端阶段安排由 [ADR 0018](0018-platform-interaction-and-native-materials.md) 取代，其余窗口与工作台约定继续有效。

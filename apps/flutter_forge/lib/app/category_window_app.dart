@@ -1,3 +1,7 @@
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import '../shared/multi_window/focus_window_navigation.dart';
+import '../shared/multi_window/multi_window_manager.dart';
+import '../module_registry/module_entry.dart';
 import '../module_registry/chinese_experiment.dart';
 import 'package:forge_localization/forge_localization.dart';
 import '../l10n/app_localizations.dart';
@@ -27,38 +31,72 @@ class CategoryWindowApp extends StatefulWidget {
     required this.category,
     required this.platform,
     required this.themeController,
+    this.module,
+    this.initialLocation,
+    this.mainWindowId,
   });
 
   final ModuleCategory category;
+  final ModuleEntry? module;
+  final String? initialLocation;
+  final String? mainWindowId;
+
+  List<ModuleEntry> get modules => module != null
+      ? [module!]
+      : filterModulesByCategory(AppRouteTable.modules, category);
+
   final AppPlatformSnapshot platform;
   final AppThemeController themeController;
 
   static GoRouter createRouter(
     ModuleCategory category,
-    AppPlatformSnapshot platform,
-  ) {
-    final modules = filterModulesByCategory(AppRouteTable.modules, category);
-    final childRoutes = buildCategoryRoutes(
-      modules,
-      platform,
-      unsupportedBuilder: (_, module) =>
-          UnsupportedModulePage(module: module, platform: platform),
-    );
-
-    final routes = <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (context, state) => CategoryHomePage(
-          category: category,
-          modules: modules,
-          platform: platform,
-          focusedWindow: true,
-        ),
-        routes: childRoutes,
-      ),
-    ];
+    AppPlatformSnapshot platform, {
+    ModuleEntry? module,
+    String? initialLocation,
+    String? mainWindowId,
+  }) {
+    final modules = module == null
+        ? filterModulesByCategory(AppRouteTable.modules, category)
+        : [module];
+    final routes = module != null
+        ? buildModuleRoutes(
+            modules,
+            platform,
+            unsupportedBuilder: (_, entry) =>
+                UnsupportedModulePage(module: entry, platform: platform),
+          )
+        : <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (context, state) => CategoryHomePage(
+                category: category,
+                modules: modules,
+                platform: platform,
+                focusedWindow: true,
+              ),
+              routes: buildCategoryRoutes(
+                modules,
+                platform,
+                unsupportedBuilder: (_, entry) =>
+                    UnsupportedModulePage(module: entry, platform: platform),
+              ),
+            ),
+          ];
+    final incoming = Uri.tryParse(initialLocation ?? '');
+    final modulePath = module?.path;
+    final inScope =
+        incoming != null &&
+        !incoming.hasScheme &&
+        !incoming.hasAuthority &&
+        modulePath != null &&
+        (incoming.path == modulePath ||
+            incoming.path.startsWith('$modulePath/'));
     return GoRouter(
-      initialLocation: '/',
+      initialLocation: inScope ? initialLocation : modulePath ?? '/',
+      overridePlatformDefaultLocation: module != null,
+      redirect: module == null
+          ? null
+          : (_, state) => state.error != null ? module.path : null,
       routes: platform.hostFamily == AppHostFamily.desktop
           ? [
               ShellRoute(
@@ -69,6 +107,8 @@ class CategoryWindowApp extends StatefulWidget {
                     location: state.uri.path,
                     platform: platform,
                     focusedCategory: category,
+                    focusedModule: module,
+                    mainWindowId: mainWindowId,
                     child: ExperimentNavigatorLocale(
                       router: GoRouter.of(context),
                       modules: modules,
@@ -93,7 +133,7 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
   @override
   void initState() {
     super.initState();
-    _router = CategoryWindowApp.createRouter(widget.category, widget.platform);
+    _router = _createRouter();
   }
 
   @override
@@ -102,18 +142,52 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
     if (oldWidget.category != widget.category ||
         oldWidget.platform.platform != widget.platform.platform) {
       final previous = _router;
-      _router = CategoryWindowApp.createRouter(
-        widget.category,
-        widget.platform,
-      );
+      _router = _createRouter();
       WidgetsBinding.instance.addPostFrameCallback((_) => previous.dispose());
     }
   }
+
+  GoRouter _createRouter() => CategoryWindowApp.createRouter(
+    widget.category,
+    widget.platform,
+    module: widget.module,
+    initialLocation: widget.initialLocation,
+    mainWindowId: widget.mainWindowId,
+  );
+
+  String _title(BuildContext context) =>
+      widget.module?.titleFor(context) ??
+      widget.category.labelIn(frameworkStrings(context));
 
   @override
   void dispose() {
     _router.dispose();
     super.dispose();
+  }
+
+  Widget _withFocusNavigation(Widget child) {
+    final mainId = widget.mainWindowId;
+    if (widget.module == null || mainId == null) return child;
+    return FocusWindowNavigation(
+      openInMain: (route) async {
+        try {
+          await WindowController.fromWindowId(
+            mainId,
+          ).invokeMethod<void>(MultiWindowManager.openRouteMethod, route);
+        } catch (error) {
+          debugPrint('[multi-window] failed to open route in main: $error');
+          if (!mounted) return;
+          final overlay =
+              _router.routerDelegate.navigatorKey.currentState?.overlay;
+          if (overlay != null) {
+            ScaffoldMessenger.of(
+              overlay.context,
+            ).showSnackBar(const SnackBar(content: Text('无法在主窗口打开页面。')));
+          }
+        }
+      },
+      child: child,
+    );
   }
 
   @override
@@ -133,7 +207,7 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
               localizationsDelegates: forgeLocalizationDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               routerConfig: _router,
-              title: widget.category.labelIn(frameworkStrings(context)),
+              title: _title(context),
               theme: AppTheme.light(widget.themeController.palette),
               darkTheme: AppTheme.dark(widget.themeController.palette),
               highContrastTheme: AppTheme.light(AppThemePalette.graphiteForge),
@@ -144,12 +218,10 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
               builder: (context, child) => DesktopWindowHost(
                 platform: widget.platform,
                 mainWindow: false,
-                title: widget.category.labelIn(frameworkStrings(context)),
+                title: _title(context),
                 router: _router,
-                modules: filterModulesByCategory(
-                  AppRouteTable.modules,
-                  widget.category,
-                ),
+                modules: widget.modules,
+                homeLocation: widget.module?.path ?? '/',
                 themeMode: widget.themeController.themeMode,
                 materialEnabled:
                     widget.themeController.palette ==
@@ -157,8 +229,8 @@ class _CategoryWindowAppState extends State<CategoryWindowApp> {
                 child: ForgeThemeBackdrop(
                   child: ExperimentNavigatorLocale(
                     router: _router,
-                    modules: AppRouteTable.modules,
-                    child: child!,
+                    modules: widget.modules,
+                    child: _withFocusNavigation(child!),
                   ),
                 ),
               ),

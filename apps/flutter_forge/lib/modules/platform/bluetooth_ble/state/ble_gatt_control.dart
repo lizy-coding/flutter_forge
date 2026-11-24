@@ -60,7 +60,8 @@ extension BleGattControl on BleSession {
             .unsubscribe(id, service.uuid, characteristic.uuid)
             .timeout(operationLimit);
         if (!_currentLink(generation)) return;
-        await _valueSubscriptions.remove(key)?.cancel();
+        await _cancelListener(_valueSubscriptions.remove(key));
+        if (!_currentLink(generation)) return;
         subscriptions.remove(key);
         _log('停止订阅 ${characteristic.uuid}');
       } else {
@@ -79,7 +80,7 @@ extension BleGattControl on BleSession {
             )
             .timeout(operationLimit);
         if (!_currentLink(generation)) {
-          await listener.cancel();
+          await _cancelListener(listener);
           return;
         }
         subscriptions.add(key);
@@ -87,7 +88,8 @@ extension BleGattControl on BleSession {
       }
     } catch (e) {
       if (!_currentLink(generation)) return;
-      await _valueSubscriptions.remove(key)?.cancel();
+      await _cancelListener(_valueSubscriptions.remove(key));
+      if (!_currentLink(generation)) return;
       error = '订阅操作失败：$e';
       _log(error!);
     } finally {

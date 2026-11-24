@@ -1,3 +1,4 @@
+import '../../../shared/multi_window/focus_window_navigation.dart';
 import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
@@ -310,12 +311,22 @@ class _ShaderPlaygroundPageState extends State<ShaderPlaygroundPage>
             Text(step.title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             const Text('学习顺序：绘制入门 → 真实 Shader → 渐变 → 卡片扫光。每步可直接查看解释，无需答题。'),
-            TextButton(
-              onPressed: () {
-                _motion.stop();
-                unawaited(context.push('/pixel-shader-intro'));
+            Builder(
+              builder: (context) {
+                final focus = FocusWindowNavigation.maybeOf(context);
+                return TextButton(
+                  onPressed: () {
+                    _motion.stop();
+                    unawaited(
+                      focus?.openInMain('/pixel-shader-intro') ??
+                          context.push<void>('/pixel-shader-intro'),
+                    );
+                  },
+                  child: Text(
+                    focus == null ? '返回基础：从画形状到算颜色' : '在主窗口打开：返回基础：从画形状到算颜色',
+                  ),
+                );
               },
-              child: const Text('返回基础：从画形状到算颜色'),
             ),
             Text('先想一想：${step.prediction}'),
             TextButton(

@@ -9,6 +9,10 @@
       "dart_3"
     ]
   },
+  "development_toolchain": {
+    "flutter": "3.50.0",
+    "pin": ".fvmrc"
+  },
   "platform": {
     "current_hosts": [
       "android",
@@ -248,7 +252,7 @@
       ],
       "rendering": "shared_flutter_workbench",
       "titlebar": "macos_immersive_flutter_windows_system_frame_with_client_toolbar",
-      "titlebar_home": "main_workbench_or_focused_category_root",
+      "titlebar_home": "main_workbench_or_focused_module_root",
       "titlebar_double_click": "platform_system_preference",
       "window_controls": "native_macos_leading_traffic_lights_windows_trailing_caption",
       "fullscreen_entry": "separate_toolbar_fullscreen_button_and_f11",
@@ -268,7 +272,8 @@
       "macos_material": "NSVisualEffectView_sidebar_behindWindow",
       "windows_material": "solid_standard_frame_compatibility",
       "main_window_close": "exit_application",
-      "category_window_close": "close_current_window",
+      "module_focus_window_close": "close_current_window",
+      "module_focus_window_management": "main_window_list_focus_close",
       "decision": "docs/adr/0018-platform-interaction-and-native-materials.md",
       "window_decision": "docs/adr/0021-windows-standard-system-frame.md"
     },

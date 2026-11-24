@@ -11,8 +11,31 @@ import '../module_registry/module_entry.dart';
 import '../module_registry/module_catalog_utils.dart';
 import '../shared/multi_window/multi_window_manager.dart';
 import 'forge_pressable_card.dart';
+import 'desktop_window_host.dart';
 import 'theme/forge_theme_tokens.dart';
+import 'navigation_policy.dart';
+
 import 'navigation_session.dart';
+
+Future<void> openModuleFocusWindow(
+  BuildContext context,
+  ModuleEntry module, {
+  String? initialLocation,
+}) async {
+  try {
+    await MultiWindowManager.instance.createModuleWindow(
+      module.path,
+      initialLocation: initialLocation,
+    );
+  } catch (error) {
+    debugPrint('[multi-window] module open failed: $error');
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('打开模块专注窗口失败，请重试。')));
+    }
+  }
+}
 
 class CategoryHomePage extends StatelessWidget {
   const CategoryHomePage({
@@ -67,9 +90,12 @@ class CategoryHomePage extends StatelessWidget {
               moduleCount: categoryModules.length,
               openCategoryWindow: openCategoryWindow,
               showWindowAction:
+                  openCategoryWindow != null &&
                   !focusedWindow &&
                   platform.hostFamily == AppHostFamily.desktop &&
-                  MultiWindowManager.isSupported,
+                  MultiWindowManager.isSupported &&
+                  MediaQuery.sizeOf(context).width >=
+                      NavigationPolicy.compactWidthBreakpoint,
             ),
           ),
         ),
@@ -272,6 +298,13 @@ class ModuleCard extends StatelessWidget {
     final available = isModuleAvailable(module, platform);
     final concepts = module.conceptsFor(context).take(3);
     final desktop = platform.hostFamily == AppHostFamily.desktop;
+    final canOpenWindow =
+        desktop &&
+        available &&
+        MultiWindowManager.isSupported &&
+        DesktopWindowScope.maybeOf(context)?.ready == true &&
+        MediaQuery.sizeOf(context).width >=
+            NavigationPolicy.compactWidthBreakpoint;
     return ForgePressableCard(
       key: ValueKey('module:${module.path}'),
       radius: desktop ? 8 : 12,
@@ -301,8 +334,20 @@ class ModuleCard extends StatelessWidget {
                 ],
               ),
               isThreeLine: true,
-              trailing: Text(
-                '${module.difficulty.labelFor(context)} · ${appStrings(context).minutes(module.estimatedMinutes)}',
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${module.difficulty.labelFor(context)} · ${appStrings(context).minutes(module.estimatedMinutes)}',
+                  ),
+                  if (canOpenWindow)
+                    IconButton(
+                      tooltip: '在专注窗口打开',
+                      onPressed: () =>
+                          unawaited(openModuleFocusWindow(context, module)),
+                      icon: const Icon(Icons.open_in_new_rounded, size: 19),
+                    ),
+                ],
               ),
             )
           : Padding(

@@ -20,3 +20,5 @@ export 'gcode_time.dart';
 export 'src/widgets/command_timeline.dart';
 export 'src/widgets/gcode_canvas.dart';
 export 'src/widgets/playback_controls.dart';
+
+export 'src/rendering/gpu_toolpath_layer.dart' show GcodeRenderStats;

@@ -87,3 +87,9 @@ test-results/
 .release/
 **/android/*.jks
 **/android/key.properties
+
+# Regenerable workspace caches (including nested packages)
+**/.gradle/
+**/.cxx/
+**/__pycache__/
+**/coverage/

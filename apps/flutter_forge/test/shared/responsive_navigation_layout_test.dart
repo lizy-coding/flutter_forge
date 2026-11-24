@@ -1,5 +1,4 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_forge_app/app/adaptive_app_shell.dart';
 import 'package:flutter_forge_app/app/learning_home_page.dart';
@@ -115,36 +114,29 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'desktop category window action is available only on native hosts',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1100, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp(
-          home: CategoryHomePage(
-            category: ModuleCategory.basic,
-            modules: AppRouteTable.modules,
-            platform: const AppPlatformSnapshot(
-              platform: AppTargetPlatform.macOS,
-            ),
+  testWidgets('standalone desktop category omits the window action', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1100, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CategoryHomePage(
+          category: ModuleCategory.basic,
+          modules: AppRouteTable.modules,
+          platform: const AppPlatformSnapshot(
+            platform: AppTargetPlatform.macOS,
           ),
         ),
-      );
+      ),
+    );
 
-      expect(
-        find.byKey(const ValueKey('category-header:basic')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('open-window:basic')),
-        kIsWeb ? findsNothing : findsOneWidget,
-      );
-      expect(find.text('在新窗口打开'), kIsWeb ? findsNothing : findsOneWidget);
-      expect(find.byType(FilledButton), kIsWeb ? findsNothing : findsOneWidget);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(find.byKey(const ValueKey('category-header:basic')), findsOneWidget);
+    expect(find.byKey(const ValueKey('open-window:basic')), findsNothing);
+    expect(find.text('在新窗口打开'), findsNothing);
+    expect(find.byType(FilledButton), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('focused category window omits the open-window action', (
     tester,

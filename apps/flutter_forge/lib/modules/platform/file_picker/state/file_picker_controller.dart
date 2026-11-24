@@ -26,6 +26,7 @@ class FilePickerController extends ChangeNotifier {
   PickedFile? _pickedFile;
   String? _errorMessage;
   String _filterMode = 'gcode';
+  bool _disposed = false;
 
   FilePickerState get state => _state;
   PickedFile? get pickedFile => _pickedFile;
@@ -34,12 +35,14 @@ class FilePickerController extends ChangeNotifier {
   List<String> get allowedExtensions => _extensionsByMode[_filterMode]!;
 
   void setFilterMode(String mode) {
+    if (_disposed) return;
     if (!_extensionsByMode.containsKey(mode) || mode == _filterMode) return;
     _filterMode = mode;
     notifyListeners();
   }
 
   Future<void> pickFile() async {
+    if (_disposed || _state == FilePickerState.loading) return;
     _state = FilePickerState.loading;
     _pickedFile = null;
     _errorMessage = null;
@@ -50,6 +53,7 @@ class FilePickerController extends ChangeNotifier {
         allowedExtensions: allowedExtensions,
         title: '选择文件',
       );
+      if (_disposed) return;
       if (file == null) {
         _state = FilePickerState.cancelled;
       } else {
@@ -57,12 +61,20 @@ class FilePickerController extends ChangeNotifier {
         _state = FilePickerState.picked;
       }
     } on MissingPluginException {
+      if (_disposed) return;
       _state = FilePickerState.platformUnsupported;
       _errorMessage = '当前平台暂未实现原生文件选择桥接';
     } catch (error) {
+      if (_disposed) return;
       _state = FilePickerState.error;
       _errorMessage = '文件选择失败：$error';
     }
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }

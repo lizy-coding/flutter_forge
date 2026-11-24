@@ -66,8 +66,10 @@ function loadFacts(root, modules, workspacePackages) {
   }
   const gcodeModule = modules.find((module) => module.id === 'gcode_visualizer');
   if (!gcodeModule) throw new Error('Missing G-code module contract');
+  const fvm = JSON.parse(fs.readFileSync(path.join(root, '.fvmrc'), 'utf8'));
   return {
     workspaceMembers,
+    flutterVersion: fvm.flutter,
     currentHosts: ['android', 'ios', 'macos', 'web', 'windows'].filter((host) => fs.existsSync(path.join(root, 'apps/flutter_forge', host))),
     gcodeDependency: gitDependency(manifest, lock, 'dependencies', 'gcode_core'),
     gcodeEntryPlatforms: ['android', 'iOS', 'macOS', 'web', 'windows'].filter((host) => !(gcodeModule.excludedPlatforms ?? []).includes(host)),

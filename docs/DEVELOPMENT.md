@@ -4,18 +4,13 @@
 
 | 组件 | 版本 | 说明 |
 |------|------|------|
-| Flutter | 3.47.8 | 见 `.fvmrc` |
-| Dart | 3.13.7 | 随 Flutter |
+| Flutter | 3.50.0 | 见 `.fvmrc` |
+| Dart | 3.14.0 | 随 Flutter |
 | Node.js | 24 | 见 `.nvmrc`（供 Agent 文档生成器） |
 | Xcode | 26+ | 仅 macOS/iOS 构建 |
 | Android SDK | 36+ | 仅 Android 构建 |
 
-Flutter 3.47.8 / Dart 3.13.7 为当前安全修复基线（GHSA-frr6-h895-5pxp）。升级后必须重建应用，既有 Windows/Android 二进制不会因更新 SDK 自动修复。
-`.fvmrc` 与各工作流固定版本保持一致。若现有全局 SDK 带本地补丁，应保留它并使用独立 SDK 验证；本轮隔离安装位于 `.release/toolchains/flutter-3.47.8`，运行项目命令前可设置：
-
-```bash
-export PATH="$PWD/.release/toolchains/flutter-3.47.8/bin:$PATH"
-```
+.fvmrc 与各工作流固定为 Flutter 3.50.0 stable。使用 FVM 时，在仓库根目录运行 `fvm install`；使用全局 SDK 时，通过 `flutter --version` 核对版本。升级后需重新构建安装包。
 
 后续正式分发需依据实际新构建重新冻结 release plan，历史报告和已下载的安装包仍对应原工具链。
 

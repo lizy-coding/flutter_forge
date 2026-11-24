@@ -41,14 +41,22 @@ class GcodeTimeEstimate {
   GcodeTimeEstimate({
     required this.knownSeconds,
     required List<GcodeTimingIssue> issues,
-  }) : issues = List.unmodifiable(issues);
+    int? issueCount,
+  })  : issues = List.unmodifiable(issues),
+        issueCount = issueCount ?? issues.length;
 
   /// Subtotal of calculable durations, not a guaranteed lower bound or full time.
   final double knownSeconds;
   final List<GcodeTimingIssue> issues;
 
+  /// The total diagnostic count, including diagnostics omitted from [issues].
+  final int issueCount;
+
+  /// Whether the diagnostic list is a bounded preview.
+  bool get issuesTruncated => issues.length < issueCount;
+
   /// Whether every processed line can be accounted for under the demo model.
-  bool get isComplete => issues.isEmpty;
+  bool get isComplete => issueCount == 0;
 
   /// Estimated seconds, or null if any processed line cannot be timed.
   double? get estimatedSeconds => isComplete ? knownSeconds : null;
@@ -123,8 +131,20 @@ class GcodeTimeEstimator {
   double _seconds = 0;
   int _lineNumber = 0;
 
-  GcodeTimeEstimate get snapshot =>
-      GcodeTimeEstimate(knownSeconds: _seconds, issues: _issues);
+  GcodeTimeEstimate get snapshot => snapshotWithIssueLimit(null);
+
+  /// Copies at most [limit] diagnostics while preserving their total count.
+  ///
+  /// A `null` limit returns all diagnostics. Truncation never makes an
+  /// incomplete estimate complete. Negative limits throw [ArgumentError].
+  GcodeTimeEstimate snapshotWithIssueLimit(int? limit) {
+    if (limit != null && limit < 0) throw ArgumentError.value(limit, 'limit');
+    return GcodeTimeEstimate(
+      knownSeconds: _seconds,
+      issues: limit == null ? _issues : _issues.take(limit).toList(),
+      issueCount: _issues.length,
+    );
+  }
 
   /// Accepts one source line; [lineNumber] defaults to the next sequential line.
   void append(String source, {int? lineNumber}) {

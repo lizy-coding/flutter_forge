@@ -1,3 +1,4 @@
+import 'router/app_route_table.dart';
 import 'package:forge_localization/forge_localization.dart';
 
 import 'localization/app_locale_host.dart';
@@ -45,6 +46,7 @@ Future<void> bootstrapFlutterForgeApp() async {
 Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
   Widget? root;
   final startupReady = Completer<void>();
+  unawaited(startupReady.future.then<void>((_) {}, onError: (Object _) {}));
   WindowController? currentWindow;
   var arguments = const WindowArguments(type: WindowType.main);
   if (!platform.isWeb && MultiWindowManager.isSupported) {
@@ -61,12 +63,22 @@ Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
           ? AppThemePalette.liquidGlass
           : AppThemePalette.graphiteForge,
     ),
-    initialSelectionPayload: arguments.type == WindowType.category
+    initialSelectionPayload: arguments.type != WindowType.main
         ? arguments.themeSelectionPayload
         : null,
   );
 
   final manager = MultiWindowManager.instance;
+  final module = AppRouteTable.modules
+      .where((entry) => entry.path == arguments.modulePath)
+      .firstOrNull;
+  if (arguments.type == WindowType.module &&
+      (module == null || !module.isSupportedOn(platform))) {
+    throw StateError('Invalid focus window module');
+  }
+  final appRouter = arguments.type == WindowType.main
+      ? AppRouter.create(platform)
+      : null;
   var localeRevision = arguments.localeRevision;
   late final LocaleController localeControllerForSync;
   void applyLocaleSnapshot(dynamic payload) {
@@ -84,11 +96,10 @@ Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
   }
 
   final localeController = await AppLocaleHost.load(
-    initialPreference: arguments.type == WindowType.category
+    initialPreference: arguments.type != WindowType.main
         ? arguments.localePreference
         : null,
-    persist:
-        arguments.type == WindowType.category && arguments.mainWindowId != null
+    persist: arguments.type != WindowType.main && arguments.mainWindowId != null
         ? (value) async {
             final response = await WindowController.fromWindowId(
               arguments.mainWindowId!,
@@ -107,6 +118,15 @@ Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
       localeController.preference,
     );
     await currentWindow.setWindowMethodHandler((call) async {
+      if (call.method == MultiWindowManager.openRouteMethod) {
+        final path = call.arguments;
+        if (path is! String || !path.startsWith('/') || path.startsWith('//')) {
+          throw ArgumentError('Invalid route');
+        }
+        appRouter!.go(path);
+        await currentWindow!.show();
+        return null;
+      }
       if (call.method == MultiWindowManager.localeRequestMethod) {
         if (call.arguments is! String) {
           throw ArgumentError('Invalid locale preference');
@@ -125,7 +145,8 @@ Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
   }
 
   if (currentWindow != null) {
-    if (arguments.type == WindowType.category && arguments.category != null) {
+    if (arguments.type != WindowType.main &&
+        (arguments.category != null || module != null)) {
       await currentWindow.setWindowMethodHandler((call) async {
         if (call.method == MultiWindowManager.readyMethod) {
           await startupReady.future;
@@ -136,7 +157,10 @@ Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
         }
       });
       root = CategoryWindowApp(
-        category: arguments.category!,
+        category: module?.category ?? arguments.category!,
+        module: module,
+        initialLocation: arguments.initialLocation,
+        mainWindowId: arguments.mainWindowId,
         platform: platform,
         themeController: themeController,
       );
@@ -159,11 +183,7 @@ Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
         child: ProviderScope(
           overrides: [appPlatformProvider.overrideWithValue(platform)],
           child:
-              root ??
-              App(
-                router: AppRouter.create(platform),
-                themeController: themeController,
-              ),
+              root ?? App(router: appRouter!, themeController: themeController),
         ),
       ),
     ),
@@ -172,19 +192,22 @@ Future<void> _startFlutterForgeApp(AppPlatformSnapshot platform) async {
     if (currentWindow != null && platform.hostFamily == AppHostFamily.desktop) {
       try {
         await currentWindow.markReady();
-        if (arguments.type == WindowType.category &&
-            arguments.mainWindowId != null) {
-          applyLocaleSnapshot(
-            await WindowController.fromWindowId(
-              arguments.mainWindowId!,
-            ).invokeMethod(MultiWindowManager.localeSnapshotMethod),
-          );
-        }
-      } catch (error) {
-        debugPrint('Native window readiness failed: $error');
+      } catch (error, stackTrace) {
+        startupReady.completeError(error, stackTrace);
         return;
       }
     }
-    if (!startupReady.isCompleted) startupReady.complete();
+    startupReady.complete();
+    if (arguments.type != WindowType.main && arguments.mainWindowId != null) {
+      try {
+        applyLocaleSnapshot(
+          await WindowController.fromWindowId(
+            arguments.mainWindowId!,
+          ).invokeMethod(MultiWindowManager.localeSnapshotMethod),
+        );
+      } catch (error) {
+        debugPrint('[multi-window] startup locale refresh failed: $error');
+      }
+    }
   });
 }

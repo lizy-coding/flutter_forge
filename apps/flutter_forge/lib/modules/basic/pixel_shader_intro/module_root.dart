@@ -1,3 +1,4 @@
+import '../../../shared/multi_window/focus_window_navigation.dart';
 import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
@@ -197,10 +198,22 @@ class _PixelShaderIntroPageState extends State<PixelShaderIntroPage> {
             const Text(
               '片元 Shader 会为绘制区域中的片元计算颜色；入门时可以先把片元近似理解为待绘制的像素。本页用 Dart 和 Canvas 演示这条思路，后续课程再把规则写成真正的 Shader。',
             ),
-            FilledButton(
-              key: const Key('intro-continue-shader'),
-              onPressed: () => unawaited(context.push('/shader-playground')),
-              child: const Text('继续学习：把颜色规则写成真实 Shader'),
+            Builder(
+              builder: (context) {
+                final focus = FocusWindowNavigation.maybeOf(context);
+                return FilledButton(
+                  key: const Key('intro-continue-shader'),
+                  onPressed: () => unawaited(
+                    focus?.openInMain('/shader-playground') ??
+                        context.push<void>('/shader-playground'),
+                  ),
+                  child: Text(
+                    focus == null
+                        ? '继续学习：把颜色规则写成真实 Shader'
+                        : '在主窗口打开：继续学习：把颜色规则写成真实 Shader',
+                  ),
+                );
+              },
             ),
             TextButton(
               onPressed: () => _startStep(0),

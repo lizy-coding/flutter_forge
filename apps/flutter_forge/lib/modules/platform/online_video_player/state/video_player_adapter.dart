@@ -96,6 +96,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
   final ValueNotifier<double> rate = ValueNotifier(1);
 
   int _openGeneration = 0;
+  int _playbackGeneration = 0;
   bool _disposed = false;
   Timer? _noFrameTimer;
   Timer? _loadingWatchdog;
@@ -197,6 +198,11 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
         return;
       }
       final value = controller.value;
+      if (!value.isPlaying) {
+        timer.cancel();
+        _noFrameTimer = null;
+        return;
+      }
       if (value.hasError) {
         timer.cancel();
         unawaited(_failNoFrame(controller, generation));
@@ -292,9 +298,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
       }
       _cancelLoadingWatchdog();
       if (startAutomatically) {
-        await controller.play();
-        if (_disposed || generation != _openGeneration) return;
-        _startNoFrameMonitor(controller, generation);
+        await play();
       } else {
         uiState.value = PlayerUiState.paused;
       }
@@ -334,10 +338,13 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
     final controller = _controller;
     if (controller == null) return;
     final generation = _openGeneration;
+    final playbackGeneration = ++_playbackGeneration;
     await controller.play();
     if (_disposed ||
         generation != _openGeneration ||
-        _controller != controller) {
+        playbackGeneration != _playbackGeneration ||
+        _controller != controller ||
+        !controller.value.isPlaying) {
       return;
     }
     _startNoFrameMonitor(controller, generation);
@@ -345,6 +352,7 @@ class VideoPlayerPluginAdapter implements VideoPlayerAdapter {
 
   @override
   Future<void> pause() async {
+    ++_playbackGeneration;
     final controller = _controller;
     if (controller == null) return;
     _cancelNoFrameMonitor();

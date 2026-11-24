@@ -11,6 +11,29 @@ import '../models/toolpath_segment.dart';
 import 'toolpath_geometry.dart';
 import 'toolpath_viewport.dart';
 
+/// Optional counters of renderer work submitted by the CPU.
+///
+/// These counters do not measure GPU time or native memory reclamation. Keep
+/// one instance for the lifetime of a canvas to compare loading and playback.
+class GcodeRenderStats {
+  int _geometryBuilds = 0;
+  int _vertexUploadBytes = 0;
+  int _compositedFrames = 0;
+  int _surfaceCreations = 0;
+  int _surfaceResizes = 0;
+  int _resourceSetsCreated = 0;
+  int _resourceSetsCleared = 0;
+
+  int get geometryBuilds => _geometryBuilds;
+  int get vertexUploadBytes => _vertexUploadBytes;
+  int get compositedFrames => _compositedFrames;
+  int get surfaceCreations => _surfaceCreations;
+  int get surfaceResizes => _surfaceResizes;
+  int get resourceSetsCreated => _resourceSetsCreated;
+  int get resourceSetsCleared => _resourceSetsCleared;
+  int get activeResourceSets => _resourceSetsCreated - _resourceSetsCleared;
+}
+
 /// GPU scene: paths, grid, origin and moving markers share one surface.
 class GpuToolpathLayer extends StatefulWidget {
   const GpuToolpathLayer(
@@ -20,13 +43,15 @@ class GpuToolpathLayer extends StatefulWidget {
       required this.progress,
       required this.style,
       this.onReady,
-      this.onError});
+      this.onError,
+      this.stats});
   final List<ToolpathSegment> segments;
   final GcodeBounds? bounds;
   final double progress;
   final GcodeStyle style;
   final VoidCallback? onReady;
   final ValueChanged<Object>? onError;
+  final GcodeRenderStats? stats;
   @override
   State<GpuToolpathLayer> createState() => _GpuToolpathLayerState();
 }
@@ -56,7 +81,9 @@ class _GpuToolpathLayerState extends State<GpuToolpathLayer> {
           library['ToolpathVertex']!, library['ToolpathFragment']!);
       final guides = gpu.gpuContext.createRenderPipeline(
           library['GuidesVertex']!, library['GuidesFragment']!);
-      if (mounted) setState(() => resources = _GpuResources(pipeline, guides));
+      if (mounted)
+        setState(
+            () => resources = _GpuResources(pipeline, guides, widget.stats));
     } catch (e) {
       debugPrint('GCODE_GPU_INIT_FAILED $e');
       if (mounted) {
@@ -116,7 +143,8 @@ class _GpuToolpathLayerState extends State<GpuToolpathLayer> {
 }
 
 class _GpuResources {
-  _GpuResources(this.pipeline, this.guides) {
+  _GpuResources(this.pipeline, this.guides, this.stats) {
+    stats?._resourceSetsCreated++;
     final data = Float32List.fromList([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
     quad = gpu.BufferView(
         gpu.gpuContext.createDeviceBufferWithCopy(ByteData.sublistView(data)),
@@ -125,6 +153,8 @@ class _GpuResources {
     // Five small uniforms per frame; four rotating blocks are enough.
     host = gpu.gpuContext.createHostBuffer(blockLengthInBytes: 16 * 1024);
   }
+  final GcodeRenderStats? stats;
+  bool _cleared = false;
   final gpu.RenderPipeline pipeline;
   final gpu.RenderPipeline guides;
   late final gpu.BufferView quad;
@@ -140,6 +170,9 @@ class _GpuResources {
   int vertexCount = 0;
   List<int> prefixVertexCounts = const [0];
   void clear() {
+    if (_cleared) return;
+    _cleared = true;
+    stats?._resourceSetsCleared++;
     surface = null;
     vertices = null;
     segments = null;
@@ -172,6 +205,8 @@ class _GpuResources {
       viewport = ToolpathViewport(bounds!, newSize);
       final nextGeometry =
           ToolpathGeometry.build(input.segments, bounds!, newSize, maxWidth);
+      stats?._geometryBuilds++;
+      stats?._vertexUploadBytes += nextGeometry.vertices.lengthInBytes;
       vertexCount = nextGeometry.vertexCount;
       vertices = vertexCount == 0
           ? null
@@ -187,9 +222,15 @@ class _GpuResources {
     }
     final w = math.max(1, (newSize.width * dpr).ceil());
     final h = math.max(1, (newSize.height * dpr).ceil());
-    surface ??= gpu.gpuContext
-        .createImageSurface(w, h, format: gpu.PixelFormat.r8g8b8a8UNormInt);
-    if (surface!.width != w || surface!.height != h) surface!.resize(w, h);
+    if (surface == null) {
+      surface = gpu.gpuContext
+          .createImageSurface(w, h, format: gpu.PixelFormat.r8g8b8a8UNormInt);
+      stats?._surfaceCreations++;
+    }
+    if (surface!.width != w || surface!.height != h) {
+      surface!.resize(w, h);
+      stats?._surfaceResizes++;
+    }
   }
 }
 
@@ -329,6 +370,7 @@ class _GpuImageCompositor extends CustomPainter {
       } finally {
         image.dispose();
       }
+      resources.stats?._compositedFrames++;
       ready();
     } catch (e) {
       frame?.discard();

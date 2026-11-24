@@ -16,7 +16,7 @@ require('../web_startup_localization.test');
 function fixture(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'forge-generator-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
-  for (const rel of ['pubspec.yaml', 'pubspec.lock', 'apps/flutter_forge/pubspec.yaml', ...workspacePackages.map((p) => `${p.path}/pubspec.yaml`)]) {
+  for (const rel of ['.fvmrc', 'pubspec.yaml', 'pubspec.lock', 'apps/flutter_forge/pubspec.yaml', ...workspacePackages.map((p) => `${p.path}/pubspec.yaml`)]) {
     fs.mkdirSync(path.dirname(path.join(dir, rel)), { recursive: true });
     fs.copyFileSync(path.join(root, rel), path.join(dir, rel));
   }
@@ -25,6 +25,7 @@ function fixture(t) {
 
 test('dependency and workspace facts match manifests, including the app and window package', () => {
   const facts = loadFacts(root, modules, workspacePackages);
+  assert.equal(facts.flutterVersion, JSON.parse(fs.readFileSync(path.join(root, '.fvmrc'), 'utf8')).flutter);
   assert.ok(facts.workspaceMembers.includes('apps/flutter_forge'));
   assert.ok(facts.workspaceMembers.includes('packages/desktop_multi_window'));
   const manifest = fs.readFileSync(path.join(root, 'apps/flutter_forge/pubspec.yaml'), 'utf8');
@@ -97,7 +98,7 @@ test('duplicate outputs and escaping paths are rejected before writing', (t) => 
 
 test('manifest and lock facts accept CRLF checkouts', (t) => {
   const dir = fixture(t);
-  for (const rel of ['pubspec.yaml', 'pubspec.lock', 'apps/flutter_forge/pubspec.yaml', ...workspacePackages.map((p) => `${p.path}/pubspec.yaml`)]) {
+  for (const rel of ['.fvmrc', 'pubspec.yaml', 'pubspec.lock', 'apps/flutter_forge/pubspec.yaml', ...workspacePackages.map((p) => `${p.path}/pubspec.yaml`)]) {
     const file = path.join(dir, rel);
     fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/\r?\n/g, '\r\n'));
   }

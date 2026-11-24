@@ -16,7 +16,8 @@ class GcodeCanvas extends StatelessWidget {
       this.style,
       this.showLegend = true,
       this.onReady,
-      this.onError});
+      this.onError,
+      this.stats});
   final List<ToolpathSegment> segments;
   final double progress;
   final int errorCount;
@@ -24,6 +25,9 @@ class GcodeCanvas extends StatelessWidget {
   final GcodeBounds? bounds;
   final GcodeStyle? style;
   final bool showLegend;
+
+  /// Optional CPU submission counters, fixed for this canvas lifetime.
+  final GcodeRenderStats? stats;
 
   /// The callback invoked after this mounted scene presents its first GPU frame.
   ///
@@ -61,6 +65,7 @@ class GcodeCanvas extends StatelessWidget {
                       ? progress.clamp(0.0, 1.0).toDouble()
                       : 0.0,
                   style: effectiveStyle,
+                  stats: stats,
                   onReady: onReady,
                   onError: onError),
               if (showLegend)

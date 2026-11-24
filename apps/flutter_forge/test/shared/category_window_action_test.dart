@@ -7,6 +7,17 @@ import 'package:flutter_forge_app/module_registry/module_category.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('compact category pages omit the native window action', (
+    tester,
+  ) async {
+    await _pumpCategory(tester, (_) async => 'window', width: 599);
+    expect(find.byKey(const ValueKey('open-window:basic')), findsNothing);
+
+    tester.view.physicalSize = const Size(600, 800);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('open-window:basic')), findsOneWidget);
+  });
+
   testWidgets('opening disables the action until the window is ready', (
     tester,
   ) async {
@@ -111,9 +122,11 @@ Future<void> _pumpCategory(
   WidgetTester tester,
   Future<String?> Function(ModuleCategory) open, {
   ModuleCategory category = ModuleCategory.basic,
+  double width = 1100,
 }) async {
-  await tester.binding.setSurfaceSize(const Size(1100, 800));
-  addTearDown(() => tester.binding.setSurfaceSize(null));
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = Size(width, 800);
+  addTearDown(tester.view.reset);
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(

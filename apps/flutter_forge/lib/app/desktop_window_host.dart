@@ -81,6 +81,7 @@ class DesktopWindowHost extends StatefulWidget {
   const DesktopWindowHost({
     super.key,
     required this.router,
+    this.homeLocation = '/',
     required this.modules,
     required this.themeMode,
     required this.child,
@@ -92,6 +93,7 @@ class DesktopWindowHost extends StatefulWidget {
 
   static const channel = MethodChannel('flutter_forge/desktop_host');
   final GoRouter router;
+  final String homeLocation;
   final List<ModuleEntry> modules;
   final ThemeMode themeMode;
   final Widget child;
@@ -280,7 +282,7 @@ class _DesktopWindowHostState extends State<DesktopWindowHost> {
         () => _controller.update(call.arguments as Map<dynamic, dynamic>?),
       );
     } else if (call.method == 'home') {
-      widget.router.go('/');
+      widget.router.go(widget.homeLocation);
     } else if (call.method == 'search') {
       final context = widget
           .router

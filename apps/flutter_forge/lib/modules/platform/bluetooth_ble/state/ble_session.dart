@@ -58,6 +58,7 @@ class BleSession extends ChangeNotifier {
     });
     _availabilitySubscription = client.availabilityChanges.listen((state) {
       if (_closed) return;
+      ++_statusGeneration;
       _applyAvailability(state);
       if (state == AvailabilityState.poweredOn) unawaited(refreshStatus());
       _notify();
@@ -91,8 +92,12 @@ class BleSession extends ChangeNotifier {
   String? error;
   String scanSummary = '尚未开始扫描';
   List<BleService> services = [];
+  // Cancelled through _cancelListener, which bounds and isolates cleanup errors.
+  // ignore: cancel_subscriptions
   StreamSubscription<BleDevice>? _scanSubscription;
+  // ignore: cancel_subscriptions
   StreamSubscription<AvailabilityState>? _availabilitySubscription;
+  // ignore: cancel_subscriptions
   StreamSubscription<bool>? _connectionSubscription;
   final Map<String, StreamSubscription<Uint8List>> _valueSubscriptions = {};
   Timer? _scanTimer;
@@ -104,6 +109,7 @@ class BleSession extends ChangeNotifier {
   bool _radioBusy = false;
   bool _scanStartInFlight = false;
   bool _nativeConnectionRequested = false;
+  int _statusGeneration = 0;
   int _generation = 0;
   int _scanGeneration = 0;
   int _connectionQueryGeneration = 0;
@@ -188,10 +194,12 @@ class BleSession extends ChangeNotifier {
   }
 
   Future<void> refreshStatus() async {
+    if (_closed) return;
+    final generation = ++_statusGeneration;
     try {
       final state = await client.availability().timeout(operationLimit);
       final granted = await client.hasPermissions().timeout(operationLimit);
-      if (_closed) return;
+      if (_closed || generation != _statusGeneration) return;
       _applyAvailability(state);
       permissionGranted = granted;
       _notify();
@@ -204,7 +212,7 @@ class BleSession extends ChangeNotifier {
         _notify();
       }
     } catch (e) {
-      if (_closed) return;
+      if (_closed || generation != _statusGeneration) return;
       error = '读取蓝牙状态失败：$e';
       _notify();
     }
@@ -490,11 +498,20 @@ class BleSession extends ChangeNotifier {
     }
   }
 
+  Future<void> _cancelListener(StreamSubscription<dynamic>? listener) async {
+    if (listener == null) return;
+    try {
+      await listener.cancel().timeout(operationLimit);
+    } catch (error) {
+      debugPrint('BLE listener cleanup failed: $error');
+    }
+  }
+
   void _clearConnection() {
-    unawaited(_connectionSubscription?.cancel());
+    unawaited(_cancelListener(_connectionSubscription));
     _connectionSubscription = null;
     for (final listener in _valueSubscriptions.values) {
-      unawaited(listener.cancel());
+      unawaited(_cancelListener(listener));
     }
     _valueSubscriptions.clear();
     subscriptions.clear();
@@ -521,14 +538,20 @@ class BleSession extends ChangeNotifier {
     _closed = true;
     ++_generation;
     ++_scanGeneration;
+    ++_statusGeneration;
     _scanTimer?.cancel();
     _heartbeat?.cancel();
     _scanUpdateTimer?.cancel();
-    await _scanSubscription?.cancel();
-    await _availabilitySubscription?.cancel();
+    final listeners = Future.wait([
+      _cancelListener(_scanSubscription),
+      _cancelListener(_availabilitySubscription),
+    ]);
+    _scanSubscription = null;
+    _availabilitySubscription = null;
     _clearConnection();
     // Dispose promptly; native cleanup has bounded waits and cannot update UI.
     super.dispose();
+    await listeners;
     if (stopNeeded) {
       try {
         await client.stopScan().timeout(operationLimit);
